@@ -92,7 +92,68 @@ RekanBumi difokuskan pada proses pencarian, penghubung, dan pengorganisasian ant
 - Sistem tidak dapat mendeteksi langsung wilayah/tempat yang perlu dilakukan penghijauan
 - Sistem tidak dapat menerima pelaporan hewan yang hilang atau perlu dievekuasi 
 
+## 2.4 Sumber Daya
 
+Untuk menjalankan RekanBumi diperlukan beberapa sumber daya sebagai berikut.
+
+### a. Sumber Daya Manusia
+
+- **Developer**, bertanggung jawab terhadap pengembangan dan pemeliharaan sistem.
+- **Admin**, bertanggung jawab terhadap pengelolaan pengguna dan penanganan laporan.
+- **Lembaga**, menyediakan program-program kegiatan yang menjadi inti dari sistem.
+- **Pengguna**, menjadi calon relawan yang menggunakan sistem untuk mencari dan mengikuti program kegiatan yang sesuai dengan preferensi mereka.
+
+### b. Data
+
+Sistem membutuhkan data berupa:
+
+- Informasi akun pengguna.
+- Informasi lembaga.
+- Informasi program-program kegiatan.
+- Lokasi, waktu, dan tujuan tiap program kegiatan.
+- Sumber daya yang dibutuhkan oleh program atau lembaga terkait.
+- Lokasi dan waktu preferensi pengguna untuk program kegiatan volunteer.
+- Preferensi jenis dan bentuk kegiatan pengguna.
+- Riwayat program kegiatan yang diikuti.
+- Status tiap program kegiatan.
+
+### c. Infrastruktur
+
+Sistem membutuhkan:
+
+- Server untuk menjalankan aplikasi.
+- Database untuk menyimpan data.
+- Storage untuk menyimpan data pendukung.
+- Koneksi internet.
+- Perangkat pengguna yang memadai untuk mengakses sistem.
+
+## 2.5 Aspek Hukum dan Etika
+
+Dalam pengembangan RekanBumi, aspek hukum dan etika perlu diperhatikan karena sistem melibatkan pengelolaan data pengguna, informasi lembaga, dokumentasi kegiatan, serta publikasi informasi program kepada masyarakat. Aspek hukum dan etika yang menjadi perhatian dalam pengembangan RekanBumi meliputi:
+
+### 1. Perlindungan Data Pribadi Pengguna
+
+RekanBumi dapat mengelola informasi data seperti identitas dan informasi kontak relawan maupun penanggung jawab lembaga. Pengumpulan dan penggunaan data perlu dilakukan untuk menunjang keberjalanan sistem. Pemberian informasi mengenai tujuan pengumpulan data dan konfirmasi kembali dari pengguna melalui *terms & conditions* akan dilakukan pada tahap awal pendaftaran, serta pembatasan akses terhadap data yang tidak diperlukan untuk ditampilkan secara publik.
+
+### 2. Verifikasi Identitas dan Legalitas Inisiator
+
+RekanBumi melakukan verifikasi terhadap identitas dan legalitas lembaga atau komunitas sebelum program dipublikasikan. Proses ini bertujuan untuk mengurangi risiko penyalahgunaan platform dan memastikan bahwa informasi mengenai pihak penyelenggara memiliki dasar yang dapat dipertanggungjawabkan. Dokumen yang digunakan dalam proses verifikasi tidak ditampilkan kepada publik apabila tidak diperlukan.
+
+### 3. Dokumentasi dan Publikasi Kegiatan
+
+Inisiator dapat mengunggah hasil dokumentasi serta informasi mengenai hasil kegiatan. Penggunaan foto dan informasi tersebut akan memperhatikan hak privasi pihak yang terdokumentasi serta memastikan materi yang dipublikasikan tidak melanggar hak pihak lain.
+
+### 4. Keamanan dan Penyalahgunaan Sistem
+
+RekanBumi perlu membatasi akses berdasarkan peran pengguna. Data dan fungsi yang bersifat administratif hanya dapat diakses dan dikelola oleh pihak terkait. Selain itu, sistem perlu menyediakan mekanisme pelaporan atau penanganan apabila ditemukan akun maupun program yang terindikasi melakukan pelanggaran terhadap *terms & conditions*.
+
+## 2.6 Unique Value Point
+
+Semakin hari, semakin banyak lembaga-lembaga inisiator program yang mendukung penjagaan bumi. Meningkatnya jumlah lembaga tersebut juga menimbulkan beberapa kekurangan, baik bagi lembaga itu sendiri maupun masyarakat umum yang berkeinginan menjadi relawan. Masyarakat menjadi bingung dalam memilih karena jumlah lembaga dan program yang terlalu banyak, bahkan dapat menjadi tidak yakin untuk berkontribusi karena adanya kemungkinan lembaga yang tersedia merupakan lembaga yang tidak terverifikasi. RekanBumi hadir untuk menjawab keresahan-keresahan tersebut.
+
+RekanBumi mengintegrasikan suatu sistem terpusat yang menyediakan informasi berbagai lembaga inisiator lingkungan beserta programnya dengan filter yang memudahkan calon relawan melalui fitur **“Jaga Alam”** dan **“Jaga Iklim”**. RekanBumi tidak hanya berfokus pada kegiatan peduli lingkungan berupa penanaman pohon atau reboisasi untuk pemulihan deforestasi, tetapi juga mengimplementasikan kepedulian masyarakat terhadap kebersihan lingkungan sekitar dan hewan-hewan liar.
+
+Poin tersebut merupakan **Unique Value Point** dari RekanBumi yang membuat RekanBumi berbeda dari platform lain dalam gerakan peduli lingkungan. RekanBumi menyediakan layanan yang memberikan calon relawan kesempatan untuk mencari program secara mudah, terarah, dan tepercaya.
 
 
 ---
