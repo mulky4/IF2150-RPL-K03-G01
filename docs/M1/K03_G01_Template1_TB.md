@@ -47,10 +47,53 @@ Memang sudah ada platform digital seperti Indorelawan dan Kitabisa yang mencoba 
 # BAB 2: Analisis Solusi
 
 ## 2.1 Deskripsi Perangkat Lunak
-Abstraksikan solusi perangkat lunak yang diusulkan dari sudut pandang pengguna. Jelaskan target platform yang akan digunakan (misalnya: desktop application) beserta alasan pemilihannya. Deskripsikan juga nilai unik (inovasi inti) dari perangkat lunak kalian dan apa yang membedakannya dari solusi yang sudah ada.
+  Perangkat lunak RekanBumi dikembangkan untuk menjembatani pengguna dengan lembaga inisiator program-program cinta lingkungan. Adapun target pengguna dari perangkat lunak ini adalah masyarakat umum. Perangkat lunak ini dikembangkan dalam web desktop, atas dasar pertimbangan kemudahan akses dari device manapun tanpa harus mengunduh aplikasi secara manual dan lokal tiap kali berpindah device. Keputusan ini juga didasarkan atas probabilitas yang lebih tinggi untuk menjangkau lebih banyak pengunjung pada perangkat lunak dibandingkan dengan menggunakan basis aplikasi desktop.
+	RekanBumi merupakan perangkat lunak berbasis web yang digunakan untuk mempertemukan masyarakat umum yang ingin memiliki  kontribusi nyata pada keberlanjutan bumi dengan lembaga-lembaga terkait. Sistem menyediakan mekanisme bagi pengguna untuk mencari dan berkontribusi langsung pada kegiatan-kegiatan yang tersedia berdasarkan tujuan, lokasi, waktu, dan bentuk. RekanBumi juga menjadi tempat bagi lembaga-lembaga terkait untuk dapat lebih dikenal oleh khalayak umum
+	Secara umum, proses RekanBumi terdiri atas screening lembaga-lembaga yang menawarkan kerjasama kepada RekanBumi, penawaran program-program aksi oleh lembaga-lembaga tersebut, pencarian dan/atau pemilihan program aksi oleh masyarakat umum, konfirmasi oleh lembaga terkait, dan pencatatan aksi kegiatan aksi yang relawan telah lakukan.
+	Sistem dikembangkan dalam bentuk web desktop karena beberapa pertimbangan yang ada. Pertama, web desktop lebih sesuai untuk menampilkan katalog program dan informasi kegiatan secara terstruktur serta mendukung pengelolaan data oleh inisiator/admin. Kedua, kebutuhan utama dari RekanBumi lebih bersifat information management dibandingkan device-specific interaction, seperti RekanBumi tidak ada dalam bentuk mobile app karena tidak membutuhkan kamera, GPS terus-menerus, sensor, ataupun background process. Ketiga, RekanBumi perku dapat diakses oleh pengguna yang belum memiliki aplikasi atau belum pernah menggunakan platform sebelumnya.
 
-## 2.2 Asumsi dan Batasan
-Definisikan secara tegas asumsi (baik teknis maupun dari sisi pengguna) yang menjadi dasar pengembangan. Tuliskan batasan seperti regulasi/hukum, keterbatasan sumber daya, dan ruang lingkup solusi.
+
+
+## 2.2 Asumsi Pengguna
+Dalam pengembangan RekanBumi, terdapat beberapa asumsi mengenai pengguna dan lingkungan penggunaan sistem
+a. Lembaga 
+- Lembaga yang menawarkan program kegiatan dapat berupa volunteer ataupun penggalangan dana
+- Lembaga bertanggung jawab atas informasi program yang dibuat, seperti spesifikasi/deskripsi, lokasi, dan waktu.
+- Lembaga harus melalui beberapa tahapan untuk dapat terverifikasi dalam RekanBumi
+b. Relawan
+- Relawan memiliki akses terhadap perangkat yang dapat digunakan untuk menggunakan RekanBumi
+- Relawan bertanggung jawab atas segala data pribadi yang diberikan saat tahap pendaftaran
+- Relawan dapat menentukan program kegiatan yang ingin dilakukan 
+c. Admin
+- Admin memiliki kewenangan untuk mengelola akun pengguna dan menangani laporan terkait penyalahgunaan sistem
+- Admin tidak bertanggung jawab untuk mengatur jalannya program-program yang ada
+d. Lingkungan Sistem
+- Sistem mengasumsikan pengguna memiliki koneksi internet ketika melakukan aktivitas pada web 
+- Informasi lokasi dan waktu yang dimasukkan pengguna diasumsikan benar dan menjadi tanggung jawab pengguna yang memasukkannya
+
+## 2.3 Batasan dan Ruang Lingkup
+RekanBumi difokuskan pada proses pencarian, penghubung, dan pengorganisasian antara masyarakat umum dengan lembaga-lembaga terdaftar. Ruang lingkup sistem dibatasi pada aktivitas yang dapat dilakukan melalui platform web. 
+a. Termasuk dalam ruang lingkup
+- Registrasi dan autentikasi pengguna
+- Pembuatan informasi kriteria program prioritas bagi pengguna 
+- Pencarian program kegiatan berdasarkan kriteria tertentu
+- Pengorganisasian program kegiatan berdasarkan kriteria tertentu
+- Memperkenalkan lembaga-lembaga yang menginisiasi aksi penghijauan, pembersihan lingkungan (dari sampah), dan kontribusi dalam evakuasi hewan.
+- Deskripsi singkat lembaga-lembaga terdaftar 
+- Mengakses web lembaga-lembaga inisiator program melalui web RekanBumi. 
+- Pencatatan riwayat program kegiatan yang diikuti para pengguna
+- Konfirmasi pendaftaran pengguna pada program kegiatan
+- Pengarahan pengguna menuju lembaga jika program berupa donasi uang elektronik
+- Pelaporan mengenai program yang diakses pada RekanBumi
+b. Tidak termasuk dalam ruang lingkup
+- Sistem tidak memadai pengerahan donasi berupa uang elektronik oleh pengguna langsung ke web RekanBumi
+- Sistem tidak melakukan pemeriksaan kondisi keberjalanan program secara langsung
+- Sistem tidak menyediakan fitur AI untuk membantu mencari program yang sesuai dengan keinginan relawan berdasarkan algoritma history pencarian relawan. 
+- Sistem tidak dapat mendeteksi langsung wilayah/tempat yang perlu dilakukan penghijauan
+- Sistem tidak dapat menerima pelaporan hewan yang hilang atau perlu dievekuasi 
+
+
+
 
 ---
 
