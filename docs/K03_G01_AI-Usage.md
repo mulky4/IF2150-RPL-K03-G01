@@ -35,15 +35,15 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 ### Milestone 1
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
-| *[Nama AI]* | *[Sertakan Tujuan Penggunaan]* | *[Tuliskan Prompt Utama]* | *[Tuliskan Keputusan Hasil Validasi]* |
-| *Gemini* | *Mengecek relasi antar class* | *"Apakah relasi antara class User dan Order dalam UML ini seharusnya composition atau aggregation?"* | *AI menyarankan composition, tapi setelah dicek kembali ke requirement, kami menggunakan aggregation karena Order masih bisa eksis di history.* |
-| | | | | |
+| *Gemini* | *Membantu dalam brainstorming pemilihan ide* | *Berikan beberapa ide proyek pengembangan perangkat lunak yang relevan dengan tema SDG 13 dan/atau SDG 13* | *AI memberikan sejumlah gagasan proyek yang relevan dengan SDG. Gagasan tersebut kemudian dievaluasi dalam diskusi kelompok. Pada akhirnya, kami tidak menggunakan ide AI secara langsung, melainkan menjadikannya fondasi untuk mengembangkan ide "RekanBumi" yang disepakati bersama.* |
+| *Gemini* | *Memastikan konten apa saja yang perlu dibahas* | *Berdasarkan hasil asistensi terdapat beberapa hal yang kurang pada bab 2 yaitu, teknis dan asumsi pengguna. batasan ruang lingkup, sumber daya, hukum, unique value point. Kira-kira harus membahas apa ya di poin-poin tersebut* | *AI menjelaskan maksud dari setiap komponen yang kurang pada Bab 2. Kami meninjau penjelasan tersebut untuk memahami konteksnya, lalu menyusun ulang isi dokumen menggunakan sambil memastikan seluruh poin revisi dari asisten sudah terjawab dengan tepat* |
+| *Gemini* | *Memastikan konten apa saja yang perlu dibahas* | *Berdasarkan info terbaru dari asisten, diagram activity dibagi per aktivitas. Apakah sudah tepat jika dibagi menjadi alur pendaftaran inisiator, alur publikasi program, alur rekrutmen relawan, dan alur eksekusi kegiatan.* | *AI mengonfirmasi kesesuaian pembagian diagram activity tersebut dan menyarankan beberapa alur tambahan. Kami memvalidasi saran dari AI dengan menyesuaikannya terhadap batasan proyek, lalu mengadaptasi beberapa tambahan yang memang diperlukan* |
 
 ### Milestone 2
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
-| | | | | |
-| | | | | |
+| | | | |
+| | | | |
 
 ---
 ### Pernyataan Integritas dan Persetujuan
@@ -52,8 +52,8 @@ Kami yang bertanda tangan di bawah ini menyatakan bahwa seluruh log penggunaan A
 
 | Tanda Tangan | Nama Anggota |
 | :---: | :--- |
-| <img src="./assets/ttd-anggota1.png" width="100"> | **[NIM - Nama Anggota 1]** |
-| <img src="./assets/ttd-anggota2.png" width="100"> | **[NIM - Nama Anggota 2]** |
-| <img src="./assets/ttd-anggota3.png" width="100"> | **[NIM - Nama Anggota 3]** |
-| <img src="./assets/ttd-anggota4.png" width="100"> | **[NIM - Nama Anggota 4]** |
-| <img src="./assets/ttd-anggota5.png" width="100"> | **[NIM - Nama Anggota 5]** |
+| <img src="./assets/ttd avicenna.jpeg" width="100"> | **13525018 - Avicenna Ananda Musthafa** |
+| <img src="./assets/ttd ribka.jpeg" width="100"> | **13525045 - Ribka Kaylena Sanjaya** |
+| <img src="./assets/ttd kairenzo.jpeg" width="100"> | **13525063 - Kairenzo Vemil** |
+| <img src="./assets/ttd mulky.jpeg" width="100"> | **13525069 - Mulky Siraj Firizqi** |
+| <img src="./assets/ttd gie.jpeg" width="100"> | **13525144 - Three Gie Gendhis Sekar Ayoe Jatmiko** |
