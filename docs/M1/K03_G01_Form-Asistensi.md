@@ -4,13 +4,13 @@
 
 | Informasi | Keterangan |
 | --- | --- |
-| **Hari** | *\[Hari\]* |
-| **Tanggal** | *\[DD/MM/YYYY\]* |
-| **Kelas** | *\[Kelas\]* |
-| **Nomor Kelompok** | *\[Nomor Kelompok\]*  |
-| **Nama Kelompok** | *\[Nama Kelompok\]*  |
-| **Nama Perangkat Lunak** | *\[Nama P/L\]*  |
-| **Dokumen** | *\[Nama Dokumen yang diasistensikan\]*  |
+| **Hari** | Senin |
+| **Tanggal** | 31/09/2026 |
+| **Kelas** | K3 |
+| **Nomor Kelompok** | G01  |
+| **Nama Kelompok** | rplsukses  |
+| **Nama Perangkat Lunak** | RekanBumi  |
+| **Dokumen** | M1  |
 
 ### Anggota Kelompok
 
