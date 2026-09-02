@@ -16,20 +16,19 @@
 
 | NIM | Nama |
 | --- | --- |
-| *\[NIM 1\]* | *\[Nama Anggota 1\]* |
-| *\[NIM 2\]* | *\[Nama Anggota 2\]* |
-| *\[NIM 3\]* | *\[Nama Anggota 3\]* |
-| *\[NIM 4\]* | *\[Nama Anggota 4\]* |
-| *\[NIM 5\]* | *\[Nama Anggota 5\]* |
+| 13525018 | Avicenna Ananda Musthafa |
+| 13525045 | Ribka Kaylena Sanjaya |
+| 13525063 | Kairenzo Vemil |
+| 13525069 | Mulky Siraj Firizqi |
+| 13525144 | Three Gie Gendhis Sekar Ayoe Jatmiko |
 
 ### Catatan
 
 | Catatan |
 | --- |
-| 1. *\[Berikan catatan hasil asistensi\]*  |
-| 2. ... |
-| 3. ... |
-| 4. ... |
+| 1. Asisten menyarankan untuk menambahkan bagian teknis dan asumsi pengguna. batasan ruang lingkup, sumber daya, dan hukum. Bab 2 juga kurang pada poin Unique value point  |
+| 2. RekanBumi dapat dilanjutkan untuk dikembangkan, hanya saja perjelas bagian-bagian yang membedakannya dengan software lainnya pada dokumen |
+| 3. Jika terdapat penambahan dan/atau pergantian fitur maka dapat dituliskan pada dokumen milestone berikutnya |
 
 **Notes for this section:**  
 *Catatan dapat dituliskan dalam bentuk paragraf atau poin-poin, disesuaikan saja.* 
