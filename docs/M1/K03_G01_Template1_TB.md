@@ -56,24 +56,24 @@ Memang sudah ada platform digital seperti Indorelawan dan Kitabisa yang mencoba 
 
 ## 2.2 Asumsi Pengguna
 Dalam pengembangan RekanBumi, terdapat beberapa asumsi mengenai pengguna dan lingkungan penggunaan sistem
-a. Lembaga 
+# a. Lembaga 
 - Lembaga yang menawarkan program kegiatan dapat berupa volunteer ataupun penggalangan dana
 - Lembaga bertanggung jawab atas informasi program yang dibuat, seperti spesifikasi/deskripsi, lokasi, dan waktu.
 - Lembaga harus melalui beberapa tahapan untuk dapat terverifikasi dalam RekanBumi
-b. Relawan
+# b. Relawan
 - Relawan memiliki akses terhadap perangkat yang dapat digunakan untuk menggunakan RekanBumi
 - Relawan bertanggung jawab atas segala data pribadi yang diberikan saat tahap pendaftaran
 - Relawan dapat menentukan program kegiatan yang ingin dilakukan 
-c. Admin
+# c. Admin
 - Admin memiliki kewenangan untuk mengelola akun pengguna dan menangani laporan terkait penyalahgunaan sistem
 - Admin tidak bertanggung jawab untuk mengatur jalannya program-program yang ada
-d. Lingkungan Sistem
+# d. Lingkungan Sistem
 - Sistem mengasumsikan pengguna memiliki koneksi internet ketika melakukan aktivitas pada web 
 - Informasi lokasi dan waktu yang dimasukkan pengguna diasumsikan benar dan menjadi tanggung jawab pengguna yang memasukkannya
 
 ## 2.3 Batasan dan Ruang Lingkup
 RekanBumi difokuskan pada proses pencarian, penghubung, dan pengorganisasian antara masyarakat umum dengan lembaga-lembaga terdaftar. Ruang lingkup sistem dibatasi pada aktivitas yang dapat dilakukan melalui platform web. 
-a. Termasuk dalam ruang lingkup
+# a. Termasuk dalam ruang lingkup
 - Registrasi dan autentikasi pengguna
 - Pembuatan informasi kriteria program prioritas bagi pengguna 
 - Pencarian program kegiatan berdasarkan kriteria tertentu
@@ -85,7 +85,7 @@ a. Termasuk dalam ruang lingkup
 - Konfirmasi pendaftaran pengguna pada program kegiatan
 - Pengarahan pengguna menuju lembaga jika program berupa donasi uang elektronik
 - Pelaporan mengenai program yang diakses pada RekanBumi
-b. Tidak termasuk dalam ruang lingkup
+# b. Tidak termasuk dalam ruang lingkup
 - Sistem tidak memadai pengerahan donasi berupa uang elektronik oleh pengguna langsung ke web RekanBumi
 - Sistem tidak melakukan pemeriksaan kondisi keberjalanan program secara langsung
 - Sistem tidak menyediakan fitur AI untuk membantu mencari program yang sesuai dengan keinginan relawan berdasarkan algoritma history pencarian relawan. 
