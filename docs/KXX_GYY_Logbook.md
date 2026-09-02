@@ -4,20 +4,20 @@
 
 | Informasi | Keterangan |
 |---|---|
-| Kelas | *[Kelas]* |
-| Nomor Kelompok | *[Nomor Kelompok]* |
-| Nama Kelompok | *[Nama Kelompok]* |
-| Nama Perangkat Lunak | *[Nama P/L]* |
+| Kelas | K03 |
+| Nomor Kelompok | G03 |
+| Nama Kelompok | rplsukses |
+| Nama Perangkat Lunak | RekanBumi |
 
 **Anggota Kelompok:**
 
 | NIM | Nama |
 |---|---|
-| *[NIM 1]* | *[Nama Anggota 1]* |
-| *[NIM 2]* | *[Nama Anggota 2]* |
-| *[NIM 3]* | *[Nama Anggota 3]* |
-| *[NIM 4]* | *[Nama Anggota 4]* |
-| *[NIM 5]* | *[Nama Anggota 5]* |
+| 13525018 | Avicenna Ananda Musthafa |
+| 13525045 | Ribka Kaylena Sanjaya |
+| 13525063 | Kairenzo Vemil |
+| 13525069 | Mulky Siraj Firizqi |
+| 13525144 | Three Gie Gendhis Sekar Ayoe Jatmiko |
 
 ---
 
@@ -29,16 +29,20 @@
 ---
 
 ### Milestone 1
-**Periode:** [Tanggal Mulai] - [Tanggal Selesai]
+**Periode:** 24 Agustus 2026 - 2 September 2026
 
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / *Blocker* | 
 | :--- | :--- | :--- | :--- | :--- | :--- | 
-| *04-05-2026* | *[Nama Mahasiswa]* | *[Jelaskan Pekerjaan secara Singkat]* | *[Durasi Pengerjaan]* | *[On Progress/Done]* | [Kendala yang dialami, jika tidak ada cukup tandai "-"] | 
-| *05-05-2026* | *John Doe* | *Mendesain diagram kelas* | *3* | *Done* | *-* | 
+| 01-09-2026 | Avicenna Ananda Musthafa | Mengerjakan M1 bab 3 | - | *Done* | - | 
+| 01-09-2026 | Ribka Kaylena Sanjaya | Mengerjakan M1 bab 2 | - | *Done* | - | 
+| 01-09-2026 | Kairenzo Vemil | Mengerjakan M1 bab 1 | - | *Done* | - | 
+| 01-09-2026 | Mulky Siraj Firizqi | Mengerjakan M1 bab 3 | - | *Done* | - | 
+| 01-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan M1 bab 2 | - | *Done* | - | 
+
 | | | | | | | |
 
 **Catatan/Evaluasi Milestone 1:**
-* *(Isi jika ada catatan khusus untuk asisten atau evaluasi singkat kerja tim)*
+* Melakukan fiksasi perangkat lunak lebih awal sehingga progress dokumen M1 dapat dilakukan lebih awal serta tidak diperlukan pengerjaan ulang
 
 ---
 
