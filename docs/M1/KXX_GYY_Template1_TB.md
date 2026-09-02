@@ -72,15 +72,59 @@ Definisikan secara tegas asumsi (baik teknis maupun dari sisi pengguna) yang men
 | **US-07** | Relawan | Melakukan konfirmasi kehadiran saat pelaksanaan kegiatan di lapangan. | Memverifikasi kehadiran untuk pencatatan riwayat kerelawanan. |
 | **US-08** | Inisiator Program | Mengunggah log dokumentasi akhir kegiatan (foto bukti aksi, ringkasan pohon ditanam/satwa ditangani/sampah terkumpul). | Menutup status program dan memperbarui laporan dampak publik secara transparan. |
 
-## 3.3 Model Proses Bisnis
+## 3.3 Deskripsi Aktivitas
+Buatlah daftar seluruh aktivitas yang terdapat dalam sistem solusi, lengkap dengan ID dan penjelasan. Telusuri hubungan aktivitas tersebut dengan *user story* yang sudah dituliskan sebelumnya. Bisa dibuat dalam bentuk tabel.
+
+| ID | Aktivitas | Penjelasan | ID User Story |
+| :--- | :--- | :--- | :--- |
+| A01 | Registrasi & Pengajuan Profil Inisiator | Inisiator mengisi formulir profil komunitas dan mengunggah dokumen identitas/legalitas penanggung jawab untuk diverifikasi. | US-01 |
+| A02 | Verifikasi Akun Inisiator | Admin platform meninjau keabsahan berkas identitas inisiator dan menyetujui status akun mitra. | US-01, US-02 |
+| A03 | Pembuatan & Pengajuan Draf Program | Inisiator menyusun rincian kegiatan baru (pilar Jaga Alam/Iklim, jadwal, lokasi, deskripsi tugas, dan kuota relawan) lalu mengajukannya ke sistem. | US-03 |
+| A04 | Kurasi & Publikasi Program | Admin platform memeriksa kelayakan isi program aksi dan menerbitkannya ke katalog program publik. | US-02 |
+| A05 | Pencarian & Eksplorasi Program | Relawan menjelajahi katalog kegiatan menggunakan filter pilar aksi (alam/iklim), lokasi kota, dan jadwal ketersediaan. | US-04 |
+| A06 | Pendaftaran Slot Relawan | Relawan memilih program, melampirkan catatan keterampilan atau komitmen waktu, dan mengirimkan permohonan ke inisiator. | US-05 |
+| A07 | Seleksi & Konfirmasi Pendaftar | Inisiator meninjau daftar calon relawan dan menetapkan status pendaftaran (Diterima / Ditolak) sesuai kapasitas kuota. | US-06 |
+| A08 | Presensi Lapangan (Check-in) | Relawan melakukan konfirmasi kehadiran fisik saat hari pelaksanaan kegiatan di lokasi melalui sistem. | US-07 |
+| A09 | Pengunggahan Dokumentasi Akhir | Inisiator mengunggah laporan hasil aksi (foto dokumentasi lapangan, catatan capaian bibit/satwa/sampah) dan menutup status kegiatan. | US-08 |
+| A10 | Pembaruan Portofolio Dampak | Sistem secara otomatis mencatat riwayat jam aksi ke profil relawan dan mengarsipkan capaian lingkungan ke halaman publik. | US-07, US-08 |
+
+## 3.4 Model Proses Bisnis
 Buatlah *Activity Diagram* atau *Swimlane Diagram* yang menunjukkan alur kerja proses bisnis dari sistem solusi. Diagram ini harus memvisualisasikan bagaimana alur operasional di dunia nyata berjalan lebih efisien dengan adanya interaksi antara aktor (yang didefinisikan pada poin 3.1) dan sistem perangkat lunak. Perhatikan notasi yang digunakan dalam pembuatannya.
+
 <br>
 
 <p align="center">
-<img alt="Contoh Activity Diagram" src="./assets/diagram/diagram-act-1.avif" width="70%">
+<img alt="Activity Diagram Alur Pendaftaran & Verifikasi Inisiator" src="./assets/diagram/Activity Diagram Alur Pendaftaran & Verifikasi Inisiator.png" width="70%">
 </p>
 <p align="center">
-<i>Gambar 1. Contoh Activity Diagram</i>
+<i>Gambar 1. Activity Diagram Alur Pendaftaran & Verifikasi Inisiator</i>
+</p>
+
+<br>
+
+<p align="center">
+<img alt="Activity Diagram Alur Manajemen & Publikasi Program" src="./assets/diagram/Activity Diagram Alur Manajemen & Publikasi Program.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 2. Activity Diagram Alur Manajemen & Publikasi Program</i>
+</p>
+
+<br>
+
+<p align="center">
+<img alt="Activity Diagram Alur Eksplorasi & Rekrutmen Relawan" src="./assets/diagram/Activity Diagram Alur Eksplorasi & Rekrutmen Relawan.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 3. Activity Diagram Alur Eksplorasi & Rekrutmen Relawan</i>
+</p>
+
+<br>
+
+<p align="center">
+<img alt="Activity Diagram Alur Eksekusi & Pelaporan Kegiatan" src="./assets/diagram/Activity Diagram Alur Eksekusi & Pelaporan Kegiatan.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 4. Activity Diagram Alur Eksekusi & Pelaporan Kegiatan</i>
 </p>
 
 <br>
