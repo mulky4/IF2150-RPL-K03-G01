@@ -55,7 +55,8 @@
 |---|---|---|---|---|---|
 | 06-09-2026 | Avicenna Ananda Musthafa | Mengisi dan commit subbab 1.1 | 1 | Done | - |
 | 08-09-2026 | Avicenna Ananda Musthafa | Revisi subbab 2.1 dan 2.2 | 0,5 | Done | - |
-
+| 08-09-2026 | Mulky Siraj Firizqi | Menyusun draf awal Bab 2.5 Kebutuhan Non-Fungsional | 1 | Done | Sempat kesulitan terkait pemahaman skenario pengujian KNF |
+| 09-09-2026 | Mulky Siraj Firizqi | Merevisi dan melengkapi Bab 2.5 Kebutuhan Non-Fungsional sesuai evaluasi asistensi dan melakukan sinkronisasi R-ID | 1 | Done | - |
 
 ---
 
