@@ -42,8 +42,7 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 ### Milestone 2
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
-| | | | |
-| | | | |
+| Gemini | Membantu merumuskan parameter ambang batas Kebutuhan Non-Fungsional (KNF) agar realistis untuk skala prototipe | Bagaimana cara membuat rumusan Kebutuhan Non-Fungsional yang realistis untuk diuji tanpa anggaran tambahan? | AI memberikan rasionalisasi teknis ambang batas ujinya. Kami meninjau dan menyesuaikan angka beban pengujian serta metrik-metrik lainnya agar sesuai dengan kapasitas dan tujuan awal kebutuhan. |
 
 ---
 ### Pernyataan Integritas dan Persetujuan
