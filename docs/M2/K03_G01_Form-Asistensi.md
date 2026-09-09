@@ -5,7 +5,7 @@
 | Informasi | Keterangan |
 | --- | --- |
 | **Hari** | *Selasa* |
-| **Tanggal** | *\08/09/2026* |
+| **Tanggal** | *08/09/2026* |
 | **Kelas** | *K3* |
 | **Nomor Kelompok** | *G01*  |
 | **Nama Kelompok** | *rplsukses*  |
@@ -37,7 +37,7 @@
 
 <!-- ![](./assets/foto-asistensi.jpg) -->
 <p align="center">
-  <img src="./assets/foto-asistensi.jpg" width="100%">
+  <img width="2940" height="1678" alt="Image 08-09-26 at 20 54" src="https://github.com/user-attachments/assets/6f28def0-5e35-4fbf-9726-de8845b3b98b" />
 </p>
 
 <p align="center">
