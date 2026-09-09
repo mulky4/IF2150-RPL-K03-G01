@@ -43,6 +43,7 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
 | Gemini | Membantu merumuskan parameter ambang batas Kebutuhan Non-Fungsional (KNF) agar realistis untuk skala prototipe | Bagaimana cara membuat rumusan Kebutuhan Non-Fungsional yang realistis untuk diuji tanpa anggaran tambahan? | AI memberikan rasionalisasi teknis ambang batas ujinya. Kami meninjau dan menyesuaikan angka beban pengujian serta metrik-metrik lainnya agar sesuai dengan kapasitas dan tujuan awal kebutuhan. |
+| ChatGPT | Membantu membentuk tata kelola kalimat sesuai dengan yang diinginkan agar lebih formal dan baku | "Lembaga inisiator harus memiliki web lembaganya masing-masing sehingga program yang terpublikasikan ke web perantara dapat dijangkau secara langsung oleh user." aku pengen ngomong kalo misalkan di web peramtara bakal ada link tautan yang mengarah ke link yanh dimiliki oleh lembaga tersebut gimana ya ngomongnya| AI memberikan jawaban yang baik namun dalam konteksnya, kami memperbaiki ulang kalimat tersebut |
 
 ---
 ### Pernyataan Integritas dan Persetujuan
