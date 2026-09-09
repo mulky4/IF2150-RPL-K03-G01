@@ -58,6 +58,7 @@
 | 08-09-2026 | Ribka Kaylena Sanjaya | Menyusun dan commit bagian sisa subbab di bab 1, subbab 2.1 dan 2.2 | 1 | Done | - |
 | 08-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Menyusun dan commit subbab 2.3 | 1 | Done | Bingung mengenai atribut P/L pada tabel |
 | 08-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Menyusun dan commit form asistensi | 0.5 | Done | - |
+| 08-09-2026 | Kairenzo Vemil | Menyusun dan commit subbab 2.3 | 1 | Done | - |
 | 08-09-2026 | Mulky Siraj Firizqi | Menyusun draf awal Bab 2.5 Kebutuhan Non-Fungsional | 1 | Done | Sempat kesulitan terkait pemahaman skenario pengujian KNF |
 | 09-09-2026 | Mulky Siraj Firizqi | Merevisi dan melengkapi Bab 2.5 Kebutuhan Non-Fungsional sesuai evaluasi asistensi dan melakukan sinkronisasi R-ID | 1 | Done | - |
 | 09-09-2026 | Ribka Kaylena Sanjaya | Menyusun, merevisi (sesuai hasil masukan saat asistensi, dan commit subbab 2.4 | 3 | Done | - |
