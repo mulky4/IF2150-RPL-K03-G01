@@ -74,6 +74,7 @@
 | 13-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengisi dan commit subbab 3.2 | 2 | Done | Use case terlalu banyak, bingung dalam penentuan use case yang berpasangan dengan aktornya berdasarkan dua sudut pandang |
 | 15-09-2026 | Semua anggota | Asistensi progres milestone 3 | 1 | Done | - |
 | 16-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Revisi use case (bab 3.2) | 0.5 | Done | - |
+| 16-09-2026 | Mulky Siraj Firizqi | Mengisi subbab 3.4.1 - 3.4.3 untuk detail skenario use case 1,2,3 | 1 | Done | - |
 
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
