@@ -68,10 +68,11 @@
 ---
 
 ### Milestone 3
-**Periode:** ? September 2026 - 16 September 2026
+**Periode:** 9 September 2026 - 16 September 2026
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
 |---|---|---|---|---|---|
 | 13-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengisi dan commit subbab 3.2 | 2 | Done | Use case terlalu banyak, bingung dalam penentuan use case yang berpasangan dengan aktornya berdasarkan dua sudut pandang |
+| 15-09-2026 | Semua anggota | Asistensi progres milestone 3 | 1 | Done | - |
 | 16-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Revisi use case (bab 3.2) | 0.5 | Done | - |
 
 
