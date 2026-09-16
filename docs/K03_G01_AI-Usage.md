@@ -51,6 +51,7 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
 | ChatGPT | Membantu membentuk tata kelola kalimat sesuai dengan yang diinginkan agar lebih formal dan baku | menaruh mengetik menuliskan melampirkan. kata apa yang tepat ya, ada ga selain itu |
+| claude | Melihat referensi dan langkah-langkah detail dalam membuat diagram | "buatkan contoh diagram use case dan rincian dari langkah-langkah pembuatannya |
 
 ---
 ### Pernyataan Integritas dan Persetujuan
