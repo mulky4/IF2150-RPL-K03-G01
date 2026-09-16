@@ -24,6 +24,7 @@
 ### Daftar Isi
 * [Milestone 1](#milestone-1)
 * [Milestone 2](#milestone-2)
+* [Milestone 3](#milestone-3)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -65,6 +66,13 @@
 | 09-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Menyusun, merevisi (sesuai hasil masukan saat asistensi) berupa perbaikan kalimat menjadi format EARS, dll serta commit subbab 2.3 | 1 | Done | - |
 
 ---
+
+### Milestone 3
+**Periode:** ? September 2026 - 16 September 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 13-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengisi dan commit subbab 3.2 | 2 | Done | Use case terlalu banyak, bingung dalam penentuan use case yang berpasangan dengan aktornya berdasarkan dua sudut pandang |
+| 16-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Revisi use case (bab 3.2) | 0.5 | Done | - |
 
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
