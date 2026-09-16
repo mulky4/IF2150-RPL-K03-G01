@@ -4,8 +4,8 @@
 
 | Informasi | Keterangan |
 | --- | --- |
-| **Hari** | *Rabu* |
-| **Tanggal** | *16/09/2026* |
+| **Hari** | *Selasa* |
+| **Tanggal** | *15/09/2026* |
 | **Kelas** | *K3* |
 | **Nomor Kelompok** | *G01*  |
 | **Nama Kelompok** | *rplsukses*  |
@@ -39,9 +39,8 @@
 ## Dokumentasi
 
 <!-- ![](./assets/foto-asistensi.jpg) -->
-<p align="center">
-  <img src="./assets/foto-asistensi.jpg" width="100%">
-</p>
+<img width="2940" height="1684" alt="Image 15-09-26 at 19 06" src="https://github.com/user-attachments/assets/984e8dcd-f66e-4e6f-bcfb-ba96b6d29843" />
+
 
 <p align="center">
   <i>Gambar 1. Dokumentasi kegiatan asistensi.</i>
