@@ -177,7 +177,124 @@ Pada bagian ini, Anda diperbolehkan untuk menyalin dari dokumen sebelumnya.
 | :--- | :--- | :--- |
 | 1 | Relawan membuka halaman eksplorasi program | Sistem menampilkan daftar program, kolom pencarian, dan pilihan kategori Jaga Alam dan Jaga Iklim |
 | 2 | Relawan mengetikkan kata kunci acak pada kolom pencarian dan memilih salah satu kategori program | Sistem memproses masukan, tidak menemukan program yang sesuai, dan menampilkan pesan bahwa program tidak ditemukan |
----
+
+
+### 3.4.4 Skenario UC04
+
+**Nama Use Case:** Mengunjungi situs program
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Relawan memilih salah satu program aksi untuk melihat detail informasi program | Sistem menampilkan halaman detail program yang memuat informasi lengkap beserta tautan situs web resmi lembaga |
+| 2 | Relawan mengklik tautan situs web resmi lembaga yang tertera pada detail program | Sistem mengarahkan (*redirect*) relawan ke halaman situs web resmi milik lembaga terkait pada tab baru |
+
+<br>
+
+**Skenario Alternatif 1: Tautan Situs Web Tidak Disediakan**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Relawan memilih salah satu program aksi untuk melihat detail informasi program | Sistem mendeteksi bahwa data tautan situs web resmi bernilai kosong (*null*) |
+| 2 | Relawan meninjau halaman detail program | Sistem menonaktifkan (*disable*) elemen tautan dan menampilkan keterangan bahwa situs web resmi tidak tersedia |
+
+### 3.4.5 Skenario UC05
+
+**Nama Use Case:** Menyeleksi calon relawan pendaftar
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Inisiator Program membuka halaman kelola pendaftar pada suatu program | Sistem menampilkan daftar calon relawan beserta catatan keterampilan atau ketersediaan waktu yang diberikan |
+| 2 | Inisiator Program menentukan pilihan status "Diterima" atau "Ditolak" untuk calon relawan | Sistem mencatat status pilihan pada antarmuka seleksi |
+| 3 | Inisiator Program menekan tombol simpan hasil seleksi | Sistem menyimpan pilihan status "Diterima" dan "Ditolak" untuk setiap calon relawan dan menampilkan pesan keberhasilan |
+
+<br>
+
+**Skenario Alternatif 1: Kuota Relawan Telah Terpenuhi**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Inisiator Program memilih status "Diterima" pada pendaftar baru ketika kuota relawan program sudah penuh | Sistem mendeteksi bahwa kuota relawan program telah terpenuhi |
+| 2 | Inisiator Program menekan tombol simpan hasil seleksi | Sistem menolak permohonan pendaftaran relawan dan menampilkan pesan kesalahan bahwa kuota program telah terpenuhi |
+| 3 | Inisiator Program mengubah status pendaftar tersebut menjadi "Ditolak" atau membatalkan pilihan | Sistem memperbarui antarmuka dan kembali ke langkah 3 Skenario Normal |
+
+### 3.4.6 Skenario UC06
+
+**Nama Use Case:** Konfirmasi status pendaftaran
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Inisiator Program mengonfirmasi pengiriman hasil keputusan seleksi relawan | Sistem memproses konfirmasi dan secara otomatis mengirimkan notifikasi mengenai status pendaftarannya kepada relawan |
+| 2 | Relawan membuka menu notifikasi pada akunnya | Sistem menampilkan detail pemberitahuan berisi status hasil seleksi pendaftaran ("Diterima" atau "Ditolak") |
+
+### 3.4.7 Skenario UC07
+
+**Nama Use Case:** Memperbarui status program
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Inisiator Program membuka halaman kelola program yang sedang berlangsung dan mengunggah dokumentasi akhir kegiatan (foto lapangan) beserta catatan capaian, misalnya jumlah bibit ditanam atau sampah terkumpul | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
+| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator bahwa terdapat laporan akhir yang perlu ditinjau |
+| 3 | Verifikator meninjau laporan akhir program dan menekan tombol konfirmasi persetujuan | Sistem mengonfirmasi status program menjadi "Selesai", menyimpan ringkasan capaian dampak lingkungan dari program tersebut, dan menampilkannya pada halaman publik |
+
+<br>
+
+**Skenario Alternatif 1: Verifikator Menolak Laporan Akhir**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Inisiator Program membuka halaman kelola program dan mengunggah dokumentasi akhir kegiatan beserta catatan capaian | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
+| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator |
+| 3 | Verifikator meninjau laporan dan mendapati dokumentasi atau catatan capaian tidak lengkap, lalu menekan tombol tolak beserta catatan revisi | Sistem mengembalikan status program menjadi "Perlu Revisi" dan mengirimkan notifikasi kepada Inisiator Program berisi catatan revisi yang harus dilengkapi |
+
+### 3.4.8 Skenario UC08
+
+**Nama Use Case:** Konfirmasi kehadiran program
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Relawan berstatus "Diterima" membuka halaman detail program pada hari pelaksanaan kegiatan dan memilih menu check-in | Sistem memeriksa status relawan dan waktu pelaksanaan kegiatan saat ini, lalu menampilkan tombol check-in karena keduanya sesuai ketentuan |
+| 2 | Relawan menekan tombol check-in untuk mengonfirmasi kehadiran | Sistem mencatat waktu kehadiran relawan pada program tersebut dan menampilkan notifikasi bahwa kehadiran berhasil dikonfirmasi |
+
+<br>
+
+**Skenario Alternatif 1: Check-in di Luar Waktu Pelaksanaan**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Relawan berstatus "Diterima" membuka halaman detail program di luar rentang waktu pelaksanaan kegiatan dan memilih menu check-in | Sistem memeriksa waktu pelaksanaan kegiatan, mendeteksi bahwa waktu saat ini berada di luar jadwal, dan menonaktifkan tombol check-in |
+| 2 | Relawan meninjau halaman program | Sistem menampilkan keterangan bahwa fitur check-in belum/tidak dapat diakses beserta rentang waktu yang diizinkan |
+
+### 3.4.9 Skenario UC09
+
+**Nama Use Case:** Memperbarui status akun relawan
+
+**Skenario Normal**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | Sistem secara otomatis menghitung dan mencatat penambahan jam aksi bagi setiap relawan yang terkonfirmasi hadir pada program tersebut ke dalam profil portofolio masing-masing |
+| 2 | Relawan membuka halaman profil/portofolio pada akunnya | Sistem menampilkan riwayat program yang telah diikuti beserta akumulasi jam aksi terbaru relawan tersebut |
+
+<br>
+
+**Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | Sistem memeriksa data kehadiran tiap relawan terdaftar pada program tersebut dan mendeteksi terdapat relawan yang tidak memiliki catatan check-in |
+| 2 | Relawan yang bersangkutan membuka halaman profil/portofolio pada akunnya | Sistem tidak menambahkan jam aksi untuk program tersebut pada portofolio relawan, karena kehadirannya tidak tercatat |
+
+
 
 # BAB 4: Diagram Kelas
 Bagian ini berisi identifikasi kelas dan pemodelan struktur kelas yang diperlukan untuk merealisasikan use case pada BAB 3. Gunakan skenario use case (3.4) sebagai dasar untuk menentukan kelas, atribut, metode, dan hubungan antarkelas.
