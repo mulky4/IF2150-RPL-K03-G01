@@ -30,7 +30,7 @@ Dipersiapkan oleh:
 
 | Revisi | Deskripsi |
 | :--- | :--- |
-| *A* | *Deskripsikan perubahan yang dilakukan dari dokumen sebelumnya pada dokumen ini. Jika tidak terdapat perubahan, harap kosongkan tabel.* |
+| A | Merevisi diksi dari semua KF tanpa mengubah makna intinya  |
 | *B* |  |
 | *C* |  |
 | ... |  |
@@ -50,23 +50,23 @@ RekanBumi adalah platform web yang mempertemukan masyarakat umum dengan lembaga 
 
 | ID KF | ID Kebutuhan | Penjelasan |
 | :--- | :--- | :--- |
-| KF01 | R02 | Perangkat lunak dapat menerima dokumen yang diunggah melalui fitur *upload* dan *drag-and-drop* |
-| KF02 | R05 | Perangkat lunak dapat menyimpan tautan situs web resmi yang diberikan oleh lembaga sebagai bagian dari informasi program |
-| KF03 | R06 | Perangkat lunak dapat menyediakan kolom pencarian untuk menerima keyword dari pengguna |
-| KF04 | R07 | Perangkat lunak dapat menyediakan pilihan kategori “Jaga Alam” dan “Jaga Iklim” untuk memfilter program |
-| KF05 | R08 | Perangkat lunak dapat menolak permohonan pendaftaran relawan apabila kuota program telah terpenuhi |
-| KF06 | R09 | Perangkat lunak dapat mengharuskan calon relawan untuk melakukan login sebelum mendaftarkan diri pada suatu program |
-| KF07 | R10 | Perangkat lunak dapat menyimpan catatan keterampilan atau ketersediaan waktu yang diberikan calon relawan pada permohonan pendaftaran |
-| KF08 | R13 | Perangkat lunak dapat mengirimkan notifikasi kepada relawan mengenai status pendaftarannya |
-| KF09 | R14 | Perangkat lunak dapat menyediakan pilihan dan menyimpan status “Diterima” dan “Ditolak” untuk setiap calon relawan |
-| KF10 | R15 | Perangkat lunak dapat memeriksa kelengkapan dan status verifikasi data diri calon relawan sebelum permohonan pendaftaran dikirimkan |
-| KF11 | R17 | Perangkat lunak dapat menyediakan fitur check-in dan mencatat waktu kehadiran relawan pada suatu program |
-| KF12 | R18 | Perangkat lunak dapat membatasi akses fitur check-in berdasarkan status relawan dan waktu pelaksanaan kegiatan |
-| KF13 | R20 | Perangkat lunak dapat menyediakan fitur untuk mengunggah dokumentasi akhir kegiatan dan mengubah status kegiatan menjadi selesai |
-| KF14 | R24 | Perangkat lunak dapat secara otomatis mencatat dan memperbarui akumulasi jam aksi relawan setelah kegiatan berstatus selesai |
-| KF15 | R25 | Perangkat lunak dapat menyimpan ringkasan capaian dampak lingkungan dari setiap program |
+| KF01 | R02 | Ketika inisiator mengunggah dokumen verifikasi, perangkat lunak harus menerima dokumen melalui fitur *upload* dan *drag-and-drop*. |
+| KF02 | R05 | Ketika inisiator memasukkan tautan situs web resmi lembaga, perangkat lunak harus menyimpan tautan tersebut sebagai bagian dari informasi program. |
+| KF03 | R06 | Ketika pengguna melakukan pencarian program, perangkat lunak harus menerima /keyword/ melalui kolom pencarian. |
+| KF04 | R07 | Ketika pengguna memilih kategori program, perangkat lunak harus menampilkan program berdasarkan kategori “Jaga Alam” atau“Jaga Iklim”. |
+| KF05 | R08 | Jika kuota program telah terpenuhi, perangkat lunak harus menolak permohonan pendaftaran relawan pada program tersebut.  |
+| KF06 | R09 | Sebelum calon relawan mengirimkan permohonan pendaftaran, perangkat lunak harus memastikan calon relawan telah melakukan login. |
+| KF07 | R10 | Ketika calon relawan mengirimkan permohonan pendaftaran, perangkat lunak harus menyimpan catatan keterampilan atau ketersediaan waktu yang diberikan. |
+| KF08 | R13 | Ketika status pendaftaran relawan berubah, perangkat lunak harus mengirimkan notifikasi kepada relawan mengenai status pendaftarannya. |
+| KF09 | R14 | Ketika inisiator menentukan hasil seleksi calon relawan, perangkat lunak harus menyediakan dan menyimpan status “Diterima” atau “Ditolak” untuk setiap calon relawan. |
+| KF10 | R15 |Sebelum permohonan pendaftaran dikirimkan, perangkat lunak harus memeriksa kelengkapan dan status verifikasi data diri calon relawan. |
+| KF11 | R17 | Ketika relawan melakukan check-in pada suatu program, perangkat lunak harus mencatat waktu kehadiran relawan tersebut. |
+| KF12 | R18 | Jika relawan telah berstatus diterima dan waktu pelaksanaan kegiatan telah sesuai dengan jadwal, perangkat lunak harus memberikan akses kepada relawan untuk melakukan check-in. |
+| KF13 | R20 | Ketika inisiator mengunggah dokumentasi akhir kegiatan, perangkat lunak harus menyimpan dokumentasi tersebut dan mengubah status kegiatan menjadi selesai. |
+| KF14 | R24 | Ketika status kegiatan berubah menjadi selesai, perangkat lunak harus secara otomatis mencatat dan memperbarui akumulasi jam aksi relawan. |
+| KF15 | R25 | Ketika inisiator mengirimkan ringkasan capaian program, perangkat lunak harus menyimpan ringkasan capaian dampak lingkungan tersebut. |
 
-Tabel 2.1. Daftar Kebutuhan Fungsional
+Tabel 2.1. Daftar Kebutuhan Fungsional (telah direvisi)
 
 
 ---
@@ -304,13 +304,17 @@ Identifikasi seluruh kelas yang diperlukan berdasarkan use case dan skenarionya.
 
 | ID Kelas | Nama Kelas | Deskripsi Kelas | ID Use Case |
 | :--- | :--- | :--- | :--- |
-| *C01* | *Pelanggan* | *Menyimpan data akun pelanggan yang membuat pesanan.* | *UC01, UC05* |
-| *C02* | *Pesanan* | *Menyimpan data pesanan beserta status pembayarannya.* | *UC01, UC03, UC05* |
-| *C03* | *Keranjang* | *Menyimpan sementara item yang dipilih sebelum checkout.* | *UC01, UC02* |
-| *C04* | *MetodePembayaran* | *Kelas abstrak yang merepresentasikan metode pembayaran yang dipilih pelanggan.* | *UC03, UC04* |
-| *C05* | *Kartu* | *Merealisasikan pembayaran melalui kartu kredit/debit dengan mengirimkan permintaan ke payment gateway (dummy).* | *UC03, UC04* |
-| *C06* | *EWallet* | *Merealisasikan pembayaran melalui e-wallet, termasuk pengecekan saldo, dengan mengirimkan permintaan ke payment gateway (dummy).* | *UC03, UC04* |
-| *C07* | *RiwayatTransaksi* | *Menyimpan catatan transaksi beserta status yang dikembalikan payment gateway (dummy).* | *UC03, UC05* |
+| *C01* | Program | Menyimpan data seperti waktu/tempat pelaksanaan, deskripsi, kuota, syarat ketentuan, dan status. | UC01, UC03, UC07 |
+| C02 | Pendaftaran | Menyimpan data keterampilan, ketersediaan waktu, status pendaftaran yang menjadi penghubung relawan dengan program. | UC05, UC06 |
+| C03 | Relawan | Menyimpan data relawan, termasuk informasi akun yang diperlukan untuk login serta informasi terkait kontribusi dan pendaftaran program. | UC01, UC02, UC05, UC06, UC08, UC09 |
+| C04 | Pengguna  | Kelas abstrak yang merepresentasikan akun pengguna platform; menyimpan data akun (email, kata sandi) dan menangani proses login untuk semua jenis pengguna.  | UC01, UC02 |
+| C05 | InisiatorProgram | Menyimpan data lembaga/komunitas pembuat program (nama lembaga, tautan situs resmi) serta menjadi pengelola program, seleksi pendaftar, dan laporan akhir | UC01, UC05, UC06, UC07  |
+| C06 | Verifikator | Menyimpan data pengelola platform yang meninau dan mengonfirmasi laporan akhir program, sehingga memicu pembaruan status kontribusi relawan. | UC07, UC09 |
+| C07 | DokumenVerifikasi | Menyimpan dokumen yang diunggah saat pendaftaran (legalitas inisiator atau data diri relawan) beserta status verifikasinya.  | UC01 |
+| C08 | Kehadiran | Menyimpan catatan check-in relawan pada suatu program, termasuk waktu kehadiran. | UC08, UC09 |
+| C09 | LaporanProgram |Menyimpan dokumentasi akhir, catatan capaian, ringkasan dampak lingkungan, status peninjauan, dan catatan revisi dari verifikator. | UC07 |
+| C10 | Notifikasi | Menyimpan pemberitahuan otomatis kepada pengguna (hasil seleksi ke relawan, laporan akhir ke verifikator, catatan revisi ke inisiator) beserta status dibacanya. | UC06, UC07 |
+| C11 | RiwayatKontribusi |Menyimpan jam aksi yang diperoleh relawan per program yang telah selesai, sebagai dasar akumulasi jam aksi pada portofolio. | UC09 |
 | *...* | *...* | *...* | *...* |
 
 Pastikan setiap kelas memiliki tanggung jawab yang jelas dan memang diperlukan untuk merealisasikan fungsi yang dimodelkan. Hindari kelas yang tidak memiliki keterkaitan dengan KF atau use case manapun.
