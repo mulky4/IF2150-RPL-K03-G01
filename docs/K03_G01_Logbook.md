@@ -83,7 +83,7 @@
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
 |---|---|---|---|---|---|
 | 18-09-2026 | Semua anggota | Asistensi Akbar Milestone 4 | 1 | Done | - |
-| 20-09-2026 | Semua anggota Pembagian tugas pengerjaan Milestone 4 | - | Done | - |
+| 20-09-2026 | Semua anggota | Pembagian tugas pengerjaan Milestone 4 | - | Done | - |
 | 23-09-2026 | Mulky Siraj Firizqi | Mengerjakan 4.2.2 - 4.2.4 | 1 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
