@@ -129,9 +129,14 @@ RekanBumi adalah platform web yang mempertemukan masyarakat umum dengan lembaga 
 </p>
 
 ## 2.2 Deskripsi Umum Perangkat Lunak
-Diisi dengan deskripsi umum perangkat lunak untuk mendukung proses bisnis yang telah diuraikan pada sub-bab sebelumnya. Uraian harus menunjukkan lingkup perangkat lunak, mencakup keterkaitan perangkat lunak dengan sistem lain di luar (misalnya *Payment Gateway* atau layanan pihak ketiga lain yang dipakai).
+RekanBumi merupakan perangkat lunak berbasis web (*web application*) yang dirancang untuk mendukung ekosistem kerelawanan lingkungan berbasis aksi nyata guna mempercepat pencapaian SDG 13 dan SDG 15 di Indonesia[cite: 13]. Perangkat lunak ini bertindak sebagai platform terintegrasi yang menghubungkan tiga aktor utama, yaitu **Relawan** (masyarakat umum), **Inisiator Program** (lembaga/komunitas lingkungan), dan **Verifikator** (admin platform).
 
-*Contoh narasi:* "*[Nama P/L]* merupakan aplikasi *[deskripsi singkat]* yang berinteraksi dengan *Payment Gateway (dummy)* untuk memproses otorisasi pembayaran. Sistem menerima input dari *Pelanggan* melalui antarmuka aplikasi dan mengirimkan permintaan transaksi ke *Payment Gateway* setiap kali pelanggan melakukan checkout."
+Lingkup fungsionalitas perangkat lunak mencakup pengelolaan seluruh siklus kegiatan kerelawanan secara terstruktur. Alur kerja sistem meliputi manajemen otentikasi akun, pendaftaran dan verifikasi legalitas lembaga inisiator, publikasi dan pencarian program aksi ("Jaga Alam" dan "Jaga Iklim"), seleksi pendaftar relawan berdasarkan kriteria kuota, konfirmasi presensi kehadiran di lokasi kegiatan, hingga pembaruan otomatis akumulasi jam aksi ke dalam portofolio kontribusi relawan.
+
+Dalam menjalankan operasinya untuk mendukung proses bisnis tersebut, perangkat lunak RekanBumi berinteraksi dengan beberapa antarmuka dan layanan eksternal:
+1. **Situs Web Resmi Inisiator (Sistem Eksternal):** Perangkat lunak menyimpan tautan situs resmi milik lembaga inisiator dan menyediakan akses pengalihan (*redirect*) antarmuka bagi relawan untuk meninjau detail legalitas atau profil lembaga eksternal pada tab peramban web baru.
+2. **Layanan Penyimpanan Berkas (*Cloud File Storage*):** Perangkat lunak berinteraksi dengan antarmuka unggah berkas (*upload & drag-and-drop*) untuk menerima, memvalidasi format, serta menyimpan berkas dokumen verifikasi legalitas lembaga dan foto dokumentasi akhir kegiatan.
+3. **Sistem Notifikasi Internal:** Perangkat lunak mengelola alur pemicu notifikasi otomatis berbasis kejadian (*event-driven*) untuk menginformasikan perubahan status pendaftaran relawan, status peninjauan laporan program, serta catatan revisi dari verifikator.
 
 ## 2.3 Pengguna dan Kebutuhan Pengguna Perangkat Lunak
 Tuliskan seluruh jenis pengguna (*role*/aktor) yang terlibat dalam perangkat lunak (P/L), beserta kebutuhannya secara umum. Bagian ini dapat disalin dari 1.2 *Deskripsi Pengguna Perangkat Lunak* (dokumen Requirement Gathering) atau 3.1 *Identifikasi Aktor* (dokumen Use Case), pastikan sudah konsisten dengan aktor final yang dipakai di BAB 4.
