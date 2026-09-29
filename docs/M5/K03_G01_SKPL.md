@@ -144,21 +144,25 @@ Tuliskan seluruh jenis pengguna (*role*/aktor) yang terlibat dalam perangkat lun
 
 ## 2.4 Batasan Perangkat Lunak
 Batasan yang harus dituliskan, di antaranya:
-1. *P/L harus memakai file data/API dari sistem lain (sebutkan, misal Payment Gateway dummy).*
-2. *P/L harus memakai format data yang sama dengan sistem lain.*
-3. *P/L harus berfungsi pada platform tertentu (misal: web browser modern, atau desktop Windows dan Linux).*
-4. *...*
+Perangkat lunak RekanBumi memiliki batasan sebagai berikut:
+
+1. RekanBumi merupakan perangkat lunak berbasis web sehingga pengguna mengakses perangkat lunak melalui peramban web.
+2. RekanBumi membutuhkan koneksi internet agar pengguna dapat mengakses layanan perangkat lunak.
+3. RekanBumi dapat dioperasikan melalui peramban web modern pada perangkat desktop dan mobile, yaitu Google Chrome, Microsoft Edge, Mozilla Firefox, dan Apple Safari.
+4. RekanBumi menggunakan tautan situs web resmi yang diberikan oleh Inisiator Program untuk mengarahkan pengguna ke situs eksternal. Ketersediaan dan isi situs eksternal berada di luar lingkup RekanBumi.
 
 ## 2.5 Lingkungan Operasi Perangkat Lunak
 Spesifikasi *operating system* atau lingkungan yang dibutuhkan P/L untuk beroperasi. Bagian ini digunakan untuk memastikan pengguna memiliki spesifikasi yang cukup untuk menjalankan P/L. Misalnya mencakup komponen server, client, OS, DBMS, tetapi tidak menutupi kemungkinan komponen lain.
 
 | Komponen | Spesifikasi |
 | :--- | :--- |
-| *Server* | *[contoh: Node.js v20, dijalankan pada layanan cloud]* |
-| *Client* | *[contoh: Web Browser modern (Chrome, Firefox terbaru)]* |
-| *DBMS* | *[contoh: PostgreSQL 15]* |
-| *OS* | *[contoh: Cross-platform (Windows/Linux/MacOS) melalui browser]* |
-| *...* | *...* |
+| Server | Node.js 20+ dengan Next.js 15 |
+| Client | Web browser modern pada perangkat desktop dan mobile |
+| DBMS | Neon PostgreSQL |
+| OS | Cross-platform melalui web browser pada perangkat desktop dan mobile |
+| Authentication | Better Auth |
+| ORM | Prisma |
+| API | tRPC |
 
 ---
 
