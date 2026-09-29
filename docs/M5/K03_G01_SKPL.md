@@ -183,7 +183,7 @@ Spesifikasi *operating system* atau lingkungan yang dibutuhkan P/L untuk beroper
 
 | Komponen | Spesifikasi |
 | :--- | :--- |
-| Server | Node.js 20+ dengan Next.js 15 |
+| Server | Node.js 20+|
 | Client | Web browser modern pada perangkat desktop dan mobile |
 | DBMS | Neon PostgreSQL |
 | OS | Cross-platform melalui web browser pada perangkat desktop dan mobile |
