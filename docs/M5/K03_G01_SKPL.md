@@ -78,23 +78,43 @@ Tabel 1.4. Aturan Penomoran
 
 | Hal/Bagian | Penomoran | Keterangan |
 | :--- | :--- | :--- |
-| Kebutuhan Fungsional | KF01 | Perangkat lunak dapat menerima dokumen yang diunggah melalui fitur *upload* dan *drag-and-drop* |
-| Kebutuhan Fungsional | KF02 | Perangkat lunak dapat menyimpan tautan situs web resmi yang diberikan oleh lembaga sebagai bagian dari informasi program |
-| Kebutuhan Fungsional | KF03 | Perangkat lunak dapat menyediakan kolom pencarian untuk menerima keyword dari pengguna |
-| Kebutuhan Fungsional | KF04 | Perangkat lunak dapat menyediakan pilihan kategori “Jaga Alam” dan “Jaga Iklim” untuk memfilter program |
-
- 
+| Kebutuhan Fungsional | KF01 | Ketika inisiator mengunggah dokumen verifikasi, perangkat lunak harus menerima dokumen melalui fitur *upload* dan *drag-and-drop*. |
+| Kebutuhan Fungsional | KF02 | Ketika inisiator memasukkan tautan situs web resmi lembaga, perangkat lunak harus menyimpan tautan tersebut sebagai bagian dari informasi program. |
+| Kebutuhan Fungsional | KF03 | Ketika pengguna melakukan pencarian program, perangkat lunak harus menerima /keyword/ melalui kolom pencarian. |
+| Kebutuhan Fungsional | KF04 | Ketika pengguna memilih kategori program, perangkat lunak harus menampilkan program berdasarkan kategori “Jaga Alam” atau“Jaga Iklim”. |
+| Kebutuhan Fungsional | KF05 | Jika kuota program telah terpenuhi, perangkat lunak harus menolak permohonan pendaftaran relawan pada program tersebut. |
+| Kebutuhan Fungsional | KF06 | Sebelum calon relawan mengirimkan permohonan pendaftaran, perangkat lunak harus memastikan calon relawan telah melakukan login. |
+| Kebutuhan Fungsional | KF07 | Ketika calon relawan mengirimkan permohonan pendaftaran, perangkat lunak harus menyimpan catatan keterampilan atau ketersediaan waktu yang diberikan. |
+| Kebutuhan Fungsional | KF08 | Ketika status pendaftaran relawan berubah, perangkat lunak harus mengirimkan notifikasi kepada relawan mengenai status pendaftarannya. |
+| Kebutuhan Fungsional | KF09 | Ketika inisiator menentukan hasil seleksi calon relawan, perangkat lunak harus menyediakan dan menyimpan status “Diterima” atau “Ditolak” untuk setiap calon relawan. |
+| Kebutuhan Fungsional | KF11 | Ketika relawan melakukan check-in pada suatu program, perangkat lunak harus mencatat waktu kehadiran relawan tersebut. |
+| Kebutuhan Fungsional | KF12 | Jika relawan telah berstatus diterima dan waktu pelaksanaan kegiatan telah sesuai dengan jadwal, perangkat lunak harus memberikan akses kepada relawan untuk melakukan check-in. |
+| Kebutuhan Fungsional | KF13 | Ketika inisiator mengunggah dokumentasi akhir kegiatan, perangkat lunak harus menyimpan dokumentasi tersebut dan mengubah status kegiatan menjadi selesai. |
+| Kebutuhan Fungsional | KF14 | Ketika status kegiatan berubah menjadi selesai, perangkat lunak harus secara otomatis mencatat dan memperbarui akumulasi jam aksi relawan. |
+| Kebutuhan Fungsional | KF15 | Ketika inisiator mengirimkan ringkasan capaian program, perangkat lunak harus menyimpan ringkasan capaian dampak lingkungan tersebut. |
 | Kebutuhan Non-Fungsional | KNF01 | Performance efficiency | Ketika pengguna menggunakan fitur mesin pencarian pada beban 50 pengguna bersamaan, sistem harus menampilkan daftar hasil pencarian dalam waktu kurang dari atau sama dengan 2 detik. |
 | Kebutuhan Non-Fungsional | KNF02 | Security | Ketika pengguna membuat akun, sistem harus melakukan hashing pada kata sandi menggunakan algoritma bcrypt sebelum menyimpannya ke database. |
 | Kebutuhan Non-Fungsional | KNF03 | Performance efficiency | Ketika lembaga inisiator mengunggah dokumen legalitas dengan ukuran maksimal 2 MB, sistem harus menyimpan berkas tersebut dalam waktu kurang dari atau sama dengan 5 detik. |
 | Kebutuhan Non-Fungsional | KNF04 | Reliability | Ketika sistem memproses beban 50 permintaan konfirmasi kehadiran secara bersamaan, sistem harus menyelesaikannya dengan jumlah kegagalan respons (seperti koneksi terputus atau galat dari server) maksimal 5 persen dari total permintaan. |
 | Kebutuhan Non-Fungsional | KNF05  | Compatibility | Selama pengguna mengakses platform, sistem harus menampilkan antarmuka secara utuh tanpa elemen yang terpotong pada layar desktop dengan resolusi 1024 piksel dan layar ponsel dengan resolusi 360 piksel. |
-
-
-
-| *Aktor* | *AXX* | |
-| *Use Case* | *UCXX* | |
-| *Kelas* | *CXX* | |
+| Kebutuhan Non-Fungsional | KNF06 | Security | Bila pengguna gagal memasukkan kata sandi sebanyak 5 kali berturut-turut pada halaman masuk (login), maka sistem harus menolak permintaan masuk selanjutnya dari alamat IP tersebut selama 5 menit. |
+| Kebutuhan Non-Fungsional| KNF07 | Interaction capability | Selama pengguna membuka halaman antarmuka web, sistem harus mendapatkan skor aksesibilitas (tingkat kemudahan antarmuka untuk dibaca dan dinavigasi) minimal 90 dari 100 ketika diuji menggunakan tool pengujian bawaan perangkat seperti Google Lighthouse. |
+| Kebutuhan Non-Fungsional | KNF08 | Flexibility | Selama pengguna menjalankan aplikasi, sistem harus dapat memuat seluruh fungsi interaktif tanpa memunculkan pesan galat sistem (teks merah atau error pada menu developer console) pada minimal 3 peramban web modern (Google Chrome, Mozilla Firefox, dan Apple Safari). |
+| Aktor | A01 | Inisiator Program (Lembaga/Komunitas) |
+| Aktor | A02 | Relawan (Masyarakat Umum) |
+| Aktor | A03 | Admin/Verifikator Platform |
+| Use Case | UC01 | Daftar program |
+| Use Case | UC02 | *Login* akun |
+| Use Case | UC03 | Mencari program |
+| Use Case | UC04 | Mengunjungi situs program |
+| Use Case | UC05 | Menyeleksi calon relawan pendaftar | 
+| Use Case | UC06 | Konfirmasi status pendaftaran |
+| Use Case | UC07 | Memperbarui status program |
+| Use Case | UC08 | Konfirmasi kehadiran program |
+| Use Case | UC09 | Memperbarui status akun relawan |
+| Kelas | C01 | Program |
+| Kelas | C03 | Relawan |
+| Kelas | C04 | Pengguna |
 | *...* | *...* |
 
 ## 1.5 Referensi
