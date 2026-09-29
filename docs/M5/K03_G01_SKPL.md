@@ -78,8 +78,20 @@ Tabel 1.4. Aturan Penomoran
 
 | Hal/Bagian | Penomoran | Keterangan |
 | :--- | :--- | :--- |
-| *Kebutuhan Fungsional* | *KFXX* | |
-| *Kebutuhan Non-Fungsional* | *KNFXX* | |
+| Kebutuhan Fungsional | KF01 | Perangkat lunak dapat menerima dokumen yang diunggah melalui fitur *upload* dan *drag-and-drop* |
+| Kebutuhan Fungsional | KF02 | Perangkat lunak dapat menyimpan tautan situs web resmi yang diberikan oleh lembaga sebagai bagian dari informasi program |
+| Kebutuhan Fungsional | KF03 | Perangkat lunak dapat menyediakan kolom pencarian untuk menerima keyword dari pengguna |
+| Kebutuhan Fungsional | KF04 | Perangkat lunak dapat menyediakan pilihan kategori “Jaga Alam” dan “Jaga Iklim” untuk memfilter program |
+
+ 
+| Kebutuhan Non-Fungsional | KNF01 | Performance efficiency | Ketika pengguna menggunakan fitur mesin pencarian pada beban 50 pengguna bersamaan, sistem harus menampilkan daftar hasil pencarian dalam waktu kurang dari atau sama dengan 2 detik. |
+| Kebutuhan Non-Fungsional | KNF02 | Security | Ketika pengguna membuat akun, sistem harus melakukan hashing pada kata sandi menggunakan algoritma bcrypt sebelum menyimpannya ke database. |
+| Kebutuhan Non-Fungsional | KNF03 | Performance efficiency | Ketika lembaga inisiator mengunggah dokumen legalitas dengan ukuran maksimal 2 MB, sistem harus menyimpan berkas tersebut dalam waktu kurang dari atau sama dengan 5 detik. |
+| Kebutuhan Non-Fungsional | KNF04 | Reliability | Ketika sistem memproses beban 50 permintaan konfirmasi kehadiran secara bersamaan, sistem harus menyelesaikannya dengan jumlah kegagalan respons (seperti koneksi terputus atau galat dari server) maksimal 5 persen dari total permintaan. |
+| Kebutuhan Non-Fungsional | KNF05  | Compatibility | Selama pengguna mengakses platform, sistem harus menampilkan antarmuka secara utuh tanpa elemen yang terpotong pada layar desktop dengan resolusi 1024 piksel dan layar ponsel dengan resolusi 360 piksel. |
+
+
+
 | *Aktor* | *AXX* | |
 | *Use Case* | *UCXX* | |
 | *Kelas* | *CXX* | |
