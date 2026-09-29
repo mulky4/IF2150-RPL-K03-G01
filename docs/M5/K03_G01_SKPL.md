@@ -129,7 +129,7 @@ RekanBumi adalah platform web yang mempertemukan masyarakat umum dengan lembaga 
 </p>
 
 ## 2.2 Deskripsi Umum Perangkat Lunak
-RekanBumi merupakan perangkat lunak berbasis web (*web application*) yang dirancang untuk mendukung ekosistem kerelawanan lingkungan berbasis aksi nyata guna mempercepat pencapaian SDG 13 dan SDG 15 di Indonesia[cite: 13]. Perangkat lunak ini bertindak sebagai platform terintegrasi yang menghubungkan tiga aktor utama, yaitu **Relawan** (masyarakat umum), **Inisiator Program** (lembaga/komunitas lingkungan), dan **Verifikator** (admin platform).
+RekanBumi merupakan perangkat lunak berbasis web (*web application*) yang dirancang untuk mendukung ekosistem kerelawanan lingkungan berbasis aksi nyata guna mempercepat pencapaian SDG 13 dan SDG 15 di Indonesia. Perangkat lunak ini bertindak sebagai platform terintegrasi yang menghubungkan tiga aktor utama, yaitu **Relawan** (masyarakat umum), **Inisiator Program** (lembaga/komunitas lingkungan), dan **Verifikator** (admin platform).
 
 Lingkup fungsionalitas perangkat lunak mencakup pengelolaan seluruh siklus kegiatan kerelawanan secara terstruktur. Alur kerja sistem meliputi manajemen otentikasi akun, pendaftaran dan verifikasi legalitas lembaga inisiator, publikasi dan pencarian program aksi ("Jaga Alam" dan "Jaga Iklim"), seleksi pendaftar relawan berdasarkan kriteria kuota, konfirmasi presensi kehadiran di lokasi kegiatan, hingga pembaruan otomatis akumulasi jam aksi ke dalam portofolio kontribusi relawan.
 
