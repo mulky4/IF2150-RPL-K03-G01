@@ -40,7 +40,13 @@ Dipersiapkan oleh:
 # BAB 1: Pendahuluan
 
 ## 1.1 Tujuan Penulisan Dokumen
-Tuliskan dengan ringkas tujuan dokumen SKPL ini dibuat dan siapa saja yang akan menggunakan dokumen ini.
+Dokumen Spesifikasi Kebutuhan Perangkat Lunak (SKPL) ini disusun untuk mendefinisikan secara rinci kebutuhan fungsional dan non-fungsional dari perangkat lunak RekanBumi, mencakup kebutuhan pengguna, batasan sistem, lingkungan operasi, model use case, serta model kelas yang menjadi acuan dalam tahap perancangan dan pengembangan perangkat lunak selanjutnya. Dokumen ini disusun agar seluruh pihak yang terlibat memiliki pemahaman yang sama dan jelas mengenai fungsi serta batasan sistem yang akan dibangun, sehingga dapat meminimalkan kesalahpahaman antara pengembang dan pengguna kebutuhan selama proses pengembangan berlangsung.
+
+Dokumen ini ditujukan untuk beberapa pihak, yaitu:
+
+1. Tim pengembang (developer) RekanBumi, sebagai acuan dalam melakukan implementasi, pengujian, dan pemeliharaan perangkat lunak agar sesuai dengan kebutuhan yang telah disepakati.
+2. Asisten dan dosen mata kuliah IF2150 Rekayasa Perangkat Lunak, sebagai bahan evaluasi terhadap kesesuaian rancangan kebutuhan perangkat lunak yang diajukan oleh kelompok.
+3. Pihak-pihak yang berkepentingan lain (calon Inisiator Program, Relawan, dan Verifikator), sebagai gambaran umum mengenai fungsi dan batasan layanan yang akan disediakan oleh RekanBumi.
 
 ## 1.2 Lingkup Masalah
 
@@ -80,10 +86,26 @@ Tabel 1.4. Aturan Penomoran
 | *...* | *...* |
 
 ## 1.5 Referensi
-Dokumentasi P/L yang dirujuk oleh dokumen ini. Referensi dapat berupa buku, panduan, ataupun dokumentasi lain yang dipakai dalam pengembangan P/L ini.
+1. Dokumen Topic Brainstorming — RekanBumi.
+2. Dokumen Requirement Gathering — RekanBumi.
+3. Dokumen Use Case & Scenario Use Case — RekanBumi.
+4. Dokumen Class Diagram — RekanBumi.
+5. Next.js Documentation. https://nextjs.org/docs
+6. Prisma Documentation. https://www.prisma.io/docs
+7. tRPC Documentation. https://trpc.io/docs
+8. Better Auth Documentation. https://www.better-auth.com/docs
+9. Neon Documentation. https://neon.tech/docs
+10. Diagram UML: https://www.drawio.com/
 
 ## 1.6 Deskripsi Umum Dokumen (Ikhtisar)
-Tuliskan sistematika pembahasan dokumen SKPL ini secara runut (misalnya: BAB 2 membahas deskripsi umum P/L, BAB 3 membahas kebutuhan fungsional dan non-fungsional, dst).
+Dokumen ini disusun dengan sistematika sebagai berikut:
+
+1. BAB 1 Pendahuluan berisi tujuan penulisan dokumen, lingkup masalah yang diselesaikan oleh RekanBumi, definisi istilah dan singkatan yang digunakan, aturan penomoran identifikasi (ID) pada dokumen, referensi yang digunakan, serta ikhtisar/sistematika dokumen ini.
+2. BAB 2 Deskripsi Perangkat Lunak berisi deskripsi umum sistem beserta activity diagram proses bisnis, deskripsi umum perangkat lunak, daftar pengguna beserta kebutuhannya, batasan perangkat lunak, dan lingkungan operasi yang dibutuhkan.
+3. BAB 3 Deskripsi Kebutuhan Perangkat Lunak berisi daftar Kebutuhan Fungsional (KF) dalam format EARS dan Kebutuhan Non-Fungsional (KNF) beserta parameternya.
+4. BAB 4 Pemodelan Use Case berisi identifikasi aktor, identifikasi use case, use case diagram, serta skenario use case (normal dan alternatif) untuk setiap use case yang telah diidentifikasi.
+5. BAB 5 Pemodelan Kelas berisi identifikasi kelas, diagram kelas untuk setiap use case beserta atribut dan metode/operasinya, serta diagram kelas keseluruhan yang menggabungkan seluruh kelas pada sistem.
+6. BAB 6 Traceability berisi keterkaitan antara Kebutuhan Fungsional, Use Case, dan Kelas yang saling mendukung satu sama lain.
 
 ---
 
