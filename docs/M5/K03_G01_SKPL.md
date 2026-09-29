@@ -160,10 +160,10 @@ Spesifikasi *operating system* atau lingkungan yang dibutuhkan P/L untuk beroper
 | Client | Web browser modern pada perangkat desktop dan mobile |
 | DBMS | Neon PostgreSQL |
 | OS | Cross-platform melalui web browser pada perangkat desktop dan mobile |
+| Frontend | Next.js 15 dan Tailwind CSS |
 | Authentication | Better Auth |
 | ORM | Prisma |
 | API | tRPC |
-
 ---
 
 # BAB 3: Deskripsi Kebutuhan Perangkat Lunak
