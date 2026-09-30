@@ -90,4 +90,12 @@
 | 23-09-2026 | AVicenna Ananda Musthafa | Mengerjakan 4.3 | 2 | Done | - |
 | 23-09-2026 | Kairenzo Vemil | Mengerjakan 2.2.8 2.2.9 dan bab 5 | 2 | Done | - |
 
+### Milestone 5
+**Periode:** 24 September 2026 - 30 September 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 29-09-2026 | Mulky Siraj Firizqi | Mengerjakan 2.2 Deskripsi Umum Perangkat Lunak | 1 | Done | - |
+| 29-09-2026 | Semua anggota | Asistensi Milestone 5 | 1/2 | Done | - |
+| 30-09-2026 | Mulky Siraj Firizqi | Revisi dan menambahkan beberapa bagian dokumen seperti aturan penomoran serta mengerjakan form asistensi | 1 | Done | - |
+
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
