@@ -105,5 +105,7 @@
 | 29-09-2026 | Ribka Kaylena Sanjaya | Penyesuaian penggunaan Actor throughout M5 | 1/2 | Done | - |
 | 29-09-2026 | Avicenna Ananda Musthafa | Mengerjakan 2.4 dan 2.5 | 1 | Done | - |
 | 30-09-2026 | Avicenna Ananda Musthafa | Revisi 4.4.6 4.4.7 4.4.9 | 1 | Done | - |
+| 29-09-2026 | Kairenzo Vemil | Mengerjakan 1.1, 1.5, dan 1.6 | 1 | Done | - |
+| 30-09-2026 | Kairenzo Vemil | Revisi 1.5 | 1/4 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
