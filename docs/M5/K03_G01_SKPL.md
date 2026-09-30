@@ -495,7 +495,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC01 (2).png" width="70%">
 </p>
 <p align="center">
-<i>Gambar 2. Diagram Kelas Use Case UC01</i>
+<i>Gambar 6. Diagram Kelas Use Case UC01</i>
 </p>
 <br>
 
@@ -519,7 +519,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img width="522" height="202" alt="Untitled Diagram-Page-1 drawio" src="https://github.com/user-attachments/assets/5c08201d-56e1-47a8-aea8-bd884025b3d4" />
 </p>
 <p align="center">
-<i>Gambar 3. Diagram Kelas Use Case UC02</i>
+<i>Gambar 7. Diagram Kelas Use Case UC02</i>
 </p>
 <br>
 
@@ -538,7 +538,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
 </p>
 <p align="center">
-<i>Gambar 4. Diagram Kelas Use Case UC03</i>
+<i>Gambar 8. Diagram Kelas Use Case UC03</i>
 </p>
 <br>
 
@@ -556,7 +556,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
 </p>
 <p align="center">
-<i>Gambar 5. Diagram Kelas Use Case UC04</i>
+<i>Gambar 9. Diagram Kelas Use Case UC04</i>
 </p>
 <br>
 
@@ -574,7 +574,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC05.jpg" width="70%"> 
 </p>
 <p align="center">
-<i>Gambar 6. Diagram Kelas Use Case UC05</i>
+<i>Gambar 10. Diagram Kelas Use Case UC05</i>
 </p>
 <br>
 
@@ -596,7 +596,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC06.jpg" width="70%">
 </p>
 <p align="center">
-<i>Gambar 7. Diagram Kelas Use Case UC06</i>
+<i>Gambar 11. Diagram Kelas Use Case UC06</i>
 </p>
 <br>
 
@@ -621,7 +621,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC07.jpg" width="70%">
 </p>
 <p align="center">
-<i>Gambar 8. Diagram Kelas Use Case UC07</i>
+<i>Gambar 12. Diagram Kelas Use Case UC07</i>
 </p>
 <br>
 
@@ -647,7 +647,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC08" src="./assets/diagram/CD_UC08.jpg" width="70%">
 </p>
 <p align="center">
-<i>Gambar 9. Diagram Kelas Use Case UC08</i>
+<i>Gambar 13. Diagram Kelas Use Case UC08</i>
 </p>
 <br>
 
@@ -670,7 +670,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <img alt="Class Diagram UC09" src="./assets/diagram/CD_UC09.jpg" width="70%">
 </p>
 <p align="center">
-<i>Gambar 10. Diagram Kelas Use Case UC09</i>
+<i>Gambar 14. Diagram Kelas Use Case UC09</i>
 </p>
 <br>
 
@@ -692,7 +692,7 @@ Gabungkan seluruh kelas dan hubungan antarkelas dari BAB 4.3 dokumen *Class Diag
 <img alt="Class Diagram Keseluruhan" src="./assets/diagram/Diagram%204.3.png" width="70%">
 </p>
 <p align="center">
-<i>Gambar 4. Diagram Kelas Keseluruhan</i>
+<i>Gambar 15. Diagram Kelas Keseluruhan</i>
 </p>
 
 | ID Kelas | Nama Kelas | Atribut | Metode/Operasi |
