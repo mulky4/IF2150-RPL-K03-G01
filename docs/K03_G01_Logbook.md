@@ -77,6 +77,8 @@
 | 16-09-2026 | Mulky Siraj Firizqi | Mengisi subbab 3.4.1 - 3.4.3 untuk detail skenario use case 1,2,3 | 1 | Done | - |
 | 15-09-2026 | Ribka Kaylena Sanjaya | Merevisi bagian KF sesuai arahan asisten dosen | 1 | Done | - |
 | 16-09-2026 | Ribka Kaylena Sanjaya | Membuat Use Case Diagram dari use case yang telah direvisi| 2.5 | Done | - |
+| 16-09-2026 | Avicenna Ananda Musthafa | Mengisi subbab 3.4.4 - 3.4.6 untuk detail skenario use case 4,5,6 | 1 | Done | - |
+
 
 ### Milestone 4
 **Periode:** 17 September 2026 - 23 September 2026
@@ -94,11 +96,14 @@
 **Periode:** 24 September 2026 - 30 September 2026
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
 |---|---|---|---|---|---|
+| 27-09-2026 | Avicenna Ananda Musthafa | Memindahkan dokumen yang diperlukan dari milestone sebelumnya | 1/2 | Done | - |
 | 29-09-2026 | Mulky Siraj Firizqi | Mengerjakan 2.2 Deskripsi Umum Perangkat Lunak | 1 | Done | - |
 | 29-09-2026 | Semua anggota | Asistensi Milestone 5 | 1/2 | Done | - |
 | 30-09-2026 | Mulky Siraj Firizqi | Revisi dan menambahkan beberapa bagian dokumen seperti aturan penomoran serta mengerjakan form asistensi | 1 | Done | - |
 | 28-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan 1.2 dan 1.3 | 1/2 | Done | - |
 | 29-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Notulensi asistensi | 1/2 | Done | - |
 | 29-09-2026 | Ribka Kaylena Sanjaya | Penyesuaian penggunaan Actor throughout M5 | 1/2 | Done | - |
+| 29-09-2026 | Avicenna Ananda Musthafa | Mengerjakan 2.4 dan 2.5 | 1 | Done | - |
+| 30-09-2026 | Avicenna Ananda Musthafa | Revisi 4.4.6 4.4.7 4.4.9 | 1 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
