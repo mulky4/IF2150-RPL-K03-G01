@@ -4,13 +4,13 @@
 
 | Informasi | Keterangan |
 | --- | --- |
-| **Hari** | *Selasa* |
-| **Tanggal** | *15/09/2026* |
-| **Kelas** | *K3* |
-| **Nomor Kelompok** | *G01*  |
-| **Nama Kelompok** | *rplsukses*  |
-| **Nama Perangkat Lunak** | *RekanBumi*  |
-| **Dokumen** | *M3*  |
+| **Hari** | Selasa |
+| **Tanggal** | 29/09/2026 |
+| **Kelas** | K03 |
+| **Nomor Kelompok** | G01 |
+| **Nama Kelompok** | rplsukses |
+| **Nama Perangkat Lunak** | RekanBumi |
+| **Dokumen** | M5 |
 
 ### Anggota Kelompok
 
@@ -26,19 +26,18 @@
 
 | Catatan |
 | --- |
-| 1. Template dokumen tetap menggunakan template M5 untuk penulisan UC-nya. |
-| 2. Waktu implementasi diberikan 2 minggu (ditinjau dari tahun lalu). |
-| 3. Lingkungan operasi perangkat lunak disesuaikan kembali sehingga bisa mengimplementasikan use case yang ada. |
-| 4. Deployment tidak wajib |
-
-**Notes for this section:**  
-*Catatan dapat dituliskan dalam bentuk paragraf atau poin-poin, disesuaikan saja.* 
+| 1. Pengisian dokumen tetap mengikuti struktur dan *template* terbaru milestone ini. |
+| 2. Referensi penyusunan dokumen dan materi pemodelan dapat merujuk pada slide perkuliahan dosen. |
+| 3. Hubungan antar-kelas pada *Class Diagram* diperbolehkan memiliki penyesuaian/perbedaan antara versi per *use case* dengan versi keseluruhan sesuai kebutuhan fungsionalnya. |
+| 4. Spesifikasi *environment* operasi dan *tech stack* disesuaikan agar perangkat lunak dapat menjalankan seluruh *use case* secara fungsional. |
+| 5. Mekanisme penanganan notifikasi dan deteksi perubahan data lokal dapat dieksplorasi serta diatur secara mandiri oleh kelompok (misalnya memanfaatkan Supabase atau pustaka pendukung). |
+| 6. Estimasi waktu yang diberikan untuk tahap implementasi perangkat lunak adalah sekitar 2 minggu. |
+| 7. *Deployment* perangkat lunak ke server publik/cloud tidak bersifat wajib (cukup dijalankan pada lokal), dan perbedaan nilai antara aplikasi yang di-*deploy* dengan yang dijalankan secara lokal tidak signifikan. |
 
 ## Dokumentasi
 
-<!-- ![](./assets/foto-asistensi.jpg) -->
 <p align="center">
-  <img src="./assets/foto-asistensi.jpg" width="100%">
+  <img width="2940" height="1678" alt="Image 29-09-26 at 21 09" src="https://github.com/user-attachments/assets/53f6a467-3a3a-4bd7-aae3-064f4eb4306a" />
 </p>
 
 <p align="center">
