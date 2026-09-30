@@ -99,5 +99,6 @@
 | 30-09-2026 | Mulky Siraj Firizqi | Revisi dan menambahkan beberapa bagian dokumen seperti aturan penomoran serta mengerjakan form asistensi | 1 | Done | - |
 | 28-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan 1.2 dan 1.3 | 1/2 | Done | - |
 | 29-09-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Notulensi asistensi | 1/2 | Done | - |
+| 29-09-2026 | Ribka Kaylena Sanjaya | Penyesuaian penggunaan Actor throughout M5 | 1/2 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
