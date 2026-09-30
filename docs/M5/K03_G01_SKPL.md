@@ -215,7 +215,6 @@ Tabel 3.1. Kebutuhan Fungsional
 | KF16 | R25 | Ketika inisiator mengirimkan ringkasan capaian program, perangkat lunak harus menyimpan ringkasan capaian dampak lingkungan tersebut. |
 
 ## 3.2 Kebutuhan Non-Fungsional (KNF)
-Salin ulang Kebutuhan Non-Fungsional dari BAB 2.5 dokumen *Requirement Gathering*, sesuaikan ID Kebutuhan (kolom "ID Kebutuhan") apabila terjadi perubahan penomoran pada BAB 3.1 di atas.
 
 Tabel 3.2. Kebutuhan Non-Fungsional
 
@@ -229,8 +228,6 @@ Tabel 3.2. Kebutuhan Non-Fungsional
 | KNF06 | R09 | Security | Bila pengguna gagal memasukkan kata sandi sebanyak 5 kali berturut-turut pada halaman masuk (login), maka sistem harus menolak permintaan masuk selanjutnya dari alamat IP tersebut selama 5 menit. |
 | KNF07 | R06, R09, R17 | Interaction capability | Selama pengguna membuka halaman antarmuka web, sistem harus mendapatkan skor aksesibilitas (tingkat kemudahan antarmuka untuk dibaca dan dinavigasi) minimal 90 dari 100 ketika diuji menggunakan tool pengujian bawaan perangkat seperti Google Lighthouse. |
 | KNF08 | R06, R09, R17 | Flexibility | Selama pengguna menjalankan aplikasi, sistem harus dapat memuat seluruh fungsi interaktif tanpa memunculkan pesan galat sistem (teks merah atau error pada menu developer console) pada minimal 3 peramban web modern (Google Chrome, Mozilla Firefox, dan Apple Safari). |
-
-<sub>*Silakan pilih parameter yang relevan dengan P/L kalian (Availability, Reliability, Ergonomy, Portability, Memory, Response time, Safety, Security, dsb), tidak perlu semua parameter diisi. Lihat kembali dokumen Requirement Gathering untuk penjelasan tiap parameter.*<sub>
 
 ---
 
@@ -282,9 +279,9 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 
 | No | Aksi Aktor | Reaksi Perangkat Lunak |
 | :--- | :--- | :--- |
-| 1 | Aktor (Inisiator Program atau Relawan) mengakses halaman pendaftaran dan mengisi formulir data | Sistem menampilkan formulir pendaftaran beserta area unggah dokumen |
-| 2 | Aktor memasukkan dokumen yang diperlukan ke dalam area unggah | Sistem menerima dokumen yang diunggah melalui fitur upload dan drag-and-drop |
-| 3 | Aktor menekan tombol kirim pendaftaran | Sistem memeriksa kelengkapan dan status verifikasi data, memproses pendaftaran, menyimpan data, dan menampilkan notifikasi keberhasilan |
+| 1 | Inisiator Program atau Relawan mengakses halaman pendaftaran dan mengisi formulir data | Sistem menampilkan formulir pendaftaran beserta area unggah dokumen |
+| 2 | Inisiator Program atau Relawan memasukkan dokumen yang diperlukan ke dalam area unggah | Sistem menerima dokumen yang diunggah melalui fitur upload dan drag-and-drop |
+| 3 | Inisiator Program atau Relawan menekan tombol kirim pendaftaran | Sistem memeriksa kelengkapan dan status verifikasi data, memproses pendaftaran, menyimpan data, dan menampilkan notifikasi keberhasilan |
 
 <br>
 
@@ -292,9 +289,9 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 
 | No | Aksi Aktor | Reaksi Perangkat Lunak |
 | :--- | :--- | :--- |
-| 1 | Aktor (Inisiator Program atau Relawan) mengakses halaman pendaftaran dan mengisi formulir data | Sistem menampilkan formulir pendaftaran beserta area unggah dokumen |
-| 2 | Aktor memasukkan dokumen yang diperlukan ke dalam area unggah | Sistem menerima dokumen yang diunggah melalui fitur upload dan drag-and-drop |
-| 3 | Aktor menekan tombol kirim pendaftaran | Sistem memeriksa kelengkapan data, mendeteksi data tidak lengkap, membatalkan pengiriman, dan menampilkan pesan peringatan untuk melengkapi data |
+| 1 | Inisiator Program atau Relawan mengakses halaman pendaftaran dan mengisi formulir data | Sistem menampilkan formulir pendaftaran beserta area unggah dokumen |
+| 2 | Inisiator Program atau Relawan memasukkan dokumen yang diperlukan ke dalam area unggah | Sistem menerima dokumen yang diunggah melalui fitur upload dan drag-and-drop |
+| 3 | Inisiator Program atau Relawan menekan tombol kirim pendaftaran | Sistem memeriksa kelengkapan data, mendeteksi data tidak lengkap, membatalkan pengiriman, dan menampilkan pesan peringatan untuk melengkapi data |
 
 
 ### 4.4.2 Skenario UC02
@@ -316,6 +313,16 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 | :--- | :--- | :--- |
 | 1 | Relawan memilih tombol pendaftaran pada halaman suatu program dalam keadaan belum masuk ke akun | Sistem mengharuskan calon relawan untuk melakukan login dan mengarahkan ke halaman login akun |
 | 2 | Relawan memasukkan kredensial akun yang salah dan menekan tombol login | Sistem menolak kredensial tersebut dan menampilkan pesan gagal masuk akun |
+
+<br>
+
+**Skenario Alternatif 2: Akun Terkunci Sementara**
+
+| No | Aksi Aktor | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- |
+| 1 | Relawan memasukkan kata sandi yang salah sebanyak 5 kali berturut-turut pada halaman login | Sistem mencatat percobaan gagal dari alamat IP pengguna |
+| 2 | Relawan mencoba menekan tombol login kembali untuk keenam kalinya | Sistem menolak permintaan masuk dan menampilkan pesan peringatan bahwa IP diblokir sementara selama 5 menit |
+
 
 ### 4.4.3 Skenario UC03
 
@@ -516,7 +523,7 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 **Nama Use Case:** Login akun
 
 <p align="center">
-<img width="522" height="202" alt="Untitled Diagram-Page-1 drawio" src="https://github.com/user-attachments/assets/5c08201d-56e1-47a8-aea8-bd884025b3d4" />
+<img alt="Class Diagram UC02" src="./assets/diagram/CD_UC02.png" width="70%">
 </p>
 <p align="center">
 <i>Gambar 7. Diagram Kelas Use Case UC02</i>
@@ -526,16 +533,17 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 | ID Kelas | Nama Kelas | Atribut | Metode/Operasi |
 | :--- | :--- | :--- | :--- |
 | C12 | KelolaAkunPage | formLogin | tampilkanFormLogin(), terimaInputKredensial(), tampilkanPesanStatus() |
-| C13 | AuthController | - | verifikasiKredensial(), buatSesiMasuk() |
+| C13 | AuthController | - | validasiKredensial(), mulaiSesi() |
 | C04 | Pengguna | email, kataSandi | getEmail(), getKataSandi() |
-| C03 | Relawan | nama, domisili | getProfil() |
+| C03 | Relawan | nama, domisili | tampilkanProfil() |
+
 
 ### 5.2.3 Use Case UC03
 
 **Nama Use Case:** Mencari program
 
 <p align="center">
-<img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
+<img alt="Class Diagram UC03" src="./assets/diagram/CD_UC03.jpg" width="70%">
 </p>
 <p align="center">
 <i>Gambar 8. Diagram Kelas Use Case UC03</i>
@@ -546,14 +554,15 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 | :--- | :--- | :--- | :--- |
 | C16 | EksplorasiProgramPage | kataKunciPencarian, filterKategori | tampilkanDaftarProgram(), terimaInputPencarian() |
 | C15 | ProgramController | - | cariProgram(), filterProgram() |
-| C01 | Program | namaProgram, kategori, status | getRingkasanProgram() |
+| C01 | Program | namaProgram, kategori, status | tampilkanRingkasan() |
+
 
 ### 5.2.4 Use Case UC04
 
 **Nama Use Case:** Mengunjungi situs program
 
 <p align="center">
-<img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
+<img alt="Class Diagram UC04" src="./assets/diagram/CD_UC04.jpg" width="70%">
 </p>
 <p align="center">
 <i>Gambar 9. Diagram Kelas Use Case UC04</i>
@@ -564,7 +573,8 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 | :--- | :--- | :--- | :--- |
 | C16 | EksplorasiProgramPage | idProgramTerpilih | tampilkanDetailProgram(), arahkanKeSitusResmi(), nonaktifkanTautan() |
 | C15 | ProgramController | - | ambilDetailProgram(), validasiTautanSitus() |
-| C01 | Program | tautanSitusResmi, deskripsi | getTautan(), getDetail() |
+| C01 | Program | deskripsi | tampilkanDetail() |
+| C05 | InisiatorProgram | tautanSitusResmi | - |
 
 ### 5.2.5 Use Case UC05
 
