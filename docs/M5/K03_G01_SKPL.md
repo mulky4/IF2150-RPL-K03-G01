@@ -390,10 +390,11 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 
 **Skenario Normal**
 
-| No | Aksi Aktor | Reaksi Perangkat Lunak |
-| :--- | :--- | :--- |
-| 1 | Inisiator Program mengonfirmasi pengiriman hasil keputusan seleksi relawan | Sistem memproses konfirmasi dan secara otomatis mengirimkan notifikasi mengenai status pendaftarannya kepada relawan |
-| 2 | Relawan membuka menu notifikasi pada akunnya | Sistem menampilkan detail pemberitahuan berisi status hasil seleksi pendaftaran ("Diterima" atau "Ditolak") |
+
+| No | Aksi Inisiator Program | Aksi Relawan | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- | :--- |
+| 1 | Inisiator Program mengonfirmasi pengiriman hasil keputusan seleksi relawan | - | Sistem memproses konfirmasi dan secara otomatis mengirimkan notifikasi mengenai status pendaftaran kepada relawan |
+| 2 | - | Relawan membuka menu notifikasi pada akunnya | Sistem menampilkan detail pemberitahuan berisi status hasil seleksi pendaftaran ("Diterima" atau "Ditolak") |
 
 ### 4.4.7 Skenario UC07
 
@@ -401,21 +402,21 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 
 **Skenario Normal**
 
-| No | Aksi Aktor | Reaksi Perangkat Lunak |
-| :--- | :--- | :--- |
-| 1 | Inisiator Program membuka halaman kelola program yang sedang berlangsung dan mengunggah dokumentasi akhir kegiatan (foto lapangan) beserta catatan capaian, misalnya jumlah bibit ditanam atau sampah terkumpul | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
-| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator bahwa terdapat laporan akhir yang perlu ditinjau |
-| 3 | Verifikator meninjau laporan akhir program dan menekan tombol konfirmasi persetujuan | Sistem mengonfirmasi status program menjadi "Selesai", menyimpan ringkasan capaian dampak lingkungan dari program tersebut, dan menampilkannya pada halaman publik |
+| No | Aksi Inisiator Program | Aksi Verifikator | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- | :--- |
+| 1 | Inisiator Program membuka halaman kelola program yang sedang berlangsung dan mengunggah dokumentasi akhir kegiatan (foto lapangan) beserta catatan capaian, misalnya jumlah bibit ditanam atau sampah terkumpul | - | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
+| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | - | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator bahwa terdapat laporan akhir yang perlu ditinjau |
+| 3 | - | Verifikator meninjau laporan akhir program dan menekan tombol konfirmasi persetujuan | Sistem mengonfirmasi status program menjadi "Selesai", menyimpan ringkasan capaian dampak lingkungan dari program tersebut, dan menampilkannya pada halaman publik |
 
 <br>
 
 **Skenario Alternatif 1: Verifikator Menolak Laporan Akhir**
 
-| No | Aksi Aktor | Reaksi Perangkat Lunak |
-| :--- | :--- | :--- |
-| 1 | Inisiator Program membuka halaman kelola program dan mengunggah dokumentasi akhir kegiatan beserta catatan capaian | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
-| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator |
-| 3 | Verifikator meninjau laporan dan mendapati dokumentasi atau catatan capaian tidak lengkap, lalu menekan tombol tolak beserta catatan revisi | Sistem mengembalikan status program menjadi "Perlu Revisi" dan mengirimkan notifikasi kepada Inisiator Program berisi catatan revisi yang harus dilengkapi |
+| No | Aksi Inisiator Program | Aksi Verifikator | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- | :--- |
+| 1 | Inisiator Program membuka halaman kelola program dan mengunggah dokumentasi akhir kegiatan beserta catatan capaian | - | Sistem menerima dan menyimpan dokumentasi serta catatan capaian sebagai draf laporan akhir program |
+| 2 | Inisiator Program menekan tombol untuk mengubah status program menjadi "Selesai" dan mengirimkan laporan untuk ditinjau | - | Sistem mengubah status program menjadi "Menunggu Konfirmasi" dan mengirimkan notifikasi kepada Verifikator |
+| 3 | - | Verifikator meninjau laporan dan mendapati dokumentasi atau catatan capaian tidak lengkap, lalu menekan tombol tolak beserta catatan revisi | Sistem mengembalikan status program menjadi "Perlu Revisi" dan mengirimkan notifikasi kepada Inisiator Program berisi catatan revisi yang harus dilengkapi |
 
 ### 4.4.8 Skenario UC08
 
@@ -443,19 +444,19 @@ Salin ulang skenario **setiap** use case (skenario normal dan alternatif) dari B
 
 **Skenario Normal**
 
-| No | Aksi Aktor | Reaksi Perangkat Lunak |
-| :--- | :--- | :--- |
-| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | Sistem secara otomatis menghitung dan mencatat penambahan jam aksi bagi setiap relawan yang terkonfirmasi hadir pada program tersebut ke dalam profil portofolio masing-masing |
-| 2 | Relawan membuka halaman profil/portofolio pada akunnya | Sistem menampilkan riwayat program yang telah diikuti beserta akumulasi jam aksi terbaru relawan tersebut |
+| No | Aksi Verifikator | Aksi Relawan | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- | :--- |
+| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | - | Sistem secara otomatis menghitung dan mencatat penambahan jam aksi bagi setiap relawan yang terkonfirmasi hadir pada program tersebut ke dalam profil portofolio masing-masing |
+| 2 | - | Relawan membuka halaman profil/portofolio pada akunnya | Sistem menampilkan riwayat program yang telah diikuti beserta akumulasi jam aksi terbaru relawan tersebut |
 
 <br>
 
 **Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan**
 
-| No | Aksi Aktor | Reaksi Perangkat Lunak |
-| :--- | :--- | :--- |
-| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | Sistem memeriksa data kehadiran tiap relawan terdaftar pada program tersebut dan mendeteksi terdapat relawan yang tidak memiliki catatan check-in |
-| 2 | Relawan yang bersangkutan membuka halaman profil/portofolio pada akunnya | Sistem tidak menambahkan jam aksi untuk program tersebut pada portofolio relawan, karena kehadirannya tidak tercatat |
+| No | Aksi Verifikator | Aksi Relawan | Reaksi Perangkat Lunak |
+| :--- | :--- | :--- | :--- |
+| 1 | Verifikator mengonfirmasi status suatu program menjadi "Selesai" | - | Sistem memeriksa data kehadiran tiap relawan terdaftar pada program tersebut dan mendeteksi terdapat relawan yang tidak memiliki catatan check-in |
+| 2 | - | Relawan yang bersangkutan membuka halaman profil/portofolio pada akunnya | Sistem tidak menambahkan jam aksi untuk program tersebut pada portofolio relawan, karena kehadirannya tidak tercatat |
 
 ---
 
