@@ -86,16 +86,14 @@ Tabel 1.4. Aturan Penomoran Dokumen SKPL
 | Kelas | CXX | Identifikasi entitas kelas pada pemodelan berorientasi objek (C01–C20). |
 
 ## 1.5 Referensi
-1. Dokumen Topic Brainstorming — RekanBumi.
-2. Dokumen Requirement Gathering — RekanBumi.
-3. Dokumen Use Case & Scenario Use Case — RekanBumi.
-4. Dokumen Class Diagram — RekanBumi.
-5. Next.js Documentation. https://nextjs.org/docs
-6. Prisma Documentation. https://www.prisma.io/docs
-7. tRPC Documentation. https://trpc.io/docs
-8. Better Auth Documentation. https://www.better-auth.com/docs
-9. Neon Documentation. https://neon.tech/docs
-10. Diagram UML: https://www.drawio.com/
+1. Next.js Documentation. https://nextjs.org/docs
+2. Tailwind CSS Documentation. https://tailwindcss.com/docs
+3. Prisma Documentation. https://www.prisma.io/docs
+4. tRPC Documentation. https://trpc.io/docs
+5. Better Auth Documentation. https://www.better-auth.com/docs
+6. Neon Documentation. https://neon.tech/docs
+7. Diagram UML: https://www.drawio.com/
+8. 8. Rukmono, S. A. Apa yang Harus Ada di Dalam Dokumen SRS/SKPL? Menurut SWEBOK v4 (Slide presentasi). IF2150 Rekayasa Perangkat Lunak
 
 ## 1.6 Deskripsi Umum Dokumen (Ikhtisar)
 Dokumen ini disusun dengan sistematika sebagai berikut:
