@@ -303,7 +303,7 @@ Salin ulang Use Case Diagram dari BAB 3.3 dokumen *Use Case & Scenario Use Case*
 <img alt="Use Case Diagram" src="./assets/diagram/UC Diagram.png" width="70%">
 </p>
 <p align="center">
-<i>Gambar 2. Use Case Diagram</i>
+<i>Gambar 5. Use Case Diagram</i>
 </p>
 
 ## 4.4 Skenario Use Case
