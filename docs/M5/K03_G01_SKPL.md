@@ -30,8 +30,9 @@ Dipersiapkan oleh:
 
 | Revisi | Deskripsi |
 | :--- | :--- |
-| A | Penyesuaian format 4.4.6 4.4.7 4.4.9 |
+| A | Penyesuaian format 4.4.6, 4.4.7, 4.4.9 |
 | B | Perbaikan kalimat Kebutuhan Fungsional (3.1) mengikuti pola EARS (*Event-driven*, *State-driven*, *Unwanted behavior*), pemisahan atomik KF13/KF14 untuk alur persetujuan verifikator, serta perbaikan pemetaan ID Kebutuhan (R11, R18, R19). |
+| C | Pembersihan teks instruksi template, penambahan skenario alternatif sistem keamanan (KNF06) pada UC02, penyesuaian penamaan metode dan lokalisasi tautan gambar diagram kelas (Keputusan #6 & #10). |
 
 <br>
 
