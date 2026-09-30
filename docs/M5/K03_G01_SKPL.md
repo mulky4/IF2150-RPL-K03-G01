@@ -525,22 +525,6 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 
 **Nama Use Case:** Daftar Program
 
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C01 | Program | Menyimpan data seperti waktu/tempat, deskripsi, kuota, syarat ketentuan, dan status. (Entity Class) | 
-| C03 | Relawan | Menyimpan data profil relawan dan informasi kontribusi. (Entity Class) | 
-| C04 | Pengguna | Kelas abstrak akun pengguna platform; secara eksklusif menyimpan data kredensial email dan kata sandi. (Entity Class) |
-| C05 | InisiatorProgram | Menyimpan data lembaga untuk mengelola program, seleksi, dan laporan. (Entity Class) | 
-| C07 | DokumenVerifikasi | Menyimpan dokumen yang diunggah saat registrasi beserta statusnya. (Entity Class) | 
-| C12 | KelolaAkunPage | Menyediakan antarmuka input kredensial untuk otentikasi dan pendaftaran akun. (Boundary Class) |
-| C13 | AuthController | Memvalidasi kredensial pengguna, mengelola sesi masuk, dan pembuatan akun baru. (Controller Class) | 
-| C14 | KelolaProgramPage | Menyediakan antarmuka bagi Inisiator untuk mendaftarkan program baru dan mengunggah laporan akhir. (Boundary Class) | 
-| C15 | ProgramController | Mengelola validasi pembuatan, penelusuran, detail, dan pembaruan status program. (Controller Class) | 
-
-#### Diagram Kelas
-
 <p align="center">
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC01 (2).png" width="70%">
 </p>
@@ -548,8 +532,6 @@ Salin ulang diagram kelas untuk setiap use case dari BAB 4.2 dokumen *Class Diag
 <i>Gambar 2. Diagram Kelas Use Case UC01</i>
 </p>
 <br>
-
-Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi milik setiap kelas dapat dituliskan pada tabel di bawah ini. Pastikan hubungan antarkelas menggunakan jenis relasi yang sesuai (asosiasi, agregasi, komposisi, generalisasi, atau dependensi).
 
 | ID Kelas | Nama Kelas | Atribut | Metode/Operasi |
 | :--- | :--- | :--- | :--- |
@@ -566,15 +548,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 ### 5.2.2 Use Case UC02
 
 **Nama Use Case:** Login akun
-
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C12 | KelolaAkunPage | Menyediakan antarmuka input kredensial untuk otentikasi dan pendaftaran akun. (Boundary Class) |
-| C13 | AuthController | Memvalidasi kredensial pengguna, mengelola sesi masuk, dan pembuatan akun baru. (Controller Class) |
-| C04 | Pengguna | Kelas abstrak akun pengguna platform; secara eksklusif menyimpan data kredensial email dan kata sandi. (Entity Class) |
-| C03 | Relawan | Menyimpan data profil relawan dan informasi kontribusi. (Entity Class) |
 
 <p align="center">
 <img width="522" height="202" alt="Untitled Diagram-Page-1 drawio" src="https://github.com/user-attachments/assets/5c08201d-56e1-47a8-aea8-bd884025b3d4" />
@@ -595,14 +568,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 
 **Nama Use Case:** Mencari program
 
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C16 | EksplorasiProgramPage | Menyediakan antarmuka bagi Relawan untuk mencari, menyaring, dan meninjau detail program. (Boundary Class) |
-| C15 | ProgramController | Mengelola validasi pembuatan, penelusuran, detail, dan pembaruan status program. (Controller Class) |
-| C01 | Program | Menyimpan data seperti waktu/tempat, deskripsi, kuota, syarat ketentuan, dan status. (Entity Class) |
-
 <p align="center">
 <img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
 </p>
@@ -621,14 +586,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 
 **Nama Use Case:** Mengunjungi situs program
 
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C16 | EksplorasiProgramPage | Menyediakan antarmuka bagi Relawan untuk mencari, menyaring, dan meninjau detail program. (Boundary Class) |
-| C15 | ProgramController | Mengelola validasi pembuatan, penelusuran, detail, dan pembaruan status program. (Controller Class) |
-| C01 | Program | Menyimpan data seperti waktu/tempat, deskripsi, kuota, syarat ketentuan, dan status. (Entity Class) |
-
 <p align="center">
 <img width="562" height="88" alt="uc 2" src="https://github.com/user-attachments/assets/e3407973-1c09-44dd-967a-fd6c049bacef" />
 </p>
@@ -646,19 +603,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 ### 5.2.5 Use Case UC05
 
 **Nama Use Case:** Menyeleksi calon relawan pendaftar 
-
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C01 | Program | Menyimpan data kuota dan status program; digunakan untuk memeriksa apakah kuota relawan masih tersedia sebelum permohonan diterima. (Entity Class) |
-| C02 | Pendaftaran | Menyimpan data keterampilan, ketersediaan waktu, status pendaftaran yang menjadi penghubung relawan dengan program. (Entity Class) |
-| C03 | Relawan | Menyimpan data relawan, termasuk informasi akun yang diperlukan untuk login serta informasi terkait kontribusi dan pendaftaran program. (Entity Class) |
-| C05 | InisiatorProgram | Menyimpan data lembaga/komunitas pembuat program (nama lembaga, tautan situs resmi) serta menjadi pengelola program, seleksi pendaftar, dan laporan akhir. (Entity Class) |
-| C17 | KelolaPendaftarPage | Menyediakan antarmuka bagi Inisiator untuk menyeleksi dan melihat status calon relawan. (Boundary Class) |
-| C18 | SeleksiController | Mengelola proses seleksi pendaftar, pengecekan kuota, dan pemicu pengiriman notifikasi. (Controller Class) |
-
-#### Diagram Kelas
 
 <p align="center">
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC05.jpg" width="70%"> 
@@ -681,20 +625,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 ### 5.2.6 Use Case UC06
 
 **Nama Use Case:** Konfirmasi status pendaftaran
-
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C02 | Pendaftaran | Menyimpan data keterampilan, ketersediaan waktu, status pendaftaran yang menjadi penghubung relawan dengan program. (Entity Class) |
-| C03 | Relawan | Menyimpan data relawan, termasuk informasi akun yang diperlukan untuk login serta informasi terkait kontribusi dan pendaftaran program. (Entity Class) |
-| C05 | InisiatorProgram | Menyimpan data lembaga/komunitas pembuat program (nama lembaga, tautan situs resmi) serta menjadi pengelola program, seleksi pendaftar, dan laporan akhir (Entity Class) |
-| C10 | Notifikasi | Menyimpan pemberitahuan otomatis kepada pengguna (hasil seleksi ke relawan, laporan akhir ke verifikator, catatan revisi ke inisiator) beserta status dibacanya. (Entity Class) |
-| C17 | KelolaPendaftarPage | 	Menyediakan antarmuka bagi Inisiator untuk mengonfirmasi hasil seleksi pendaftar. (Boundary Class) |
-| C18 | SeleksiController | Mengelola proses konfirmasi status pendaftaran dan pemicu pengiriman notifikasi. (Controller Class) |
-
-
-#### Diagram Kelas
 
 <p align="center">
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC06.jpg" width="70%">
@@ -720,21 +650,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 ### 5.2.7 Use Case UC07
 
 **Nama Use Case:** Memperbarui status program
-
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C01 | Program |  Menyimpan data seperti waktu/tempat pelaksanaan, deskripsi, kuota, syarat ketentuan, dan status. (Entity Class) |
-| C05 | InisiatorProgram | Menyimpan data lembaga/komunitas pembuat program (nama lembaga, tautan situs resmi) serta menjadi pengelola program, seleksi pendaftar, dan laporan akhir. (Entity Class) |
-| C06 | Verifikator | Menyimpan data pengelola platform yang meninau dan mengonfirmasi laporan akhir program, sehingga memicu pembaruan status kontribusi relawan. (Entity Class) |
-| C09 | LaporanProgram | LaporanProgram | Menyimpan dokumentasi akhir, catatan capaian, ringkasan dampak lingkungan, status peninjauan, dan catatan revisi dari verifikator. (Entity Class) | 
-| C10 | Notifikasi | Menyimpan pemberitahuan otomatis kepada pengguna (hasil seleksi ke relawan, laporan akhir ke verifikator, catatan revisi ke inisiator) beserta status dibacanya. (Entity Class) |
-| C14 | KelolaProgramPage | Menyediakan antarmuka bagi Inisiator untuk mengunggah laporan akhir kegiatan. (Boundary Class) | 
-| C15 | ProgramController | Mengelola validasi dan pembaruan status program berdasarkan laporan akhir. (Controller Class) | 
-
-
-#### Diagram Kelas
 
 <p align="center">
 <img alt="Class Diagram UC01" src="./assets/diagram/CD_UC07.jpg" width="70%">
@@ -762,18 +677,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 
 **Nama Use Case:** Konfirmasi kehadiran program
 
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C03 | Relawan |  Menyimpan data relawan yang telah berstatus diterima pada suatu program, digunakan untuk memvalidasi identitas dan kelayakan relawan saat melakukan check-in. (Entity Class) |
-| C08 | Kehadiran | Menyimpan catatan check-in relawan pada suatu program, termasuk waktu kehadiran yang tercatat begitu proses konfirmasi berhasil dilakukan. (Entity Class) |
-| C19 | AreaKegiatanPage | Menyediakan antarmuka bagi relawan untuk mengakses menu check-in dan menampilkan status ketersediaan fitur tersebut sesuai jadwal kegiatan. (Boundary Class) |
-| C20 | PresensiController | Memvalidasi status relawan dan kesesuaian waktu pelaksanaan kegiatan sebelum mengizinkan check-in, serta mencatat data kehadiran ke Kehadiran. (Controller Class) | 
-
-
-#### Diagram Kelas
-
 <p align="center">
 <img alt="Class Diagram UC08" src="./assets/diagram/CD_UC08.jpg" width="70%">
 </p>
@@ -797,20 +700,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 
 **Nama Use Case:** Memperbarui status akun relawanm
 
-#### Identifikasi Kelas
-
-| ID Kelas | Nama Kelas | Deskripsi Kelas |
-| :--- | :--- | :--- |
-| C03 | Relawan |  Menyimpan data relawan yang menerima pembaruan akumulasi jam aksi serta menampilkan riwayat kontribusinya pada halaman portofolio. (Entity Class) |
-| C06 | Verifikator | Menyimpan data admin platform yang mengonfirmasi status penyelesaian program, sehingga memicu pembaruan otomatis pada portofolio relawan terkait. (Entity Class) |
-| C08 | Kehadiran | Menyimpan catatan check-in relawan pada suatu program, digunakan sistem untuk menentukan relawan mana saja yang berhak menerima pembaruan jam aksi. (Entity Class) |
-| C11 | RiwayatKontribusi | Menyimpan akumulasi jam aksi dan daftar program yang telah diselesaikan oleh setiap relawan sebagai bagian dari portofolio dampaknya. (Entity Class) | 
-| C19 | AreaKegiatanPage | Menyediakan antarmuka bagi relawan untuk melihat halaman profil/portofolio berisi riwayat program dan akumulasi jam aksi terbaru. (Boundary Class) |
-| C20 | PresensiController | Memproses pembaruan otomatis akumulasi jam aksi relawan berdasarkan data kehadiran begitu status program dikonfirmasi selesai oleh Verifikator. (Controller Class) | 
-
-
-#### Diagram Kelas
-
 <p align="center">
 <img alt="Class Diagram UC09" src="./assets/diagram/CD_UC09.jpg" width="70%">
 </p>
@@ -829,7 +718,6 @@ Pada diagram kelas, cukup tampilkan nama kelas saja. Atribut dan metode/operasi 
 | C19 | AreaKegiatanPage | - | tampilkanPortofolio(), tampilkanRiwayatProgram() |
 | C20 | PresensiController | - | 	hitungJamAksi(), perbaruiPortofolioRelawan() |
 
-> Lanjutkan pola **5.2.x** untuk setiap use case pada 4.2.
 
 ## 5.3 Diagram Kelas Keseluruhan
 Gabungkan seluruh kelas dan hubungan antarkelas dari BAB 4.3 dokumen *Class Diagram* menjadi satu diagram kelas keseluruhan. Pastikan tidak ada kelas yang terduplikasi atau tertinggal.
