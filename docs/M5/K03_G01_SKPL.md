@@ -31,9 +31,7 @@ Dipersiapkan oleh:
 | Revisi | Deskripsi |
 | :--- | :--- |
 | A | Penyesuaian format 4.4.6 4.4.7 4.4.9 |
-| *B* |  |
-| *C* |  |
-| ... |  |
+| B | Perbaikan kalimat Kebutuhan Fungsional (3.1) mengikuti pola EARS (*Event-driven*, *State-driven*, *Unwanted behavior*), pemisahan atomik KF13/KF14 untuk alur persetujuan verifikator, serta perbaikan pemetaan ID Kebutuhan (R11, R18, R19). |
 
 <br>
 
@@ -194,7 +192,6 @@ Spesifikasi *operating system* atau lingkungan yang dibutuhkan P/L untuk beroper
 # BAB 3: Deskripsi Kebutuhan Perangkat Lunak
 
 ## 3.1 Kebutuhan Fungsional (KF)
-Salin ulang **seluruh Kebutuhan Fungsional (KF)** versi terbaru dari BAB 2.1 dokumen *Class Diagram* (sudah versi final dan sudah memakai format EARS). Pastikan ID Kebutuhan (kolom "ID Kebutuhan") juga konsisten dengan ID pada tabel Pemetaan Kebutuhan di dokumen *Requirement Gathering*.
 
 Tabel 3.1. Kebutuhan Fungsional
 
@@ -202,19 +199,20 @@ Tabel 3.1. Kebutuhan Fungsional
 | :--- | :--- | :--- |
 | KF01 | R02 | Ketika inisiator mengunggah dokumen verifikasi, perangkat lunak harus menerima dokumen melalui fitur *upload* dan *drag-and-drop*. |
 | KF02 | R05 | Ketika inisiator memasukkan tautan situs web resmi lembaga, perangkat lunak harus menyimpan tautan tersebut sebagai bagian dari informasi program. |
-| KF03 | R06 | Ketika relawan melakukan pencarian program, perangkat lunak harus menerima /keyword/ melalui kolom pencarian. |
-| KF04 | R07 | Ketika relawan memilih kategori program, perangkat lunak harus menampilkan program berdasarkan kategori “Jaga Alam” atau“Jaga Iklim”. |
-| KF05 | R08 | Jika kuota program telah terpenuhi, perangkat lunak harus menolak permohonan pendaftaran relawan pada program tersebut.  |
-| KF06 | R09 | Sebelum relawan mengirimkan permohonan pendaftaran, perangkat lunak harus memastikan calon relawan telah melakukan login. |
-| KF07 | R10 | Ketika relawan mengirimkan permohonan pendaftaran, perangkat lunak harus menyimpan catatan keterampilan atau ketersediaan waktu yang diberikan. |
-| KF08 | R13 | Ketika status pendaftaran relawan berubah, perangkat lunak harus mengirimkan notifikasi kepada relawan mengenai status pendaftarannya. |
-| KF09 | R14 | Ketika inisiator menentukan hasil seleksi relawan, perangkat lunak harus menyediakan dan menyimpan status “Diterima” atau “Ditolak” untuk setiap calon relawan. |
-| KF10 | R15 |Sebelum permohonan pendaftaran dikirimkan, perangkat lunak harus memeriksa kelengkapan dan status verifikasi data diri relawan. |
-| KF11 | R17 | Ketika relawan melakukan check-in pada suatu program, perangkat lunak harus mencatat waktu kehadiran relawan tersebut. |
-| KF12 | R18 | Jika relawan telah berstatus diterima dan waktu pelaksanaan kegiatan telah sesuai dengan jadwal, perangkat lunak harus memberikan akses kepada relawan untuk melakukan check-in. |
-| KF13 | R20 | Ketika inisiator mengunggah dokumentasi akhir kegiatan, perangkat lunak harus menyimpan dokumentasi tersebut dan mengubah status kegiatan menjadi selesai. |
-| KF14 | R24 | Ketika status kegiatan berubah menjadi selesai, perangkat lunak harus secara otomatis mencatat dan memperbarui akumulasi jam aksi relawan. |
-| KF15 | R25 | Ketika inisiator mengirimkan ringkasan capaian program, perangkat lunak harus menyimpan ringkasan capaian dampak lingkungan tersebut. |
+| KF03 | R06 | Ketika relawan melakukan pencarian program, perangkat lunak harus menerima *keyword* melalui kolom pencarian. |
+| KF04 | R07 | Ketika relawan memilih kategori program, perangkat lunak harus menampilkan program berdasarkan kategori “Jaga Alam” atau “Jaga Iklim”. |
+| KF05 | R08 | Bila kuota program telah terpenuhi, maka perangkat lunak harus menolak permohonan pendaftaran relawan pada program tersebut. |
+| KF06 | R09 | Bila relawan belum melakukan *login* saat mengirimkan permohonan pendaftaran, maka perangkat lunak harus menolak permohonan tersebut dan mengarahkan relawan ke halaman *login*. |
+| KF07 | R11 | Ketika relawan mengirimkan permohonan pendaftaran, perangkat lunak harus menyimpan catatan keterampilan atau ketersediaan waktu yang diberikan. |
+| KF08 | R13 | Ketika status pendaftaran relawan berubah, perangkat lunak harus mengirimkan notifikasi mengenai status pendaftaran kepada relawan tersebut. |
+| KF09 | R14 | Ketika inisiator menentukan hasil seleksi relawan, perangkat lunak harus menyimpan status “Diterima” atau “Ditolak” untuk relawan tersebut. |
+| KF10 | R15 | Ketika relawan mengirimkan permohonan pendaftaran, perangkat lunak harus memeriksa kelengkapan dan status verifikasi data diri relawan. |
+| KF11 | R17 | Ketika relawan melakukan *check-in* pada suatu program, perangkat lunak harus mencatat waktu kehadiran relawan tersebut. |
+| KF12 | R18, R19 | Selama relawan berstatus diterima dan waktu pelaksanaan kegiatan berlangsung sesuai jadwal, perangkat lunak harus menyediakan akses fitur *check-in* kepada relawan. |
+| KF13 | R20 | Ketika inisiator mengunggah dokumentasi akhir kegiatan, perangkat lunak harus menyimpan dokumentasi tersebut dan memperbarui status program menjadi “Menunggu Konfirmasi”. |
+| KF14 | R20 | Ketika verifikator menyetujui laporan akhir program, perangkat lunak harus mengubah status program menjadi “Selesai”. |
+| KF15 | R24 | Ketika status program berubah menjadi “Selesai”, perangkat lunak harus secara otomatis mencatat dan memperbarui akumulasi jam aksi relawan. |
+| KF16 | R25 | Ketika inisiator mengirimkan ringkasan capaian program, perangkat lunak harus menyimpan ringkasan capaian dampak lingkungan tersebut. |
 
 ## 3.2 Kebutuhan Non-Fungsional (KNF)
 Salin ulang Kebutuhan Non-Fungsional dari BAB 2.5 dokumen *Requirement Gathering*, sesuaikan ID Kebutuhan (kolom "ID Kebutuhan") apabila terjadi perubahan penomoran pada BAB 3.1 di atas.
