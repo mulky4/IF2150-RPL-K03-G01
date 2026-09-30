@@ -58,6 +58,11 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | :--- | :--- | :--- | :--- |
 | Gemini | Membantu mengklarifikasi penerapan konsep Boundary-Controller-Entity (BCE) sesuai materi perkuliahan | Bagaimana penerapan pola BCE yang tepat untuk perancangan class diagram per Use Case? | AI memberikan acuan teori penataan pola BCE. Kami meninjau penjelasan tersebut, lalu menyusun ulang struktur dan pembagian kelas agar tepat dengan skenario use case RekanBumi. |
 
+### Milestone 5
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Gemini | Membantu penyuntingan tata bahasa, kerapian struktur, dan validasi kelengkapan komponen dokumen SKPL | Bantu perbaiki keterbacaan dan tinjau kelengkapan komponen deskripsi perangkat lunak serta aturan penomoran pada dokumen SKPL | AI memberikan saran perbaikan narasi dan format penulisan. Kami meninjau kembali setiap poin, menyunting tata bahasanya, serta memastikan seluruh isinya selaras dengan dokumen kebutuhan RekanBumi. |
+
 ---
 ### Pernyataan Integritas dan Persetujuan
 
