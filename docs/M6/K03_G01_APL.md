@@ -211,6 +211,23 @@ Gambar 3 menunjukkan *package* Client yang memuat komponen *View* serta *package
 
 <sub><b><i>Catatan</i></b>: <i>Ganti XXX dengan nama view yang dibuat, misalnya Logical View. Gambar 2 hanya contoh untuk P/L e-commerce, ganti dengan view milik kelompok Anda yang memuat seluruh komponen pada Tabel 2.1. Jenis view dan notasinya boleh berbeda dari contoh. Jika membuat view tambahan, lanjutkan pola 3.x ini (3.2, 3.3, dan seterusnya).</i></sub>
 
+## 3.2 Physical View
+
+*Physical View* menggambarkan bagaimana komponen perangkat lunak RekanBumi didistribusikan dan dijalankan pada node-node fisik/komputasi dalam lingkungan operasionalnya, mengikuti Client-*Server Architecture* yang ditetapkan pada BAB 1. View ini disajikan dalam bentuk deployment diagram, dengan setiap node merepresentasikan unit komputasi tempat sekumpulan komponen dijalankan.
+
+*Physical View* dipilih sebagai pelengkap Logical View (3.1). Jika Logical View menunjukkan pembagian tanggung jawab antarkomponen secara struktural mengikuti pola MVC, Physical View menunjukkan di mana komponen-komponen tersebut secara fisik dijalankan serta bagaimana node-node tersebut saling berkomunikasi melalui jaringan. Pemilihan view ini selaras dengan Tabel 1.3 Lingkungan Operasi Perangkat Lunak pada BAB 1, yang telah menetapkan spesifikasi node Client, Server, dan DBMS yang digunakan RekanBumi.
+
+<p align="center">
+<img alt="Physical View RekanBumi" src="./assets/diagram/physical-view.png" width="100%">
+</p>
+<p align="center">
+<i>Gambar 4. Physical View RekanBumi</i>
+</p>
+
+Gambar 4 menunjukkan empat node pada arsitektur RekanBumi. Node Client Device merepresentasikan peramban web milik pengguna (Relawan, Inisiator Program, dan Verifikator) yang menjalankan seluruh komponen View: KelolaAkunPage, KelolaProgramPage, EksplorasiProgramPage, KelolaPendaftarPage, dan AreaKegiatanPage. Node Application Server menjalankan seluruh komponen Controller (AuthController, ProgramController, SeleksiController, PresensiController), seluruh komponen Model (Pengguna, Relawan, InisiatorProgram, Verifikator, Program, Pendaftaran, DokumenVerifikasi, Kehadiran, LaporanProgram, Notifikasi, RiwayatKontribusi), komponen pendukung Better Auth, serta CloudStorageAdapter sebagai komponen integrasi eksternal. Node Database Server menjalankan DBMS: Neon PostgreSQL sebagai basis data terpusat.
+
+Komunikasi antara Client Device dan Application Server dilakukan melalui tRPC di atas protokol HTTPS, diberi label "memanggil API". Komunikasi antara Application Server dan Database Server dilakukan melalui Prisma ORM, diberi label "akses data". Sistem di luar P/L, yaitu layanan Cloud Storage eksternal yang diakses CloudStorageAdapter untuk menyimpan dan mengambil dokumen legalitas serta foto laporan, digambarkan dengan garis putus-putus dan node bertanda «external», sejalan dengan ketentuan bahwa sistem di luar P/L tidak perlu dimasukkan ke Tabel 2.1.
+
 ---
 
 # Referensi
