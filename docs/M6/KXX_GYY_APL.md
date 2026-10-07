@@ -35,10 +35,18 @@ Dipersiapkan oleh:
 Pada bagian ini, tentukan *architectural style* atau *pattern* yang menjadi acuan untuk aplikasi yang Anda kembangkan. Misalnya *layered architecture*, *client-server*, *repository*, *pipe and filter architecture*, atau MVC (*Model-View-Controller*).
 
 <p align="center">
-<img alt="Contoh Arsitektur MVC" src="./assets/diagram/contoh-arsitektur-mvc.webp" width="70%">
+<img alt="Arsitektur MVC : RekanBumi" src="./assets/diagram/MVC.png" width="70%">
 </p>
 <p align="center">
-<i>Gambar 1. Contoh Arsitektur MVC</i>
+<i>Gambar 1. Arsitektur MVC : RekanBumi </i>
+</p>
+
+
+<p align="center">
+<img alt="Arsitektur Client-Server : RekanBumi" src="./assets/diagram/CLIENTSERVER.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 2. Arsitektur Client-Server : RekanBumi </i>
 </p>
 
 Isi bab ini dengan hal-hal berikut:
