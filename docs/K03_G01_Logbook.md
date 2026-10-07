@@ -115,6 +115,7 @@
 | 07-10-2026 | Avicenna Ananda Musthafa | Mengerjakan 3.1 Logical View | 2 | Done | - |
 | 07-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 1 (terutama diagram MVC dan Client-Server Architecture) | 2 | Done | - |
 | 07-10-2026 | Ribka Kaylena Sanjaya | Mengerjakan bab 1 (deskripsi dan sebagainya) | 2 | Done | - |
+| 07-10-2026 | Mulky Siraj Firizqi | Mengerjakan bab 2 (Identifikasi Komponen/Modul/Subsistem) | 1 | Done | - |
 
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
