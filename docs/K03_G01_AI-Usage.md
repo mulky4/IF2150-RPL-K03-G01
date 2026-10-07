@@ -63,6 +63,10 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | :--- | :--- | :--- | :--- |
 | Gemini | Membantu penyuntingan tata bahasa, kerapian struktur, dan validasi kelengkapan komponen dokumen SKPL | Bantu perbaiki keterbacaan dan tinjau kelengkapan komponen deskripsi perangkat lunak serta aturan penomoran pada dokumen SKPL | AI memberikan saran perbaikan narasi dan format penulisan. Kami meninjau kembali setiap poin, menyunting tata bahasanya, serta memastikan seluruh isinya selaras dengan dokumen kebutuhan RekanBumi. |
 
+### Milestone 6
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Gemini | Sebagai verifikator dan pembanding untuk memeriksa konsistensi antara diagram arsitektur Bab 1 dan pemetaan identifikasi komponen Bab 2 ataupun Bab 3 | Bagaimana cara mengelompokkan komponen Client-Server dan MVC agar konsisten antara diagram Bab 1 dan tabel identifikasi Bab 2? | AI digunakan sebagai partner diskusi dan pengarah untuk mengecek kesesuaian format. Evaluasi dan tinjauan mendalam serta koreksi dilakukan kelompok agar konsisten dengan rancangan kelompok. |
 ---
 ### Pernyataan Integritas dan Persetujuan
 
