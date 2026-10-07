@@ -32,23 +32,6 @@ Dipersiapkan oleh:
 
 # BAB 1: Style/Pattern Arsitektur Acuan
 
-Pada bagian ini, tentukan *architectural style* atau *pattern* yang menjadi acuan untuk aplikasi yang Anda kembangkan. Misalnya *layered architecture*, *client-server*, *repository*, *pipe and filter architecture*, atau MVC (*Model-View-Controller*).
-
-<p align="center">
-<img alt="Arsitektur MVC : RekanBumi" src="./assets/diagram/MVC.png" width="70%">
-</p>
-<p align="center">
-<i>Gambar 1. Arsitektur MVC : RekanBumi </i>
-</p>
-
-
-<p align="center">
-<img alt="Arsitektur Client-Server : RekanBumi" src="./assets/diagram/CLIENTSERVER.png" width="70%">
-</p>
-<p align="center">
-<i>Gambar 2. Arsitektur Client-Server : RekanBumi </i>
-</p>
-
 ## 1.1  Style/Pattern Arsitektur Acuan 
 
 Arsitektur perangkat lunak RekanBumi menggunakan Client-Server Architecture sebagai gaya arsitektur dan Model-View-Controller (MVC) sebagai pola arsitektur pada interface. Kombinasi ini digunakan untuk memisahkan interaksi pengguna dengan proses pengolahan data yang dilakukan oleh server.
@@ -143,6 +126,20 @@ Pada sisi pengelolaan data, Prisma berperan sebagai ORM yang menjembatani aplika
 
 Kombinasi teknologi tersebut sesuai dengan arsitektur yang dipilih karena client mengakses layanan aplikasi melalui server, sementara pengelolaan antarmuka, proses aplikasi, dan data dapat dipisahkan berdasarkan tanggung jawab masing-masing komponen dalam penerapan MVC.
 
+<p align="center">
+<img alt="Arsitektur MVC : RekanBumi" src="./assets/diagram/MVC.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 1. Arsitektur MVC : RekanBumi </i>
+</p>
+
+
+<p align="center">
+<img alt="Arsitektur Client-Server : RekanBumi" src="./assets/diagram/CLIENTSERVER.png" width="70%">
+</p>
+<p align="center">
+<i>Gambar 2. Arsitektur Client-Server : RekanBumi </i>
+</p>
 
 ---
 
