@@ -49,15 +49,83 @@ Pada bagian ini, tentukan *architectural style* atau *pattern* yang menjadi acua
 <i>Gambar 2. Arsitektur Client-Server : RekanBumi </i>
 </p>
 
-Isi bab ini dengan hal-hal berikut:
-1. **Style/pattern yang dipilih** beserta penjelasan singkat peran setiap bagiannya. Untuk MVC, jelaskan peran *Model*, *View*, dan *Controller*.
-2. **Alasan pemilihan** berdasarkan karakteristik P/L Anda, misalnya jenis pengguna, alur proses bisnis, serta KF dan KNF pada dokumen SKPL.
-3. **Gambar style/pattern yang diterapkan pada P/L Anda.** Jangan hanya menyalin Gambar 1. Isi setiap bagian pattern dengan komponen milik P/L Anda. Misalnya, kotak *Controller* berisi daftar *controller* yang ada di aplikasi dan kotak *Model* berisi daftar *model* yang ada di aplikasi.
+## 1.1  Style/Pattern Arsitektur Acuan 
 
-Selain *style/pattern*, tuliskan juga lingkungan operasi P/L. Tabel berikut **disalin dari subbab 2.5 *Lingkungan Operasi Perangkat Lunak* pada dokumen SKPL** tanpa perubahan. Setelah tabel, jelaskan kaitan teknologi yang dipakai dengan *style/pattern* yang dipilih. Contohnya, Django (Python) secara bawaan mengikuti pola MVT (*Model-View-Template*), yaitu varian dari MVC.
+Arsitektur perangkat lunak RekanBumi menggunakan Client-Server Architecture sebagai gaya arsitektur dan Model-View-Controller (MVC) sebagai pola arsitektur pada interface. Kombinasi ini digunakan untuk memisahkan interaksi pengguna dengan proses pengolahan data yang dilakukan oleh server.
 
-Tabel 1.1. Lingkungan Operasi Perangkat Lunak
+### 1.1.1 Client-Server Architecture 
+Pada Client-Server, perangkat lunak dibagi menjadi dua bagian utama yaitu, client dan server. Client merupakan bagian yang berinteraksi langsung dengan pengguna dan mengirimkan permintaan kepada server. Server bertanggung jawab menerima permintaan, menjalankan proses bisnis, mengelola data, serta mengirimkan hasil pengolahan kepada client.
 
+Jika diimplementasikan pada RekanBumi:
+Client merupakan antarmuka web yang digunakan oleh Relawan, Inisiator Program, dan Verifikator untuk mengakses fungsi-fungsi RekanBumi.
+Server menangani proses aplikasi, autentikasi, pengolahan data, validasi, serta komunikasi dengan basis data.
+Database menyimpan data sistem secara terpusat sehingga data program, pengguna, pendaftaran, kehadiran, laporan, notifikasi, dan riwayat kontribusi dapat digunakan oleh berbagai client.
+
+Pemisahan tersebut memungkinkan beberapa jenis pengguna mengakses layanan dan data yang sama melalui client masing-masing. RekanBumi sendiri merupakan platform web yang mempertemukan masyarakat umum dengan lembaga lingkungan terverifikasi melalui program "Jaga Alam" dan "Jaga Iklim".
+
+### 1.1.2 Model-View-Controller (MVC)
+Di dalam RekanBumi, pola MVC digunakan untuk memisahkan tanggung jawab antara antarmuka pengguna, pengendalian alur proses, dan representasi data.
+
+**1. Model**
+Model bertanggung jawab merepresentasikan dan mengelola data serta keadaan (state) yang digunakan oleh sistem. Pada RekanBumi, bagian Model direpresentasikan oleh kelas-kelas *Entity Class* , yaitu:
+  - Program
+  - Pendaftaran
+  - Relawan
+  - Pengguna
+  - InisiatorProgram
+  - Verifikator
+  - DokumenVerifikasi
+  - Kehadiran
+  - LaporanProgram
+  - Notifikasi
+  - RiwayatKontribusi
+
+Kelas-kelas tersebut menyimpan data utama yang digunakan dalam proses bisnis RekanBumi. Misalnya, Program menyimpan informasi program, Pendaftaran menyimpan data pendaftaran relawan, Kehadiran menyimpan catatan check-in, dan RiwayatKontribusi menyimpan riwayat jam aksi relawan. Daftar kelas dan pembagiannya sebagai Entity Class telah didefinisikan pada pemodelan kelas RekanBumi.
+
+**2. View** 
+View bertanggung jawab menyediakan antarmuka yang digunakan pengguna untuk melihat informasi dan memberikan masukan kepada sistem. Pada RekanBumi, bagian View direpresentasikan oleh kelas-kelas Boundary Class, yaitu:
+  - KelolaAkunPage
+  - KelolaProgramPage
+  - EksplorasiProgramPage
+  - KelolaPendaftarPage
+  - AreaKegiatanPage
+
+Contohnya, EksplorasiProgramPage digunakan oleh Relawan untuk mencari, menyaring, dan melihat detail program, sedangkan AreaKegiatanPage menyediakan antarmuka untuk melakukan *check-in* dan melihat portofolio kontribusi.
+
+**3. Controller**
+Controller bertanggung jawab menerima masukan dari View, menjalankan proses dan validasi yang diperlukan, serta menghubungkan View dengan Model. Pada RekanBumi, bagian Controller terdiri atas:
+
+- AuthController
+- ProgramController
+- SeleksiController
+- PresensiController
+
+AuthController menangani autentikasi dan sesi pengguna, ProgramController menangani pembuatan, pencarian, detail, dan perubahan status program, SeleksiController menangani proses seleksi relawan dan pengecekan kuota, sedangkan PresensiController menangani validasi dan pencatatan kehadiran serta pembaruan riwayat jam aksi.
+
+Dengan demikian, alur dasar MVC pada RekanBumi adalah:
+
+**Pengguna → View → Controller → Model → Controller → View → Pengguna**
+
+Sedangkan dalam konteks Client-Server:
+
+**Client → Request → Server (MVC) → Database → Server → Response → Client**
+
+## 1.2 Alasan Pemilihan
+Pemilihan Client-Server Architecture didasarkan pada karakteristik RekanBumi sebagai perangkat lunak berbasis web yang digunakan oleh para aktor, yaitu Inisiator Program, Relawan, dan Verifikator. Ketiga aktor tersebut membutuhkan akses terhadap layanan dan data yang sama, seperti data program, pendaftaran relawan, status program, kehadiran, laporan, dan riwayat kontribusi. Oleh karena itu, pengelolaan data secara terpusat pada server sesuai dengan kebutuhan RekanBumi.
+
+Client-Server juga sesuai dengan alur proses bisnis RekanBumi yang melibatkan banyak interaksi antara pengguna dan sistem. Relawan dapat mencari program, mendaftarkan diri, menerima notifikasi, dan melakukan check-in. Inisiator dapat membuat program, menyeleksi relawan, serta mengirimkan laporan kegiatan. Sementara itu, Verifikator melakukan verifikasi dan meninjau laporan program. Proses-proses tersebut membutuhkan server sebagai pusat pengolahan dan penyimpanan data.
+
+Pemilihan MVC didasarkan pada banyaknya fungsi dan antarmuka yang dimiliki RekanBumi. Pemisahan antara View, Controller, dan Model memungkinkan setiap bagian memiliki tanggung jawab yang lebih terfokus. View menangani interaksi dengan pengguna, Controller menangani alur dan validasi proses, sedangkan Model menangani data dan keadaan sistem.
+
+MVC juga sesuai dengan pembagian kelas yang telah dibuat pada pemodelan kelas. RekanBumi telah memiliki Boundary Class, Controller Class, dan Entity Class yang dapat dipetakan secara langsung ke View, Controller, dan Model.
+
+Selain itu, pola ini mendukung kebutuhan fungsional RekanBumi yang melibatkan proses seperti pencarian dan penyaringan program (KF03 dan KF04), validasi pendaftaran (KF05 dan KF10), autentikasi (KF06), seleksi relawan (KF07 dan KF09), notifikasi (KF08), check-in (KF11 dan KF12), serta pembaruan status program dan riwayat kontribusi (KF13–KF15).
+
+Dari sisi kebutuhan non-fungsional, pemisahan tanggung jawab pada Client-Server dan MVC juga mendukung kebutuhan **performance efficiency, security, reliability, compatibility, interaction capability,** dan **flexibility** yang tercantum dalam SKPL. Misalnya, proses pencarian dapat diproses oleh server untuk memenuhi target waktu respons, autentikasi dapat dipusatkan pada server, sedangkan View dapat dirancang agar kompatibel dengan berbagai ukuran layar dan peramban.
+
+
+## 1.3 Lingkungan Operasi Perangkat Lunak
+Lingkungan operasi perangkat lunak yang tertera di bawah merupakan sama dengan lingkungan yang tertera pada SKPL.
 | Komponen | Spesifikasi |
 | :--- | :--- |
 | Server | Node.js 20+|
@@ -69,7 +137,12 @@ Tabel 1.1. Lingkungan Operasi Perangkat Lunak
 | ORM | Prisma |
 | API | tRPC |
 
-<sub><b><i>Catatan</i></b>: <i>Style/pattern yang dipilih di bab ini menjadi acuan untuk BAB 2 (pengelompokan komponen) dan BAB 3 (model arsitektur). Contoh pada dokumen ini memakai MVC secara konsisten dari BAB 1 sampai BAB 3. Kelompok boleh memakai pattern lain selama alasannya dijelaskan dan BAB 2 serta BAB 3 disesuaikan. Tabel 1.1 harus sama persis dengan subbab 2.5 dokumen SKPL; jangan menambah atau mengubah isinya karena SKPL sudah final.</i></sub>
+Teknologi yang digunakan mendukung penerapan Client-Server Architecture dan MVC. Next.js 15 dan Tailwind CSS digunakan pada sisi frontend sebagai bagian yang menyediakan antarmuka kepada client. Node.js 20+ menjadi lingkungan server untuk menjalankan aplikasi. tRPC digunakan sebagai mekanisme komunikasi antara client dan server untuk mengakses fungsi aplikasi.
+
+Pada sisi pengelolaan data, Prisma berperan sebagai ORM yang menjembatani aplikasi dengan Neon PostgreSQL sebagai DBMS. Dengan demikian, data yang dikelola oleh Model dapat disimpan secara terpusat pada server. Better Auth digunakan untuk mendukung kebutuhan autentikasi pengguna pada aplikasi.
+
+Kombinasi teknologi tersebut sesuai dengan arsitektur yang dipilih karena client mengakses layanan aplikasi melalui server, sementara pengelolaan antarmuka, proses aplikasi, dan data dapat dipisahkan berdasarkan tanggung jawab masing-masing komponen dalam penerapan MVC.
+
 
 ---
 
