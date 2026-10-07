@@ -108,4 +108,11 @@
 | 29-09-2026 | Kairenzo Vemil | Mengerjakan 1.1, 1.5, dan 1.6 | 1 | Done | - |
 | 30-09-2026 | Kairenzo Vemil | Revisi 1.5 | 1/4 | Done | - |
 
+### Milestone 6
+**Periode:** 30 September 2026 - 7 Oktober 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 07-10-2026 | Avicenna Ananda Musthafa | Mengerjakan 3.1 Logical View | 2 | Done | - |
+
+
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
