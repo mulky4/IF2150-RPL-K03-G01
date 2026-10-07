@@ -148,37 +148,37 @@ Kombinasi teknologi tersebut sesuai dengan arsitektur yang dipilih karena client
 
 # BAB 2: Identifikasi Komponen / Modul / Subsistem
 
-Pada bagian ini, lakukan identifikasi terhadap komponen, modul, atau subsistem yang menyusun aplikasi berdasarkan *pattern* arsitektur yang telah ditetapkan sebelumnya. Setiap komponen memiliki tanggung jawab tertentu dalam mendukung fungsionalitas sistem.
+Pada bagian ini, dilakukan identifikasi terhadap komponen dan subsistem yang menyusun perangkat lunak RekanBumi. Pengelompokan komponen didasarkan pada perpaduan *Client-Server Architecture* dan pola *Model-View-Controller* (MVC) yang telah ditetapkan pada BAB 1.
 
-Setiap komponen memiliki tanggung jawab tertentu dalam mendukung fungsionalitas sistem secara keseluruhan. Komponen dapat dikelompokkan berdasarkan lapisan arsitektur (misalnya *Model*, *View*, dan *Controller* pada pattern MVC), atau berdasarkan fungsi atau peran komponen di dalam sistem (misalnya modul autentikasi, manajemen data, dan integrasi eksternal).
+Tabel di bawah ini mendefinisikan rincian komponen yang membentuk arsitektur sistem, sekaligus memetakan setiap elemen secara hierarkis dengan antarmuka, pengontrol, dan kelas entitas yang telah dirancang pada dokumen SKPL sebelumnya.
 
 Tabel 2.1. Identifikasi Komponen/Modul/Subsistem
 
-| Nama Komponen/Modul/Subsistem | Jenis                 | Penjelasan                                                                                                           |
-| :---------------------------- | :-------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| *KatalogView*                 | *View*                | *Menampilkan daftar produk dan meneruskan aksi pelanggan (misalnya "Tambah ke Keranjang") ke KatalogController.*     |
-| *KeranjangView*               | *View*                | *Menampilkan isi keranjang pelanggan beserta tombol checkout.*                                                       |
-| *CheckoutView*                | *View*                | *Menampilkan ringkasan pesanan dan pilihan metode pembayaran kepada pelanggan.*                                      |
-| *RiwayatPesananView*          | *View*                | *Menampilkan daftar pesanan yang pernah dibuat pelanggan beserta statusnya.*                                         |
-| *KatalogController*           | *Controller*          | *Memproses permintaan daftar produk dan penambahan produk ke keranjang.*                                             |
-| *KeranjangController*         | *Controller*          | *Memproses perubahan isi keranjang dan membuat pesanan baru saat checkout.*                                          |
-| *PembayaranController*        | *Controller*          | *Memproses pemilihan metode pembayaran dan meneruskan permintaan otorisasi ke PaymentGatewayAdapter.*                |
-| *PesananController*           | *Controller*          | *Memproses permintaan riwayat pesanan milik pelanggan.*                                                              |
-| *Produk*                      | *Model*               | *Merepresentasikan data produk beserta stoknya serta metode untuk mengakses dan mengubahnya.*                        |
-| *Keranjang*                   | *Model*               | *Merepresentasikan item yang dipilih pelanggan sebelum checkout serta metode untuk mengakses dan mengubahnya.*       |
-| *Pesanan*                     | *Model*               | *Merepresentasikan data pesanan beserta status pembayarannya serta metode untuk mengakses dan mengubahnya.*          |
-| *Pelanggan*                   | *Model*               | *Merepresentasikan data akun pelanggan serta metode untuk mengakses dan mengubahnya.*                                |
-| *Validasi*                    | *Pendukung*           | *Memvalidasi input pelanggan sebelum diproses oleh controller.*                                                      |
-| *PaymentGatewayAdapter*       | *Integrasi Eksternal* | *Mengirim permintaan otorisasi ke payment gateway (dummy) dan meneruskan status pembayaran ke PembayaranController.* |
-| *Database*                    | *Penyimpanan Data*    | *Menyimpan seluruh data model secara persisten, baik lokal (misalnya SQLite) maupun terpusat (misalnya Supabase).*   |
-| *...*                         | *...*                 | *...*                                                                                                                |
-
-Ketentuan pengisian Tabel 2.1:
-1. Kolom **Jenis** mengikuti pengelompokan pada *style/pattern* di BAB 1. Untuk MVC, jenisnya adalah *Model*, *View*, dan *Controller*. Jenis lain boleh ditambahkan, misalnya *Pendukung* untuk komponen bantu yang dipakai bersama, atau *Integrasi Eksternal* untuk penghubung ke sistem di luar P/L yang disebutkan pada subbab 2.2 dokumen SKPL. Kolom ini juga boleh diisi dengan *Subsistem*, *Modul*, atau *Komponen* apabila komponen dikelompokkan berdasarkan fungsinya. Tuliskan subsistem terlebih dahulu, lalu komponen penyusunnya di baris-baris berikutnya.
-2. Komponen **tidak sama dengan** kelas. Satu komponen boleh mewadahi beberapa kelas dari diagram kelas pada dokumen SKPL. Pastikan seluruh kelas tercakup oleh setidaknya satu komponen.
-3. Pastikan seluruh use case pada dokumen SKPL dapat dijalankan oleh komponen-komponen yang didaftarkan di tabel ini. Jangan menambahkan komponen untuk fitur yang tidak ada di SKPL.
-
-<sub><b><i>Catatan</i></b>: <i>Nama komponen pada Tabel 2.1 harus dipakai sama persis pada gambar di BAB 1 dan setiap view di BAB 3. Jika saat membuat view ternyata dibutuhkan komponen baru, tambahkan komponen tersebut ke Tabel 2.1 terlebih dahulu.</i></sub>
+| Nama Komponen/Modul/Subsistem | Jenis | Penjelasan |
+| :--- | :--- | :--- |
+| *KelolaAkunPage* | *Client (View)* | Menampilkan formulir pendaftaran dan masuk akun pada peramban klien, serta meneruskan interaksi ke *AuthController*. |
+| *KelolaProgramPage* | *Client (View)* | Menampilkan antarmuka bagi Inisiator untuk mendaftarkan program baru beserta dokumennya, dan mengunggah laporan akhir. |
+| *EksplorasiProgramPage* | *Client (View)* | Menampilkan katalog, fitur pencarian, filter kategori "Jaga Alam" dan "Jaga Iklim", serta detail informasi program aksi kepada Relawan. |
+| *KelolaPendaftarPage* | *Client (View)* | Menampilkan daftar calon relawan pendaftar dan menyediakan antarmuka bagi Inisiator untuk memasukkan keputusan hasil seleksi. |
+| *AreaKegiatanPage* | *Client (View)* | Menampilkan antarmuka eksekusi *check-in* kehadiran di lokasi dan halaman peninjauan riwayat portofolio jam aksi relawan. |
+| *AuthController* | *Server (Controller)* | Menerima permintaan dari klien, memvalidasi kredensial keamanan, memproses pembuatan akun, dan mengelola rute sesi. |
+| *ProgramController* | *Server (Controller)* | Mengeksekusi logika bisnis terkait pencarian program, validasi unggahan data program baru, dan pembaruan status laporan. |
+| *SeleksiController* | *Server (Controller)* | Mengeksekusi logika validasi ketersediaan kuota program, menyimpan status seleksi relawan, dan memicu notifikasi. |
+| *PresensiController* | *Server (Controller)* | Memvalidasi kesesuaian rentang waktu *check-in* kegiatan dan mengeksekusi kalkulasi penambahan portofolio relawan. |
+| *Pengguna* | *Server (Model)* | Merepresentasikan data kredensial autentikasi (email dan kata sandi) dari entitas akun platform. |
+| *Relawan* | *Server (Model)* | Merepresentasikan data profil dan metrik jam aksi individu masyarakat umum. |
+| *InisiatorProgram* | *Server (Model)* | Merepresentasikan data profil dan tautan situs resmi dari lembaga atau komunitas lingkungan. |
+| *Verifikator* | *Server (Model)* | Merepresentasikan data entitas pengelola sistem yang bertugas meninjau laporan. |
+| *Program* | *Server (Model)* | Merepresentasikan data detail kegiatan, jadwal, kategori, kuota, dan status keberlangsungan. |
+| *Pendaftaran* | *Server (Model)* | Merepresentasikan data keterampilan, ketersediaan waktu, dan status seleksi calon relawan. |
+| *DokumenVerifikasi* | *Server (Model)* | Merepresentasikan data dan status validasi dari dokumen legalitas yang diunggah inisiator. |
+| *Kehadiran* | *Server (Model)* | Merepresentasikan catatan waktu (*timestamp*) konfirmasi kehadiran relawan di lokasi program. |
+| *LaporanProgram* | *Server (Model)* | Merepresentasikan data dokumentasi akhir, catatan capaian, dan catatan revisi kegiatan. |
+| *Notifikasi* | *Server (Model)* | Merepresentasikan entitas pemberitahuan otomatis berserta status keterbacaannya. |
+| *RiwayatKontribusi* | *Server (Model)* | Merepresentasikan data akumulasi jam aksi dan daftar program yang telah diselesaikan relawan. |
+| *Better Auth* | *Server (Pendukung)* | Komponen pendukung autentikasi yang diintegrasikan di lapisan model pada peladen (*server*). |
+| *DBMS : NeonPostgreSQL* | *Penyimpanan Data* | Relasional DBMS berbasis komputasi awan yang menyimpan seluruh skema data sistem secara persisten. |
+| *CloudStorageAdapter* | *Integrasi Eksternal* | Komponen pengelola API eksternal untuk menyimpan dan mengambil berkas dokumen legalitas serta foto laporan. |
 
 ---
 
