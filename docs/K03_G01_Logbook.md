@@ -118,5 +118,10 @@
 | 07-10-2026 | Mulky Siraj Firizqi | Mengerjakan bab 2 (Identifikasi Komponen/Modul/Subsistem) | 1 | Done | - |
 | 07-10-2026 | Kairenzo Vemil | Mengerjakan 3.2 Physical View | 2 | Done | - |
 
+### Milestone 7
+**Periode:** Oktober 2026 - 21 Oktober 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 20-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 3 untuk UC07 dan UC08 | 3,5 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
