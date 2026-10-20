@@ -209,7 +209,7 @@ Pada diagram, pastikan:
 - Kelas yang sama dengan kelas di use case lain memakai nama, atribut, dan metode yang konsisten.
 
 ## 3.7 Use Case 07 : Memperbarui status program
-**ID Use Case:** CU07
+**ID Use Case:** UC07
 **Nama Use Case:** Memperbarui status program
 
 ### 3.7.1 Identifikasi Kelas
@@ -231,19 +231,19 @@ Buat *sequence diagram* untuk **setiap skenario use case**, mencakup skenario no
 - **Skenario Normal**
 
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd(normal)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(normal)_uc07.jpg" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram [UC01]</i>
+<i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program </i>
 </p>
 
-- **Skenario Alternatif [Nomor]: [Nama Skenario]**
+- **Skenario Alternatif 1 : [Nama Skenario]**
 
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram [UC01] - [Nama skenario alternatif]</i>
+<i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program - Verifikator Menolak Laporan Akhir</i>
 </p>
 
 ### 3.7.3 Diagram Kelas
@@ -251,24 +251,17 @@ Buat *sequence diagram* untuk **setiap skenario use case**, mencakup skenario no
 Buatlah diagram kelas untuk use case ini yang terdiri atas kelas-kelas dari 3.1.1. **Setiap kelas pada diagram wajib menampilkan atribut dan metode/operasi langsung di dalam kotak kelasnya**, sehingga tidak perlu membuat tabel daftar atribut dan metode per kelas pada subbab ini. Daftar lengkap atribut dan metode seluruh kelas disajikan pada Tabel 4.1 (Bab 4).
 
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd_uc07.jpg" width="35%">
+<img alt="" src="./assets/diagram/sd_uc07.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar X. Diagram Kelas [Nama Uce Case]</i>
+<i>Gambar X. Diagram Kelas UC07 : Memperbarui Status Program</i>
 </p>
-
-Pada diagram, pastikan:
-- Atribut dituliskan beserta visibilitas dan tipe datanya, misalnya `- email: String`.
-- Operasi dituliskan beserta visibilitas, parameter, dan tipe kembaliannya, misalnya `+ login(email: String, password: String): Boolean`.
-- Relasi antarkelas (asosiasi, agregasi, komposisi, generalisasi, dan dependensi) digambarkan lengkap dengan multiplisitas.
-- Semua operasi yang dipanggil pada sequence diagram 3.1.2 (skenario normal dan alternatif) ada pada kelas yang bersangkutan.
-- Kelas yang sama dengan kelas di use case lain memakai nama, atribut, dan metode yang konsisten.
 
 <br>
 
-## 3.8 Use Case 08 : Memperbarui status program
-**ID Use Case:** CU07
-**Nama Use Case:** Konfirmasi kehadiran program
+## 3.8 Use Case 08 : Konfirmasi kehadiran program
+**ID Use Case:** CU08
+**Nama Use Case:** Konfirmasi Kehadiran Program
 
 ### 3.8.1 Identifikasi Kelas
 
@@ -284,43 +277,32 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 
 ### 3.8.2 Sequence Diagram
 
-Buat *sequence diagram* untuk **setiap skenario use case**, mencakup skenario normal dan alternatif pada subbab 4.4 SKPL. Diagram melibatkan kelas-kelas yang telah diidentifikasi pada SKPL. 
-
 - **Skenario Normal**
 
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd(normal)_uc08.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(normal)_uc08.jpg" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram [UC01]</i>
+<i>Gambar X. Sequence Diagram UC08 : Konfirmasi kehadiran program </i>
 </p>
 
 - **Skenario Alternatif [Nomor]: [Nama Skenario]**
 
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram [UC08] - [Nama skenario alternatif]</i>
+<i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran program - Check-in di Luar Waktu Pelaksanaan </i>
 </p>
 
 ### 3.8.3 Diagram Kelas
-
-Buatlah diagram kelas untuk use case ini yang terdiri atas kelas-kelas dari 3.1.1. **Setiap kelas pada diagram wajib menampilkan atribut dan metode/operasi langsung di dalam kotak kelasnya**, sehingga tidak perlu membuat tabel daftar atribut dan metode per kelas pada subbab ini. Daftar lengkap atribut dan metode seluruh kelas disajikan pada Tabel 4.1 (Bab 4).
-
 <p align="center">
-<img alt="Contoh Logical View pada P/L E-Commerce" src="./assets/diagram/sd_uc08.jpg" width="35%">
+<img alt="" src="./assets/diagram/sd_uc08.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar X. Diagram Kelas [Nama Uce Case]</i>
+<i>Gambar X. Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
-Pada diagram, pastikan:
-- Atribut dituliskan beserta visibilitas dan tipe datanya, misalnya `- email: String`.
-- Operasi dituliskan beserta visibilitas, parameter, dan tipe kembaliannya, misalnya `+ login(email: String, password: String): Boolean`.
-- Relasi antarkelas (asosiasi, agregasi, komposisi, generalisasi, dan dependensi) digambarkan lengkap dengan multiplisitas.
-- Semua operasi yang dipanggil pada sequence diagram 3.1.2 (skenario normal dan alternatif) ada pada kelas yang bersangkutan.
-- Kelas yang sama dengan kelas di use case lain memakai nama, atribut, dan metode yang konsisten.
 
 <br>
 
