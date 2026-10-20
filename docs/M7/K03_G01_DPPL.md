@@ -7,24 +7,24 @@ DESKRIPSI PERANCANGAN PERANGKAT LUNAK (DPPL)
 </h1>
 <br>
 
-## *Nama Perangkat Lunak*
+## RekanBumi *
 ### *[Logo Perangkat Lunak]*
 
-### Untuk: *[Nama Asisten]*
+### Untuk: Stefani Angeline Oroh
 
 Dipersiapkan oleh:
 | Informasi | Keterangan |
 | --- | --- |
-| Kelas | *\[Kelas\]* |
-| Kelompok | *\[Nomor Kelompok\]*  |
+| Kelas | K03 |
+| Kelompok | G01 |
 
 | NIM | Nama |
 |---|---|
-| *[NIM 1]* | *[Nama Anggota 1]* |
-| *[NIM 2]* | *[Nama Anggota 2]* |
-| *[NIM 3]* | *[Nama Anggota 3]* |
-| *[NIM 4]* | *[Nama Anggota 4]* |
-| *[NIM 5]* | *[Nama Anggota 5]* |
+| 13525018 | Avicenna Ananda Musthafa |
+| 13525045 | Ribka Kaylena Sanjaya |
+| 13525063 | Kairenzo Vemil |
+| 13525069 | Mulky Siraj Firizqi |
+| 13525144 | Three Gie Gendhis Sekar Ayoe Jatmiko |
 ---
 
 ## Daftar Perubahan
@@ -254,7 +254,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 <br>
 
 ## 3.8 Use Case 08 : Konfirmasi kehadiran program
-**ID Use Case:** CU08
+**ID Use Case:** UC08
 **Nama Use Case:** Konfirmasi Kehadiran Program
 
 ### 3.8.1 Identifikasi Kelas
@@ -278,7 +278,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 <i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
-- **Skenario Alternatif 1 : Check-in di Luar Waktu Pelaksanaan **
+- Skenario Alternatif 1 : Check-in di Luar Waktu Pelaksanaan 
 
 <p align="center">
 <img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
