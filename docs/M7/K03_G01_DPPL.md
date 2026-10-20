@@ -210,13 +210,11 @@ Pada diagram, pastikan:
 
 ## 3.7 Use Case 07 : Memperbarui status program
 **ID Use Case:** UC07
-**Nama Use Case:** Memperbarui status program
+**Nama Use Case:** Memperbarui Status Program
 
 ### 3.7.1 Identifikasi Kelas
 
-Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
-
-Tabel 3.1. Identifikasi Kelas Use Case [UC01]
+Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
@@ -237,7 +235,7 @@ Buat *sequence diagram* untuk **setiap skenario use case**, mencakup skenario no
 <i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program </i>
 </p>
 
-- **Skenario Alternatif 1 : [Nama Skenario]**
+- **Skenario Alternatif 1 : Verifikator Menolak Laporan Akhir**
 
 <p align="center">
 <img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
@@ -248,10 +246,8 @@ Buat *sequence diagram* untuk **setiap skenario use case**, mencakup skenario no
 
 ### 3.7.3 Diagram Kelas
 
-Buatlah diagram kelas untuk use case ini yang terdiri atas kelas-kelas dari 3.1.1. **Setiap kelas pada diagram wajib menampilkan atribut dan metode/operasi langsung di dalam kotak kelasnya**, sehingga tidak perlu membuat tabel daftar atribut dan metode per kelas pada subbab ini. Daftar lengkap atribut dan metode seluruh kelas disajikan pada Tabel 4.1 (Bab 4).
-
 <p align="center">
-<img alt="" src="./assets/diagram/sd_uc07.jpg" width="35%">
+<img alt="" src="./assets/diagram/cd_uc07.jpg" width="35%">
 </p>
 <p align="center">
 <i>Gambar X. Diagram Kelas UC07 : Memperbarui Status Program</i>
@@ -264,8 +260,6 @@ Buatlah diagram kelas untuk use case ini yang terdiri atas kelas-kelas dari 3.1.
 **Nama Use Case:** Konfirmasi Kehadiran Program
 
 ### 3.8.1 Identifikasi Kelas
-
-Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
 
 Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 
@@ -283,10 +277,10 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 <img alt="" src="./assets/diagram/sd(normal)_uc08.jpg" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram UC08 : Konfirmasi kehadiran program </i>
+<i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
-- **Skenario Alternatif [Nomor]: [Nama Skenario]**
+- **Skenario Alternatif 1 : Check-in di Luar Waktu Pelaksanaan **
 
 <p align="center">
 <img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
@@ -297,7 +291,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 
 ### 3.8.3 Diagram Kelas
 <p align="center">
-<img alt="" src="./assets/diagram/sd_uc08.jpg" width="35%">
+<img alt="" src="./assets/diagram/cd_uc08.jpg" width="35%">
 </p>
 <p align="center">
 <i>Gambar X. Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
