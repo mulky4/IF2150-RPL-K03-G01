@@ -410,7 +410,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 - **Skenario Normal**
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(normal)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(normal)_uc07.png" width="50%">
 </p>
 <p align="center">
 <i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program </i>
@@ -419,7 +419,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 - **Skenario Alternatif 1 : Verifikator Menolak Laporan Akhir**
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(alt)_uc07.png" width="50%">
 </p>
 <p align="center">
 <i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program - Verifikator Menolak Laporan Akhir</i>
@@ -455,7 +455,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 - **Skenario Normal**
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(normal)_uc08.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(normal)_uc08.png" width="50%">
 </p>
 <p align="center">
 <i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
@@ -464,7 +464,7 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 - Skenario Alternatif 1 : Check-in di Luar Waktu Pelaksanaan 
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(alt)_uc07.jpg" width="50%">
+<img alt="" src="./assets/diagram/sd(alt)_uc08.png" width="50%">
 </p>
 <p align="center">
 <i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran program - Check-in di Luar Waktu Pelaksanaan </i>
