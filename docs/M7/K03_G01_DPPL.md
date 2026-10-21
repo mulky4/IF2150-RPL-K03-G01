@@ -343,6 +343,140 @@ Pada diagram, pastikan:
 - Semua operasi yang dipanggil pada sequence diagram 3.1.2 (skenario normal dan alternatif) ada pada kelas yang bersangkutan.
 - Kelas yang sama dengan kelas di use case lain memakai nama, atribut, dan metode yang konsisten.
 
+## 3.1 Use Case Daftar program
+
+**ID Use Case:** UC01  
+**Nama Use Case:** Daftar program  
+**Kebutuhan fungsional terkait:** KF01, KF10
+
+### 3.1.1 Identifikasi Kelas
+
+Tabel 3.1 memuat kelas perancangan yang terlibat dalam UC01 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.1. Identifikasi Kelas Use Case UC01
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program | Program |
+| 2 | C02 Pendaftaran | Pendaftaran |
+| 3 | C03 Relawan | Relawan |
+| 4 | C04 Pengguna | Pengguna |
+| 5 | C05 InisiatorProgram | InisiatorProgram |
+| 6 | C07 DokumenVerifikasi | DokumenVerifikasi |
+| 7 | C12 KelolaAkunPage | KelolaAkunPage |
+| 8 | C13 AuthController | AuthController |
+| 9 | C14 KelolaProgramPage | KelolaProgramPage |
+| 10 | C15 ProgramController | ProgramController |
+| 11 | C16 EksplorasiProgramPage | EksplorasiProgramPage |
+| 12 | C18 SeleksiController | SeleksiController |
+| 13 | C21 CloudStorageAdapter | - (kelas baru tahap perancangan) |
+| 14 | C22 BetterAuth | - (kelas baru tahap perancangan) |
+
+### 3.1.2 Sequence Diagram
+
+- **Skenario Normal**
+
+Gambar 3.1 menunjukkan *sequence diagram* UC01 untuk Skenario Normal. Diagram memakai fragmen alt untuk membedakan pendaftaran oleh Relawan dan oleh Inisiator Program. Pada operand [Relawan], KelolaAkunPage meneruskan data diri dan berkas ke AuthController melalui buatAkunBaru(). AuthController memeriksa kelengkapan dan status verifikasi data, mendaftarkan kredensial ke BetterAuth (kata sandi di-*hash* di dalam BetterAuth), mengunggah berkas melalui CloudStorageAdapter, lalu membuat objek Relawan dan DokumenVerifikasi. Setelah akun terbentuk, Relawan memilih program; EksplorasiProgramPage memastikan sesi aktif melalui cekSesi(), lalu permohonan pendaftaran diproses oleh SeleksiController yang meminta Relawan memeriksa kelengkapan data dan kelayakannya sebelum membuat objek Pendaftaran. Pada operand [Inisiator Program], Inisiator Program terlebih dahulu membuat akun melalui KelolaAkunPage dengan alur buatAkunBaru() yang sama dengan Relawan: AuthController memeriksa kelengkapan dan status verifikasi data, mendaftarkan kredensial ke BetterAuth, lalu membuat objek InisiatorProgram. Pada registrasi ini parameter berkas dikirim kosong karena dokumen legalitas lembaga diunggah kemudian melalui formulir program. Setelah itu, Inisiator Program mengisi formulir program pada KelolaProgramPage, dan ProgramController memvalidasi data program, memeriksa status verifikasi InisiatorProgram, mengunggah berkas, serta membuat objek DokumenVerifikasi dan Program.
+
+<p align="center">
+<img alt="Sequence Diagram UC01 Skenario Normal" src="./assets/diagram/SD_UC01_normal.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.1. Sequence Diagram UC01 - Skenario Normal</i>
+</p>
+
+- **Skenario Alternatif 1: Data Diri Relawan Tidak Lengkap**
+
+Gambar 3.2 menunjukkan *sequence diagram* UC01 untuk Skenario Alternatif 1: Data Diri Relawan Tidak Lengkap. Diagram memuat tiga alur yang masing-masing gagal pada pemeriksaan kelengkapan: registrasi akun Relawan gagal pada validasiKelengkapanData() di AuthController, permohonan pendaftaran program gagal pada cekKelengkapanData() di Relawan, dan pendaftaran program oleh Inisiator gagal pada validasiDataProgram() di ProgramController. Pada setiap alur, tidak ada objek yang dibuat dan halaman terkait menampilkan pesan error yang ditandai dengan *guard* [data tidak lengkap].
+
+<p align="center">
+<img alt="Sequence Diagram UC01 Skenario Alternatif 1: Data Diri Relawan Tidak Lengkap" src="./assets/diagram/SD_UC01_alt1.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.2. Sequence Diagram UC01 - Skenario Alternatif 1: Data Diri Relawan Tidak Lengkap</i>
+</p>
+
+### 3.1.3 Diagram Kelas
+
+Gambar 3.3 menunjukkan diagram kelas UC01 yang terdiri atas kelas-kelas pada Tabel 3.1. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Diagram disusun berlapis dari *View*, *Controller*, kelas pendukung dan integrasi eksternal (BetterAuth dan CloudStorageAdapter), hingga *Model*, dengan superkelas Pengguna di atas Relawan dan InisiatorProgram. Seluruh operasi yang dipanggil pada *sequence diagram* 3.1.2 terdapat pada kelas yang bersangkutan.
+
+<p align="center">
+<img alt="Diagram Kelas UC01" src="./assets/diagram/CD_UC01.png" width="35%">
+</p>
+<p align="center">
+<i>Gambar 3.3. Diagram Kelas Use Case UC01 - Daftar program</i>
+</p>
+
+<br>
+
+## 3.2 Use Case Login akun
+
+**ID Use Case:** UC02  
+**Nama Use Case:** Login akun  
+**Kebutuhan fungsional terkait:** KF06
+
+### 3.2.1 Identifikasi Kelas
+
+Tabel 3.2 memuat kelas perancangan yang terlibat dalam UC02 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.2. Identifikasi Kelas Use Case UC02
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C12 KelolaAkunPage | KelolaAkunPage |
+| 2 | C13 AuthController | AuthController |
+| 3 | C16 EksplorasiProgramPage | EksplorasiProgramPage |
+| 4 | C22 BetterAuth | - (kelas baru tahap perancangan) |
+
+### 3.2.2 Sequence Diagram
+
+- **Skenario Normal**
+
+Gambar 3.4 menunjukkan *sequence diagram* UC02 untuk Skenario Normal. Ketika Relawan menekan tombol daftar pada halaman program, EksplorasiProgramPage memeriksa sesi melalui cekSesi() dan, karena Relawan belum masuk, mengarahkannya ke halaman login dengan arahkanKeLogin(). Kredensial yang dimasukkan divalidasi oleh AuthController: status blokir IP diperiksa, kredensial diverifikasi oleh BetterAuth (yang mencocokkan *hash* kata sandi dan mengembalikan idPengguna), percobaan gagal direset, lalu sesi dimulai dan dibuat melalui buatSesiMasuk(). KelolaAkunPage menampilkan status keberhasilan dan mengarahkan Relawan kembali ke halaman program asal dengan arahkanKembali().
+
+<p align="center">
+<img alt="Sequence Diagram UC02 Skenario Normal" src="./assets/diagram/SD_UC02_normal.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.4. Sequence Diagram UC02 - Skenario Normal</i>
+</p>
+
+- **Skenario Alternatif 1: Kredensial Salah**
+
+Gambar 3.5 menunjukkan *sequence diagram* UC02 untuk Skenario Alternatif 1: Kredensial Salah. Seperti pada skenario normal, Relawan yang belum masuk menekan tombol daftar sehingga EksplorasiProgramPage memeriksa sesi melalui cekSesi() dan mengarahkannya ke halaman login dengan arahkanKeLogin(). Setelah kredensial dimasukkan, cocokkanHash() pada BetterAuth bernilai false sehingga verifikasiKredensial() tidak mengembalikan idPengguna. AuthController mencatat percobaan gagal dari IP tersebut, dan KelolaAkunPage menampilkan pesan gagal masuk yang ditandai dengan *guard* [kredensial salah].
+
+<p align="center">
+<img alt="Sequence Diagram UC02 Skenario Alternatif 1: Kredensial Salah" src="./assets/diagram/SD_UC02_alt1.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.5. Sequence Diagram UC02 - Skenario Alternatif 1: Kredensial Salah</i>
+</p>
+
+- **Skenario Alternatif 2: Akun Terkunci Sementara**
+
+Gambar 3.6 menunjukkan *sequence diagram* UC02 untuk Skenario Alternatif 2: Akun Terkunci Sementara. Fragmen loop menggambarkan lima percobaan masuk yang gagal secara berturut-turut. Pada setiap percobaan, AuthController memeriksa status blokir IP, BetterAuth gagal memverifikasi kredensial karena cocokkanHash() bernilai false, lalu catatPercobaanGagal() menambah jumlah percobaan gagal dari IP tersebut. Ketika jumlahnya mencapai BATAS_PERCOBAAN (5), AuthController memblokir IP melalui blokirIP() di dalam fragmen opt. Pada percobaan masuk berikutnya, cekStatusBlokir() bernilai true sehingga permintaan masuk ditolak, dan KelolaAkunPage menampilkan peringatan bahwa IP diblokir sementara selama 5 menit, yang ditandai dengan *guard* [IP diblokir].
+
+<p align="center">
+<img alt="Sequence Diagram UC02 Skenario Alternatif 2: Akun Terkunci Sementara" src="./assets/diagram/SD_UC02_alt2.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.6. Sequence Diagram UC02 - Skenario Alternatif 2: Akun Terkunci Sementara</i>
+</p>
+
+### 3.2.3 Diagram Kelas
+
+Gambar 3.7 menunjukkan diagram kelas UC02 yang terdiri atas kelas-kelas pada Tabel 3.2. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. BetterAuth hanya dipanggil oleh AuthController dan mengembalikan idPengguna tanpa bergantung pada kelas Pengguna, sedangkan kembali ke halaman asal dilakukan melalui *self-call* arahkanKembali() sehingga tidak ada lingkaran kebergantungan antarhalaman. Seluruh operasi yang dipanggil pada *sequence diagram* 3.2.2 terdapat pada kelas yang bersangkutan.
+
+<p align="center">
+<img alt="Diagram Kelas UC02" src="./assets/diagram/CD_UC02.png" width="35%">
+</p>
+<p align="center">
+<i>Gambar 3.7. Diagram Kelas Use Case UC02 - Login akun</i>
+</p>
+
+<br>
+
+
 ## 3.5 Use Case Menyeleksi calon relawan pendaftar
 
 **ID Use Case:** UC05  
