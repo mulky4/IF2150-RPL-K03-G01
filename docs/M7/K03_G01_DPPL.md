@@ -426,6 +426,64 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 <i>Gambar X. Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
+## 3.9 Use Case Memperbarui status akun relawan
+
+**ID Use Case:** UC09  
+**Nama Use Case:** Memperbarui status akun relawan  
+**Kebutuhan fungsional terkait:** KF15
+
+### 3.9.1 Identifikasi Kelas
+
+Tabel 3.9 memuat kelas perancangan yang terlibat dalam UC09 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.9. Identifikasi Kelas Use Case UC09
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program | Program |
+| 2 | C02 Pendaftaran | Pendaftaran |
+| 3 | C03 Relawan | Relawan |
+| 4 | C08 Kehadiran | Kehadiran |
+| 5 | C11 RiwayatKontribusi | RiwayatKontribusi |
+| 6 | C14 KelolaProgramPage | KelolaProgramPage |
+| 7 | C15 ProgramController | ProgramController |
+| 8 | C19 AreaKegiatanPage | AreaKegiatanPage |
+| 9 | C20 PresensiController | PresensiController |
+
+### 3.9.2 Sequence Diagram
+
+- **Skenario Normal**
+
+Gambar 3.25 menunjukkan *sequence diagram* UC09 untuk Skenario Normal. Setelah Verifikator menyetujui laporan akhir (lanjutan UC07), PresensiController memeriksa kehadiran setiap relawan berstatus diterima di dalam fragmen loop, menghitung jam aksi dari durasi program, lalu memperbarui RiwayatKontribusi. Relawan kemudian membuka portofolio untuk melihat akumulasi jam aksi dan riwayat program yang telah diikuti.
+
+<p align="center">
+<img alt="Sequence Diagram UC09 Skenario Normal" src="./assets/diagram/SD_UC09_normal.png" width="100%">
+</p>
+<p align="center">
+<i>Gambar 3.25. Sequence Diagram UC09 - Skenario Normal</i>
+</p>
+
+- **Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan**
+
+Gambar 3.26 menunjukkan *sequence diagram* UC09 untuk Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan. Relawan tidak memiliki catatan check-in sehingga cekKehadiran() bernilai false; perbaruiJamAksi() dan tambahRiwayatProgram() tidak dipanggil, dan portofolio relawan tidak bertambah untuk program tersebut.
+
+<p align="center">
+<img alt="Sequence Diagram UC09 Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan" src="./assets/diagram/SD_UC09_alt1.png" width="100%">
+</p>
+<p align="center">
+<i>Gambar 3.26. Sequence Diagram UC09 - Skenario Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan</i>
+</p>
+
+### 3.9.3 Diagram Kelas
+
+Gambar 3.27 menunjukkan diagram kelas UC09 yang terdiri atas kelas-kelas pada Tabel 3.9. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Seluruh operasi yang dipanggil pada *sequence diagram* 3.9.2 terdapat pada kelas yang bersangkutan.
+
+<p align="center">
+<img alt="Diagram Kelas UC09" src="./assets/diagram/CD_UC09_perancangan.png" width="100%">
+</p>
+<p align="center">
+<i>Gambar 3.27. Diagram Kelas Use Case UC09 - Memperbarui status akun relawan</i>
+</p>
 
 <br>
 
