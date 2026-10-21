@@ -343,6 +343,54 @@ Pada diagram, pastikan:
 - Semua operasi yang dipanggil pada sequence diagram 3.1.2 (skenario normal dan alternatif) ada pada kelas yang bersangkutan.
 - Kelas yang sama dengan kelas di use case lain memakai nama, atribut, dan metode yang konsisten.
 
+## 3.5 Use Case Menyeleksi calon relawan pendaftar
+
+**ID Use Case:** UC05  
+**Nama Use Case:** Menyeleksi calon relawan pendaftar
+
+### 3.5.1 Identifikasi Kelas
+
+Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
+
+Tabel 3.5.1 Identifikasi Kelas Use Case [UC05]
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program| Program |
+| 2 | C02 Pendaftaran | Pendaftaran |
+| 3 | C17 KelolaPendaftarPage | KelolaPendaftarPage |
+| 4 | C18 SeleksiController | SeleksiController |
+| ... | *...* | *...* |
+
+### 3.5.2 Sequence Diagram
+
+- **Skenario Normal**
+
+## 3.6 Konfirmasi Status Pendaftaran
+
+**ID Use Case:** UC06 
+**Nama Use Case:** Konfirmasi Status Pendaftaran
+
+### 3.6.1 Identifikasi Kelas
+
+Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
+
+Tabel 3.6.1 Identifikasi Kelas Use Case [UC05]
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program| Program |
+| 2 | C02 Pendaftaran | Pendaftaran |
+| 3 | C03 Relawan | Relawan |
+| 4 | C04 Pengguna | Pengguna |
+| 5 | C10 Notifikasi |  |
+| 6 | C12 KelolaAkunPage | KelolaAkunPage |
+| 7 | C13 AuthController | AuthController |
+| 8 | C17 KelolaPendaftarPage | KelolaPendaftarPage |
+| 9 | C18 SeleksiController | SeleksiController |
+| ... | *...* | *...* |
+
+
 ## 3.7 Use Case 07 : Memperbarui status program
 **ID Use Case:** UC07
 **Nama Use Case:** Memperbarui Status Program
