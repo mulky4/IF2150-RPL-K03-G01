@@ -25,6 +25,10 @@
 * [Milestone 1](#milestone-1)
 * [Milestone 2](#milestone-2)
 * [Milestone 3](#milestone-3)
+* [Milestone 4](#milestone-4)
+* [Milestone 5](#milestone-5)
+* [Milestone 6](#milestone-6)
+* [Milestone 7](#milestone-7)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -123,5 +127,6 @@
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
 |---|---|---|---|---|---|
 | 20-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 3 untuk UC07 dan UC08 | 3,5 | Done | - |
+| 21-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Revisi bab 3 untuk UC07 dan UC08 | 2 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
