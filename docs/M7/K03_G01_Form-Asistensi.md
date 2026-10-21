@@ -10,7 +10,7 @@
 | **Nomor Kelompok** | G01 |
 | **Nama Kelompok** | rplsukses |
 | **Nama Perangkat Lunak** | RekanBumi |
-| **Dokumen** | M6 |
+| **Dokumen** | M7 |
 
 ### Anggota Kelompok
 
@@ -26,10 +26,9 @@
 
 | Catatan |
 | --- |
-| 1. *\[Berikan catatan hasil asistensi\]*  |
-| 2. ... |
-| 3. ... |
-| 4. ... |
+| 1. Sequence diagram perlu menggambarkan seluruh alur dari skenario use case di SKPL, baik skenario normal maupun alternatif, termasuk proses ketika terjadi kesalahan. |
+| 2. Setiap method yang dipanggil pada sequence diagram harus ada di class diagram. Relasi antarkelas juga harus konsisten supaya alur interaksinya sesuai dengan rancangan sistem. |
+| 3. Lifeline pada sequence diagram harus menggunakan kelas atau komponen yang jelas sesuai rancangan, bukan hanya nama umum seperti frontend, backend, atau database. |
 
 **Notes for this section:**  
 *Catatan dapat dituliskan dalam bentuk paragraf atau poin-poin, disesuaikan saja.* 
@@ -38,7 +37,7 @@
 
 <!-- ![](./assets/foto-asistensi.jpg) -->
 <p align="center">
-  <img src="./assets/foto-asistensi.jpg" width="100%">
+  <img src="./assets/asistensi akbar m7.png" width="100%">
 </p>
 
 <p align="center">
