@@ -397,7 +397,9 @@ Tabel 3.6.1 Identifikasi Kelas Use Case [UC05]
 
 ### 3.7.1 Identifikasi Kelas
 
-Tabel 3.1. Identifikasi Kelas Use Case [UC07]
+Tabel 3.7 memuat kelas perancangan yang terlibat dalam UC07 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.7. Identifikasi Kelas Use Case [UC07]
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
@@ -414,29 +416,35 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 
 - **Skenario Normal**
 
+Gambar 3.20 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan membuka halaman kegiatan melalui AreaKegiatanPage, kemudian PresensiController memvalidasi status penerimaan relawan dan waktu pelaksanaan program melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Apabila kedua validasi berhasil, sistem mengaktifkan tombol check-in dan menampilkan keterangan waktu kegiatan. Ketika relawan melakukan check-in, PresensiController memproses pencatatan kehadiran melalui prosesCheckIn(). Setelah kehadiran berhasil dicatat, sistem memperbarui portofolio relawan dan menampilkan status check-in. Relawan juga dapat membuka portofolio untuk melihat total jam aksi melalui ambilTotalJamAksi() dan riwayat program melalui ambilRiwayatProgram(), yang kemudian ditampilkan oleh AreaKegiatanPage.
+
 <p align="center">
 <img alt="" src="./assets/diagram/sd(normal)_uc07.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program </i>
+<i>Gambar 3.20 Sequence Diagram UC07 : Memperbarui Status Program </i>
 </p>
 
 - **Skenario Alternatif 1 : Verifikator Menolak Laporan Akhir**
+
+Gambar 3.21 menunjukkan sequence diagram UC07 untuk skenario alternatif: Laporan Akhir Program Ditolak. Verifikator menolak laporan akhir program dan memberikan catatan revisi sehingga tolakLaporan() dipanggil. Akibatnya, status laporan diperbarui menjadi “Perlu Revisi” melalui updateStatus(), dan sistem mengirimkan notifikasi kepada Inisiator melalui buatNotifikasi() agar laporan dapat diperbaiki.
 
 <p align="center">
 <img alt="" src="./assets/diagram/sd(alt)_uc07.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram UC07 : Memperbarui Status Program - Verifikator Menolak Laporan Akhir</i>
+<i>Gambar 3.21 Sequence Diagram UC07 : Memperbarui Status Program - Verifikator Menolak Laporan Akhir</i>
 </p>
 
 ### 3.7.3 Diagram Kelas
+
+Gambar 3.22 menunjukkan diagram kelas UC07 yang terdiri atas kelas-kelas pada Tabel 3.7. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Seluruh operasi yang dipanggil pada *sequence diagram* 3.7.2 terdapat pada kelas yang bersangkutan
 
 <p align="center">
 <img alt="" src="./assets/diagram/cd_uc07.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar X. Diagram Kelas UC07 : Memperbarui Status Program</i>
+<i>Gambar 3.22 Diagram Kelas UC07 : Memperbarui Status Program</i>
 </p>
 
 <br>
@@ -447,7 +455,9 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 
 ### 3.8.1 Identifikasi Kelas
 
-Tabel 3.1. Identifikasi Kelas Use Case [UC08]
+Tabel 3.8 memuat kelas perancangan yang terlibat dalam UC08 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.8. Identifikasi Kelas Use Case [UC08]
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:---|:---|:---|
@@ -461,28 +471,35 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 
 - **Skenario Normal**
 
+Gambar 3.23 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan membuka halaman kegiatan melalui AreaKegiatanPage, kemudian PresensiController memvalidasi status penerimaan relawan dan waktu pelaksanaan program melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Apabila kedua validasi berhasil, sistem mengaktifkan tombol check-in dan menampilkan keterangan waktu kegiatan. Ketika relawan melakukan check-in, PresensiController memproses pencatatan kehadiran melalui prosesCheckIn(). Setelah kehadiran berhasil dicatat, sistem memperbarui portofolio relawan dan menampilkan status check-in. Relawan juga dapat membuka portofolio untuk melihat total jam aksi melalui ambilTotalJamAksi() dan riwayat program melalui ambilRiwayatProgram(), yang kemudian ditampilkan oleh AreaKegiatanPage.
+
 <p align="center">
 <img alt="" src="./assets/diagram/sd(normal)_uc08.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
+<i>Gambar 3.23 Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
-- Skenario Alternatif 1 : Check-in di Luar Waktu Pelaksanaan 
+- **Skenario Alternatif 1** : Check-in di Luar Waktu Pelaksanaan 
+
+Gambar 3.24 menunjukkan sequence diagram UC08 untuk skenario alternatif: Relawan Membuka Halaman di Luar Jadwal Kegiatan. Sistem memvalidasi status relawan dan waktu pelaksanaan kegiatan melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Karena waktu akses berada di luar jadwal kegiatan, tombol check-in dinonaktifkan dan rentang waktu pelaksanaan ditampilkan kepada relawan. Akibatnya, catatKehadiran() tidak dipanggil sehingga catatan kehadiran tidak dibuat.
 
 <p align="center">
 <img alt="" src="./assets/diagram/sd(alt)_uc08.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar X. Sequence Diagram UC08 : Konfirmasi Kehadiran program - Check-in di Luar Waktu Pelaksanaan </i>
+<i>Gambar 3.24 Sequence Diagram UC08 : Konfirmasi Kehadiran program - Check-in di Luar Waktu Pelaksanaan </i>
 </p>
 
 ### 3.8.3 Diagram Kelas
+
+Gambar 3.25 menunjukkan diagram kelas UC08 yang terdiri atas kelas-kelas pada Tabel 3.8. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Seluruh operasi yang dipanggil pada *sequence diagram* 3.8.2 terdapat pada kelas yang bersangkutan
+
 <p align="center">
 <img alt="" src="./assets/diagram/cd_uc08.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar X. Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
+<i>Gambar 3.25 Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
 </p>
 
 ## 3.9 Use Case Memperbarui status akun relawan
