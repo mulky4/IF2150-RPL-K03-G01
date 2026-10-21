@@ -67,6 +67,12 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
 | Gemini | Sebagai verifikator dan pembanding untuk memeriksa konsistensi antara diagram arsitektur Bab 1 dan pemetaan identifikasi komponen Bab 2 ataupun Bab 3 | Bagaimana cara mengelompokkan komponen Client-Server dan MVC agar konsisten antara diagram Bab 1 dan tabel identifikasi Bab 2? | AI digunakan sebagai partner diskusi dan pengarah untuk mengecek kesesuaian format. Evaluasi dan tinjauan mendalam serta koreksi dilakukan kelompok agar konsisten dengan rancangan kelompok. |
+
+### Milestone 7
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Claude | Membantu merancang langkah-langkah penyusunan diagram UML (Sequence & Class Diagram) serta memvalidasi kesesuaian rancangan DPPL dengan materi perkuliahan dan asistensi | Tolong bantu susun langkah-langkah logika pembuatan Sequence Diagram dan Class Diagram per Use Case, lalu validasi apakah struktur draf dokumen DPPL ini sudah sesuai dengan materi perkuliahan dan PPT asistensi akbar. | AI memberikan acuan alur interaksi antar-objek, saran struktur atribut/metode, dan catatan kesesuaian materi. Kami mengevaluasi seluruh masukan tersebut, merancang serta menggambar diagram, dan menyelaraskan penamaan fungsi agar konsisten di seluruh bab dan sesuai dengan dokumen sebelumnya. |
+
 ---
 ### Pernyataan Integritas dan Persetujuan
 
