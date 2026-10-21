@@ -401,9 +401,14 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
-| 1 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL]* |
-| 2 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL]* |
-| ... | *...* | *...* |
+| 1 | C01 Program | Program |
+| 2 | C06 Verifikator | Verifikator |
+| 3 | C09 LaporanProgram | LaporanProgram |
+| 4 | C10 Notifikasi | Notifikasi |
+| 5 | C14 KelolaProgramPage | KelolaProgramPage |
+| 6 | C15 ProgramController | ProgramController |
+| 7 | C20 PresensiController	| PresensiController |
+| 8 | C21 CloudStorageAdapter | CloudStorageAdapter |
 
 ### 3.7.2 Sequence Diagram
 
@@ -445,10 +450,12 @@ Tabel 3.1. Identifikasi Kelas Use Case [UC07]
 Tabel 3.1. Identifikasi Kelas Use Case [UC08]
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
-|:--- | :--- | :--- |
-| 1 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL]* |
-| 2 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL]* |
-| ... | *...* | *...* |
+|:---|:---|:---|
+| 1 | C01 Program | Program |
+| 2 | C02 Pendaftaran | Pendaftaran |
+| 3 | C08 Kehadiran | Kehadiran |
+| 4 | C19 AreaKegiatanPage | AreaKegiatanPage |
+| 5 | C20 PresensiController | PresensiController |
 
 ### 3.8.2 Sequence Diagram
 
