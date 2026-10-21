@@ -476,6 +476,118 @@ Gambar 3.7 menunjukkan diagram kelas UC02 yang terdiri atas kelas-kelas pada Tab
 
 <br>
 
+## 3.3 Use Case Mencari program
+
+**ID Use Case:** UC03  
+**Nama Use Case:** Mencari program
+**Kebutuhan fungsional terkait:** KF03, KF04
+
+### 3.3.1 Identifikasi Kelas
+
+Tabel 3.3 memuat kelas perancangan yang terlibat dalam UC03 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.3. Identifikasi Kelas Use Case UC03
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program | Program |
+| 2 | C15 ProgramController | ProgramController |
+| 3 | C16 EksplorasiProgramPage | EksplorasiProgramPage |
+
+### 3.3.2 Sequence Diagram
+
+- **Skenario Normal**
+
+Gambar 3.8 menunjukkan sequence diagram UC03 untuk Skenario Normal. Relawan membuka halaman eksplorasi melalui bukaHalamanEksplorasi(), kemudian memasukkan kata kunci dan memilih kategori melalui terimaInputPencarian(kataKunci, kategori) pada EksplorasiProgramPage. EksplorasiProgramPage meneruskan permintaan ke ProgramController melalui cariProgram(kataKunci, kategori), yang kemudian memanggil operasi statis Program.cari(kataKunci, kategori) sebagai pemilik data pencarian. Daftar program yang ditemukan dikembalikan berturut-turut ke ProgramController lalu ke EksplorasiProgramPage, yang menampilkannya melalui tampilkanDaftarProgram(daftar).
+
+<p align="center">
+<img alt="Sequence Diagram UC03 Skenario Normal" src="./assets/diagram/SD_UC03_normal.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.8. Sequence Diagram UC03 - Skenario Normal</i>
+</p>
+
+- **Skenario Alternatif 1: Program Tidak Ditemukan**
+
+Gambar 3.9 menunjukkan sequence diagram UC03 untuk Skenario Alternatif 1: Program Tidak Ditemukan. Alur berjalan sama seperti skenario normal hingga Program.cari(kataKunci, kategori) dipanggil, tetapi pencarian tidak menghasilkan program yang sesuai sehingga daftar kosong dikembalikan. EksplorasiProgramPage kemudian memanggil tampilkanPesanTidakDitemukan(), bukan tampilkanDaftarProgram(), untuk memberi tahu Relawan bahwa tidak ada program yang cocok.
+
+<p align="center">
+<img alt="Sequence Diagram UC03 Skenario Alternatif 1: Program Tidak Ditemukan" src="./assets/diagram/SD_UC03_alt.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.9. Sequence Diagram UC03 - Skenario Alternatif 1: Program Tidak Ditemukan</i>
+</p>
+
+
+### 3.3.3 Diagram Kelas
+
+Gambar 3.10 menunjukkan diagram kelas UC03 yang terdiri atas kelas-kelas pada Tabel 3.3. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2 (EksplorasiProgramPage bergantung pada ProgramController, dan ProgramController bergantung pada Program). Seluruh operasi yang dipanggil pada sequence diagram 3.3.2 — cariProgram(), Program.cari() (statis), tampilkanDaftarProgram(), dan tampilkanPesanTidakDitemukan() — terdapat pada kelas yang bersangkutan.
+
+<p align="center">
+<img alt="Diagram Kelas UC03" src="./assets/diagram/CD_UC03.png" width="35%">
+</p>
+<p align="center">
+<i>Gambar 3.10. Diagram Kelas Use Case UC03 - Mencari program</i>
+</p>
+
+<br>
+
+## 3.4 Use Case Mengunjungi situs program
+
+**ID Use Case:** UC04  
+**Nama Use Case:** Mengunjungi situs program
+**Kebutuhan fungsional terkait:** 
+
+### 3.4.1 Identifikasi Kelas
+
+Tabel 3.4 memuat kelas perancangan yang terlibat dalam UC04 beserta kelas analisis terkait pada SKPL.
+
+Tabel 3.4. Identifikasi Kelas Use Case UC04
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+|:--- | :--- | :--- |
+| 1 | C01 Program | Program |
+| 2 | C05 InisiatorProgram | InisiatorProgram |
+| 3 | C15 ProgramController | ProgramController |
+| 4 | C16 EksplorasiProgramPage | EksplorasiProgramPage |
+
+### 3.4.2 Sequence Diagram
+
+- **Skenario Normal**
+
+Gambar 3.11 menunjukkan sequence diagram UC04 untuk Skenario Normal. Relawan memilih program dari daftar melalui pilihProgram(idProgram) pada EksplorasiProgramPage, yang meneruskan permintaan ke ProgramController melalui ambilDetailProgram(idProgram). Untuk memperoleh tautan situs resmi program, ProgramController memanggil Program.getTautan(); Program menelusuri pengelolanya melalui ambilPengelola() (self-call) lalu memanggil InisiatorProgram.getTautan(), yang mengembalikan tautanSitusResmi miliknya. Program meneruskan tautan tersebut ke ProgramController, yang memvalidasinya melalui validasiTautanSitus(url). Detail program beserta status tautan dikembalikan ke EksplorasiProgramPage, yang menampilkannya melalui tampilkanDetailProgram(idProgram). Ketika Relawan mengklik tautan situs resmi (klikTautanSitusResmi()), EksplorasiProgramPage mengarahkan Relawan ke situs tersebut pada tab baru melalui arahkanKeSitusResmi(url).
+
+<p align="center">
+<img alt="Sequence Diagram UC04 Skenario Normal" src="./assets/diagram/SD_UC04_normal.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.11. Sequence Diagram UC04 - Skenario Normal</i>
+</p>
+
+- **Skenario Alternatif 1: Tautan Tidak Disediakan**
+
+Gambar 3.12 menunjukkan sequence diagram UC04 untuk Skenario Alternatif 1: Tautan Tidak Disediakan. Alur berjalan sama seperti skenario normal hingga InisiatorProgram.getTautan() dipanggil, tetapi lembaga pengelola belum mencantumkan tautan situs resmi sehingga nilai yang dikembalikan kosong. Akibatnya, validasiTautanSitus(url) pada ProgramController bernilai tidak valid, dan EksplorasiProgramPage memanggil nonaktifkanTautan() sebelum menampilkan detail program, sehingga tombol/tautan situs resmi tidak dapat diklik oleh Relawan.
+
+<p align="center">
+<img alt="Sequence Diagram UC04 Skenario Alternatif 1: Tautan Tidak Disediakan" src="./assets/diagram/SD_UC04_alt.png" width="50%">
+</p>
+<p align="center">
+<i>Gambar 3.12. Sequence Diagram UC04 - Skenario Alternatif 1: Tautan Tidak Disediakan</i>
+</p>
+
+
+### 3.4.3 Diagram Kelas
+
+Gambar 3.13 menunjukkan diagram kelas UC04 yang terdiri atas kelas-kelas pada Tabel 3.4. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2: EksplorasiProgramPage bergantung pada ProgramController, ProgramController bergantung pada Program, dan Program berasosiasi dengan InisiatorProgram (multiplisitas 0..* : 1) yang dinavigasi melalui ambilPengelola(). Seluruh operasi yang dipanggil pada sequence diagram 3.4.2 — ambilDetailProgram(), getTautan() (pada Program maupun InisiatorProgram), ambilPengelola(), validasiTautanSitus(), tampilkanDetailProgram(), klikTautanSitusResmi(), arahkanKeSitusResmi(), dan nonaktifkanTautan() — terdapat pada kelas yang bersangkutan.
+
+<p align="center">
+<img alt="Diagram Kelas UC04" src="./assets/diagram/CD_UC04.png" width="35%">
+</p>
+<p align="center">
+<i>Gambar 3.13. Diagram Kelas Use Case UC04 - Mengunjungi situs program</i>
+</p>
+
+<br>
 
 ## 3.5 Use Case Menyeleksi calon relawan pendaftar
 
