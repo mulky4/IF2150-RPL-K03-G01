@@ -140,8 +140,8 @@ Tabel 2.1. Rancangan Lingkungan Implementasi
 | ORM | Prisma |
 | API | tRPC |
 | *Filing System* | Layanan penyimpanan berkas berbasis *cloud* (*Cloud File Storage*) yang diakses melalui *CloudStorageAdapter* untuk menyimpan dokumen legalitas lembaga dan foto dokumentasi akhir kegiatan. **[nama layanan cloud storage yang dipakai (belum)]** |
-| Bahasa Pemrograman | **[bahasa pemrograman yang digunakan (belum)]** |
-| *Development Tools* | **[IDE/editor, version control, tools diagram, dll (belum)]** |
+| Bahasa Pemrograman | TypeScript, JavaScript, SQL |
+| *Development Tools* | Visual Studio Code, Git, GitHub, pnpm, draw.io |
 
 Teknologi yang digunakan mendukung penerapan *Client-Server Architecture* dan MVC. Next.js 15 dan Tailwind CSS digunakan pada sisi *frontend* sebagai bagian yang menyediakan antarmuka kepada *client*. Node.js 20+ menjadi lingkungan *server* untuk menjalankan aplikasi. tRPC digunakan sebagai mekanisme komunikasi antara *client* dan *server* untuk mengakses fungsi aplikasi.
 
