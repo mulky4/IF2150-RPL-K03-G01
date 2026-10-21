@@ -8,7 +8,7 @@ DESKRIPSI PERANCANGAN PERANGKAT LUNAK (DPPL)
 <br>
 
 ## RekanBumi
-### [LOGO PERANGKAT LUNAK (belum)]
+<img src="assets/logo_RekanBumi.png" alt="Logo RekanBumi" width="250">
 
 ### Untuk: Stefani Angeline Oroh
 
