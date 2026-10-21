@@ -536,7 +536,7 @@ Gambar 3.10 menunjukkan diagram kelas UC03 yang terdiri atas kelas-kelas pada Ta
 
 **ID Use Case:** UC04  
 **Nama Use Case:** Mengunjungi situs program
-**Kebutuhan fungsional terkait:** 
+**Kebutuhan fungsional terkait:** KF02
 
 ### 3.4.1 Identifikasi Kelas
 
