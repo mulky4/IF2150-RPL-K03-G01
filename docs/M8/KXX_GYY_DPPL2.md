@@ -356,7 +356,7 @@ Gambar 3.2 menunjukkan *sequence diagram* UC01 untuk Skenario Alternatif 1: Data
 Gambar 3.3 menunjukkan diagram kelas UC01 yang terdiri atas kelas-kelas pada Tabel 3.1. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Diagram disusun berlapis dari *View*, *Controller*, kelas pendukung dan integrasi eksternal (BetterAuth dan CloudStorageAdapter), hingga *Model*, dengan superkelas Pengguna di atas Relawan dan InisiatorProgram. Seluruh operasi yang dipanggil pada *sequence diagram* 3.1.2 terdapat pada kelas yang bersangkutan.
 
 <p align="center">
-<img alt="Diagram Kelas UC01" src="./assets/diagram/CD_UC01.png" width="35%">
+<img alt="Diagram Kelas UC01" src="./assets/diagram/CD_UC01 (3).png" width="35%">
 </p>
 <p align="center">
 <i>Gambar 3.3. Diagram Kelas Use Case UC01 - Daftar program</i>
@@ -569,7 +569,7 @@ Tabel 3.5.1 Identifikasi Kelas Use Case [UC05]
 Gambar 3.14 menunjukkan sequence diagram UC05 untuk Skenario Normal. Inisiator Program membuka halaman pendaftar melalui bukaKelolaPendaftar(idProgram) pada KelolaPendaftarPage, yang meminta daftar pendaftar ke SeleksiController melalui lihatDaftarRelawan(idProgram). SeleksiController memperoleh daftar tersebut dari Program.daftarPendaftar(), lalu mengembalikannya sebagai List<Pendaftaran> sehingga KelolaPendaftarPage dapat menampilkannya melalui tampilkanDaftarPendaftar(daftar) dan tampilkanFormSeleksi(). Inisiator Program menentukan keputusan untuk setiap pendaftar melalui pilihStatusSeleksi(idPendaftaran, status), kemudian mengirimkannya melalui kirimHasilSeleksi(), yang diteruskan ke SeleksiController melalui simpanHasilSeleksi(idProgram, keputusan). Untuk setiap keputusan seleksi (fragmen loop), keputusan DITERIMA divalidasi terhadap kuota melalui validasiKuota(idProgram, jumlahDiterimaBaru), yang memanggil Program.cekKuotaTersedia(jumlahTambahan) (Program menghitung jumlah relawan diterima melalui hitungJumlahDiterima()) dan dilanjutkan dengan Pendaftaran.terima(), sedangkan keputusan DITOLAK langsung memanggil Pendaftaran.tolak(). Hasil penyimpanan dikembalikan sebagai Boolean dan KelolaPendaftarPage menampilkan tampilkanNotifikasiBerhasil().
 
 <p align="center">
-<img alt="Sequence Diagram UC05 Skenario Normal" src="./assets/diagram/SD_UC05_normal.png" width="100%">
+<img alt="Sequence Diagram UC05 Skenario Normal" src="./assets/diagram/SD_UC05_normal (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.14. Sequence Diagram UC05 - Skenario Normal</i>
@@ -581,7 +581,7 @@ Gambar 3.15 menunjukkan sequence diagram UC05 untuk Skenario Alternatif 1: Kuota
 Pada validasiKuota(idProgram, jumlahDiterimaBaru), Program.cekKuotaTersedia(jumlahTambahan) mengembalikan false karena jumlah relawan diterima akan melampaui kuota. SeleksiController mengembalikan nilai tersebut ke KelolaPendaftarPage, yang menampilkan tampilkanPesanError(pesan). Inisiator Program kemudian mengubah pilihannya menjadi DITOLAK melalui pilihStatusSeleksi(idPendaftaran, status), dan alur kembali ke simpanHasilSeleksi() pada skenario normal.
 
 <p align="center">
-<img alt="Sequence Diagram UC05 Skenario Alternatif 1: Kuota Relawan Telah Terpenuhi" src="./assets/diagram/SD_UC05_alt1.png" width="100%">
+<img alt="Sequence Diagram UC05 Skenario Alternatif 1: Kuota Relawan Telah Terpenuhi" src="./assets/diagram/SD_UC05_alt1 (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.15. Sequence Diagram UC05 - Skenario Alternatif 1: Kuota Relawan Telah Terpenuhi</i>
@@ -592,7 +592,7 @@ Pada validasiKuota(idProgram, jumlahDiterimaBaru), Program.cekKuotaTersedia(juml
 Gambar 3.16 menunjukkan diagram kelas UC05 yang terdiri atas kelas-kelas pada Tabel 3.5. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2: KelolaPendaftarPage bergantung pada SeleksiController (memanggil), SeleksiController bergantung pada Pendaftaran (membuat pendaftaran & menetapkan hasil seleksi) dan pada Program (memeriksa kuota & mengambil pendaftar), serta Program berasosiasi dengan Pendaftaran (multiplisitas 1 : 0..*, label "untuk"). Seluruh operasi yang dipanggil pada sequence diagram 3.5.2 — lihatDaftarRelawan(), simpanHasilSeleksi(), validasiKuota(), daftarPendaftar(), cekKuotaTersedia(), hitungJumlahDiterima(), terima(), tolak(), bukaKelolaPendaftar(), tampilkanDaftarPendaftar(), tampilkanFormSeleksi(), pilihStatusSeleksi(), kirimHasilSeleksi(), tampilkanNotifikasiBerhasil(), dan tampilkanPesanError() — terdapat pada kelas yang bersangkutan.
 
 <p align="center">
-<img alt="Diagram Kelas UC05" src="./assets/diagram/CD_UC05.png" width="100%">
+<img alt="Diagram Kelas UC05" src="./assets/diagram/CD_UC05 (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.16. Diagram Kelas Use Case UC05 - Menyeleksi calon relawan pendaftar</i>
@@ -626,10 +626,12 @@ Tabel 3.6.1 Identifikasi Kelas Use Case [UC05]
 
 - **Skenario Normal**
 
-Gambar 3.17 menunjukkan sequence diagram UC06 untuk Skenario Normal. Inisiator Program mengonfirmasi hasil seleksi melalui kirimKonfirmasiHasil() pada KelolaPendaftarPage, yang meneruskannya ke SeleksiController melalui konfirmasiHasilSeleksi(idProgram). SeleksiController memperoleh daftar pendaftar dari Program.daftarPendaftar(), lalu pada fragmen loop memastikan setiap pendaftaran telah diputuskan melalui Pendaftaran.sudahDiputuskan(). Setelah seluruh pendaftaran terbukti sudah diputuskan, fragmen loop berikutnya membuat notifikasi untuk setiap pendaftaran melalui triggerNotifikasi(pendaftaran), yang membuat objek Notifikasi (<<create>>) dan mengirimkannya melalui kirim(). Hasil dikembalikan sebagai Boolean dan KelolaPendaftarPage menampilkan tampilkanKonfirmasiHasil(). Selanjutnya, Relawan membuka menu notifikasi melalui bukaMenuNotifikasi() pada KelolaAkunPage, yang meminta ambilNotifikasi(idPengguna) ke AuthController; AuthController memperoleh daftar notifikasi dari Relawan.lihatNotifikasi() (diwarisi dari Pengguna), kemudian KelolaAkunPage menampilkannya melalui tampilkanDaftarNotifikasi(daftar). Ketika Relawan memilih notifikasi melalui pilihNotifikasi(idNotifikasi), KelolaAkunPage memanggil bacaNotifikasi(idNotifikasi) pada AuthController, yang menandai notifikasi terbaca melalui Notifikasi.baca() dan mengambil isinya melalui Notifikasi.showDetail(), lalu menampilkannya melalui tampilkanDetailNotifikasi(detail).
+Gambar 3.17 menunjukkan sequence diagram UC06 untuk Skenario Normal. Inisiator Program mengonfirmasi hasil seleksi melalui kirimKonfirmasiHasil() pada KelolaPendaftarPage, yang meneruskannya ke SeleksiController melalui konfirmasiHasilSeleksi(idProgram). SeleksiController memperoleh daftar pendaftar dari Program.daftarPendaftar(), lalu pada fragmen loop memastikan setiap pendaftaran telah diputuskan melalui Pendaftaran.sudahDiputuskan(). Setelah seluruh pendaftaran terbukti sudah diputuskan, fragmen loop berikutnya membuat notifikasi untuk setiap pendaftaran melalui triggerNotifikasi(pendaftaran), yang membuat objek Notifikasi (<<create>>) dan mengirimkannya melalui kirim(). 
+
+Hasil dikembalikan sebagai Boolean dan KelolaPendaftarPage menampilkan tampilkanKonfirmasiHasil(). Selanjutnya, Relawan membuka menu notifikasi melalui bukaMenuNotifikasi() pada KelolaAkunPage, yang meminta ambilNotifikasi(idPengguna) ke AuthController; AuthController memperoleh daftar notifikasi dari Relawan.lihatNotifikasi() (diwarisi dari Pengguna), kemudian KelolaAkunPage menampilkannya melalui tampilkanDaftarNotifikasi(daftar). Ketika Relawan memilih notifikasi melalui pilihNotifikasi(idNotifikasi), KelolaAkunPage memanggil bacaNotifikasi(idNotifikasi) pada AuthController, yang menandai notifikasi terbaca melalui Notifikasi.baca() dan mengambil isinya melalui Notifikasi.showDetail(), lalu menampilkannya melalui tampilkanDetailNotifikasi(detail).
 
 <p align="center">
-<img alt="Sequence Diagram UC06 Skenario Normal" src="./assets/diagram/SD_UC06_normal.png" width="100%">
+<img alt="Sequence Diagram UC06 Skenario Normal" src="./assets/diagram/SD_UC06_normal (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.17. Sequence Diagram UC06 - Skenario Normal</i>
@@ -641,7 +643,7 @@ Gambar 3.18 menunjukkan sequence diagram UC06 untuk Skenario Alternatif 1: Masih
 Karena minimal satu pendaftaran bernilai false, konfirmasiHasilSeleksi(idProgram) mengembalikan false dan tidak ada notifikasi yang dibuat maupun dikirim. KelolaPendaftarPage kemudian menampilkan tampilkanPesanError(pesan) sehingga Inisiator Program dapat menyelesaikan seleksi terlebih dahulu.
 
 <p align="center">
-<img alt="Sequence Diagram UC06 Skenario Alternatif 1: Masih Ada Pendaftar yang Belum Diseleksi" src="./assets/diagram/SD_UC06_alt1.png" width="100%">
+<img alt="Sequence Diagram UC06 Skenario Alternatif 1: Masih Ada Pendaftar yang Belum Diseleksi" src="./assets/diagram/SD_UC06_alt1 (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.18. Sequence Diagram UC06 - Skenario Alternatif 1: Masih Ada Pendaftar yang Belum Diseleksi</i>
@@ -653,7 +655,7 @@ Gambar 3.19 menunjukkan diagram kelas UC06 yang terdiri atas kelas-kelas pada Ta
 Relawan merupakan generalisasi dari Pengguna; Pengguna berasosiasi dengan Notifikasi (1 : 0..*, "menerima"); Relawan dan Program masing-masing berasosiasi dengan Pendaftaran (1 : 0..*, "mengajukan" dan "untuk"); KelolaAkunPage bergantung pada AuthController dan KelolaPendaftarPage bergantung pada SeleksiController (memanggil); AuthController bergantung pada Relawan (membuat akun relawan) dan Notifikasi (mengambil notifikasi); serta SeleksiController bergantung pada Pendaftaran, Program, Relawan, dan Notifikasi. Seluruh operasi yang dipanggil pada sequence diagram 3.6.2 — konfirmasiHasilSeleksi(), daftarPendaftar(), sudahDiputuskan(), triggerNotifikasi(), kirim(), ambilNotifikasi(), lihatNotifikasi(), bacaNotifikasi(), baca(), showDetail(), kirimKonfirmasiHasil(), tampilkanKonfirmasiHasil(), tampilkanPesanError(), bukaMenuNotifikasi(), pilihNotifikasi(), tampilkanDaftarNotifikasi(), dan tampilkanDetailNotifikasi() — terdapat pada kelas yang bersangkutan.
 
 <p align="center">
-<img alt="Diagram Kelas UC06" src="./assets/diagram/CD_UC06.png" width="100%">
+<img alt="Diagram Kelas UC06" src="./assets/diagram/CD_UC06 (!).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.19. Diagram Kelas Use Case UC06 - Konfirmasi status pendaftaran</i>
