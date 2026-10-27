@@ -1281,7 +1281,7 @@ Tabel 5.1.3. Query Kelas Program
 **Nama Kelas:** KelolaAkunPage
 **ID Kelas:** C12
 
-Tabel 5.12.1. Operasi Kelas [Nama Kelas 1]
+Tabel 5.12.1. Operasi Kelas KelolaAkunPage 
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
@@ -1304,7 +1304,7 @@ Tabel 5.12.1. Operasi Kelas [Nama Kelas 1]
 | tampilkanDaftarNotifikasi(daftar: List<Notifikasi>): void | public | Menampilkan daftar notifikasi beserta status keterbacaannya. |
 | tampilkanDetailNotifikasi(detail: String): void | public | Menampilkan isi lengkap notifikasi yang dipilih. |
 
-Tabel 5.12.2. Atribut Kelas [Nama Kelas 1]
+Tabel 5.12.2. Atribut Kelas KelolaAkunPage
 
 | Nama Atribut | Visibility | Tipe |
 | :--- | :--- | :--- |
@@ -1315,9 +1315,201 @@ Tabel 5.12.2. Atribut Kelas [Nama Kelas 1]
 
 ### 5.12.1 Algoritma/Query
 
-**Nama Kelas:** 
-**Nama Operasi:**   
-**ID Algoritma:** 
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** bukaHalamanRegistrasi()  
+**Algoritma :** (Algo-C12-01)
+
+```text
+Procedure bukaHalamanRegistrasi()
+    tampilkanFormRegistrasi()
+```
+
+### 5.12.2 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanFormRegistrasi()  
+**Algoritma :** (Algo-C12-02)
+
+```text
+Procedure tampilkanFormRegistrasi()
+    render formulir registrasi (kolom data diri, kolom unggah dokumen, tombol kirim)
+```
+
+### 5.12.3 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** isiFormRegistrasi(dataDiri)  
+**Algoritma :** (Algo-C12-03)
+
+```text
+Procedure isiFormRegistrasi(dataDiri)
+    this.dataDiri ← dataDiri
+```
+
+### 5.12.4 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** unggahDokumen(berkas)  
+**Algoritma :** (Algo-C12-04)
+
+```text
+Procedure unggahDokumen(berkas)
+    this.berkas ← berkas
+```
+
+### 5.12.5 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** kirimPendaftaran()  
+**Algoritma :** (Algo-C12-05)
+
+```text
+Procedure kirimPendaftaran()
+    hasil ← AuthController.buatAkunBaru(this.dataDiri, this.berkas)
+    if hasil = error(daftarPesan) then
+        tampilkanPesanError(daftarPesan)
+    else
+        tampilkanNotifikasiBerhasil()
+```
+
+### 5.12.6 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanNotifikasiBerhasil()  
+**Algoritma :** (Algo-C12-06)
+
+```text
+Procedure tampilkanNotifikasiBerhasil()
+    render pesan "Akun berhasil dibuat"
+```
+
+### 5.12.7 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanPesanError(pesan)  
+**Algoritma :** (Algo-C12-07)
+
+```text
+Procedure tampilkanPesanError(pesan)
+    render pesan kesalahan pada halaman
+```
+
+### 5.12.8 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** arahkanKeLogin(urlKembali)  
+**Algoritma :** (Algo-C12-08)
+
+```text
+Procedure arahkanKeLogin(urlKembali)
+    this.urlKembali ← urlKembali
+    tampilkanFormLogin()
+```
+
+### 5.12.9 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** arahkanKembali()  
+**Algoritma :** (Algo-C12-09)
+
+```text
+Procedure arahkanKembali()
+    if this.urlKembali tidak kosong and this.urlKembali adalah alamat internal RekanBumi then
+        navigasi ke this.urlKembali
+    else
+        navigasi ke halaman beranda
+```
+
+### 5.12.10 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanFormLogin()  
+**Algoritma :** (Algo-C12-10)
+
+```text
+Procedure tampilkanFormLogin()
+    render formulir login (kolom email, kolom kata sandi, tombol masuk)
+```
+
+### 5.12.11 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** terimaInputKredensial(email, kataSandi)  
+**Algoritma :** (Algo-C12-11)
+
+```text
+Procedure terimaInputKredensial(email, kataSandi)
+    hasil ← AuthController.validasiKredensial(email, kataSandi, ip)
+    // ip diambil server dari request, bukan diisi pengguna
+    if hasil = error "IP diblokir" then
+        tampilkanPesanStatus("IP diblokir sementara selama 5 menit")
+    else if hasil = true then
+        tampilkanPesanStatus("Berhasil masuk")
+        arahkanKembali()
+    else
+        tampilkanPesanStatus("Email atau kata sandi salah")
+```
+
+### 5.12.12 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanPesanStatus(pesan)  
+**Algoritma :** (Algo-C12-12)
+
+```text
+Procedure tampilkanPesanStatus(pesan)
+    render pesan status login pada halaman
+```
+
+### 5.12.13 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** bukaMenuNotifikasi()  
+**Algoritma :** (Algo-C12-13)
+
+```text
+Procedure bukaMenuNotifikasi()
+    daftar ← AuthController.ambilNotifikasi(idPengguna)
+    // idPengguna diambil dari sesi aktif
+    tampilkanDaftarNotifikasi(daftar)
+```
+
+### 5.12.14 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** pilihNotifikasi(idNotifikasi)  
+**Algoritma :** (Algo-C12-14)
+
+```text
+Procedure pilihNotifikasi(idNotifikasi)
+    notifikasi ← AuthController.bacaNotifikasi(idNotifikasi)
+    tampilkanDetailNotifikasi(notifikasi.showDetail())
+```
+
+### 5.12.15 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanDaftarNotifikasi(daftar)  
+**Algoritma :** (Algo-C12-15)
+
+```text
+Procedure tampilkanDaftarNotifikasi(daftar)
+    For each notifikasi in daftar
+        render baris notifikasi (ringkasan pesan, waktu kirim, status dibaca)
+```
+
+### 5.12.16 Algoritma/Query
+
+**Nama Kelas :** KelolaAkunPage  
+**Nama Operasi :** tampilkanDetailNotifikasi(detail)  
+**Algoritma :** (Algo-C12-16)
+
+```text
+Procedure tampilkanDetailNotifikasi(detail)
+    render isi lengkap notifikasi
+```
+
+Kelas KelolaAkunPage adalah kelas *boundary* sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
 
 
 ## 5.13 Kelas AuthController
