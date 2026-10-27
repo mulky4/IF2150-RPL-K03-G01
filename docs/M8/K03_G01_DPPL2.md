@@ -1082,6 +1082,125 @@ Tabel 5.1.1. Query Operasi [Nama Operasi]
 
 *[Ulangi pola 5.1: nama dan ID kelas, tabel operasi, tabel atribut, serta subbab algoritma/query untuk operasi penting jika diperlukan.]*
 
+
+## 5.12 Kelas KelolaAkunPage
+
+**Nama Kelas:** KelolaAkunPage
+**ID Kelas:** C12
+
+Tabel 5.12.1. Operasi Kelas [Nama Kelas 1]
+
+| Nama Operasi | Visibility (private, public) | Keterangan |
+| :--- | :--- | :--- |
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| bukaHalamanRegistrasi(): void | public | Membuka halaman registrasi akun dan memanggil tampilkanFormRegistrasi(). |
+| tampilkanFormRegistrasi(): void | public | Menampilkan formulir registrasi (data diri dan kolom unggah dokumen). |
+| isiFormRegistrasi(dataDiri: FormData): void | public | Menerima isian formulir dan menyimpannya pada atribut dataDiri. |
+| unggahDokumen(berkas: File): void | public | Menerima berkas dokumen verifikasi dan menyimpannya pada atribut berkas. |
+| kirimPendaftaran(): void | public | Mengirim dataDiri dan berkas ke AuthController.buatAkunBaru(), lalu menampilkan hasilnya (berhasil atau pesan galat). |
+| tampilkanNotifikasiBerhasil(): void | public | Menampilkan pemberitahuan bahwa akun berhasil dibuat. |
+| tampilkanPesanError(pesan: String): void | public | Menampilkan pesan kesalahan validasi (mis. data tidak lengkap). |
+| arahkanKeLogin(urlKembali: String): void | public | Menyimpan urlKembali lalu menampilkan halaman login; dipanggil EksplorasiProgramPage saat pengguna belum punya sesi. |
+| arahkanKembali(): void | public | Setelah login berhasil, mengarahkan pengguna ke urlKembali (halaman program asal). |
+| tampilkanFormLogin(): void | public | Menampilkan formulir login (email dan kata sandi). |
+| terimaInputKredensial(email: String, kataSandi: String): void | public | Menerima kredensial dan meneruskannya ke AuthController.validasiKredensial(); menampilkan status sesuai hasilnya. |
+| tampilkanPesanStatus(pesan: String): void | public | Menampilkan status login: berhasil, kredensial salah, atau IP diblokir sementara. |
+| bukaMenuNotifikasi(): void | public | Meminta daftar notifikasi pengguna ke AuthController.ambilNotifikasi(). |
+| pilihNotifikasi(idNotifikasi: String): void | public | Meminta isi notifikasi terpilih ke AuthController.bacaNotifikasi(). |
+| tampilkanDaftarNotifikasi(daftar: List<Notifikasi>): void | public | Menampilkan daftar notifikasi beserta status keterbacaannya. |
+| tampilkanDetailNotifikasi(detail: String): void | public | Menampilkan isi lengkap notifikasi yang dipilih. |
+
+Tabel 5.12.2. Atribut Kelas [Nama Kelas 1]
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| dataDiri | private | FormData |
+| berkas | private | File |
+| formLogin | private | FormData |
+| urlKembali | private | String |
+
+### 5.12.1 Algoritma/Query
+
+**Nama Kelas:** 
+**Nama Operasi:**   
+**ID Algoritma:** 
+
+
+## 5.13 Kelas AuthController
+**Nama Kelas:** AuthController  
+**ID Kelas:** C13 (*control*)
+
+Tabel 5.13.1. Operasi Kelas AuthController
+
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| buatAkunBaru(dataDiri: FormData, berkas: File): Pengguna | public | Memvalidasi data, mendaftarkan kredensial ke BetterAuth, mengunggah berkas (bila ada), lalu membuat objek Relawan atau InisiatorProgram dan DokumenVerifikasi. |
+| validasiKelengkapanData(dataDiri: FormData, berkas: File): String[] | private | Memeriksa kelengkapan dan format isian; mengembalikan daftar pesan galat (kosong jika valid). |
+| cekStatusVerifikasi(dataDiri: FormData): StatusVerifikasi | private | Menentukan status verifikasi awal akun (berdasarkan verifikasi email oleh Better Auth). |
+| cekSesi(): Boolean | public | Memeriksa apakah pengguna memiliki sesi aktif; dipanggil EksplorasiProgramPage. |
+| validasiKredensial(email: String, kataSandi: String, ip: String): Boolean | public | Alur login: cek blokir IP, verifikasi kredensial ke BetterAuth, catat/reset percobaan gagal, dan mulai sesi. |
+| cekStatusBlokir(ip: String): Boolean | private | Mengembalikan true bila IP masih dalam masa blokir. |
+| catatPercobaanGagal(ip: String): Integer | private | Menambah hitungan percobaan gagal IP dan mengembalikan jumlah terbarunya. |
+| blokirIP(ip: String): void | private | Menetapkan waktu blokir IP selama DURASI_BLOKIR_MENIT (KNF06). |
+| resetPercobaanGagal(ip: String): void | private | Menghapus hitungan percobaan gagal IP setelah login berhasil. |
+| mulaiSesi(idPengguna: String): String | private | Memanggil `BetterAuth.buatSesiMasuk() dan mengembalikan token sesi. |
+| ambilNotifikasi(idPengguna: String): List<Notifikasi> | public | Mengambil daftar notifikasi milik pengguna melalui `Pengguna.lihatNotifikasi(). |
+| bacaNotifikasi(idNotifikasi: String): Notifikasi | public | Menandai notifikasi terbaca (Notifikasi.baca()) dan mengambil isinya (showDetail()). |
+
+Tabel 5.13.2. Atribut Kelas AuthController
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| percobaanGagal | private | Map<String, Integer> |
+| waktuBlokir | private | Map<String, DateTime> |
+| BATAS_PERCOBAAN | private | Integer (= 5) |
+| DURASI_BLOKIR_MENIT | private | Integer (= 5) |
+
+### 5.13.1 Algoritma/Query
+
+**Nama Kelas:** 
+**Nama Operasi:**   
+**ID Algoritma:** 
+
+
+## 5.14 Kelas KelolaProgramPage
+
+**Nama Kelas:** KelolaProgramPage  
+**ID Kelas:** C14 (*boundary*)
+
+Tabel 5.14.1. Operasi Kelas KelolaProgramPage
+
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| bukaHalamanDaftarProgram(): void | public | Membuka halaman pendaftaran program oleh Inisiator Program. |
+| tampilkanFormProgram(): void | public | Menampilkan formulir data program dan kolom unggah dokumen legalitas. |
+| isiFormProgram(dataProgram: FormData): void` | public | Menyimpan isian formulir pada atribut dataProgram. |
+| unggahDokumen(berkas: File): void | public | Menyimpan dokumen legalitas lembaga pada atribut berkas. |
+| kirimPendaftaran(): void | public | Mengirim dataProgram dan berkas ke ProgramController.simpanProgramBaru(); menampilkan hasil. |
+| tampilkanFormLaporan(idProgram: String): void` | public | Menampilkan formulir laporan akhir untuk program tertentu. |
+| unggahLaporanAkhir(idProgram: String, dokumentasi: List<File>, ringkasanCapaian: String): void | public | Mengirim laporan akhir ke ProgramController.ajukanLaporanAkhir(); menampilkan status program hasilnya. |
+| pilihLaporan(idLaporan: String): void | public | (Verifikator) Memilih laporan, lalu meminta ProgramController.tinjauLaporan(). |
+| tampilkanLaporanUntukDitinjau(laporan: LaporanProgram): void | public | (Verifikator) Menampilkan ringkasan capaian dan dokumentasi laporan. |
+| kirimPersetujuanLaporan(idLaporan: String): void | public | (Verifikator) Memanggil ProgramController.konfirmasiLaporan(). |
+| kirimPenolakanLaporan(idLaporan: String, catatanRevisi: String): void | public | (Verifikator) Memanggil ProgramController.tolakLaporan() beserta catatan revisi. |
+| tampilkanStatusProgram(status: StatusProgram): void | public | Menampilkan status program terbaru setelah pengajuan, persetujuan, atau penolakan. |
+| tampilkanNotifikasiBerhasil(): void | public | Menampilkan pemberitahuan aksi berhasil. |
+| tampilkanPesanError(pesan: String): void | public | Menampilkan pesan kesalahan validasi. |
+
+Tabel 5.14.2. Atribut Kelas KelolaProgramPage
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| dataProgram | private | FormData |
+| berkas | private | File |
+
+### 5.14.1 Algoritma/Query
+
+**Nama Kelas:** 
+**Nama Operasi:**   
+**ID Algoritma:** 
+
 <br>
 
 ---
