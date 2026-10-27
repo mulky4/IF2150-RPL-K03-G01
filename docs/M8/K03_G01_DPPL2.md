@@ -1027,56 +1027,249 @@ Tabel 5.1. Daftar Kelas Perancangan dan Kelas Analisis Terkait
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 | :--- | :--- | :--- |
-| 1 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL atau -]* |
-| 2 | *[Nama kelas perancangan]* | *[Nama kelas analisis pada SKPL atau -]* |
-| ... | *...* | *...* |
+| 1 | Program | Program |
+| 2 | Pendaftaran | Pendaftaran |
+| 3 | Relawan | Relawan |
+| 4 | Pengguna | Pengguna |
+| 5 | InisiatorProgram | InisiatorProgram |
+| 6 | Verifikator | Verifikator |
+| 7 | DokumenVerifikasi | DokumenVerifikasi |
+| 8 | Kehadiran | Kehadiran |
+| 9 | LaporanProgram | LaporanProgram |
+| 10 | Notifikasi | Notifikasi |
+| 11 | RiwayatKontribusi | RiwayatKontribusi |
+| 12 | KelolaAkunPage | KelolaAkunPage |
+| 13 | AuthController | AuthController |
+| 14 | KelolaProgramPage | KelolaProgramPage |
+| 15 | ProgramController | ProgramController |
+| 16 | EksplorasiProgramPage | EksplorasiProgramPage |
+| 17 | KelolaPendaftarPage | KelolaPendaftarPage |
+| 18 | SeleksiController | SeleksiController |
+| 19 | AreaKegiatanPage | AreaKegiatanPage |
+| 20 | PresensiController | PresensiController |
+| 21 | CloudStorageAdapter | [Baru] |
+| 22 | BetterAuth | [Baru] |
 
 Untuk **setiap kelas**, identifikasi operasi berdasarkan tanggung jawab kelas beserta *visibility*-nya, serta atribut beserta *visibility* dan tipenya. Buat subbab tersendiri untuk setiap kelas.
 
-## 5.1 Kelas [Nama Kelas 1]
+## 5.1 Kelas Program
 
-**Nama Kelas:** *[Nama kelas]*  
-**ID Kelas:** *[ID kelas]*
+**Nama Kelas:** Program 
+**ID Kelas:** C01
 
-Tabel 5.1.1. Operasi Kelas [Nama Kelas 1]
+Tabel 5.1.1. Operasi Kelas Program
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| *[Signature operasi, termasuk parameter dan tipe kembalian]* | *[Visibility]* | *[Tanggung jawab operasi]* |
+| ajukanKonfirmasi() | public | Mengubah status program menjadi menunggu konfirmasi setelah Inisiator mengajukan laporan akhir; mengembalikan status baru. |
+| selesaikan() | public | Menandai program selesai setelah laporan disetujui Verifikator; mengembalikan status baru. |
+| mintaRevisi() | public | Mengembalikan program ke dalam status 'perlu revisi' ketika laporan ditolak; mengembalikan status baru. |
+| cekKuotaTersedia() | public | Memeriksa apakah kuota relawan masih tersedia. |
+| cekDalamWaktuPelaksanaan(waktu) | public | Memeriksa apakah suatu waktu berada di antara waktuMulai dan waktuSelesai (dipakai untuk check-in, KF12). |
+| hitungDurasiJam() | public | Menghitung durasi program dalam jam (dipakai untuk durasi jam aksi, KF15). |
+| hitungJumlahDiterima() | public | Menghitung jumlah pendaftar dengan status diterima. |
+| keteranganWaktu() | public | Mengembalikan keterangan waktu: belum dimulai, sedang berlangsung, atau sudah selesai. |
+| ambilPengelola() | public | Mengambil InisiatorProgram pemilik program |
+| daftarPendaftar() | public | Mengambil semua Pendaftaran untuk program terkait |
+| daftarRelawanDiterima() | public | Mengambil daftar Relawan yang pendaftarannya diterima. |
+| cari(kata, kategori) | public (static) | Mencari program yang dibuka berdasarkan kata kunci dan kategori; menggantikan filterProgram() | 
 | *...* | *...* | *...* |
 
-Tabel 5.1.2. Atribut Kelas [Nama Kelas 1]
+Tabel 5.1.2. Atribut Kelas Program
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| *[Nama atribut]* | *[Visibility]* | *[Tipe sesuai bahasa pemrograman yang digunakan]* |
-| *...* | *...* | *...* |
+| idProgram | private | string |
+| namaProgram | private | string |
+| deskripsi | private | string |
+| kategori | private | enum |
+| kuota | private | int |
+| status | private | enum |
+| waktuMulai | private | DateTime |
+| waktuSelesai | private | DateTime |
+| tempatPelaksanaan | private | string |
+|idInisiator | private | string |
 
 ### 5.1.1 Algoritma/Query
 
-Bagian ini diisi untuk kerangka algoritma proses yang dianggap cukup penting. Algoritma dapat dituliskan sebagai *pseudocode*. Implementasi *skeleton code* juga dapat digunakan untuk kelas yang sudah terdefinisi pada bahasa pemrograman tertentu.
-
-**Nama Kelas:** *[Nama kelas]*  
-**Nama Operasi:** *[Signature operasi]*  
-**ID Algoritma:** *[Algo-001]*
+**Nama Kelas:** Program
+**Nama Operasi:** ajukanKonfirmasi() 
+**ID Algoritma:** (Algo-C01-01)
 
 ```text
-[Tuliskan pseudocode algoritma operasi di sini.]
+Function ajukanKonfirmasi()
+    if this.status ≠ "Berjalan" then
+        → error "Program tidak dapat diajukan konfirmasi"
+    this.status ← "MenungguKonfirmasi"
+    DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
+    → this.status
 ```
-
-Jika operasi mengacu pada query tertentu, lengkapi tabel berikut. 
-
-Tabel 5.1.1. Query Operasi [Nama Operasi]
-
-| No Query | Query | Keterangan |
-| :--- | :--- | :--- |
-| *[Q-001]* | *[Tuliskan query]* | *[Fungsi query]* |
-| *...* | *...* | *...* |
-
 
 ### 5.1.2 Algoritma/Query
 
-*[Ulangi pola 5.1.1 untuk operasi penting berikutnya pada kelas yang sama, jika ada.]*
+**Nama Kelas:** Program
+**Nama Operasi:** selesaikan() 
+**ID Algoritma:** (Algo-C01-02)
+
+```text
+Function selesaikan()
+    if this.status ≠ "MenungguKonfirmasi" then
+        → error "Program belum diajukan konfirmasi"
+    this.status ← "Selesai"
+    DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
+    → this.status
+```
+
+### 5.1.3 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** mintaRevisi() 
+**ID Algoritma:** (Algo-C01-03)
+
+```text
+Function mintaRevisi()
+    if this.status ≠ "MenungguKonfirmasi" then
+        → error "Program belum diajukan konfirmasi"
+    this.status ← "PerluRevisi"
+    DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
+    → this.status
+```
+
+### 5.1.4 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** cekKuotaTersedia() 
+**ID Algoritma:** (Algo-C01-04)
+
+```text
+Function cekKuotaTersedia() → boolean
+    diterima ← this.hitungJumlahDiterima()
+    if (diterima < this.kuota) then
+        → true
+    else
+        → false
+```
+
+### 5.1.5 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** cekDalamWaktuPelaksanaan(waktu) 
+**ID Algoritma:** (Algo-C01-05)
+
+```text
+Function cekDalamWaktuPelaksanaan(waktu) → boolean
+    → (waktu ≥ this.waktuMulai) and (waktu ≤ this.waktuSelesai)
+```
+
+### 5.1.6 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** hitungDurasiJam()
+**ID Algoritma:** (Algo-C01-06)
+
+```text
+Function hitungDurasiJam() → real
+    selisih ← this.waktuSelesai − this.waktuMulai
+    → selisih dalam satuan jam
+```
+
+### 5.1.7 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** hitungJumlahDiterima()
+**ID Algoritma:** (Algo-C01-07)
+
+```text
+Function hitungJumlahDiterima() → int
+    → DB_SERVICE.countPendaftarDiterima(this.idProgram)
+```
+
+### 5.1.8 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** keteranganWaktu()
+**ID Algoritma:** (Algo-C01-08)
+
+```text
+Function keteranganWaktu() → string
+    sekarang ← now()
+    if (sekarang < this.waktuMulai) then
+        → "Belum dimulai"
+    else if (sekarang ≤ this.waktuSelesai) then
+        → "Sedang berlangsung"
+    else
+        → "Sudah selesai"
+```
+
+### 5.1.9 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** ambilPengelola()
+**ID Algoritma:** (Algo-C01-09)
+
+```text
+Function ambilPengelola() → InisiatorProgram
+    data ← DB_SERVICE.findInisiatorByID(this.idInisiator)
+    if data is null then
+        → error "Pengelola program tidak ditemukan"
+    → new InisiatorProgram(data)
+```
+
+### 5.1.10 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** daftarPendaftar()
+**ID Algoritma:** (Algo-C01-10)
+
+```text
+Function daftarPendaftar() → List<Pendaftaran>
+    dataList ← DB_SERVICE.findPendaftarByProgram(this.idProgram)
+    hasil ← new List<Pendaftaran>
+    For each data in dataList
+        hasil.add(new Pendaftaran(data))
+    → hasil
+```
+
+### 5.1.11 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** daftarRelawanDiterima()
+**ID Algoritma:** (Algo-C01-11)
+
+```text
+Function daftarRelawanDiterima() → List<Relawan>
+    dataList ← DB_SERVICE.findRelawanDiterimaByProgram(this.idProgram)
+    hasil ← new List<Relawan>
+    For each data in dataList
+        hasil.add(new Relawan(data))
+    → hasil
+```
+
+### 5.1.12 Algoritma/Query
+
+**Nama Kelas:** Program
+**Nama Operasi:** cari(kata, kategori)
+**ID Algoritma:** (Algo-C01-12)
+
+```text
+Function cari(kata, kategori) → List<Program>
+    dataList ← DB_SERVICE.searchProgram(kata, kategori)
+    hasil ← new List<Program>
+    For each data in dataList
+        hasil.add(new Program(data))
+    → hasil
+```
+
+Tabel 5.1.3. Query Kelas Program
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C01-01 | UPDATE program SET status = @status WHERE idProgram = @idProgram	 | Memperbarui status program (dipakai oleh Algo-C01-01, -02, dan -03). |
+| Q-C01-07 | SELECT COUNT(*) FROM pendaftaran WHERE idProgram = @idProgram AND status = 'Diterima' | Menghitung pendaftar yang diterima. |
+| Q-C01-09 | SELECT * FROM inisiator_program WHERE idInisiator = @idInisiator | Mengambil data pengelola program. |
+| Q-C01-10 | SELECT * FROM pendaftaran WHERE idProgram = @idProgram | Mengambil semua pendaftar program. |
+| Q-C01-11 | SELECT r.* FROM relawan r JOIN pendaftaran p ON p.idRelawan = r.idRelawan WHERE p.idProgram = @idProgram AND p.status = 'Diterima' | Mengambil relawan yang diterima. |
+| Q-C01-12 | SELECT * FROM program WHERE status = 'Dibuka' AND namaProgram LIKE @kata AND (@kategori IS NULL OR kategori = @kategori) | Pencaria program dengan filter. | 
+
 
 ## 5.2 Kelas [Nama Kelas Berikutnya]
 
