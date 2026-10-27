@@ -1328,7 +1328,7 @@ Procedure bukaHalamanRegistrasi()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanFormRegistrasi()  
-**Algoritma :** (Algo-C12-02)
+**ID Algoritma :** (Algo-C12-02)
 
 ```text
 Procedure tampilkanFormRegistrasi()
@@ -1339,7 +1339,7 @@ Procedure tampilkanFormRegistrasi()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** isiFormRegistrasi(dataDiri)  
-**Algoritma :** (Algo-C12-03)
+**ID Algoritma :** (Algo-C12-03)
 
 ```text
 Procedure isiFormRegistrasi(dataDiri)
@@ -1350,7 +1350,7 @@ Procedure isiFormRegistrasi(dataDiri)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** unggahDokumen(berkas)  
-**Algoritma :** (Algo-C12-04)
+**ID Algoritma :** (Algo-C12-04)
 
 ```text
 Procedure unggahDokumen(berkas)
@@ -1361,7 +1361,7 @@ Procedure unggahDokumen(berkas)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** kirimPendaftaran()  
-**Algoritma :** (Algo-C12-05)
+**ID Algoritma :** (Algo-C12-05)
 
 ```text
 Procedure kirimPendaftaran()
@@ -1376,7 +1376,7 @@ Procedure kirimPendaftaran()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanNotifikasiBerhasil()  
-**Algoritma :** (Algo-C12-06)
+**ID Algoritma :** (Algo-C12-06)
 
 ```text
 Procedure tampilkanNotifikasiBerhasil()
@@ -1387,7 +1387,7 @@ Procedure tampilkanNotifikasiBerhasil()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanPesanError(pesan)  
-**Algoritma :** (Algo-C12-07)
+**ID Algoritma :** (Algo-C12-07)
 
 ```text
 Procedure tampilkanPesanError(pesan)
@@ -1398,7 +1398,7 @@ Procedure tampilkanPesanError(pesan)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** arahkanKeLogin(urlKembali)  
-**Algoritma :** (Algo-C12-08)
+**ID Algoritma :** (Algo-C12-08)
 
 ```text
 Procedure arahkanKeLogin(urlKembali)
@@ -1410,7 +1410,7 @@ Procedure arahkanKeLogin(urlKembali)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** arahkanKembali()  
-**Algoritma :** (Algo-C12-09)
+**ID Algoritma :** (Algo-C12-09)
 
 ```text
 Procedure arahkanKembali()
@@ -1424,7 +1424,7 @@ Procedure arahkanKembali()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanFormLogin()  
-**Algoritma :** (Algo-C12-10)
+**ID Algoritma :** (Algo-C12-10)
 
 ```text
 Procedure tampilkanFormLogin()
@@ -1435,7 +1435,7 @@ Procedure tampilkanFormLogin()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** terimaInputKredensial(email, kataSandi)  
-**Algoritma :** (Algo-C12-11)
+**ID Algoritma :** (Algo-C12-11)
 
 ```text
 Procedure terimaInputKredensial(email, kataSandi)
@@ -1454,7 +1454,7 @@ Procedure terimaInputKredensial(email, kataSandi)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanPesanStatus(pesan)  
-**Algoritma :** (Algo-C12-12)
+**ID Algoritma :** (Algo-C12-12)
 
 ```text
 Procedure tampilkanPesanStatus(pesan)
@@ -1465,7 +1465,7 @@ Procedure tampilkanPesanStatus(pesan)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** bukaMenuNotifikasi()  
-**Algoritma :** (Algo-C12-13)
+**ID Algoritma :** (Algo-C12-13)
 
 ```text
 Procedure bukaMenuNotifikasi()
@@ -1478,7 +1478,7 @@ Procedure bukaMenuNotifikasi()
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** pilihNotifikasi(idNotifikasi)  
-**Algoritma :** (Algo-C12-14)
+**ID Algoritma :** (Algo-C12-14)
 
 ```text
 Procedure pilihNotifikasi(idNotifikasi)
@@ -1490,7 +1490,7 @@ Procedure pilihNotifikasi(idNotifikasi)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanDaftarNotifikasi(daftar)  
-**Algoritma :** (Algo-C12-15)
+**ID Algoritma :** (Algo-C12-15)
 
 ```text
 Procedure tampilkanDaftarNotifikasi(daftar)
@@ -1502,7 +1502,7 @@ Procedure tampilkanDaftarNotifikasi(daftar)
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** tampilkanDetailNotifikasi(detail)  
-**Algoritma :** (Algo-C12-16)
+**ID Algoritma :** (Algo-C12-16)
 
 ```text
 Procedure tampilkanDetailNotifikasi(detail)
@@ -1544,9 +1544,204 @@ Tabel 5.13.2. Atribut Kelas AuthController
 
 ### 5.13.1 Algoritma/Query
 
-**Nama Kelas:** 
-**Nama Operasi:**   
-**ID Algoritma:** 
+**Nama Kelas :** AuthController  
+**Nama Operasi :** buatAkunBaru(dataDiri, berkas)  
+**ID Algoritma :** (Algo-C13-01)
+
+```text
+Function buatAkunBaru(dataDiri, berkas)
+    daftarGalat ← validasiKelengkapanData(dataDiri, berkas)
+    if not isEmpty(daftarGalat) then
+        → error daftarGalat
+    status ← cekStatusVerifikasi(dataDiri)
+    idPengguna ← BetterAuth.daftarkanKredensial(dataDiri.email, dataDiri.kataSandi)
+    if dataDiri.peran = RELAWAN then
+        pengguna ← new Relawan(idPengguna, dataDiri, status)
+    else
+        pengguna ← new InisiatorProgram(idPengguna, dataDiri, status)
+    DB_SERVICE.savePengguna(pengguna)
+    if berkas ≠ null then
+        if not CloudStorageAdapter.validasiBerkas(berkas) then
+            → error "Berkas tidak valid"
+        url ← CloudStorageAdapter.unggahBerkas(berkas)
+        dokumen ← new DokumenVerifikasi(pengguna.idPengguna, dataDiri.jenisDokumen, url, MENUNGGU)
+        DB_SERVICE.saveDokumenVerifikasi(dokumen)
+    → pengguna
+```
+
+### 5.13.2 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** validasiKelengkapanData(dataDiri, berkas)  
+**ID Algoritma :** (Algo-C13-02)
+
+```text
+Function validasiKelengkapanData(dataDiri, berkas)
+    galat ← new List<string>
+    if isEmpty(dataDiri.email) or formatEmailTidakValid(dataDiri.email) then
+        galat.add("Email tidak valid")
+    if isEmpty(dataDiri.kataSandi) then
+        galat.add("Kata sandi wajib diisi")
+    if dataDiri.peran = RELAWAN then
+        if isEmpty(dataDiri.nama) or isEmpty(dataDiri.noTelepon) or isEmpty(dataDiri.domisili) then
+            galat.add("Data diri tidak lengkap")
+        if berkas = null then
+            galat.add("Dokumen verifikasi wajib diunggah")
+    else
+        if isEmpty(dataDiri.namaLembaga) then
+            galat.add("Nama lembaga wajib diisi")
+    → galat
+```
+
+### 5.13.3 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** cekStatusVerifikasi(dataDiri)  
+**ID Algoritma :** (Algo-C13-03)
+
+```text
+Function cekStatusVerifikasi(dataDiri)
+    if dataDiri.emailTerverifikasi = true then
+        → TERVERIFIKASI
+    → MENUNGGU
+```
+
+### 5.13.4 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** cekSesi()  
+**ID Algoritma :** (Algo-C13-04)
+
+```text
+Function cekSesi()
+    sesi ← BetterAuth.ambilSesi()
+    → (sesi ≠ null)
+```
+
+### 5.13.5 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** validasiKredensial(email, kataSandi, ip)  
+**ID Algoritma :** (Algo-C13-05)
+
+```text
+Function validasiKredensial(email, kataSandi, ip)
+    if cekStatusBlokir(ip) then
+        → error "IP diblokir"
+    idPengguna ← BetterAuth.verifikasiKredensial(email, kataSandi)
+    if idPengguna = null then
+        jumlah ← catatPercobaanGagal(ip)
+        if jumlah ≥ this.BATAS_PERCOBAAN then
+            blokirIP(ip)
+        → false
+    resetPercobaanGagal(ip)
+    mulaiSesi(idPengguna)
+    → true
+```
+
+### 5.13.6 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** cekStatusBlokir(ip)  
+**ID Algoritma :** (Algo-C13-06)
+
+```text
+Function cekStatusBlokir(ip)
+    if this.waktuBlokir mengandung ip then
+        if sekarang < this.waktuBlokir[ip] then
+            → true
+        hapus this.waktuBlokir[ip]
+        resetPercobaanGagal(ip)
+    → false
+```
+
+### 5.13.7 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** catatPercobaanGagal(ip)  
+**ID Algoritma :** (Algo-C13-07)
+
+```text
+Function catatPercobaanGagal(ip)
+    if this.percobaanGagal tidak mengandung ip then
+        this.percobaanGagal[ip] ← 0
+    this.percobaanGagal[ip] ← this.percobaanGagal[ip] + 1
+    → this.percobaanGagal[ip]
+```
+
+### 5.13.8 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** blokirIP(ip)  
+**ID Algoritma :** (Algo-C13-08)
+
+```text
+Procedure blokirIP(ip)
+    this.waktuBlokir[ip] ← sekarang + this.DURASI_BLOKIR_MENIT menit
+```
+
+### 5.13.9 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** resetPercobaanGagal(ip)  
+**ID Algoritma :** (Algo-C13-09)
+
+```text
+Procedure resetPercobaanGagal(ip)
+    hapus this.percobaanGagal[ip]
+```
+
+### 5.13.10 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** mulaiSesi(idPengguna)  
+**ID Algoritma :** (Algo-C13-10)
+
+```text
+Function mulaiSesi(idPengguna)
+    tokenSesi ← BetterAuth.buatSesiMasuk(idPengguna)
+    → tokenSesi
+```
+
+### 5.13.11 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** ambilNotifikasi(idPengguna)  
+**ID Algoritma :** (Algo-C13-11)
+
+```text
+Function ambilNotifikasi(idPengguna)
+    pengguna ← DB_SERVICE.findPenggunaByID(idPengguna)
+    if pengguna = null then
+        → error "Pengguna tidak ditemukan"
+    → pengguna.lihatNotifikasi()
+```
+
+### 5.13.12 Algoritma/Query
+
+**Nama Kelas :** AuthController  
+**Nama Operasi :** bacaNotifikasi(idNotifikasi)  
+**ID Algoritma :** (Algo-C13-12)
+
+```text
+Function bacaNotifikasi(idNotifikasi)
+    notifikasi ← DB_SERVICE.findNotifikasiByID(idNotifikasi)
+    if notifikasi = null then
+        → error "Notifikasi tidak ditemukan"
+    notifikasi.baca()
+    → notifikasi
+```
+
+Query :
+
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C13-01 | buatAkunBaru (Relawan):<br>INSERT INTO tbl_relawan (idPengguna, email, nama, noTelepon, domisili, statusVerifikasi) VALUES (@idPengguna, @email, @nama, @noTelepon, @domisili, @status) | Menyimpan akun Relawan baru ke dalam sistem. |
+| Q-C13-02 | buatAkunBaru (Inisiator):<br>INSERT INTO tbl_inisiator_program (idPengguna, email, namaLembaga, tautanSitusResmi, statusVerifikasi) VALUES (@idPengguna, @email, @namaLembaga, @tautan, @status) | Menyimpan akun Inisiator Program baru ke dalam sistem. |
+| Q-C13-03 | buatAkunBaru (dokumen):<br>INSERT INTO tbl_dokumen_verifikasi (idDokumen, idPengguna, jenisDokumen, urlFile, statusVerifikasi) VALUES (@idDokumen, @idPengguna, @jenisDokumen, @urlFile, 'MENUNGGU') | Menyimpan dokumen verifikasi yang diunggah pengguna saat registrasi. |
+| Q-C13-04 | ambilNotifikasi:<br>SELECT * FROM tbl_notifikasi WHERE idPenerima = @idPengguna ORDER BY waktuKirim DESC | Mengambil semua notifikasi milik pengguna, terbaru di atas. |
+| Q-C13-05 | bacaNotifikasi (ambil):<br>SELECT * FROM tbl_notifikasi WHERE idNotifikasi = @idNotifikasi | Mengambil satu notifikasi yang dipilih pengguna. |
+| Q-C13-06 | bacaNotifikasi (tandai):<br>UPDATE tbl_notifikasi SET statusDibaca = TRUE WHERE idNotifikasi = @idNotifikasi | Menandai notifikasi sebagai sudah dibaca. |
 
 
 ## 5.14 Kelas KelolaProgramPage
@@ -1582,9 +1777,179 @@ Tabel 5.14.2. Atribut Kelas KelolaProgramPage
 
 ### 5.14.1 Algoritma/Query
 
-**Nama Kelas:** 
-**Nama Operasi:**   
-**ID Algoritma:** 
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** bukaHalamanDaftarProgram()  
+**ID Algoritma :** (Algo-C14-01)
+
+```text
+Procedure bukaHalamanDaftarProgram()
+    tampilkanFormProgram()
+```
+
+### 5.14.2 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanFormProgram()  
+**ID Algoritma :** (Algo-C14-02)
+
+```text
+Procedure tampilkanFormProgram()
+    render formulir program (nama, deskripsi, kategori, tempat, waktu mulai, waktu selesai, kuota, syarat dan ketentuan, unggah dokumen legalitas)
+```
+
+### 5.14.3 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** isiFormProgram(dataProgram)  
+**ID Algoritma :** (Algo-C14-03)
+
+```text
+Procedure isiFormProgram(dataProgram)
+    this.dataProgram ← dataProgram
+```
+
+### 5.14.4 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** unggahDokumen(berkas)  
+**ID Algoritma :** (Algo-C14-04)
+
+```text
+Procedure unggahDokumen(berkas)
+    this.berkas ← berkas
+```
+
+### 5.14.5 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** kirimPendaftaran()  
+**ID Algoritma :** (Algo-C14-05)
+
+```text
+Procedure kirimPendaftaran()
+    hasil ← ProgramController.simpanProgramBaru(idInisiator, this.dataProgram, this.berkas)
+    // idInisiator diambil dari sesi aktif
+    if hasil = error(daftarPesan) then
+        tampilkanPesanError(daftarPesan)
+    else
+        tampilkanNotifikasiBerhasil()
+```
+
+### 5.14.6 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanFormLaporan(idProgram)  
+**ID Algoritma :** (Algo-C14-06)
+
+```text
+Procedure tampilkanFormLaporan(idProgram)
+    render formulir laporan akhir (unggah dokumentasi, ringkasan capaian) untuk idProgram
+```
+
+### 5.14.7 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** unggahLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian)  
+**ID Algoritma :** (Algo-C14-07)
+
+```text
+Procedure unggahLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian)
+    hasil ← ProgramController.ajukanLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian)
+    if hasil = error(daftarPesan) then
+        tampilkanPesanError(daftarPesan)
+    else
+        tampilkanStatusProgram(hasil)
+        tampilkanNotifikasiBerhasil()
+```
+
+### 5.14.8 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** pilihLaporan(idLaporan)  
+**ID Algoritma :** (Algo-C14-08)
+
+```text
+Procedure pilihLaporan(idLaporan)
+    laporan ← ProgramController.tinjauLaporan(idLaporan)
+    tampilkanLaporanUntukDitinjau(laporan)
+```
+
+### 5.14.9 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanLaporanUntukDitinjau(laporan)  
+**ID Algoritma :** (Algo-C14-09)
+
+```text
+Procedure tampilkanLaporanUntukDitinjau(laporan)
+    render laporan.showSummary() dan laporan.showDokumentasi()
+    render tombol setujui dan tombol tolak (dengan kolom catatan revisi)
+```
+
+### 5.14.10 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** kirimPersetujuanLaporan(idLaporan)  
+**ID Algoritma :** (Algo-C14-10)
+
+```text
+Procedure kirimPersetujuanLaporan(idLaporan)
+    status ← ProgramController.konfirmasiLaporan(idLaporan, idVerifikator)
+    // idVerifikator diambil dari sesi aktif
+    tampilkanStatusProgram(status)
+    tampilkanNotifikasiBerhasil()
+```
+
+### 5.14.11 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** kirimPenolakanLaporan(idLaporan, catatanRevisi)  
+**ID Algoritma :** (Algo-C14-11)
+
+```text
+Procedure kirimPenolakanLaporan(idLaporan, catatanRevisi)
+    if isEmpty(catatanRevisi) then
+        tampilkanPesanError("Catatan revisi wajib diisi")
+    else
+        status ← ProgramController.tolakLaporan(idLaporan, idVerifikator, catatanRevisi)
+        tampilkanStatusProgram(status)
+```
+
+### 5.14.12 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanStatusProgram(status)  
+**ID Algoritma :** (Algo-C14-12)
+
+```text
+Procedure tampilkanStatusProgram(status)
+    render label status program (MENUNGGU_VERIFIKASI, AKTIF, MENUNGGU_KONFIRMASI, PERLU_REVISI, atau SELESAI)
+```
+
+### 5.14.13 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanNotifikasiBerhasil()  
+**ID Algoritma :** (Algo-C14-13)
+
+```text
+Procedure tampilkanNotifikasiBerhasil()
+    render pesan keberhasilan aksi
+```
+
+### 5.14.14 Algoritma/Query
+
+**Nama Kelas :** KelolaProgramPage  
+**Nama Operasi :** tampilkanPesanError(pesan)  
+**ID Algoritma :** (Algo-C14-14)
+
+```text
+Procedure tampilkanPesanError(pesan)
+    render pesan kesalahan pada halaman
+```
+
+Kelas KelolaProgramPage adalah kelas *boundary* sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
+
 
 <br>
 
