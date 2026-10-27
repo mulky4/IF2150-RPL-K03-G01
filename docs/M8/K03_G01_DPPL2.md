@@ -1951,6 +1951,230 @@ Procedure tampilkanPesanError(pesan)
 Kelas KelolaProgramPage adalah kelas *boundary* sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
 
 
+## 5.15 Kelas ProgramController
+
+**Nama Kelas:** ProgramController  
+**ID Kelas:** C15 (*control*)
+
+Tabel 5.15.1. Operasi Kelas ProgramController
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| - | - | - |
+
+Kelas ProgramController tidak memiliki atribut.
+
+### 5.15.1 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** simpanProgramBaru(idInisiator, dataProgram, berkas)  
+**ID Algoritma :** (Algo-C15-01)
+
+```text
+Function simpanProgramBaru(idInisiator, dataProgram, berkas)
+    daftarGalat ← validasiDataProgram(dataProgram, berkas)
+    if not isEmpty(daftarGalat) then
+        → error daftarGalat
+    inisiator ← DB_SERVICE.findInisiatorByID(idInisiator)
+    if not inisiator.cekStatusVerifikasi() then
+        → error "Lembaga belum terverifikasi"
+    if not CloudStorageAdapter.validasiBerkas(berkas) then
+        → error "Berkas tidak valid"
+    url ← CloudStorageAdapter.unggahBerkas(berkas)
+    dokumen ← new DokumenVerifikasi(idInisiator, "Legalitas lembaga", url, MENUNGGU)
+    DB_SERVICE.saveDokumenVerifikasi(dokumen)
+    program ← new Program(idInisiator, dataProgram, MENUNGGU_VERIFIKASI)
+    DB_SERVICE.saveProgram(program)
+    → program
+```
+
+### 5.15.2 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** validasiDataProgram(dataProgram, berkas)  
+**Algoritma :** (Algo-C15-02)
+
+```text
+Function validasiDataProgram(dataProgram, berkas)
+    galat ← new List<string>
+    if isEmpty(dataProgram.namaProgram) or isEmpty(dataProgram.deskripsi)
+       or isEmpty(dataProgram.tempatPelaksanaan) or isEmpty(dataProgram.syaratKetentuan) then
+        galat.add("Data program tidak lengkap")
+    if dataProgram.kategori not in {JAGA_ALAM, JAGA_IKLIM} then
+        galat.add("Kategori tidak valid")
+    if dataProgram.waktuSelesai ≤ dataProgram.waktuMulai then
+        galat.add("Rentang waktu tidak valid")
+    if dataProgram.kuota ≤ 0 then
+        galat.add("Kuota harus lebih dari 0")
+    if berkas = null then
+        galat.add("Dokumen legalitas wajib diunggah")
+    → galat
+```
+
+### 5.15.3 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** cariProgram(kataKunci, kategori)  
+**ID Algoritma :** (Algo-C15-03)
+
+```text
+Function cariProgram(kataKunci, kategori)
+    daftar ← Program.cari(kataKunci, kategori)
+    → daftar
+```
+
+### 5.15.4 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** ambilDetailProgram(idProgram)  
+**ID Algoritma :** (Algo-C15-04)
+
+```text
+Function ambilDetailProgram(idProgram)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    if program = null then
+        → error "Program tidak ditemukan"
+    url ← program.getTautan()
+    program.tautanValid ← validasiTautanSitus(url)
+    → program
+```
+
+### 5.15.5 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** validasiTautanSitus(url)  
+**ID Algoritma :** (Algo-C15-05)
+
+```text
+Function validasiTautanSitus(url)
+    if isEmpty(url) then
+        → false
+    → (url berformat URL dengan skema http atau https)
+```
+
+### 5.15.6 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** ajukanLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian)  
+**ID Algoritma :** (Algo-C15-06)
+
+```text
+Function ajukanLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian)
+    daftarGalat ← validasiLaporan(dokumentasi, ringkasanCapaian)
+    if not isEmpty(daftarGalat) then
+        → error daftarGalat
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    laporan ← new LaporanProgram(idProgram, ringkasanCapaian, MENUNGGU)
+    For each berkas in dokumentasi
+        url ← CloudStorageAdapter.unggahBerkas(berkas)
+        laporan.uploadDokumentasi(url)
+    DB_SERVICE.saveLaporan(laporan)
+    status ← program.ajukanKonfirmasi()
+    DB_SERVICE.updateStatusProgram(idProgram, status)
+    → status
+```
+
+### 5.15.7 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** validasiLaporan(dokumentasi, ringkasanCapaian)  
+**ID Algoritma :** (Algo-C15-07)
+
+```text
+Function validasiLaporan(dokumentasi, ringkasanCapaian)
+    galat ← new List<string>
+    if isEmpty(dokumentasi) then
+        galat.add("Dokumentasi akhir wajib diunggah")
+    For each berkas in dokumentasi
+        if not CloudStorageAdapter.validasiBerkas(berkas) then
+            galat.add("Berkas tidak valid")
+    if isEmpty(ringkasanCapaian) then
+        galat.add("Ringkasan capaian wajib diisi")
+    → galat
+```
+
+### 5.15.8 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** tinjauLaporan(idLaporan)  
+**ID Algoritma :** (Algo-C15-08)
+
+```text
+Function tinjauLaporan(idLaporan)
+    laporan ← DB_SERVICE.findLaporanByID(idLaporan)
+    if laporan = null then
+        → error "Laporan tidak ditemukan"
+    → laporan
+```
+
+### 5.15.9 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** konfirmasiLaporan(idLaporan, idVerifikator)  
+**ID Algoritma :** (Algo-C15-09)
+
+```text
+Function konfirmasiLaporan(idLaporan, idVerifikator)
+    laporan ← DB_SERVICE.findLaporanByID(idLaporan)
+    verifikator ← DB_SERVICE.findVerifikatorByID(idVerifikator)
+    program ← DB_SERVICE.findProgramByLaporan(idLaporan)
+    verifikator.konfirmasiLaporan(laporan)
+    DB_SERVICE.updateStatusLaporan(laporan)
+    status ← program.selesaikan()
+    DB_SERVICE.updateStatusProgram(program.idProgram, status)
+    PresensiController.perbaruiPortofolioRelawan(program.idProgram)
+    buatNotifikasi(program.ambilPengelola(), "Laporan akhir disetujui")
+    → status
+```
+
+### 5.15.10 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** tolakLaporan(idLaporan, idVerifikator, catatanRevisi)  
+**ID Algoritma :** (Algo-C15-10)
+
+```text
+Function tolakLaporan(idLaporan, idVerifikator, catatanRevisi)
+    laporan ← DB_SERVICE.findLaporanByID(idLaporan)
+    verifikator ← DB_SERVICE.findVerifikatorByID(idVerifikator)
+    program ← DB_SERVICE.findProgramByLaporan(idLaporan)
+    verifikator.tolakLaporan(laporan, catatanRevisi)
+    DB_SERVICE.updateStatusLaporan(laporan)
+    status ← program.mintaRevisi()
+    DB_SERVICE.updateStatusProgram(program.idProgram, status)
+    buatNotifikasi(program.ambilPengelola(), "Laporan perlu revisi: " + catatanRevisi)
+    → status
+```
+
+### 5.15.11 Algoritma/Query
+
+**Nama Kelas :** ProgramController  
+**Nama Operasi :** buatNotifikasi(penerima, pesan)  
+**ID Algoritma :** (Algo-C15-11)
+
+```text
+Function buatNotifikasi(penerima, pesan)
+    notifikasi ← new Notifikasi(penerima.idPengguna, pesan, false)
+    notifikasi.kirim()
+    DB_SERVICE.saveNotifikasi(notifikasi)
+    → notifikasi
+```
+
+Query :
+
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C15-01 | simpanProgramBaru (dokumen):<br>INSERT INTO tbl_dokumen_verifikasi (idDokumen, idPengguna, jenisDokumen, urlFile, statusVerifikasi) VALUES (@idDokumen, @idInisiator, 'Legalitas lembaga', @urlFile, 'MENUNGGU') | Menyimpan dokumen legalitas lembaga yang diunggah saat mendaftarkan program. |
+| Q-C15-02 | simpanProgramBaru (program):<br>INSERT INTO tbl_program (idProgram, idInisiator, namaProgram, deskripsi, kategori, tempatPelaksanaan, waktuMulai, waktuSelesai, kuota, syaratKetentuan, status) VALUES (@idProgram, @idInisiator, @namaProgram, @deskripsi, @kategori, @tempat, @waktuMulai, @waktuSelesai, @kuota, @syarat, 'MENUNGGU_VERIFIKASI') | Mendaftarkan program baru ke dalam sistem. |
+| Q-C15-03 | cariProgram:<br>SELECT * FROM tbl_program WHERE status = 'AKTIF' AND (namaProgram LIKE @kataKunci OR deskripsi LIKE @kataKunci) AND (@kategori IS NULL OR kategori = @kategori) | Mencari program aktif berdasarkan kata kunci dan filter kategori (dijalankan oleh Program.cari()). |
+| Q-C15-04 | ambilDetailProgram:<br>SELECT p.*, i.tautanSitusResmi FROM tbl_program p JOIN tbl_inisiator_program i ON p.idInisiator = i.idInisiator WHERE p.idProgram = @idProgram | Mengambil detail program beserta tautan situs resmi lembaga pengelola. |
+| Q-C15-05 | ajukanLaporanAkhir (laporan):<br>INSERT INTO tbl_laporan_program (idLaporan, idProgram, dokumentasiAkhir, ringkasanCapaian, statusPeninjauan, waktuPengajuan) VALUES (@idLaporan, @idProgram, @dokumentasiAkhir, @ringkasanCapaian, 'MENUNGGU', CURRENT_TIMESTAMP) | Menyimpan laporan akhir yang diajukan Inisiator. |
+| Q-C15-06 | updateStatusProgram:<br>UPDATE tbl_program SET status = @status WHERE idProgram = @idProgram | Memperbarui status program (MENUNGGU_KONFIRMASI, SELESAI, atau PERLU_REVISI). |
+| Q-C15-07 | tinjauLaporan:<br>SELECT * FROM tbl_laporan_program WHERE idLaporan = @idLaporan | Mengambil laporan akhir untuk ditinjau Verifikator. |
+| Q-C15-08 | updateStatusLaporan:<br>UPDATE tbl_laporan_program SET statusPeninjauan = @statusPeninjauan, catatanRevisi = @catatanRevisi, idVerifikator = @idVerifikator WHERE idLaporan = @idLaporan | Menyimpan hasil peninjauan laporan (disetujui atau ditolak). |
+| Q-C15-09 | buatNotifikasi:<br>INSERT INTO tbl_notifikasi (idNotifikasi, idPenerima, pesan, waktuKirim, statusDibaca) VALUES (@idNotifikasi, @idPenerima, @pesan, CURRENT_TIMESTAMP, FALSE) | Menyimpan notifikasi untuk Inisiator Program. |
+
+
 <br>
 
 ---
