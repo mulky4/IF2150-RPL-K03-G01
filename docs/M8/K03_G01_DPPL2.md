@@ -4010,6 +4010,222 @@ Tabel 6.7. Spesifikasi Objek Antarmuka I-07
 
 <br>
 
+## 6.8 Rancangan Antarmuka I-08
+
+**Antarmuka:** I-08  
+**Nama Layar:** Formulir Daftar Program  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-08 - Formulir Daftar Program" src="./assets/antarmuka/I-08_Formulir-Daftar-Program.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.8. Rancangan Antarmuka I-08 - Formulir Daftar Program</i>
+</p>
+
+Tabel 6.8. Spesifikasi Objek Antarmuka I-08
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I08-NAV-Navbar | Navigasi | "Program Saya", "Daftarkan Program", lonceng notifikasi, profil lembaga | Navigasi Inisiator Program: Program Saya → I-07, Notifikasi → I-03. Menu "Daftarkan Program" memanggil bukaHalamanDaftarProgram() (Algo-C14-01) lalu tampilkanFormProgram() (Algo-C14-02). |
+| I08-LNK-Kembali | Link | "Kembali ke Program Saya" | Membuka I-07 tanpa menyimpan. |
+| I08-TXT-NamaProgram | Text field | "Nama program" | Wajib, maks. 80 karakter. Bagian dari dataProgram pada isiFormProgram(dataProgram) (Algo-C14-03). |
+| I08-RDO-Kategori | Radio (kartu pilihan) | "Jaga Alam" / "Jaga Iklim" | Wajib; nilai KategoriProgram (JAGA_ALAM / JAGA_IKLIM). |
+| I08-TXA-Deskripsi | Text area | "Deskripsi" | Wajib. |
+| I08-TXT-Tempat | Text field | "Tempat pelaksanaan" | Wajib. |
+| I08-TXT-WaktuMulai, -WaktuSelesai | Text field (tanggal & jam) | "Waktu mulai", "Waktu selesai" | Wajib; waktu selesai harus setelah waktu mulai. Dipakai untuk akses check-in (KF12) dan perhitungan jam aksi (KF15). |
+| I08-TXT-Kuota | Text field (angka) | "Kuota relawan" | Wajib, bilangan bulat > 0; menjadi batas penerimaan relawan (KF05). |
+| I08-TXA-Syarat | Text area | "Syarat dan ketentuan" | Wajib; tampil di halaman detail program (I-05). |
+| I08-UPL-Legalitas | File upload | "Dokumen legalitas lembaga" (PDF, JPG, atau PNG · maks. 2 MB) | unggahDokumen(berkas) (Algo-C14-04) lewat Pilih berkas atau seret & lepas (KF01). Ukuran dan tipe diperiksa CloudStorageAdapter.validasiBerkas() (Algo-C21-01); berkas disimpan ≤ 5 detik (KNF03). |
+| I08-CRD-Pratinjau | Card (pratinjau) | Pratinjau kartu program + info "Program berstatus Menunggu Verifikasi …" | Menampilkan data yang sedang diisi seperti kartu di I-04. |
+| I08-BTN-Kirim | Button | "Kirim Pendaftaran Program" | kirimPendaftaran() (Algo-C14-05) → ProgramController.simpanProgramBaru() (Algo-C15-01): validasiDataProgram() (Algo-C15-02), cek status verifikasi lembaga, lalu unggah berkas lewat CloudStorageAdapter.unggahBerkas() (Algo-C21-02). Berhasil → program tersimpan dengan status MENUNGGU_VERIFIKASI → I08-MSG-Berhasil; gagal → I08-MSG-Error / I08-MSG-BelumTerverifikasi / I08-MSG-BerkasTidakValid. |
+| I08-BTN-Batal | Button | "Batal" | Kembali ke I-07 tanpa menyimpan. |
+| I08-MSG-Error | Banner error | "Data program tidak lengkap" / "Rentang waktu tidak valid" / "Kuota harus lebih dari 0" / "Dokumen legalitas wajib diunggah" | tampilkanPesanError(pesan) (Algo-C14-14) dengan daftar galat dari validasiDataProgram() (Algo-C15-02) (UC01 alt. 1); field terkait ditandai merah. |
+| I08-MSG-BelumTerverifikasi | Banner error | "Lembaga belum terverifikasi" | tampilkanPesanError(pesan) (Algo-C14-14); program tidak disimpan sampai lembaga diverifikasi Verifikator. |
+| I08-MSG-BerkasTidakValid | Banner error | "Berkas tidak valid" (ukuran melebihi 2 MB atau tipe bukan PDF/JPG/PNG) | validasiBerkas() bernilai false (Algo-C21-01); berkas ditolak sebelum diunggah (KNF03). |
+| I08-MSG-Berhasil | Panel sukses | "Program terkirim" + I08-BDG-Status "Menunggu Verifikasi" | tampilkanNotifikasiBerhasil() (Algo-C14-13). |
+| I08-BTN-LihatProgram | Button | "Lihat Program Saya" | Membuka I-07. |
+
+## 6.9 Rancangan Antarmuka I-09
+
+**Antarmuka:** I-09  
+**Nama Layar:** Unggah Laporan Akhir  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-09 - Unggah Laporan Akhir" src="./assets/antarmuka/I-09_Unggah-Laporan-Akhir.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.9. Rancangan Antarmuka I-09 - Unggah Laporan Akhir</i>
+</p>
+
+Tabel 6.9. Spesifikasi Objek Antarmuka I-09
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I09-NAV-Navbar | Navigasi | Navigasi Inisiator Program | Program Saya → I-07, Daftarkan Program → I-08, Notifikasi → I-03. |
+| I09-LNK-Kembali | Link | "Kembali ke Program Saya" | Membuka I-07. |
+| I09-CRD-Ringkasan | Card | Foto, nama program, lembaga, tanggal + I09-BDG-Status | tampilkanFormLaporan(idProgram) (Algo-C14-06). |
+| I09-BDG-Status | Badge | "Aktif" / "Menunggu Konfirmasi" / "Perlu Revisi" | tampilkanStatusProgram(status) (Algo-C14-12); nilai StatusProgram. |
+| I09-LBL-CatatanRevisi | Banner peringatan | Catatan revisi dari Verifikator | Muncul bila status PERLU_REVISI (UC07 alt. 1); Inisiator Program mengunggah ulang laporan. |
+| I09-UPL-Dokumentasi | File upload (banyak berkas) | "Foto dokumentasi akhir kegiatan" (JPG atau PNG · maks. 2 MB per foto · minimal 1 foto) | Menerima beberapa foto lewat Pilih berkas atau seret & lepas (KF13); tiap berkas diperiksa CloudStorageAdapter.validasiBerkas() (Algo-C21-01). |
+| I09-TBL-Preview | Galeri thumbnail | "4 foto dipilih" + pratinjau foto dengan tombol hapus (×) | Setiap foto dapat dihapus sebelum dikirim. |
+| I09-TXT-Metrik | Text field (angka) | "Bibit ditanam", "Luas area (hektare)" | Opsional; melengkapi ringkasan capaian. |
+| I09-TXA-Ringkasan | Text area | "Ringkasan capaian dampak lingkungan" | Wajib; disimpan sebagai ringkasanCapaian pada LaporanProgram (KF16). |
+| I09-LBL-Info | Banner info | "Setelah dikirim, status program menjadi Menunggu Konfirmasi sampai Verifikator meninjau laporan." | Menjelaskan perubahan status setelah laporan dikirim (KF13). |
+| I09-BTN-Kirim | Button | "Kirim untuk Ditinjau" / "Kirim Ulang Laporan" | unggahLaporanAkhir(idProgram, dokumentasi, ringkasanCapaian) (Algo-C14-07) → ProgramController.ajukanLaporanAkhir() (Algo-C15-06): validasiLaporan() (Algo-C15-07), unggah foto lewat CloudStorageAdapter.unggahBerkas() (Algo-C21-02), simpan LaporanProgram, status program menjadi MENUNGGU_KONFIRMASI → I09-MSG-Berhasil. Data tidak lengkap → I09-MSG-Error. |
+| I09-BTN-Batal | Button | "Batal" | Kembali ke I-07 tanpa menyimpan. |
+| I09-MSG-Error | Banner error | "Dokumentasi akhir wajib diunggah" / "Berkas tidak valid" / "Ringkasan capaian wajib diisi" | tampilkanPesanError(pesan) (Algo-C14-14) dengan daftar galat dari validasiLaporan(). |
+| I09-MSG-Berhasil | Panel sukses | "Laporan terkirim" + status Menunggu Konfirmasi | tampilkanStatusProgram(status) (Algo-C14-12) dan tampilkanNotifikasiBerhasil() (Algo-C14-13). |
+| I09-BTN-KeProgramSaya | Button | "Kembali ke Program Saya" | Membuka I-07. |
+
+## 6.10 Rancangan Antarmuka I-10
+
+**Antarmuka:** I-10  
+**Nama Layar:** Tinjau Laporan Akhir  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-10 - Tinjau Laporan Akhir" src="./assets/antarmuka/I-10_Tinjau-Laporan-Akhir.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.10. Rancangan Antarmuka I-10 - Tinjau Laporan Akhir (atas: Laporan Masuk; bawah: Detail Laporan)</i>
+</p>
+
+Tabel 6.10. Spesifikasi Objek Antarmuka I-10
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I10-NAV-Navbar | Navigasi | "Laporan Masuk", lonceng notifikasi, profil Verifikator | Navigasi Verifikator: Laporan Masuk → I-10, Notifikasi → I-03. |
+| I10-CHP-FilterStatus | Chip (tab filter) | "Menunggu Tinjauan (3)", "Disetujui", "Ditolak" | Menyaring daftar laporan berdasarkan StatusPeninjauan (MENUNGGU / DISETUJUI / DITOLAK). |
+| I10-SRC-Cari | Search field | "Cari program atau lembaga…" | Mencari laporan berdasarkan nama program atau lembaga. |
+| I10-TBL-DaftarLaporan | Tabel | Program, lembaga, kategori, tanggal pengajuan, status, aksi | Daftar laporan akhir yang diajukan Inisiator Program. |
+| I10-CRD-Laporan1…3 | Baris tabel | Satu laporan + badge "Menunggu Konfirmasi" | Laporan dari program berstatus MENUNGGU_KONFIRMASI. |
+| I10-BTN-Tinjau1…3 | Button | "Tinjau" | pilihLaporan(idLaporan) (Algo-C14-08) → ProgramController.tinjauLaporan() (Algo-C15-08) → tampilkanLaporanUntukDitinjau(laporan) (Algo-C14-09) → tampilan Detail Laporan (Gambar 6.10 bawah). |
+| I10-LNK-Kembali | Link | "Laporan Masuk" | Kembali ke daftar laporan. |
+| I10-LBL-Detail | Panel detail | Kategori, nama program, lembaga, jadwal, waktu pengajuan | Identitas laporan yang ditinjau. |
+| I10-BDG-Status | Badge | "Menunggu Konfirmasi" / "Selesai" / "Perlu Revisi" | tampilkanStatusProgram(status) (Algo-C14-12). |
+| I10-IMG-Dokumentasi | Galeri | "Dokumentasi Kegiatan (6 foto)" | Hasil LaporanProgram.showDokumentasi(); foto diambil dari Cloud Storage lewat CloudStorageAdapter.ambilBerkas() (Algo-C21-03). |
+| I10-LBL-Ringkasan | Panel + teks | "Ringkasan Capaian": metrik (bibit, hektare) dan teks ringkasan | Hasil LaporanProgram.showSummary(); data ringkasanCapaian (KF16). |
+| I10-LBL-DataProgram | Panel | "Relawan diterima", "Hadir (check-in)", "Durasi kegiatan" + info dampak persetujuan | Dasar perhitungan jam aksi relawan yang hadir (KF15). |
+| I10-BTN-Setujui | Button | "Setujui Laporan" | Membuka I10-MDL-Setujui. |
+| I10-MDL-Setujui | Modal | "Setujui laporan akhir?" | I10-BTN-KonfirmasiSetujui "Ya, Setujui" → kirimPersetujuanLaporan(idLaporan) (Algo-C14-10) → ProgramController.konfirmasiLaporan() (Algo-C15-09): status program menjadi SELESAI (KF14) dan PresensiController.perbaruiPortofolioRelawan() (Algo-C20-04) menambah jam aksi relawan yang hadir (UC09, KF15) → I10-MSG-Berhasil. "Batal" menutup modal. |
+| I10-BTN-Tolak | Button | "Tolak & Minta Revisi" | Membuka I10-MDL-Tolak. |
+| I10-MDL-Tolak | Modal | "Tolak laporan akhir?" + I10-TXA-CatatanRevisi | I10-BTN-KirimPenolakan → kirimPenolakanLaporan(idLaporan, catatanRevisi) (Algo-C14-11) → ProgramController.tolakLaporan() (Algo-C15-10): status program menjadi PERLU_REVISI dan Inisiator Program dinotifikasi lewat buatNotifikasi() (Algo-C15-11) (UC07 alt. 1); I10-BDG-Status berubah menjadi "Perlu Revisi" lewat tampilkanStatusProgram(status) (Algo-C14-12). Catatan kosong → I10-MSG-Error. "Batal" menutup modal. |
+| I10-MSG-Error | Pesan error (di modal) | "Catatan revisi wajib diisi" | tampilkanPesanError(pesan) (Algo-C14-14). |
+| I10-MSG-Berhasil | Banner sukses | "Laporan disetujui. Program ditandai Selesai …" | tampilkanStatusProgram(status) (Algo-C14-12) dan tampilkanNotifikasiBerhasil() (Algo-C14-13). |
+
+## 6.11 Rancangan Antarmuka I-11
+
+**Antarmuka:** I-11  
+**Nama Layar:** Kelola Pendaftar & Seleksi  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-11 - Kelola Pendaftar & Seleksi" src="./assets/antarmuka/I-11_Kelola-Pendaftar-Seleksi.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.11. Rancangan Antarmuka I-11 - Kelola Pendaftar & Seleksi</i>
+</p>
+
+Tabel 6.11. Spesifikasi Objek Antarmuka I-11
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I11-NAV-Navbar | Navigasi | Navigasi Inisiator Program | Program Saya → I-07, Daftarkan Program → I-08, Notifikasi → I-03. |
+| I11-LNK-Kembali | Link | "Kembali ke Program Saya" | Membuka I-07. |
+| I11-LBL-Judul | Label | Nama program, badge status, jadwal, lokasi | Identitas program yang sedang diseleksi. |
+| I11-LBL-Kuota | Panel + progress bar | "Diterima 18 / 30" + "Sisa 12 kuota" | Jumlah pendaftar diterima terhadap kuota program (KF05); merah saat penuh. |
+| I11-CHP-FilterStatus | Chip (tab filter) | "Semua (26)", "Belum Diputuskan (6)", "Diterima (18)", "Ditolak (2)" | Menyaring daftar pendaftar berdasarkan StatusPendaftaran. |
+| I11-TBL-Pendaftar | Tabel | Nama, domisili, keterampilan, ketersediaan waktu, tanggal daftar, keputusan | bukaKelolaPendaftar(idProgram) (Algo-C17-01) → SeleksiController.lihatDaftarRelawan() (Algo-C18-02) → tampilkanDaftarPendaftar(daftar) (Algo-C17-02) dan tampilkanFormSeleksi() (Algo-C17-03) (UC05). |
+| I11-CRD-Pendaftar1…n | Baris tabel | Data satu pendaftar | Keterampilan dan ketersediaan waktu berasal dari I-06 (KF07). |
+| I11-BDG-Status1…n | Badge | "Menunggu" / "Diterima" / "Ditolak" | StatusPendaftaran (MENUNGGU / DITERIMA / DITOLAK). |
+| I11-RDO-Keputusan1…n | Segmented control | "Terima" / "Tolak" | pilihStatusSeleksi(idPendaftaran, status) (Algo-C17-04) menyimpan keputusan sementara pada formulir. Baris yang belum dipilih diberi keterangan "Belum diputuskan". |
+| I11-LBL-JumlahTampil | Label | "Menampilkan 5 dari 26 pendaftar" | Jumlah baris yang ditampilkan. |
+| I11-LBL-BarAksi | Bar aksi (menempel di bawah) | "6 pendaftar belum diputuskan" + tombol aksi | Selalu terlihat saat daftar digulir. |
+| I11-BTN-Simpan | Button | "Simpan Hasil Seleksi" | kirimHasilSeleksi() (Algo-C17-05) → SeleksiController.simpanHasilSeleksi() (Algo-C18-04): validasiKuota() (Algo-C18-03), lalu simpan status Diterima/Ditolak (KF09). Berhasil → I11-MSG-Tersimpan; kuota terlampaui → I11-MSG-KuotaPenuh (UC05 alt. 1). |
+| I11-BTN-Konfirmasi | Button | "Konfirmasi & Kirim Notifikasi" | kirimKonfirmasiHasil() (Algo-C17-06) → SeleksiController.konfirmasiHasilSeleksi() (Algo-C18-05): semua sudah diputuskan → triggerNotifikasi() (Algo-C18-06) untuk tiap pendaftar (KF08, UC06) → I11-MSG-Berhasil; masih ada yang belum → I11-MSG-BelumDiputuskan (UC06 alt. 1). |
+| I11-MSG-Tersimpan | Banner sukses | "Hasil seleksi berhasil disimpan" | tampilkanNotifikasiBerhasil() (Algo-C17-08). |
+| I11-MSG-KuotaPenuh | Banner error | "Kuota relawan program telah terpenuhi" | tampilkanPesanError(pesan) (Algo-C17-09); baris pendaftar terkait diberi garis merah. Inisiator Program mengubah keputusan menjadi Tolak lalu menyimpan ulang (UC05 alt. 1). |
+| I11-MSG-BelumDiputuskan | Banner error | "Masih terdapat pendaftar yang belum diseleksi" | tampilkanPesanError(pesan) (Algo-C17-09); pendaftar yang belum diputuskan diberi garis merah. |
+| I11-MSG-Berhasil | Banner sukses | "Hasil seleksi telah dikonfirmasi dan notifikasi terkirim ke seluruh pendaftar." | tampilkanKonfirmasiHasil() (Algo-C17-07). |
+
+## 6.12 Rancangan Antarmuka I-12
+
+**Antarmuka:** I-12  
+**Nama Layar:** Area Kegiatan & Check-in  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-12 - Area Kegiatan & Check-in" src="./assets/antarmuka/I-12_Area-Kegiatan-Check-in.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.12. Rancangan Antarmuka I-12 - Area Kegiatan & Check-in</i>
+</p>
+
+Tabel 6.12. Spesifikasi Objek Antarmuka I-12
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I12-NAV-Navbar | Navigasi | "Eksplorasi", "Kegiatan Saya", "Portofolio", lonceng notifikasi, profil | Navigasi Relawan: Eksplorasi → I-04, Kegiatan Saya → I-12, Portofolio → I-13, lonceng → I-03. |
+| I12-TBL-Kegiatan | List | "Kegiatan Saya" — program yang diikuti relawan | Daftar program di sisi kiri; program terpilih ditandai garis hijau. |
+| I12-CRD-Kegiatan1…2 | Item list | Nama program, jadwal, lokasi + I12-BDG-Jadwal | Klik item → bukaHalamanKegiatan(idProgram) (Algo-C19-01) → menampilkan I12-CRD-CheckIn. |
+| I12-BDG-Jadwal1…2 | Badge | "Berlangsung" / "Akan datang" | Status jadwal program terhadap waktu sekarang. |
+| I12-CRD-Program | Card | Foto, kategori, nama program, lokasi + I12-BDG-StatusPendaftaran | Ringkasan program yang dipilih. |
+| I12-BDG-StatusPendaftaran | Badge | "Diterima" | Hanya relawan berstatus DITERIMA yang dapat check-in (KF12). |
+| I12-CRD-CheckIn | Panel | "Check-in Kehadiran": waktu pelaksanaan, status kegiatan, waktu sekarang, tombol check-in | Saat dibuka: PresensiController.validasiStatusRelawan() (Algo-C20-01) dan PresensiController.validasiWaktuPelaksanaan() (Algo-C20-02) menentukan ketersediaan check-in (KF12). |
+| I12-BDG-StatusKegiatan | Badge | "Kegiatan belum dimulai" / "Kegiatan sedang berlangsung" / "Kegiatan sudah selesai" | Keterangan waktu dari Program.keteranganWaktu(). |
+| I12-BTN-CheckIn | Button | "Check-in Sekarang" / "Sudah check-in · 07.12 WIB" | tampilkanTombolCheckIn(aktif) (Algo-C19-02). Aktif → klikCheckIn() (Algo-C19-04) → PresensiController.prosesCheckIn() (Algo-C20-03) mencatat waktu kehadiran (KF11) → tampilkanStatusCheckIn(berhasil) (Algo-C19-05) → I12-MSG-Berhasil. Di luar waktu atau belum diterima → nonaktif (UC08 alt. 1). |
+| I12-LBL-KeteranganWaktu | Banner peringatan | "Check-in hanya dapat dilakukan pada … 07.00–12.00 WIB." | Muncul bila waktu belum/sudah lewat: PresensiController.ambilKeteranganWaktu() (Algo-C20-05) → tampilkanKeteranganWaktu(keterangan) (Algo-C19-03). |
+| I12-LBL-InfoJamAksi | Banner info | "Jam aksi ditambahkan ke portofolio setelah laporan akhir program disetujui Verifikator." | Menjelaskan aturan UC09. |
+| I12-MSG-Berhasil | Banner sukses | "Kehadiran berhasil dikonfirmasi" | tampilkanStatusCheckIn(true) (Algo-C19-05); waktu kehadiran tercatat dan tombol berubah menjadi "Sudah check-in". |
+| I12-MSG-Gagal | Banner error | "Check-in gagal" + alasan, mis. "Kehadiran sudah tercatat sebelumnya" | tampilkanStatusCheckIn(false) (Algo-C19-05) bila prosesCheckIn() (Algo-C20-03) mengembalikan galat. |
+| I12-LNK-Portofolio | Link | "Lihat Portofolio Saya" | Membuka I-13. |
+
+## 6.13 Rancangan Antarmuka I-13
+
+**Antarmuka:** I-13  
+**Nama Layar:** Portofolio Relawan  
+
+<p align="center">
+<img alt="Rancangan Antarmuka I-13 - Portofolio Relawan" src="./assets/antarmuka/I-13_Portofolio-Relawan.png" width="90%">
+</p>
+<p align="center">
+<i>Gambar 6.13. Rancangan Antarmuka I-13 - Portofolio Relawan</i>
+</p>
+
+Tabel 6.13. Spesifikasi Objek Antarmuka I-13
+
+| Id_Objek | Jenis | Konten | Keterangan |
+| :--- | :--- | :--- | :--- |
+| I13-NAV-Navbar | Navigasi | "Eksplorasi", "Kegiatan Saya", "Portofolio", lonceng notifikasi, profil | Menu "Portofolio" memanggil bukaPortofolio() (Algo-C19-06). Navigasi Relawan: I-04, I-12, I-13, I-03. |
+| I13-LBL-Profil | Panel profil | Avatar, nama, badge "Relawan terverifikasi", domisili, "relawan sejak …" | Identitas relawan pemilik portofolio. |
+| I13-LBL-TotalJamAksi | Panel statistik | "16 jam aksi" + "Total jam aksi" | PresensiController.ambilTotalJamAksi() (Algo-C20-06) → tampilkanPortofolio(totalJamAksi) (Algo-C19-07) (KF15). |
+| I13-LBL-JumlahProgram | Panel statistik | "4 program" + "Program selesai" | Jumlah program selesai yang dihadiri relawan. |
+| I13-LBL-Catatan | Banner info | "Jam aksi hanya bertambah untuk program yang kamu hadiri (sudah check-in) dan laporannya disetujui Verifikator." | Penjelasan aturan UC09 alt. 1. |
+| I13-CHP-Tab | Chip (tab) | "Riwayat Selesai (4)", "Sedang Diikuti (2)" | "Sedang Diikuti" menampilkan program aktif; item membuka I-12. |
+| I13-TBL-RiwayatProgram | List | Riwayat program selesai | PresensiController.ambilRiwayatProgram() (Algo-C20-07) → tampilkanRiwayatProgram(daftar) (Algo-C19-08). |
+| I13-CRD-Riwayat1…4 | Item list | Foto, kategori, nama program, tanggal, lembaga, badge "Hadir", "+n jam" | Program selesai yang dihadiri relawan; total = 16 jam. |
+| I13-MSG-Kosong | Empty state | "Belum ada program yang selesai diikuti" | Muncul bila riwayat kosong. |
+| I13-BTN-CariProgram | Button | "Cari Program" | Ada pada empty state; membuka I-04. |
+
+## 6.14 Rancangan Antarmuka Keseluruhan
+
+Tabel 6.14. Rancangan Antarmuka Keseluruhan
+
+| No | Tampilan Antarmuka |
+| :--- | :--- |
+| I-01 | <img src="./assets/antarmuka/I-01_Registrasi-Akun.png" alt="I-01 Registrasi Akun" width="400"> |
+| I-02 | <img src="./assets/antarmuka/I-02_Login.png" alt="I-02 Login" width="400"> |
+| I-03 | <img src="./assets/antarmuka/I-03_Notifikasi.png" alt="I-03 Notifikasi" width="400"> |
+| I-04 | <img src="./assets/antarmuka/I-04_Eksplorasi-Program.png" alt="I-04 Eksplorasi Program" width="400"> |
+| I-05 | <img src="./assets/antarmuka/I-05_Detail-Program.png" alt="I-05 Detail Program" width="400"> |
+| I-06 | <img src="./assets/antarmuka/I-06_Formulir-Pendaftaran-Program.png" alt="I-06 Formulir Pendaftaran Program" width="400"> |
+| I-07 | <img src="./assets/antarmuka/I-07_Program-Saya.png" alt="I-07 Program Saya" width="400"> |
+| I-08 | <img src="./assets/antarmuka/I-08_Formulir-Daftar-Program.png" alt="I-08 Formulir Daftar Program" width="400"> |
+| I-09 | <img src="./assets/antarmuka/I-09_Unggah-Laporan-Akhir.png" alt="I-09 Unggah Laporan Akhir" width="400"> |
+| I-10 | <img src="./assets/antarmuka/I-10_Tinjau-Laporan-Akhir.png" alt="I-10 Tinjau Laporan Akhir" width="400"> |
+| I-11 | <img src="./assets/antarmuka/I-11_Kelola-Pendaftar-Seleksi.png" alt="I-11 Kelola Pendaftar & Seleksi" width="400"> |
+| I-12 | <img src="./assets/antarmuka/I-12_Area-Kegiatan-Check-in.png" alt="I-12 Area Kegiatan & Check-in" width="400"> |
+| I-13 | <img src="./assets/antarmuka/I-13_Portofolio-Relawan.png" alt="I-13 Portofolio Relawan" width="400"> |
+
+<br>
+
 ---
 
 # BAB 7: Matriks Kerunutan
