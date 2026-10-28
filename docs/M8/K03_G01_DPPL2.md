@@ -3811,10 +3811,7 @@ Tabel 5.22.3. Query Kelas BetterAuth
 ## 6.1 Rancangan Antarmuka I-01
 
 **Antarmuka:** I-01  
-**Nama Layar:** Registrasi Akun  
-**Aktor:** Pengunjung  
-**Kelas boundary:** KelolaAkunPage (C12)  
-**Use case / kebutuhan terkait:** UC01 Daftar program · KF01, KF10  
+**Nama Layar:** Registrasi Akun
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-01 - Registrasi Akun" src="./assets/antarmuka/I-01_Registrasi-Akun.png" width="90%">
@@ -3827,30 +3824,27 @@ Tabel 6.1. Spesifikasi Objek Antarmuka I-01
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I01-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | Logo → I-04. Navigasi pengunjung: Eksplorasi → I-04, Masuk → I-02. |
-| I01-RDO-JenisAkun | Segmented control | "Relawan" / "Inisiator Program" | Mengganti isian formulir sesuai jenis akun (field Nama lembaga dan Tautan situs resmi tampil untuk Inisiator Program). |
-| I01-TXT-Nama | Text field | "Nama lengkap" | Wajib (Relawan). Bagian dari dataDiri pada isiFormRegistrasi(dataDiri). |
-| I01-TXT-NamaLembaga | Text field | "Nama lembaga" | Wajib (Inisiator Program). |
-| I01-TXT-Email | Text field | "Email" | Wajib, format email; dipakai untuk masuk di I-02. |
-| I01-TXT-KataSandi | Password field | "Kata sandi" | Wajib, minimal 8 karakter; di-hash oleh BetterAuth.hashKataSandi() (KNF02). |
-| I01-TXT-Telepon | Text field | "No. telepon" | Wajib (Relawan). |
-| I01-DDL-Domisili | Dropdown | "Domisili" (pilih kota/kabupaten) | Wajib (Relawan). |
-| I01-TXT-Tautan | Text field | "Tautan situs web resmi (opsional)" | Inisiator; disimpan sebagai tautan situs resmi lembaga (KF02), dipakai di I-05. |
-| I01-UPL-Dokumen | File upload | "Dokumen verifikasi diri" | Menerima berkas lewat Pilih berkas atau drag-and-drop (KF01), maks. 2 MB; memanggil unggahDokumen(berkas). |
+| I01-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | Logo dan "Eksplorasi Program" → I-04; "Masuk" → I-02. |
+| I01-RDO-JenisAkun | Segmented control | "Relawan" / "Inisiator Program" | Memilih peran akun (dataDiri.peran). Untuk Inisiator Program, isian berganti menjadi nama lembaga dan tautan situs resmi. bukaHalamanRegistrasi() → tampilkanFormRegistrasi() (Algo-C12-01, Algo-C12-02). |
+| I01-TXT-Nama | Text field | "Nama lengkap" | Wajib untuk Relawan. Disimpan ke dataDiri melalui isiFormRegistrasi(dataDiri) (Algo-C12-03). |
+| I01-TXT-NamaLembaga | Text field | "Nama lembaga" | Wajib untuk Inisiator Program; kosong → "Nama lembaga wajib diisi" (Algo-C13-02). |
+| I01-TXT-Email | Text field | "Email" | Wajib dan berformat email; tidak valid → "Email tidak valid" (Algo-C13-02). Dipakai untuk masuk di I-02. |
+| I01-TXT-KataSandi | Password field | "Kata sandi" | Wajib; kosong → "Kata sandi wajib diisi" (Algo-C13-02). Disimpan sebagai hash oleh BetterAuth.daftarkanKredensial() dan hashKataSandi() (Algo-C22-01, Algo-C22-02; KNF02). |
+| I01-TXT-Telepon | Text field | "No. telepon" | Wajib untuk Relawan (dataDiri.noTelepon). |
+| I01-DDL-Domisili | Dropdown | "Domisili" (pilih kota/kabupaten) | Wajib untuk Relawan (dataDiri.domisili). |
+| I01-TXT-Tautan | Text field | "Tautan situs web resmi (opsional)" | Khusus Inisiator Program; disimpan sebagai tautan situs resmi lembaga (KF02) dan ditampilkan di I-05. |
+| I01-UPL-Dokumen | File upload | "Dokumen verifikasi diri" | Pilih berkas atau drag-and-drop (KF01) → unggahDokumen(berkas) (Algo-C12-04). Wajib untuk Relawan; kosong → "Dokumen verifikasi wajib diunggah" (Algo-C13-02). Berkas diperiksa CloudStorageAdapter.validasiBerkas() sebelum diunggah (Algo-C21-01). |
 | I01-CHK-Setuju | Checkbox | "Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi RekanBumi." | Wajib dicentang sebelum I01-BTN-Daftar dapat mengirim data. |
-| I01-BTN-Daftar | Button | "Daftar" | kirimPendaftaran() → AuthController.buatAkunBaru(), yang memeriksa data lewat AuthController.validasiKelengkapanData(). Lengkap → I01-MSG-Berhasil lalu ke I-02; tidak lengkap → I01-MSG-Error. |
+| I01-BTN-Daftar | Button | "Daftar" | kirimPendaftaran() (Algo-C12-05) → AuthController.buatAkunBaru() (Algo-C13-01) yang memvalidasi data lewat validasiKelengkapanData() (Algo-C13-02). Lengkap → I01-MSG-Berhasil; tidak lengkap → I01-MSG-Error. |
 | I01-LNK-Masuk | Link | "Sudah punya akun? Masuk" | Membuka I-02. |
-| I01-MSG-Error | Banner error | "Lengkapi data yang ditandai sebelum mendaftar." | tampilkanPesanError(pesan); field kosong diberi pesan di bawahnya. Tidak ada akun yang dibuat (UC01 alt. 1). |
-| I01-MSG-Berhasil | Banner sukses | "Akun berhasil dibuat. Silakan masuk untuk melanjutkan." | tampilkanNotifikasiBerhasil(). |
+| I01-MSG-Error | Banner error | Daftar galat, misalnya "Data diri tidak lengkap", "Email tidak valid", "Dokumen verifikasi wajib diunggah" | tampilkanPesanError(pesan) (Algo-C12-07); akun tidak dibuat (UC01 alt. 1). |
+| I01-MSG-Berhasil | Banner sukses | "Akun berhasil dibuat" | tampilkanNotifikasiBerhasil() (Algo-C12-06); pengguna lanjut masuk melalui I-02. |
 | I01-LBL-InfoLegalitas | Banner info | "Dokumen legalitas lembaga diunggah saat mendaftarkan program (I-08)." | Informasi untuk Inisiator Program. |
 
 ## 6.2 Rancangan Antarmuka I-02
 
 **Antarmuka:** I-02  
-**Nama Layar:** Login  
-**Aktor:** Pengunjung  
-**Kelas boundary:** KelolaAkunPage (C12)  
-**Use case / kebutuhan terkait:** UC02 Login akun · KF06, KNF06  
+**Nama Layar:** Login
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-02 - Login" src="./assets/antarmuka/I-02_Login.png" width="90%">
@@ -3863,23 +3857,20 @@ Tabel 6.2. Spesifikasi Objek Antarmuka I-02
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I02-NAV-Navbar | Navigasi | Logo, "Eksplorasi Program", "Masuk", "Daftar" | Eksplorasi → I-04, Daftar → I-01. |
-| I02-IMG-Logo | Gambar (logo) | Logo RekanBumi | Identitas aplikasi pada formulir masuk. |
-| I02-LBL-InfoRedirect | Banner info | "Masuk dulu untuk mendaftar program …" | Muncul bila pengguna diarahkan dari I-05 lewat arahkanKeLogin(urlKembali) (KF06). |
-| I02-TXT-Email | Text field | "Email" | Wajib, format email. |
-| I02-TXT-KataSandi | Password field | "Kata sandi" | Wajib; ikon mata menampilkan/menyembunyikan isi. |
-| I02-BTN-Masuk | Button | "Masuk" | terimaInputKredensial(email, kataSandi) → AuthController.validasiKredensial(). Berhasil → arahkanKembali() ke halaman asal (I-05) atau beranda peran (I-04, I-07, I-10). Gagal → I02-MSG-Error. Gagal 5 kali → I02-MSG-Blokir. |
+| I02-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | "Eksplorasi Program" → I-04; "Daftar" → I-01. |
+| I02-IMG-Logo | Gambar (logo) | Logo RekanBumi | Identitas aplikasi pada formulir masuk. Formulir ditampilkan oleh tampilkanFormLogin() (Algo-C12-10). |
+| I02-LBL-InfoRedirect | Banner info | "Masuk dulu untuk mendaftar program …" | Muncul bila pengguna diarahkan dari I-05 lewat KelolaAkunPage.arahkanKeLogin(urlKembali) (Algo-C12-08; KF06). |
+| I02-TXT-Email | Text field | "Email" | Wajib, berformat email. |
+| I02-TXT-KataSandi | Password field | "Kata sandi" | Wajib; ikon mata menampilkan atau menyembunyikan isi. |
+| I02-BTN-Masuk | Button | "Masuk" | terimaInputKredensial(email, kataSandi) (Algo-C12-11) → AuthController.validasiKredensial() (Algo-C13-05): cek blokir IP (Algo-C13-06), verifikasi lewat BetterAuth.verifikasiKredensial() (Algo-C22-03), lalu mulaiSesi() (Algo-C13-10). Berhasil → arahkanKembali() (Algo-C12-09) ke halaman asal (I-05) atau beranda peran (I-04, I-07, I-10). |
 | I02-LNK-Daftar | Link | "Belum punya akun? Daftar" | Membuka I-01. |
-| I02-MSG-Error | Banner error | "Email atau kata sandi salah. Sisa percobaan: 4." | tampilkanPesanStatus(pesan) (UC02 alt. 1). |
-| I02-MSG-Blokir | Banner peringatan | "Terlalu banyak percobaan gagal. Coba lagi dalam 4:59." | AuthController.blokirIP() memblokir IP selama 5 menit (KNF06, UC02 alt. 2); field dan tombol Masuk nonaktif sampai hitung mundur selesai. |
+| I02-MSG-Error | Banner error | "Email atau kata sandi salah" | tampilkanPesanStatus(pesan) (Algo-C12-12); percobaan gagal dicatat catatPercobaanGagal() (Algo-C13-07) (UC02 alt. 1). |
+| I02-MSG-Blokir | Banner peringatan | "IP diblokir sementara selama 5 menit" | Setelah 5 kali gagal, AuthController.blokirIP() (Algo-C13-08) memblokir IP (KNF06, UC02 alt. 2); field dan tombol Masuk nonaktif selama blokir. |
 
 ## 6.3 Rancangan Antarmuka I-03
 
 **Antarmuka:** I-03  
-**Nama Layar:** Notifikasi  
-**Aktor:** Relawan, Inisiator Program, Verifikator  
-**Kelas boundary:** KelolaAkunPage (C12)  
-**Use case / kebutuhan terkait:** UC06 Konfirmasi status pendaftaran · KF08  
+**Nama Layar:** Notifikasi
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-03 - Notifikasi" src="./assets/antarmuka/I-03_Notifikasi.png" width="90%">
@@ -3892,21 +3883,18 @@ Tabel 6.3. Spesifikasi Objek Antarmuka I-03
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I03-NAV-Navbar | Navigasi | Ikon lonceng dengan angka notifikasi belum dibaca | bukaMenuNotifikasi() → AuthController.ambilNotifikasi(); angka merah menandakan ada notifikasi belum dibaca. Tersedia untuk Relawan, Inisiator Program, dan Verifikator. |
-| I03-TBL-DaftarNotifikasi | List | Daftar notifikasi terbaru | tampilkanDaftarNotifikasi(daftar). Item belum dibaca berlatar hijau muda dan bertitik. |
-| I03-CRD-Notifikasi1…4 | Item list | Pesan + waktu | pilihNotifikasi(idNotifikasi) → menampilkan I03-LBL-Detail di panel kanan. AuthController.bacaNotifikasi() menandai notifikasi sudah dibaca. |
-| I03-LBL-Detail | Panel detail | Judul, waktu, dan isi pesan | tampilkanDetailNotifikasi(detail). |
-| I03-BDG-Status | Badge | "Diterima" / "Belum diterima" | Status pendaftaran yang dikirim setelah konfirmasi seleksi (KF08, UC06). |
-| I03-BTN-LihatKegiatan | Button | "Lihat Kegiatan" | Membuka I-12 Area Kegiatan untuk program terkait. |
+| I03-NAV-Navbar | Navigasi | Ikon lonceng dengan angka notifikasi belum dibaca | bukaMenuNotifikasi() (Algo-C12-13) → AuthController.ambilNotifikasi() (Algo-C13-11). Tersedia untuk Relawan, Inisiator Program, dan Verifikator. |
+| I03-TBL-DaftarNotifikasi | List | Daftar notifikasi terbaru | tampilkanDaftarNotifikasi(daftar) (Algo-C12-15); item belum dibaca diberi latar hijau muda dan titik. |
+| I03-CRD-Notifikasi1…4 | Item list | Pesan + waktu kirim | pilihNotifikasi(idNotifikasi) (Algo-C12-14) → AuthController.bacaNotifikasi() (Algo-C13-12) menandai notifikasi sudah dibaca, lalu detail tampil di I03-LBL-Detail. |
+| I03-LBL-Detail | Panel detail | Judul, waktu, dan isi pesan | tampilkanDetailNotifikasi(detail) (Algo-C12-16) dengan isi dari Notifikasi.showDetail(). |
+| I03-BDG-Status | Badge | "Diterima" / "Ditolak" | Status pendaftaran yang dikirim setelah konfirmasi hasil seleksi (KF08, UC06). |
+| I03-BTN-LihatKegiatan | Button | "Lihat Kegiatan" | Membuka I-12 untuk program terkait. |
 | I03-MSG-Kosong | Empty state | "Belum ada notifikasi" | Muncul bila daftar notifikasi kosong. |
 
 ## 6.4 Rancangan Antarmuka I-04
 
 **Antarmuka:** I-04  
-**Nama Layar:** Eksplorasi Program  
-**Aktor:** Pengunjung, Relawan  
-**Kelas boundary:** EksplorasiProgramPage (C16)  
-**Use case / kebutuhan terkait:** UC03 Mencari program · KF03, KF04  
+**Nama Layar:** Eksplorasi Program
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-04 - Eksplorasi Program" src="./assets/antarmuka/I-04_Eksplorasi-Program.png" width="90%">
@@ -3919,26 +3907,23 @@ Tabel 6.4. Spesifikasi Objek Antarmuka I-04
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I04-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | Logo → I-04; Masuk → I-02; Daftar → I-01. Setelah masuk, navbar mengikuti peran pengguna. |
-| I04-LBL-Hero | Banner teks | "Jaga Bumi, Mulai dari Sekarang." | Informasi pembuka halaman eksplorasi (bukaHalamanEksplorasi()). |
-| I04-SRC-KataKunci | Search field | "Cari program, contoh: mangrove" | Menerima kata kunci (KF03); disimpan sebagai kataKunciPencarian. |
-| I04-BTN-Cari | Button | "Cari" | terimaInputPencarian(kataKunci, kategori) → ProgramController.cariProgram(). Ada hasil → tampilkanDaftarProgram(daftar); kosong → I04-MSG-TidakDitemukan. |
-| I04-CHP-Semua / JagaAlam / JagaIklim | Chip filter | "Semua", "Jaga Alam", "Jaga Iklim" | Menyaring program berdasarkan kategori (KF04). |
-| I04-LBL-Jumlah | Label | "Menampilkan 6 dari 6 program" | Jumlah hasil pencarian. |
-| I04-TBL-DaftarProgram | Grid card | Daftar program | Grid 3 kolom. |
-| I04-CRD-Program1…6 | Card | Foto, kategori, nama program, lembaga, lokasi, tanggal, kuota | Tombol "Lihat Detail" di card → pilihProgram(idProgram) → I-05. |
-| I04-BTN-MuatLagi | Button | "Muat Lebih Banyak" | Menampilkan program berikutnya pada hasil pencarian. |
-| I04-MSG-TidakDitemukan | Empty state | "Program tidak ditemukan. Coba kata kunci atau kategori lain." | tampilkanPesanTidakDitemukan() (UC03 alt. 1). |
-| I04-BTN-Reset | Button | "Lihat Semua Program" | Menghapus kata kunci dan filter, lalu menampilkan seluruh program. |
+| I04-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | "Masuk" → I-02; "Daftar" → I-01. Setelah masuk, navbar mengikuti peran pengguna. |
+| I04-LBL-Hero | Banner teks | "Jaga Bumi, Mulai dari Sekarang." | Pembuka halaman; bukaHalamanEksplorasi() (Algo-C16-01) memuat seluruh program aktif lewat ProgramController.cariProgram("", null) (Algo-C15-03). |
+| I04-SRC-KataKunci | Search field | "Cari program, contoh: mangrove" | Menerima kata kunci (KF03); disimpan ke kataKunciPencarian. |
+| I04-BTN-Cari | Button | "Cari" | terimaInputPencarian(kataKunci, kategori) (Algo-C16-02) → ProgramController.cariProgram() (Algo-C15-03) → Program.cari() (Algo-C01-12). Ada hasil → tampilkanDaftarProgram(daftar) (Algo-C16-03); kosong → I04-MSG-TidakDitemukan. |
+| I04-CHP-Semua / JagaAlam / JagaIklim | Chip filter | "Semua", "Jaga Alam", "Jaga Iklim" | Menyaring program berdasarkan KategoriProgram (KF04); disimpan ke filterKategori. |
+| I04-LBL-Jumlah | Label | "Menampilkan 6 dari 24 program" | Jumlah hasil pencarian. |
+| I04-TBL-DaftarProgram | Grid card | Daftar program | Grid 3 kolom berisi kartu program. |
+| I04-CRD-Program1…6 | Card | Foto, kategori, nama program, lembaga, lokasi, tanggal, kuota | Tombol "Lihat Detail" → pilihProgram(idProgram) (Algo-C16-05) → I-05. |
+| I04-BTN-MuatLagi | Button | "Muat Lebih Banyak" | Menampilkan program berikutnya dari hasil pencarian. |
+| I04-MSG-TidakDitemukan | Empty state | "Program tidak ditemukan" | tampilkanPesanTidakDitemukan() (Algo-C16-04; UC03 alt. 1). |
+| I04-BTN-Reset | Button | "Lihat Semua Program" | Menghapus kata kunci dan filter, lalu menampilkan seluruh program aktif. |
 | I04-LBL-Footer | Footer | "© 2026 RekanBumi · Mendukung SDG 13 & SDG 15", "Tentang", "Kebijakan Privasi", "Bantuan" | Informasi aplikasi dan tautan halaman statis. |
 
 ## 6.5 Rancangan Antarmuka I-05
 
 **Antarmuka:** I-05  
-**Nama Layar:** Detail Program  
-**Aktor:** Pengunjung, Relawan  
-**Kelas boundary:** EksplorasiProgramPage (C16)  
-**Use case / kebutuhan terkait:** UC04 Mengunjungi situs program · UC02 (arahkan ke login) · KF02, KF06  
+**Nama Layar:** Detail Program
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-05 - Detail Program" src="./assets/antarmuka/I-05_Detail-Program.png" width="90%">
@@ -3951,27 +3936,24 @@ Tabel 6.5. Spesifikasi Objek Antarmuka I-05
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I05-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | Logo → I-04; Masuk → I-02; Daftar → I-01. |
+| I05-NAV-Navbar | Navigasi | Logo RekanBumi, "Eksplorasi Program", "Masuk", "Daftar" | "Eksplorasi Program" → I-04; "Masuk" → I-02; "Daftar" → I-01. |
 | I05-LNK-Kembali | Link | "Kembali ke Eksplorasi" | Membuka I-04 dengan pencarian terakhir. |
 | I05-IMG-Foto | Gambar | Foto program | Foto sampul program. |
 | I05-BDG-Kategori | Badge | "Jaga Iklim" / "Jaga Alam" | Kategori program. |
 | I05-BDG-Status | Badge | "Aktif" / "Kuota penuh" | Status program dan ketersediaan kuota. |
-| I05-LBL-Judul, -Lembaga, -Deskripsi, -Syarat | Label | Nama program, lembaga, deskripsi, syarat dan ketentuan | tampilkanDetailProgram(idProgram) dengan data dari ProgramController.ambilDetailProgram(). |
-| I05-LBL-Tempat, -Waktu | Label | Tempat pelaksanaan; waktu mulai–selesai | Data waktuMulai dan waktuSelesai program. |
+| I05-LBL-Judul, -Lembaga, -Deskripsi, -Syarat | Label | Nama program, lembaga, deskripsi, syarat dan ketentuan | tampilkanDetailProgram(idProgram) (Algo-C16-06) dengan data dari ProgramController.ambilDetailProgram() (Algo-C15-04). |
+| I05-LBL-Tempat, -Waktu | Label | Tempat pelaksanaan; waktu mulai–selesai | Data tempatPelaksanaan, waktuMulai, dan waktuSelesai program. |
 | I05-LBL-Kuota | Label + progress bar | "18/30 relawan · sisa 12 kuota" | Jumlah relawan diterima terhadap kuota (KF05). |
-| I05-BTN-Daftar | Button | "Daftar Program" | pilihDaftarProgram(idProgram). Belum masuk → AuthController.cekSesi() gagal → KelolaAkunPage.arahkanKeLogin(urlKembali) → I-02 (UC02). Sudah masuk → I-06. Kuota penuh → nonaktif "Kuota terpenuhi". |
-| I05-BTN-SitusResmi | Button | "Kunjungi Situs Resmi Lembaga" | klikTautanSitusResmi() → ProgramController.validasiTautanSitus() → arahkanKeSitusResmi(url) di tab baru (UC04). Tautan kosong → nonaktifkanTautan(). |
-| I05-LBL-TautanKosong | Label | "Lembaga belum mencantumkan situs resmi." | UC04 alt. 1. |
-| I05-MSG-KuotaPenuh | Banner peringatan | "Kuota program sudah terpenuhi. Pendaftaran ditutup." | Muncul bila kuota terpenuhi (KF05). |
+| I05-BTN-Daftar | Button | "Daftar Program" | pilihDaftarProgram(idProgram) (Algo-C16-10). AuthController.cekSesi() (Algo-C13-04) bernilai false → KelolaAkunPage.arahkanKeLogin(urlKembali) (Algo-C12-08) → I-02 (UC02); sudah masuk → tampilkanFormPendaftaran() (Algo-C16-11) → I-06. Saat kuota penuh tombol nonaktif ("Kuota terpenuhi"). |
+| I05-BTN-SitusResmi | Button | "Kunjungi Situs Resmi Lembaga" | klikTautanSitusResmi() (Algo-C16-07): tautan valid menurut ProgramController.validasiTautanSitus() (Algo-C15-05) → arahkanKeSitusResmi(url) (Algo-C16-08) di tab baru (UC04). |
+| I05-LBL-TautanKosong | Label | "Situs resmi tidak tersedia" | nonaktifkanTautan() (Algo-C16-09) menonaktifkan I05-BTN-SitusResmi bila tautan kosong atau tidak valid (UC04 alt. 1). |
+| I05-MSG-KuotaPenuh | Banner peringatan | "Kuota program sudah penuh" | Muncul bila kuota terpenuhi (KF05); pendaftaran ditutup. |
 | I05-LBL-Footer | Footer | "© 2026 RekanBumi · Mendukung SDG 13 & SDG 15", "Tentang", "Kebijakan Privasi", "Bantuan" | Informasi aplikasi dan tautan halaman statis. |
 
 ## 6.6 Rancangan Antarmuka I-06
 
 **Antarmuka:** I-06  
-**Nama Layar:** Formulir Pendaftaran Program  
-**Aktor:** Relawan  
-**Kelas boundary:** EksplorasiProgramPage (C16)  
-**Use case / kebutuhan terkait:** UC01 Daftar program · KF05, KF07, KF10  
+**Nama Layar:** Formulir Pendaftaran Program
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-06 - Formulir Pendaftaran Program" src="./assets/antarmuka/I-06_Formulir-Pendaftaran-Program.png" width="90%">
@@ -3984,26 +3966,23 @@ Tabel 6.6. Spesifikasi Objek Antarmuka I-06
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I06-NAV-Navbar | Navigasi | Navigasi Relawan | Eksplorasi → I-04, Kegiatan → I-12, Portofolio → I-13, Notifikasi → I-03. |
+| I06-NAV-Navbar | Navigasi | "Eksplorasi", "Kegiatan Saya", "Portofolio", lonceng notifikasi, profil | Eksplorasi → I-04, Kegiatan Saya → I-12, Portofolio → I-13, lonceng → I-03. |
 | I06-LNK-Kembali | Link | "Kembali ke detail program" | Membuka I-05. |
-| I06-CRD-Ringkasan | Card | Foto, nama program, lembaga, tanggal | Ringkasan program yang dipilih (tampilkanFormPendaftaran()). |
+| I06-CRD-Ringkasan | Card | Foto, nama program, lembaga, tanggal | Ringkasan program terpilih; formulir ditampilkan oleh tampilkanFormPendaftaran() (Algo-C16-11). |
 | I06-TXA-Keterampilan | Text area | "Keterampilan yang kamu miliki" | Wajib; disimpan sebagai keterampilan pada Pendaftaran (KF07). |
 | I06-DDL-Ketersediaan | Dropdown | "Ketersediaan waktu" | Wajib; disimpan sebagai ketersediaanWaktu pada Pendaftaran (KF07). |
 | I06-CHK-Setuju | Checkbox | "Saya sudah membaca dan menyetujui syarat dan ketentuan program." | Wajib dicentang sebelum mengirim. |
-| I06-BTN-Kirim | Button | "Kirim Pendaftaran" | kirimPermohonanPendaftaran(keterampilan, ketersediaanWaktu) → SeleksiController.ajukanPendaftaran(): cek kelengkapan dan status verifikasi data diri (KF10) dan kuota (KF05). Berhasil → I06-MSG-Berhasil; gagal → I06-MSG-Error. |
+| I06-BTN-Kirim | Button | "Kirim Pendaftaran" | kirimPermohonanPendaftaran(keterampilan, ketersediaanWaktu) (Algo-C16-12) → SeleksiController.ajukanPendaftaran() (Algo-C18-01): cek kelengkapan data diri, kelayakan relawan (KF10), dan kuota (KF05). Berhasil → I06-MSG-Berhasil; gagal → I06-MSG-Error. |
 | I06-BTN-Batal | Button | "Batal" | Kembali ke I-05 tanpa menyimpan. |
-| I06-MSG-Error | Banner error | "Data dirimu belum lengkap …" / "Kuota program sudah terpenuhi …" | tampilkanPesanError(pesan) (UC01 alt. 1, KF05); tombol Kirim nonaktif. |
-| I06-MSG-Berhasil | Banner sukses | "Pendaftaran terkirim. … pantau statusnya di Notifikasi." | tampilkanNotifikasiBerhasil(). |
+| I06-MSG-Error | Banner error | "Data diri belum lengkap" / "Relawan belum memenuhi syarat kelayakan (KF10)" / "Kuota program sudah penuh" | tampilkanPesanError(pesan) (Algo-C16-14; UC01 alt. 1, KF05); pendaftaran tidak disimpan. |
+| I06-MSG-Berhasil | Banner sukses | "Permohonan pendaftaran berhasil dikirim" | tampilkanNotifikasiBerhasil() (Algo-C16-13); status pendaftaran MENUNGGU. |
 | I06-BTN-LihatNotifikasi | Button | "Lihat Notifikasi" | Membuka I-03. |
 | I06-BTN-KeEksplorasi | Button | "Kembali ke Eksplorasi" | Membuka I-04. |
 
 ## 6.7 Rancangan Antarmuka I-07
 
 **Antarmuka:** I-07  
-**Nama Layar:** Program Saya  
-**Aktor:** Inisiator Program  
-**Kelas boundary:** KelolaProgramPage (C14)  
-**Use case / kebutuhan terkait:** layar navigasi Inisiator Program · UC01, UC05, UC07  
+**Nama Layar:** Program Saya
 
 <p align="center">
 <img alt="Rancangan Antarmuka I-07 - Program Saya" src="./assets/antarmuka/I-07_Program-Saya.png" width="90%">
@@ -4016,17 +3995,18 @@ Tabel 6.7. Spesifikasi Objek Antarmuka I-07
 
 | Id_Objek | Jenis | Konten | Keterangan |
 | :--- | :--- | :--- | :--- |
-| I07-NAV-Navbar | Navigasi | "Program Saya", "Daftarkan Program", lonceng notifikasi, profil lembaga | Navigasi Inisiator Program: I-07, I-08, I-03. |
-| I07-BDG-Terverifikasi | Badge | "Terverifikasi" | Status verifikasi lembaga; hanya lembaga terverifikasi yang dapat mendaftarkan program. |
-| I07-BTN-DaftarkanBaru | Button | "+ Daftarkan Program Baru" | bukaHalamanDaftarProgram() → I-08. |
-| I07-LBL-Statistik | Panel statistik | Program aktif, pendaftar menunggu seleksi, laporan perlu revisi | Ringkasan cepat dari daftar program lembaga. |
+| I07-NAV-Navbar | Navigasi | "Program Saya", "Daftarkan Program", lonceng notifikasi, profil lembaga | Navigasi Inisiator Program: "Program Saya" → I-07, "Daftarkan Program" → I-08, lonceng → I-03. |
+| I07-BDG-Terverifikasi | Badge | "Terverifikasi" | Status verifikasi lembaga (InisiatorProgram.cekStatusVerifikasi(), Algo-C05-01); hanya lembaga terverifikasi yang dapat mendaftarkan program. |
+| I07-BTN-DaftarkanBaru | Button | "+ Daftarkan Program Baru" | bukaHalamanDaftarProgram() (Algo-C14-01) → tampilkanFormProgram() (Algo-C14-02) → I-08. |
+| I07-LBL-Statistik | Panel statistik | Program aktif, pendaftar menunggu seleksi, laporan perlu revisi | Ringkasan dari daftar program lembaga. |
 | I07-CHP-FilterStatus | Chip (tab filter) | "Semua", "Aktif", "Menunggu Konfirmasi", "Perlu Revisi", "Selesai" | Menyaring I07-TBL-DaftarProgram berdasarkan StatusProgram. |
 | I07-TBL-DaftarProgram | Tabel | Nama, kategori, jadwal, diterima/kuota, status, aksi | Halaman navigasi Inisiator Program menuju I-08, I-09, dan I-11. |
-| I07-CRD-Program1…5 | Baris tabel | Satu program + progress kuota | Menampilkan status program sesuai StatusProgram. |
-| I07-BDG-Status1…5 | Badge | "Aktif", "Menunggu Verifikasi", "Menunggu Konfirmasi", "Perlu Revisi", "Selesai" | Status program (KF13, KF14). |
-| I07-BTN-KelolaPendaftar1…5 | Button (link) | "Kelola Pendaftar" | KelolaPendaftarPage.bukaKelolaPendaftar(idProgram) → I-11. Nonaktif saat program masih Menunggu Verifikasi. |
-| I07-BTN-UnggahLaporan1…3 | Button (link) | "Unggah Laporan" / "Laporan Dikirim" / "Unggah Ulang" | tampilkanFormLaporan(idProgram) → I-09. Nonaktif ("Laporan Dikirim") saat status Menunggu Konfirmasi. |
+| I07-CRD-Program1…5 | Baris tabel | Satu program + progress kuota | Jumlah diterima dari Program.hitungJumlahDiterima() (Algo-C01-07). |
+| I07-BDG-Status1…5 | Badge | "Aktif", "Menunggu Verifikasi", "Menunggu Konfirmasi", "Perlu Revisi", "Selesai" | tampilkanStatusProgram(status) (Algo-C14-12; KF13, KF14). |
+| I07-BTN-KelolaPendaftar1…5 | Button (link) | "Kelola Pendaftar" | KelolaPendaftarPage.bukaKelolaPendaftar(idProgram) (Algo-C17-01) → I-11. Nonaktif selama program Menunggu Verifikasi. |
+| I07-BTN-UnggahLaporan1…3 | Button (link) | "Unggah Laporan" / "Laporan Dikirim" / "Unggah Ulang" | tampilkanFormLaporan(idProgram) (Algo-C14-06) → I-09. Nonaktif ("Laporan Dikirim") saat status Menunggu Konfirmasi. |
 | I07-MSG-Kosong | Empty state | "Belum ada program" | Muncul bila lembaga belum memiliki program. |
+
 
 <br>
 
