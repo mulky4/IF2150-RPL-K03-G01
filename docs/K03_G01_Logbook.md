@@ -29,6 +29,7 @@
 * [Milestone 5](#milestone-5)
 * [Milestone 6](#milestone-6)
 * [Milestone 7](#milestone-7)
+* [Milestone 8](#milestone-8)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -132,5 +133,11 @@
 | 20-10-2026  - 21-10-2026| Mulky Siraj Firizqi | Mengerjakan BAB 1,2,3.9,4,5 | 5 | Done | - |
 | 21-10-2026 | Ribka Kaylena Sanjaya | Mengerjakan bab 3 untuk UC05 dan UC06 | 4 | Done | - |
 
+### Milestone 8
+**Periode:** 21 Oktober 2026 - 28 Oktober 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 27-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 5 untuk C12-C14 | 1,5  | - | Bingung mengenai query dan algoritma tiap class |
+| 28-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 5 untuk C09 - C11, C15 dan revisi C12-C14 | 3 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
