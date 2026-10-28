@@ -143,5 +143,7 @@
 | 28-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 5 untuk C09 - C11, C15 dan revisi C12-C14 | 3 | Done | - |
 | 28-10-2026 | Ribka Kaylena Sanjaya | Mengerjakan bab 5 C2-C8 | 3 | Done | - |
 | 26-10-2026  - 28-10-2026 | Mulky Siraj Firizqi | Mengerjakan bab 6.1 - 6.7 | 6 | Done | - |
+| 26-10-2026  - 28-10-2026 | Avicenna Ananda Musthafa | Mengerjakan bab 6 | 6 | Done | - |
+| 28-10-2026 | Kairenzo Vemil | Mengerjakan bab 5 C16-C22 | 3 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
