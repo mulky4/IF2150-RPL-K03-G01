@@ -137,7 +137,10 @@
 **Periode:** 21 Oktober 2026 - 28 Oktober 2026
 | Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
 |---|---|---|---|---|---|
+| 26-10-2026 | Ribka Kaylena Sanjaya | Menyalin dppl1 ke dppl2 | 0,5  | Done | - |
+| 27-10-2026 | Ribka Kaylena Sanjaya | Mengerjakan bab 5 C1 | 1,5  | - | Masih berusaha memahami |
 | 27-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 5 untuk C12-C14 | 1,5  | - | Bingung mengenai query dan algoritma tiap class |
 | 28-10-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Mengerjakan bab 5 untuk C09 - C11, C15 dan revisi C12-C14 | 3 | Done | - |
+| 28-10-2026 | Ribka Kaylena Sanjaya | Mengerjakan bab 5 C2-C8 | 3 | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
