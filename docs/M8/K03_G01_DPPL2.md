@@ -1276,6 +1276,110 @@ Tabel 5.1.3. Query Kelas Program
 *[Ulangi pola 5.1: nama dan ID kelas, tabel operasi, tabel atribut, serta subbab algoritma/query untuk operasi penting jika diperlukan.]*
 
 
+## 5.9 Kelas LaporanProgram
+
+**Nama Kelas:** LaporanProgram  
+**ID Kelas:** C09 (*entity*)
+
+Tabel 5.9.1. Operasi Kelas LaporanProgram
+
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| uploadDokumentasi(urlFile: String): void | public | Menambahkan tautan berkas dokumentasi akhir ke laporan. |
+| setujui(verifikator: Verifikator): void | public | Menandai laporan disetujui oleh Verifikator peninjau. |
+| tolak(verifikator: Verifikator, catatanRevisi: String): void | public | Menandai laporan ditolak beserta catatan revisi dari Verifikator peninjau. |
+| showSummary(): String | public | Mengambil ringkasan capaian dampak lingkungan. |
+| showDokumentasi(): List<String> | public | Mengambil daftar dokumentasi akhir kegiatan. |
+
+Tabel 5.9.2. Atribut Kelas LaporanProgram
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| idLaporan | private | String |
+| dokumentasiAkhir | private | List<String> |
+| ringkasanCapaian | private | String |
+| catatanRevisi | private | String [0..1] |
+| statusPeninjauan | private | StatusPeninjauan |
+| waktuPengajuan | private | DateTime |
+
+### 5.9.1 Algoritma/Query
+
+**Nama Kelas :** LaporanProgram  
+**Nama Operasi :** uploadDokumentasi(urlFile)  
+**ID Algoritma :** (Algo-C09-01)
+
+```text
+Procedure uploadDokumentasi(urlFile)
+    if isEmpty(urlFile) then
+        → error "Tautan berkas tidak valid"
+    this.dokumentasiAkhir.add(urlFile)
+```
+
+### 5.9.2 Algoritma/Query
+
+**Nama Kelas :** LaporanProgram  
+**Nama Operasi :** setujui(verifikator)  
+**ID Algoritma :** (Algo-C09-02)
+
+```text
+Procedure setujui(verifikator)
+    if this.statusPeninjauan ≠ MENUNGGU then
+        → error "Laporan sudah ditinjau"
+    this.statusPeninjauan ← DISETUJUI
+    this.catatanRevisi ← null
+    this.verifikator ← verifikator
+```
+
+### 5.9.3 Algoritma/Query
+
+**Nama Kelas :** LaporanProgram  
+**Nama Operasi :** tolak(verifikator, catatanRevisi)  
+**ID Algoritma :** (Algo-C09-03)
+
+```text
+Procedure tolak(verifikator, catatanRevisi)
+    if this.statusPeninjauan ≠ MENUNGGU then
+        → error "Laporan sudah ditinjau"
+    if isEmpty(catatanRevisi) then
+        → error "Catatan revisi wajib diisi"
+    this.statusPeninjauan ← DITOLAK
+    this.catatanRevisi ← catatanRevisi
+    this.verifikator ← verifikator
+```
+
+### 5.9.4 Algoritma/Query
+
+**Nama Kelas :** LaporanProgram  
+**Nama Operasi :** showSummary()  
+**ID Algoritma :** (Algo-C09-04)
+
+```text
+Function showSummary()
+    → this.ringkasanCapaian
+```
+
+### 5.9.5 Algoritma/Query
+
+**Nama Kelas :** LaporanProgram  
+**Nama Operasi :** showDokumentasi()  
+**ID Algoritma :** (Algo-C09-05)
+
+```text
+Function showDokumentasi()
+    → this.dokumentasiAkhir
+```
+
+Query :
+
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C09-01 | uploadDokumentasi:<br>UPDATE tbl_laporan_program SET dokumentasiAkhir = @dokumentasiAkhir WHERE idLaporan = @idLaporan | Menyimpan daftar tautan dokumentasi akhir pada laporan. |
+| Q-C09-02 | setujui:<br>UPDATE tbl_laporan_program SET statusPeninjauan = 'DISETUJUI', catatanRevisi = NULL, idVerifikator = @idVerifikator WHERE idLaporan = @idLaporan | Menyimpan hasil persetujuan laporan oleh Verifikator. |
+| Q-C09-03 | tolak:<br>UPDATE tbl_laporan_program SET statusPeninjauan = 'DITOLAK', catatanRevisi = @catatanRevisi, idVerifikator = @idVerifikator WHERE idLaporan = @idLaporan | Menyimpan hasil penolakan laporan beserta catatan revisi. |
+| Q-C09-04 | showSummary:<br>SELECT ringkasanCapaian FROM tbl_laporan_program WHERE idLaporan = @idLaporan | Mengambil ringkasan capaian dampak lingkungan dari laporan. |
+| Q-C09-05 | showDokumentasi:<br>SELECT dokumentasiAkhir FROM tbl_laporan_program WHERE idLaporan = @idLaporan | Mengambil daftar dokumentasi akhir kegiatan dari laporan. |
+
+
 ## 5.10 Kelas Notifikasi
 
 **Nama Kelas:** Notifikasi  
