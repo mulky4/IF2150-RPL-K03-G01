@@ -1019,179 +1019,143 @@ Tabel 4.5. Operasi Baru pada Tahap Perancangan
 <br>
 
 ---
-# BAB 5: Perancangan Rinci Kelas
-
-Bagian ini diisi dengan daftar seluruh kelas dalam tabel berikut:
-
-Tabel 5.1. Daftar Kelas Perancangan dan Kelas Analisis Terkait
-
-| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
-| :--- | :--- | :--- |
-| 1 | Program | Program |
-| 2 | Pendaftaran | Pendaftaran |
-| 3 | Relawan | Relawan |
-| 4 | Pengguna | Pengguna |
-| 5 | InisiatorProgram | InisiatorProgram |
-| 6 | Verifikator | Verifikator |
-| 7 | DokumenVerifikasi | DokumenVerifikasi |
-| 8 | Kehadiran | Kehadiran |
-| 9 | LaporanProgram | LaporanProgram |
-| 10 | Notifikasi | Notifikasi |
-| 11 | RiwayatKontribusi | RiwayatKontribusi |
-| 12 | KelolaAkunPage | KelolaAkunPage |
-| 13 | AuthController | AuthController |
-| 14 | KelolaProgramPage | KelolaProgramPage |
-| 15 | ProgramController | ProgramController |
-| 16 | EksplorasiProgramPage | EksplorasiProgramPage |
-| 17 | KelolaPendaftarPage | KelolaPendaftarPage |
-| 18 | SeleksiController | SeleksiController |
-| 19 | AreaKegiatanPage | AreaKegiatanPage |
-| 20 | PresensiController | PresensiController |
-| 21 | CloudStorageAdapter | [Baru] |
-| 22 | BetterAuth | [Baru] |
-
-Untuk **setiap kelas**, identifikasi operasi berdasarkan tanggung jawab kelas beserta *visibility*-nya, serta atribut beserta *visibility* dan tipenya. Buat subbab tersendiri untuk setiap kelas.
-
 ## 5.1 Kelas Program
 
-**Nama Kelas:** Program 
-**ID Kelas:** C01
+**Nama Kelas:** Program  
+**ID Kelas:** C01 (*entity*)
 
 Tabel 5.1.1. Operasi Kelas Program
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
+| cekKuotaTersedia(jumlahTambahan: Integer) | public | Memeriksa apakah kuota relawan masih mencukupi jika ditambah sejumlah relawan baru. |
+| hitungJumlahDiterima() | private | Menghitung jumlah pendaftar dengan status diterima. |
 | ajukanKonfirmasi() | public | Mengubah status program menjadi menunggu konfirmasi setelah Inisiator mengajukan laporan akhir; mengembalikan status baru. |
 | selesaikan() | public | Menandai program selesai setelah laporan disetujui Verifikator; mengembalikan status baru. |
-| mintaRevisi() | public | Mengembalikan program ke dalam status 'perlu revisi' ketika laporan ditolak; mengembalikan status baru. |
-| cekKuotaTersedia() | public | Memeriksa apakah kuota relawan masih tersedia. |
-| cekDalamWaktuPelaksanaan(waktu) | public | Memeriksa apakah suatu waktu berada di antara waktuMulai dan waktuSelesai (dipakai untuk check-in, KF12). |
-| hitungDurasiJam() | public | Menghitung durasi program dalam jam (dipakai untuk durasi jam aksi, KF15). |
-| hitungJumlahDiterima() | public | Menghitung jumlah pendaftar dengan status diterima. |
+| mintaRevisi() | public | Mengembalikan program ke status perlu revisi ketika laporan ditolak; mengembalikan status baru. |
+| cekDalamWaktuPelaksanaan(waktu: DateTime) | public | Memeriksa apakah suatu waktu berada di antara waktuMulai dan waktuSelesai (dipakai untuk check-in, KF12). |
 | keteranganWaktu() | public | Mengembalikan keterangan waktu: belum dimulai, sedang berlangsung, atau sudah selesai. |
-| ambilPengelola() | public | Mengambil InisiatorProgram pemilik program |
-| daftarPendaftar() | public | Mengambil semua Pendaftaran untuk program terkait |
+| hitungDurasiJam() | public | Menghitung durasi program dalam jam (dipakai untuk jam aksi, KF15). |
+| getTautan() | public | Mengembalikan tautan situs resmi lembaga pengelola program. |
+| ambilPengelola() | public | Mengambil InisiatorProgram pemilik program. |
+| daftarPendaftar() | public | Mengambil semua Pendaftaran untuk program terkait. |
 | daftarRelawanDiterima() | public | Mengambil daftar Relawan yang pendaftarannya diterima. |
-| cari(kata, kategori) | public (static) | Mencari program yang dibuka berdasarkan kata kunci dan kategori; menggantikan filterProgram() | 
-| *...* | *...* | *...* |
+| cari(kataKunci: String, kategori: KategoriProgram) | public (static) | Mencari program yang aktif berdasarkan kata kunci dan kategori; menggantikan filterProgram(). |
 
 Tabel 5.1.2. Atribut Kelas Program
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idProgram | private | string |
-| namaProgram | private | string |
-| deskripsi | private | string |
-| kategori | private | enum |
-| kuota | private | int |
-| status | private | enum |
+| idProgram | private | String |
+| namaProgram | private | String |
+| deskripsi | private | String |
+| kategori | private | KategoriProgram |
+| tempatPelaksanaan | private | String |
 | waktuMulai | private | DateTime |
 | waktuSelesai | private | DateTime |
-| tempatPelaksanaan | private | string |
-|idInisiator | private | string |
+| kuota | private | Integer |
+| syaratKetentuan | private | String |
+| status | private | StatusProgram |
 
 ### 5.1.1 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** ajukanKonfirmasi() 
+**Nama Kelas:** Program  
+**Nama Operasi:** ajukanKonfirmasi()  
 **ID Algoritma:** (Algo-C01-01)
 
 ```text
-Function ajukanKonfirmasi()
-    if this.status ≠ "Berjalan" then
+Function ajukanKonfirmasi() → StatusProgram
+    if this.status ≠ "AKTIF" then
         → error "Program tidak dapat diajukan konfirmasi"
-    this.status ← "MenungguKonfirmasi"
+    this.status ← "MENUNGGU_KONFIRMASI"
     DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
     → this.status
 ```
 
 ### 5.1.2 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** selesaikan() 
+**Nama Kelas:** Program  
+**Nama Operasi:** selesaikan()  
 **ID Algoritma:** (Algo-C01-02)
 
 ```text
-Function selesaikan()
-    if this.status ≠ "MenungguKonfirmasi" then
+Function selesaikan() → StatusProgram
+    if this.status ≠ "MENUNGGU_KONFIRMASI" then
         → error "Program belum diajukan konfirmasi"
-    this.status ← "Selesai"
+    this.status ← "SELESAI"
     DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
     → this.status
 ```
 
 ### 5.1.3 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** mintaRevisi() 
+**Nama Kelas:** Program  
+**Nama Operasi:** mintaRevisi()  
 **ID Algoritma:** (Algo-C01-03)
 
 ```text
-Function mintaRevisi()
-    if this.status ≠ "MenungguKonfirmasi" then
+Function mintaRevisi() → StatusProgram
+    if this.status ≠ "MENUNGGU_KONFIRMASI" then
         → error "Program belum diajukan konfirmasi"
-    this.status ← "PerluRevisi"
+    this.status ← "PERLU_REVISI"
     DB_SERVICE.updateStatusProgram(this.idProgram, this.status)
     → this.status
 ```
 
 ### 5.1.4 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** cekKuotaTersedia() 
+**Nama Kelas:** Program  
+**Nama Operasi:** cekKuotaTersedia(jumlahTambahan: Integer)  
 **ID Algoritma:** (Algo-C01-04)
 
 ```text
-Function cekKuotaTersedia() → boolean
+Function cekKuotaTersedia(jumlahTambahan: Integer) → Boolean
     diterima ← this.hitungJumlahDiterima()
-    if (diterima < this.kuota) then
-        → true
-    else
-        → false
+    → (diterima + jumlahTambahan ≤ this.kuota)
 ```
 
 ### 5.1.5 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** cekDalamWaktuPelaksanaan(waktu) 
+**Nama Kelas:** Program  
+**Nama Operasi:** cekDalamWaktuPelaksanaan(waktu: DateTime)  
 **ID Algoritma:** (Algo-C01-05)
 
 ```text
-Function cekDalamWaktuPelaksanaan(waktu) → boolean
+Function cekDalamWaktuPelaksanaan(waktu: DateTime) → Boolean
     → (waktu ≥ this.waktuMulai) and (waktu ≤ this.waktuSelesai)
 ```
 
 ### 5.1.6 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** hitungDurasiJam()
+**Nama Kelas:** Program  
+**Nama Operasi:** hitungDurasiJam()  
 **ID Algoritma:** (Algo-C01-06)
 
 ```text
-Function hitungDurasiJam() → real
+Function hitungDurasiJam() → Float
     selisih ← this.waktuSelesai − this.waktuMulai
     → selisih dalam satuan jam
 ```
 
 ### 5.1.7 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** hitungJumlahDiterima()
+**Nama Kelas:** Program  
+**Nama Operasi:** hitungJumlahDiterima()  
 **ID Algoritma:** (Algo-C01-07)
 
 ```text
-Function hitungJumlahDiterima() → int
+Function hitungJumlahDiterima() → Integer
     → DB_SERVICE.countPendaftarDiterima(this.idProgram)
 ```
 
 ### 5.1.8 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** keteranganWaktu()
+**Nama Kelas:** Program  
+**Nama Operasi:** keteranganWaktu()  
 **ID Algoritma:** (Algo-C01-08)
 
 ```text
-Function keteranganWaktu() → string
+Function keteranganWaktu() → String
     sekarang ← now()
     if (sekarang < this.waktuMulai) then
         → "Belum dimulai"
@@ -1203,13 +1167,13 @@ Function keteranganWaktu() → string
 
 ### 5.1.9 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** ambilPengelola()
+**Nama Kelas:** Program  
+**Nama Operasi:** ambilPengelola()  
 **ID Algoritma:** (Algo-C01-09)
 
 ```text
 Function ambilPengelola() → InisiatorProgram
-    data ← DB_SERVICE.findInisiatorByID(this.idInisiator)
+    data ← DB_SERVICE.findInisiatorByProgram(this.idProgram)
     if data is null then
         → error "Pengelola program tidak ditemukan"
     → new InisiatorProgram(data)
@@ -1217,8 +1181,8 @@ Function ambilPengelola() → InisiatorProgram
 
 ### 5.1.10 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** daftarPendaftar()
+**Nama Kelas:** Program  
+**Nama Operasi:** daftarPendaftar()  
 **ID Algoritma:** (Algo-C01-10)
 
 ```text
@@ -1232,8 +1196,8 @@ Function daftarPendaftar() → List<Pendaftaran>
 
 ### 5.1.11 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** daftarRelawanDiterima()
+**Nama Kelas:** Program  
+**Nama Operasi:** daftarRelawanDiterima()  
 **ID Algoritma:** (Algo-C01-11)
 
 ```text
@@ -1247,41 +1211,55 @@ Function daftarRelawanDiterima() → List<Relawan>
 
 ### 5.1.12 Algoritma/Query
 
-**Nama Kelas:** Program
-**Nama Operasi:** cari(kata, kategori)
+**Nama Kelas:** Program  
+**Nama Operasi:** cari(kataKunci: String, kategori: KategoriProgram)  
 **ID Algoritma:** (Algo-C01-12)
 
 ```text
-Function cari(kata, kategori) → List<Program>
-    dataList ← DB_SERVICE.searchProgram(kata, kategori)
+Function cari(kataKunci: String, kategori: KategoriProgram) → List<Program>
+    dataList ← DB_SERVICE.searchProgram(kataKunci, kategori)
     hasil ← new List<Program>
     For each data in dataList
         hasil.add(new Program(data))
     → hasil
 ```
 
+### 5.1.13 Algoritma/Query
+
+**Nama Kelas:** Program  
+**Nama Operasi:** getTautan()  
+**ID Algoritma:** (Algo-C01-13)
+
+```text
+Function getTautan() → String
+    pengelola ← this.ambilPengelola()
+    → pengelola.getTautan()
+```
+
 Tabel 5.1.3. Query Kelas Program
+
 | No Query | Query | Keterangan |
 | :--- | :--- | :--- |
-| Q-C01-01 | UPDATE program SET status = @status WHERE idProgram = @idProgram	 | Memperbarui status program (dipakai oleh Algo-C01-01, -02, dan -03). |
-| Q-C01-07 | SELECT COUNT(*) FROM pendaftaran WHERE idProgram = @idProgram AND status = 'Diterima' | Menghitung pendaftar yang diterima. |
-| Q-C01-09 | SELECT * FROM inisiator_program WHERE idInisiator = @idInisiator | Mengambil data pengelola program. |
-| Q-C01-10 | SELECT * FROM pendaftaran WHERE idProgram = @idProgram | Mengambil semua pendaftar program. |
-| Q-C01-11 | SELECT r.* FROM relawan r JOIN pendaftaran p ON p.idRelawan = r.idRelawan WHERE p.idProgram = @idProgram AND p.status = 'Diterima' | Mengambil relawan yang diterima. |
-| Q-C01-12 | SELECT * FROM program WHERE status = 'Dibuka' AND namaProgram LIKE @kata AND (@kategori IS NULL OR kategori = @kategori) | Pencaria program dengan filter. | 
+| Q-C01-01 | `UPDATE program SET status = @status WHERE idProgram = @idProgram` | Memperbarui status program (dipakai oleh Algo-C01-01, -02, dan -03). |
+| Q-C01-07 | `SELECT COUNT(*) FROM pendaftaran WHERE idProgram = @idProgram AND status = 'DITERIMA'` | Menghitung pendaftar yang diterima. |
+| Q-C01-09 | `SELECT i.* FROM inisiator_program i JOIN program p ON p.idInisiator = i.idInisiator WHERE p.idProgram = @idProgram` | Mengambil data pengelola program. |
+| Q-C01-10 | `SELECT * FROM pendaftaran WHERE idProgram = @idProgram` | Mengambil semua pendaftar program. |
+| Q-C01-11 | `SELECT r.* FROM relawan r JOIN pendaftaran p ON p.idRelawan = r.idRelawan WHERE p.idProgram = @idProgram AND p.status = 'DITERIMA'` | Mengambil relawan yang diterima. |
+| Q-C01-12 | `SELECT * FROM program WHERE status = 'AKTIF' AND namaProgram LIKE @kataKunci AND (@kategori IS NULL OR kategori = @kategori)` | Pencarian program aktif dengan filter kategori. |
 
+---
 
 ## 5.2 Kelas Pendaftaran
 
 **Nama Kelas:** Pendaftaran  
-**ID Kelas:** C02
+**ID Kelas:** C02 (*entity*)
 
 Tabel 5.2.1. Operasi Kelas Pendaftaran
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| terima() | public | Menandai pendaftaran sebagai diterima berdasarkan keputusan seleksi Inisiator; mengembalikan status baru. |
-| tolak() | public | Menandai pendaftaran sebagai ditolak berdasarkan keputusan seleksi Inisiator; mengembalikan status baru. |
+| terima() | public | Menandai pendaftaran sebagai diterima berdasarkan keputusan seleksi Inisiator. |
+| tolak() | public | Menandai pendaftaran sebagai ditolak berdasarkan keputusan seleksi Inisiator. |
 | isDiterima() | public | Memeriksa apakah status pendaftaran adalah diterima. |
 | sudahDiputuskan() | public | Memeriksa apakah pendaftaran sudah diputuskan (diterima atau ditolak). |
 
@@ -1289,12 +1267,10 @@ Tabel 5.2.2. Atribut Kelas Pendaftaran
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idPendaftaran | private | string |
-| idProgram | private | string |
-| idRelawan | private | string |
-| keterampilan | private | string |
-| ketersediaanWaktu | private | string |
-| status | private | enum |
+| idPendaftaran | private | String |
+| keterampilan | private | String |
+| ketersediaanWaktu | private | String |
+| status | private | StatusPendaftaran |
 | waktuDaftar | private | DateTime |
 
 ### 5.2.1 Algoritma/Query
@@ -1307,9 +1283,8 @@ Tabel 5.2.2. Atribut Kelas Pendaftaran
 Function terima()
     if this.sudahDiputuskan() then
         → error "Pendaftaran sudah diputuskan"
-    this.status ← "Diterima"
+    this.status ← "DITERIMA"
     DB_SERVICE.updateStatusPendaftaran(this.idPendaftaran, this.status)
-    → this.status
 ```
 
 ### 5.2.2 Algoritma/Query
@@ -1322,9 +1297,8 @@ Function terima()
 Function tolak()
     if this.sudahDiputuskan() then
         → error "Pendaftaran sudah diputuskan"
-    this.status ← "Ditolak"
+    this.status ← "DITOLAK"
     DB_SERVICE.updateStatusPendaftaran(this.idPendaftaran, this.status)
-    → this.status
 ```
 
 ### 5.2.3 Algoritma/Query
@@ -1334,8 +1308,8 @@ Function tolak()
 **ID Algoritma:** (Algo-C02-03)
 
 ```text
-Function isDiterima() → boolean
-    → (this.status = "Diterima")
+Function isDiterima() → Boolean
+    → (this.status = "DITERIMA")
 ```
 
 ### 5.2.4 Algoritma/Query
@@ -1345,8 +1319,8 @@ Function isDiterima() → boolean
 **ID Algoritma:** (Algo-C02-04)
 
 ```text
-Function sudahDiputuskan() → boolean
-    → (this.status = "Diterima") or (this.status = "Ditolak")
+Function sudahDiputuskan() → Boolean
+    → (this.status = "DITERIMA") or (this.status = "DITOLAK")
 ```
 
 Tabel 5.2.3. Query Kelas Pendaftaran
@@ -1360,26 +1334,27 @@ Tabel 5.2.3. Query Kelas Pendaftaran
 ## 5.3 Kelas Relawan
 
 **Nama Kelas:** Relawan  
-**ID Kelas:** C03
+**ID Kelas:** C03 (*entity*)
 
 Tabel 5.3.1. Operasi Kelas Relawan
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| cekStatusKelayakan() | public | Memeriksa apakah relawan layak mendaftar program, yaitu data profil lengkap dan dokumen verifikasi sudah diunggah (KF10). |
 | cekKelengkapanData() | public | Memeriksa apakah data profil relawan sudah lengkap. |
+| cekStatusKelayakan() | public | Memeriksa apakah relawan layak mendaftar program, yaitu data profil lengkap dan status verifikasi terverifikasi (KF10). |
 | lihatPortofolio() | public | Mengambil RiwayatKontribusi (portofolio) milik relawan. |
-| catatKontribusi(program) | public | Mencatat program yang diselesaikan ke riwayat kontribusi relawan (KF15). |
-| hadirPada(program) | public | Memeriksa apakah relawan tercatat hadir pada program tertentu. |
+| catatKontribusi(program: Program) | public | Mencatat program yang diikuti ke riwayat kontribusi relawan jika relawan tercatat hadir; mengembalikan true jika berhasil dicatat (KF15). |
+| hadirPada(program: Program) | private | Memeriksa apakah relawan tercatat hadir pada program tertentu. |
 
 Tabel 5.3.2. Atribut Kelas Relawan
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idRelawan | private | string |
-| nama | private | string |
-| nomorTelepon | private | string |
-| domisili | private | string |
+| idRelawan | private | String |
+| nama | private | String |
+| noTelepon | private | String |
+| domisili | private | String |
+| statusVerifikasi | private | StatusVerifikasi |
 
 ### 5.3.1 Algoritma/Query
 
@@ -1388,11 +1363,10 @@ Tabel 5.3.2. Atribut Kelas Relawan
 **ID Algoritma:** (Algo-C03-01)
 
 ```text
-Function cekStatusKelayakan() → boolean
+Function cekStatusKelayakan() → Boolean
     if not this.cekKelengkapanData() then
         → false
-    jumlahDokumen ← DB_SERVICE.countDokumenByPengguna(this.idPengguna)
-    → (jumlahDokumen > 0)
+    → (this.statusVerifikasi = "TERVERIFIKASI")
 ```
 
 ### 5.3.2 Algoritma/Query
@@ -1402,8 +1376,8 @@ Function cekStatusKelayakan() → boolean
 **ID Algoritma:** (Algo-C03-02)
 
 ```text
-Function cekKelengkapanData() → boolean
-    if (this.nama is empty) or (this.nomorTelepon is empty) or (this.domisili is empty) then
+Function cekKelengkapanData() → Boolean
+    if (this.nama is empty) or (this.noTelepon is empty) or (this.domisili is empty) then
         → false
     → true
 ```
@@ -1425,73 +1399,68 @@ Function lihatPortofolio() → RiwayatKontribusi
 ### 5.3.4 Algoritma/Query
 
 **Nama Kelas:** Relawan  
-**Nama Operasi:** catatKontribusi(program)  
+**Nama Operasi:** catatKontribusi(program: Program)  
 **ID Algoritma:** (Algo-C03-04)
 
 ```text
-Function catatKontribusi(program)
+Function catatKontribusi(program: Program) → Boolean
     if program is null then
-        → error "Program tidak ditemukan"
+        → false
+    if not this.hadirPada(program) then
+        → false
     riwayat ← this.lihatPortofolio()
     riwayat.tambahRiwayatProgram(program)
+    → true
 ```
 
 ### 5.3.5 Algoritma/Query
 
 **Nama Kelas:** Relawan  
-**Nama Operasi:** hadirPada(program)  
+**Nama Operasi:** hadirPada(program: Program)  
 **ID Algoritma:** (Algo-C03-05)
 
 ```text
-Function hadirPada(program) → boolean
-    kehadiran ← Kehadiran.untukProgram(this.idRelawan, program.idProgram)
-    → (kehadiran ≠ null)
+Function hadirPada(program: Program) → Boolean
+    dataList ← DB_SERVICE.findKehadiranByRelawan(this.idRelawan)
+    For each data in dataList
+        kehadiran ← new Kehadiran(data)
+        if kehadiran.untukProgram(program) then
+            → true
+    → false
 ```
 
 Tabel 5.3.3. Query Kelas Relawan
 
 | No Query | Query | Keterangan |
 | :--- | :--- | :--- |
-| Q-C03-01 | `SELECT COUNT(*) FROM dokumen_verifikasi WHERE idPengguna = @idPengguna` | Menghitung dokumen verifikasi yang sudah diunggah pengguna. |
 | Q-C03-03 | `SELECT * FROM riwayat_kontribusi WHERE idRelawan = @idRelawan` | Mengambil riwayat kontribusi relawan. |
+| Q-C03-05 | `SELECT * FROM kehadiran WHERE idRelawan = @idRelawan` | Mengambil semua kehadiran milik relawan. |
 
 ---
 
 ## 5.4 Kelas Pengguna
 
 **Nama Kelas:** Pengguna  
-**ID Kelas:** C04
+**ID Kelas:** C04 (*entity*, *abstract*)
 
 Tabel 5.4.1. Operasi Kelas Pengguna
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| getIdPengguna() | public | Mengembalikan ID pengguna. |
 | lihatNotifikasi() | public | Mengambil daftar Notifikasi milik pengguna (berlaku untuk Relawan, Inisiator, dan Verifikator). |
 
 Tabel 5.4.2. Atribut Kelas Pengguna
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idPengguna | private | string |
-| email | private | string |
+| idPengguna | protected | String |
+| email | protected | String |
 
 ### 5.4.1 Algoritma/Query
 
 **Nama Kelas:** Pengguna  
-**Nama Operasi:** getIdPengguna()  
-**ID Algoritma:** (Algo-C04-01)
-
-```text
-Function getIdPengguna() → string
-    → this.idPengguna
-```
-
-### 5.4.2 Algoritma/Query
-
-**Nama Kelas:** Pengguna  
 **Nama Operasi:** lihatNotifikasi()  
-**ID Algoritma:** (Algo-C04-02)
+**ID Algoritma:** (Algo-C04-01)
 
 ```text
 Function lihatNotifikasi() → List<Notifikasi>
@@ -1506,30 +1475,30 @@ Tabel 5.4.3. Query Kelas Pengguna
 
 | No Query | Query | Keterangan |
 | :--- | :--- | :--- |
-| Q-C04-02 | `SELECT * FROM notifikasi WHERE idPenerima = @idPengguna ORDER BY waktuKirim DESC` | Mengambil notifikasi milik pengguna, terbaru lebih dulu. |
+| Q-C04-01 | `SELECT * FROM notifikasi WHERE idPenerima = @idPengguna ORDER BY waktuKirim DESC` | Mengambil notifikasi milik pengguna, terbaru lebih dulu. |
 
 ---
 
 ## 5.5 Kelas InisiatorProgram
 
 **Nama Kelas:** InisiatorProgram  
-**ID Kelas:** C05
+**ID Kelas:** C05 (*entity*)
 
 Tabel 5.5.1. Operasi Kelas InisiatorProgram
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
 | cekStatusVerifikasi() | public | Memeriksa apakah lembaga Inisiator sudah terverifikasi; dipakai saat mendaftarkan program. |
-| getTautan() | public | Mengembalikan tautan situs resmi lembaga. |
+| getTautan() | public | Mengembalikan tautan situs resmi lembaga (kosong jika lembaga tidak memiliki situs). |
 
 Tabel 5.5.2. Atribut Kelas InisiatorProgram
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idInisiator | private | string |
-| namaLembaga | private | string |
-| tautanSitusResmi | private | string |
-| statusVerifikasi | private | enum |
+| idInisiator | private | String |
+| namaLembaga | private | String |
+| tautanSitusResmi | private | String [0..1] |
+| statusVerifikasi | private | StatusVerifikasi |
 
 ### 5.5.1 Algoritma/Query
 
@@ -1538,8 +1507,8 @@ Tabel 5.5.2. Atribut Kelas InisiatorProgram
 **ID Algoritma:** (Algo-C05-01)
 
 ```text
-Function cekStatusVerifikasi() → boolean
-    → (this.statusVerifikasi = "Terverifikasi")
+Function cekStatusVerifikasi() → Boolean
+    → (this.statusVerifikasi = "TERVERIFIKASI")
 ```
 
 ### 5.5.2 Algoritma/Query
@@ -1549,7 +1518,7 @@ Function cekStatusVerifikasi() → boolean
 **ID Algoritma:** (Algo-C05-02)
 
 ```text
-Function getTautan() → string
+Function getTautan() → String
     → this.tautanSitusResmi
 ```
 
@@ -1562,46 +1531,48 @@ Tidak ada query pada kelas ini.
 ## 5.6 Kelas Verifikator
 
 **Nama Kelas:** Verifikator  
-**ID Kelas:** C06
+**ID Kelas:** C06 (*entity*)
 
 Tabel 5.6.1. Operasi Kelas Verifikator
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| konfirmasiLaporan(laporan) | public | Menyetujui laporan program dengan meneruskan keputusan ke LaporanProgram yang ditinjau. |
-| tolakLaporan(laporan) | public | Menolak laporan program dengan meneruskan keputusan ke LaporanProgram yang ditinjau. |
+| konfirmasiLaporan(laporan: LaporanProgram) | public | Menyetujui laporan program dengan meneruskan keputusan ke LaporanProgram yang ditinjau. |
+| tolakLaporan(laporan: LaporanProgram, catatanRevisi: String) | public | Menolak laporan program beserta catatan revisi dengan meneruskan keputusan ke LaporanProgram yang ditinjau. |
 
 Tabel 5.6.2. Atribut Kelas Verifikator
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idVerifikator | private | string |
-| nama | private | string |
+| idVerifikator | private | String |
+| nama | private | String |
 
 ### 5.6.1 Algoritma/Query
 
 **Nama Kelas:** Verifikator  
-**Nama Operasi:** konfirmasiLaporan(laporan)  
+**Nama Operasi:** konfirmasiLaporan(laporan: LaporanProgram)  
 **ID Algoritma:** (Algo-C06-01)
 
 ```text
-Function konfirmasiLaporan(laporan)
+Function konfirmasiLaporan(laporan: LaporanProgram)
     if laporan is null then
         → error "Laporan tidak ditemukan"
-    → laporan.setujui(this)
+    laporan.setujui(this)
 ```
 
 ### 5.6.2 Algoritma/Query
 
 **Nama Kelas:** Verifikator  
-**Nama Operasi:** tolakLaporan(laporan)  
+**Nama Operasi:** tolakLaporan(laporan: LaporanProgram, catatanRevisi: String)  
 **ID Algoritma:** (Algo-C06-02)
 
 ```text
-Function tolakLaporan(laporan)
+Function tolakLaporan(laporan: LaporanProgram, catatanRevisi: String)
     if laporan is null then
         → error "Laporan tidak ditemukan"
-    → laporan.tolak(this)
+    if catatanRevisi is empty then
+        → error "Catatan revisi wajib diisi"
+    laporan.tolak(this, catatanRevisi)
 ```
 
 Tabel 5.6.3. Query Kelas Verifikator
@@ -1613,121 +1584,62 @@ Tidak ada query pada kelas ini.
 ## 5.7 Kelas DokumenVerifikasi
 
 **Nama Kelas:** DokumenVerifikasi  
-**ID Kelas:** C07
+**ID Kelas:** C07 (*entity*)
 
 Tabel 5.7.1. Operasi Kelas DokumenVerifikasi
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| simpan() | public | Menyimpan data dokumen verifikasi ke basis data setelah berkas terunggah ke penyimpanan awan. |
-| getUrlBerkas() | public | Mengembalikan URL berkas dokumen. |
-| getJenisDokumen() | public | Mengembalikan jenis dokumen (dokumen Relawan atau dokumen legalitas lembaga). |
+| - | - | - |
 
 Tabel 5.7.2. Atribut Kelas DokumenVerifikasi
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idDokumen | private | string |
-| idPengguna | private | string |
-| jenisDokumen | private | enum |
-| urlBerkas | private | string |
-| waktuUnggah | private | DateTime |
+| idDokumen | private | String |
+| jenisDokumen | private | String |
+| urlFile | private | String |
+| statusVerifikasi | private | StatusVerifikasi |
 
-### 5.7.1 Algoritma/Query
-
-**Nama Kelas:** DokumenVerifikasi  
-**Nama Operasi:** simpan()  
-**ID Algoritma:** (Algo-C07-01)
-
-```text
-Function simpan() → string
-    if this.urlBerkas is empty then
-        → error "Berkas belum diunggah"
-    DB_SERVICE.saveDokumen(this)
-    → this.idDokumen
-```
-
-### 5.7.2 Algoritma/Query
-
-**Nama Kelas:** DokumenVerifikasi  
-**Nama Operasi:** getUrlBerkas()  
-**ID Algoritma:** (Algo-C07-02)
-
-```text
-Function getUrlBerkas() → string
-    → this.urlBerkas
-```
-
-### 5.7.3 Algoritma/Query
-
-**Nama Kelas:** DokumenVerifikasi  
-**Nama Operasi:** getJenisDokumen()  
-**ID Algoritma:** (Algo-C07-03)
-
-```text
-Function getJenisDokumen() → enum
-    → this.jenisDokumen
-```
-
-Tabel 5.7.3. Query Kelas DokumenVerifikasi
-
-| No Query | Query | Keterangan |
-| :--- | :--- | :--- |
-| Q-C07-01 | `INSERT INTO dokumen_verifikasi (idDokumen, idPengguna, jenisDokumen, urlBerkas, waktuUnggah) VALUES (@idDokumen, @idPengguna, @jenisDokumen, @urlBerkas, @waktuUnggah)` | Menyimpan dokumen verifikasi baru. |
+Kelas DokumenVerifikasi tidak memiliki operasi (Tabel 4.1), sehingga tidak ada algoritma maupun query pada kelas ini. Pembuatan dan penyimpanan dokumen dilakukan oleh AuthController (dokumen Relawan) dan ProgramController (dokumen legalitas lembaga).
 
 ---
 
 ## 5.8 Kelas Kehadiran
 
 **Nama Kelas:** Kehadiran  
-**ID Kelas:** C08
+**ID Kelas:** C08 (*entity*)
 
 Tabel 5.8.1. Operasi Kelas Kehadiran
 
 | Nama Operasi | Visibility (private, public) | Keterangan |
 | :--- | :--- | :--- |
-| untukProgram(idRelawan, idProgram) | public (static) | Mengambil data kehadiran seorang relawan pada satu program; mengembalikan null jika belum tercatat. Dipanggil oleh Relawan. |
-| getWaktuCheckIn() | public | Mengembalikan waktu check-in relawan. |
+| untukProgram(program: Program) | public | Memeriksa apakah kehadiran ini tercatat untuk program tertentu. Dipanggil oleh Relawan. |
 
 Tabel 5.8.2. Atribut Kelas Kehadiran
 
 | Nama Atribut | Visibility (private, public) | Tipe |
 | :--- | :--- | :--- |
-| idKehadiran | private | string |
-| idRelawan | private | string |
-| idProgram | private | string |
-| waktuCheckIn | private | DateTime |
+| idKehadiran | private | String |
+| waktuKehadiran | private | DateTime |
 
 ### 5.8.1 Algoritma/Query
 
 **Nama Kelas:** Kehadiran  
-**Nama Operasi:** untukProgram(idRelawan, idProgram)  
+**Nama Operasi:** untukProgram(program: Program)  
 **ID Algoritma:** (Algo-C08-01)
 
 ```text
-Function untukProgram(idRelawan, idProgram) → Kehadiran
-    data ← DB_SERVICE.findKehadiran(idRelawan, idProgram)
-    if data is null then
-        → null
-    → new Kehadiran(data)
-```
-
-### 5.8.2 Algoritma/Query
-
-**Nama Kelas:** Kehadiran  
-**Nama Operasi:** getWaktuCheckIn()  
-**ID Algoritma:** (Algo-C08-02)
-
-```text
-Function getWaktuCheckIn() → DateTime
-    → this.waktuCheckIn
+Function untukProgram(program: Program) → Boolean
+    idProgramKehadiran ← DB_SERVICE.findIDProgramByKehadiran(this.idKehadiran)
+    → (idProgramKehadiran = program.idProgram)
 ```
 
 Tabel 5.8.3. Query Kelas Kehadiran
 
 | No Query | Query | Keterangan |
 | :--- | :--- | :--- |
-| Q-C08-01 | `SELECT * FROM kehadiran WHERE idRelawan = @idRelawan AND idProgram = @idProgram` | Mengambil kehadiran relawan pada program tertentu. |
+| Q-C08-01 | `SELECT idProgram FROM kehadiran WHERE idKehadiran = @idKehadiran` | Mengambil program tempat kehadiran ini tercatat. |
 
 
 ## 5.9 Kelas LaporanProgram
