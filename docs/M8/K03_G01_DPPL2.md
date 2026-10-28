@@ -1276,6 +1276,94 @@ Tabel 5.1.3. Query Kelas Program
 *[Ulangi pola 5.1: nama dan ID kelas, tabel operasi, tabel atribut, serta subbab algoritma/query untuk operasi penting jika diperlukan.]*
 
 
+## 5.11 Kelas RiwayatKontribusi
+
+**Nama Kelas:** RiwayatKontribusi  
+**ID Kelas:** C11 (*entity*)
+
+Tabel 5.11.1. Operasi Kelas RiwayatKontribusi
+
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| tambahRiwayatProgram(program: Program): void | public | Menambahkan program yang telah selesai diikuti ke riwayat dan menambah jam aksi sesuai durasi program. |
+| perbaruiJamAksi(jamAksi: Float): void | private | Menambah akumulasi total jam aksi relawan. |
+| getTotalJamAksi(): Float | public | Mengambil total jam aksi relawan. |
+| getDaftarProgramSelesai(): List<Program> | public | Mengambil daftar program yang telah diselesaikan relawan. |
+
+Tabel 5.11.2. Atribut Kelas RiwayatKontribusi
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| idRiwayat | private | String |
+| totalJamAksi | private | Float |
+
+### 5.11.1 Algoritma/Query
+
+**Nama Kelas :** RiwayatKontribusi  
+**Nama Operasi :** tambahRiwayatProgram(program)  
+**ID Algoritma :** (Algo-C11-01)
+
+```text
+Procedure tambahRiwayatProgram(program)
+    daftarSelesai ← getDaftarProgramSelesai()
+    if program.idProgram in daftarSelesai then
+        → error "Program sudah tercatat pada riwayat"
+    DB_SERVICE.saveRiwayatProgram(this.idRiwayat, program.idProgram)
+    jamAksi ← program.hitungDurasiJam()
+    perbaruiJamAksi(jamAksi)
+```
+
+### 5.11.2 Algoritma/Query
+
+**Nama Kelas :** RiwayatKontribusi  
+**Nama Operasi :** perbaruiJamAksi(jamAksi)  
+**ID Algoritma :** (Algo-C11-02)
+
+```text
+Procedure perbaruiJamAksi(jamAksi)
+    if jamAksi < 0 then
+        → error "Jam aksi tidak valid"
+    this.totalJamAksi ← this.totalJamAksi + jamAksi
+    DB_SERVICE.tambahTotalJamAksi(this.idRiwayat, jamAksi)
+```
+
+### 5.11.3 Algoritma/Query
+
+**Nama Kelas :** RiwayatKontribusi  
+**Nama Operasi :** getTotalJamAksi()  
+**ID Algoritma :** (Algo-C11-03)
+
+```text
+Function getTotalJamAksi()
+    → this.totalJamAksi
+```
+
+### 5.11.4 Algoritma/Query
+
+**Nama Kelas :** RiwayatKontribusi  
+**Nama Operasi :** getDaftarProgramSelesai()  
+**ID Algoritma :** (Algo-C11-04)
+
+```text
+Function getDaftarProgramSelesai()
+    dataProgram ← DB_SERVICE.findProgramSelesaiByRiwayat(this.idRiwayat)
+    daftar ← new List<Program>
+    For each data in dataProgram
+        daftar.add(new Program(data.idProgram, data.namaProgram, ...))
+    → daftar
+```
+
+Query :
+
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C11-01 | tambahRiwayatProgram (cek duplikat):<br>SELECT COUNT(*) FROM tbl_riwayat_program WHERE idRiwayat = @idRiwayat AND idProgram = @idProgram | Memastikan program belum tercatat pada riwayat relawan. |
+| Q-C11-02 | tambahRiwayatProgram (simpan):<br>INSERT INTO tbl_riwayat_program (idRiwayat, idProgram) VALUES (@idRiwayat, @idProgram) | Menambahkan program selesai ke riwayat kontribusi relawan. |
+| Q-C11-03 | perbaruiJamAksi:<br>UPDATE tbl_riwayat_kontribusi SET totalJamAksi = totalJamAksi + @jamAksi WHERE idRiwayat = @idRiwayat | Menambah akumulasi total jam aksi relawan. |
+| Q-C11-04 | getTotalJamAksi:<br>SELECT totalJamAksi FROM tbl_riwayat_kontribusi WHERE idRiwayat = @idRiwayat | Mengambil total jam aksi relawan untuk ditampilkan pada portofolio. |
+| Q-C11-05 | getDaftarProgramSelesai:<br>SELECT p.* FROM tbl_program p JOIN tbl_riwayat_program rp ON p.idProgram = rp.idProgram WHERE rp.idRiwayat = @idRiwayat | Mengambil semua program yang telah diselesaikan relawan. |
+
+
 ## 5.12 Kelas KelolaAkunPage
 
 **Nama Kelas:** KelolaAkunPage
