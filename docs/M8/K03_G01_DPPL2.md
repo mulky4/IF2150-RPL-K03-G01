@@ -1997,8 +1997,6 @@ Query :
 
 Tabel 5.12.1. Operasi Kelas KelolaAkunPage 
 
-| Nama Operasi | Visibility (private, public) | Keterangan |
-| :--- | :--- | :--- |
 | Nama Operasi | Visibility | Keterangan |
 | :--- | :--- | :--- |
 | bukaHalamanRegistrasi(): void | public | Membuka halaman registrasi akun dan memanggil tampilkanFormRegistrasi(). |
@@ -2031,7 +2029,7 @@ Tabel 5.12.2. Atribut Kelas KelolaAkunPage
 
 **Nama Kelas :** KelolaAkunPage  
 **Nama Operasi :** bukaHalamanRegistrasi()  
-**Algoritma :** (Algo-C12-01)
+**ID Algoritma :** (Algo-C12-01)
 
 ```text
 Procedure bukaHalamanRegistrasi()
@@ -2469,10 +2467,10 @@ Tabel 5.14.1. Operasi Kelas KelolaProgramPage
 | :--- | :--- | :--- |
 | bukaHalamanDaftarProgram(): void | public | Membuka halaman pendaftaran program oleh Inisiator Program. |
 | tampilkanFormProgram(): void | public | Menampilkan formulir data program dan kolom unggah dokumen legalitas. |
-| isiFormProgram(dataProgram: FormData): void` | public | Menyimpan isian formulir pada atribut dataProgram. |
+| isiFormProgram(dataProgram: FormData): void | public | Menyimpan isian formulir pada atribut dataProgram. |
 | unggahDokumen(berkas: File): void | public | Menyimpan dokumen legalitas lembaga pada atribut berkas. |
 | kirimPendaftaran(): void | public | Mengirim dataProgram dan berkas ke ProgramController.simpanProgramBaru(); menampilkan hasil. |
-| tampilkanFormLaporan(idProgram: String): void` | public | Menampilkan formulir laporan akhir untuk program tertentu. |
+| tampilkanFormLaporan(idProgram: String): void | public | Menampilkan formulir laporan akhir untuk program tertentu. |
 | unggahLaporanAkhir(idProgram: String, dokumentasi: List<File>, ringkasanCapaian: String): void | public | Mengirim laporan akhir ke ProgramController.ajukanLaporanAkhir(); menampilkan status program hasilnya. |
 | pilihLaporan(idLaporan: String): void | public | (Verifikator) Memilih laporan, lalu meminta ProgramController.tinjauLaporan(). |
 | tampilkanLaporanUntukDitinjau(laporan: LaporanProgram): void | public | (Verifikator) Menampilkan ringkasan capaian dan dokumentasi laporan. |
@@ -2672,6 +2670,22 @@ Kelas KelolaProgramPage adalah kelas *boundary* sehingga tidak mengakses basis d
 
 Tabel 5.15.1. Operasi Kelas ProgramController
 
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| simpanProgramBaru(idInisiator: String, dataProgram: FormData, berkas: File): Program | public | Memvalidasi data program, memeriksa status verifikasi Inisiator, mengunggah dokumen legalitas, lalu membuat DokumenVerifikasi dan Program. |
+| validasiDataProgram(dataProgram: FormData, berkas: File): String[] | private | Memeriksa kelengkapan dan kewajaran data program; mengembalikan daftar pesan galat (kosong jika valid). |
+| cariProgram(kataKunci: String, kategori: KategoriProgram): List<Program> | public | Meneruskan pencarian ke Program.cari() berdasarkan kata kunci dan kategori. |
+| ambilDetailProgram(idProgram: String): Program | public | Mengambil program beserta pengelolanya dan memvalidasi tautan situs resmi. |
+| validasiTautanSitus(url: String): Boolean | private | Memeriksa apakah tautan tersedia dan berformat URL valid. |
+| ajukanLaporanAkhir(idProgram: String, dokumentasi: List<File>, ringkasanCapaian: String): StatusProgram | public | Memvalidasi dan mengunggah dokumentasi, membuat LaporanProgram, lalu mengubah status program menjadi MENUNGGU_KONFIRMASI. |
+| validasiLaporan(dokumentasi: List<File>, ringkasanCapaian: String): String[] | private | Memeriksa dokumentasi dan ringkasan capaian laporan; mengembalikan daftar pesan galat. |
+| tinjauLaporan(idLaporan: String): LaporanProgram | public | Mengambil laporan akhir untuk ditinjau Verifikator. |
+| konfirmasiLaporan(idLaporan: String, idVerifikator: String): StatusProgram | public | Menyetujui laporan, menyelesaikan program, memicu pembaruan jam aksi relawan, dan mengirim notifikasi. |
+| tolakLaporan(idLaporan: String, idVerifikator: String, catatanRevisi: String): StatusProgram | public | Menolak laporan dengan catatan revisi, mengubah status menjadi PERLU_REVISI, dan mengirim notifikasi. |
+| buatNotifikasi(penerima: Pengguna, pesan: String): Notifikasi | private | Membuat objek Notifikasi untuk penerima lalu memanggil Notifikasi.kirim(). |
+
+Tabel 5.15.2. Atribut Kelas ProgramController
+
 | Nama Atribut | Visibility | Tipe |
 | :--- | :--- | :--- |
 | - | - | - |
@@ -2706,7 +2720,7 @@ Function simpanProgramBaru(idInisiator, dataProgram, berkas)
 
 **Nama Kelas :** ProgramController  
 **Nama Operasi :** validasiDataProgram(dataProgram, berkas)  
-**Algoritma :** (Algo-C15-02)
+**ID Algoritma :** (Algo-C15-02)
 
 ```text
 Function validasiDataProgram(dataProgram, berkas)
