@@ -31,28 +31,18 @@ Dipersiapkan oleh:
 
 | Revisi | Deskripsi |
 | :--- | :--- |
-| *A* | *Deskripsikan perubahan yang dilakukan dari dokumen sebelumnya pada dokumen ini. Jika tidak terdapat perubahan, harap kosongkan tabel.* |
-| *B* |  |
-| *C* |  |
-| ... |  |
+| A | Menambahkan BAB 5 Perancangan Rinci Kelas dan BAB 6 Perancangan Antarmuka; memperbarui BAB 1 (tujuan penulisan, aturan penomoran, dan ikhtisar) serta BAB 7 Matriks Kerunutan. |
 
 ---
 
 <br>
 
-> **Petunjuk pengerjaan:** *[Silahkan hapus bagian ini setelah selesai mengerjakan]*
->
-> Dokumen ini melanjutkan **Deskripsi Perancangan Perangkat Lunak**. Gunakan nama, ID, kebutuhan, dan use case yang konsisten dengan kedua dokumen tersebut. Contoh pola ID baru di bawah dapat disesuaikan dengan kesepakatan kelompok, ID yang sudah ada tetap dipertahankan.
-
-<br>
-
----
 
 
 # BAB 1: Pendahuluan
 
 ## 1.1 Tujuan Penulisan Dokumen
-Dokumen Deskripsi Perancangan Perangkat Lunak (DPPL) ini disusun untuk menjabarkan rancangan perangkat lunak RekanBumi sebagai kelanjutan dari dokumen Spesifikasi Kebutuhan Perangkat Lunak (SKPL) dan Arsitektur Perangkat Lunak (APL). Dokumen ini menerjemahkan kebutuhan, *use case*, dan kelas analisis yang telah didefinisikan pada SKPL, serta arsitektur yang telah ditetapkan pada APL, menjadi rancangan yang siap diimplementasikan, meliputi rancangan lingkungan implementasi, rancangan arsitektur, realisasi setiap *use case* dalam bentuk *sequence diagram* dan diagram kelas, diagram kelas perancangan keseluruhan, serta matriks kerunutan antara kelas perancangan dan *use case*.
+Dokumen Deskripsi Perancangan Perangkat Lunak (DPPL) ini disusun untuk menjabarkan rancangan perangkat lunak RekanBumi sebagai kelanjutan dari dokumen Spesifikasi Kebutuhan Perangkat Lunak (SKPL) dan Arsitektur Perangkat Lunak (APL). Dokumen ini menerjemahkan kebutuhan, *use case*, dan kelas analisis yang telah didefinisikan pada SKPL, serta arsitektur yang telah ditetapkan pada APL, menjadi rancangan yang siap diimplementasikan, meliputi rancangan lingkungan implementasi, rancangan arsitektur, realisasi setiap *use case* dalam bentuk *sequence diagram* dan diagram kelas, diagram kelas perancangan keseluruhan, rancangan rinci setiap kelas beserta algoritmanya, rancangan antarmuka, serta matriks kerunutan antara kelas perancangan dan *use case*.
 
 Dokumen ini ditujukan untuk beberapa pihak, yaitu:
 
@@ -111,8 +101,11 @@ Tabel 1.4. Aturan Penomoran
 | Aktor | AXX | Identifikasi entitas pengguna atau peran yang berinteraksi dengan sistem (A01–A03). |
 | Use Case | UCXX | Identifikasi unit interaksi fungsional antara aktor dan perangkat lunak (UC01–UC09). |
 | Kelas | CXX | Identifikasi kelas pada pemodelan berorientasi objek (C01–C20 dari SKPL; C21–C22 ditambahkan pada tahap perancangan). |
+| Algoritma | Algo-CXX-YY | Identifikasi algoritma operasi ke-YY pada kelas CXX (BAB 5). |
+| Query | Q-CXX-YY | Identifikasi *query* basis data milik kelas CXX (BAB 5). |
+| Layar | I-XX | Identifikasi layar antarmuka (I-01–I-13) pada BAB 6. |
+| Objek Antarmuka | IXX-JENIS-Nama | Identifikasi objek pada layar I-XX, misalnya I01-BTN-Daftar (BAB 6). |
 
-## 1.5 Referensi
 ## 1.5 Referensi
 1. Kelompok G01 K03. (2026). *Spesifikasi Kebutuhan Perangkat Lunak (SKPL) RekanBumi*, revisi D. IF2150 Rekayasa Perangkat Lunak, Institut Teknologi Bandung.
 2. Kelompok G01 K03. (2026). *Arsitektur Perangkat Lunak (APL) RekanBumi*, revisi A. IF2150 Rekayasa Perangkat Lunak, Institut Teknologi Bandung.
@@ -127,7 +120,7 @@ Tabel 1.4. Aturan Penomoran
 
 
 ## 1.6 Deskripsi Umum Dokumen (Ikhtisar)
-Tuliskan sistematika pembahasan dokumen ini secara ringkas dan runut, dengan maksimal 1 paragraf.
+Dokumen ini terdiri atas tujuh bab. BAB 1 Pendahuluan memuat tujuan penulisan dokumen, lingkup masalah, definisi dan singkatan, aturan penomoran, referensi, serta ikhtisar dokumen. BAB 2 Perancangan Arsitektur menjelaskan rancangan lingkungan implementasi, *style/pattern* arsitektur *Client-Server* dan MVC beserta alasan pemilihannya, identifikasi komponen, serta model arsitektur dalam bentuk *logical view* dan *physical view*. BAB 3 Realisasi Use Case menguraikan setiap *use case* UC01–UC09 melalui identifikasi kelas, *sequence diagram* skenario normal dan alternatif, serta diagram kelas per *use case*. BAB 4 Diagram Kelas Keseluruhan menyajikan gabungan seluruh kelas perancangan beserta relasi antarkelas, tipe enumerasi, dan penyesuaian dari kelas analisis. BAB 5 Perancangan Rinci Kelas merinci operasi dan atribut setiap kelas C01–C22 beserta algoritma dan *query* yang dijalankannya. BAB 6 Perancangan Antarmuka memuat rancangan tampilan desktop untuk setiap layar I-01–I-13 beserta spesifikasi objek antarmuka dan reaksi sistem terhadap interaksi pengguna. BAB 7 Matriks Kerunutan memetakan setiap kelas perancangan terhadap *use case* yang direalisasikannya.
 
 <br>
 
@@ -222,7 +215,7 @@ Pilihan ini juga memiliki harga yang diterima secara sadar. *Server* aplikasi da
 
 Komponen penyusun RekanBumi dikelompokkan berdasarkan perpaduan *Client-Server Architecture* dan pola MVC yang telah ditetapkan pada subbab 2.2. Setiap komponen *View*, *Controller*, dan *Model* dipetakan secara langsung dengan kelas perancangan pada BAB 4, sehingga tanggung jawab yang dituliskan di bawah ini konsisten dengan operasi pada Tabel 4.1.
 
-Tabel 2.3. Identifikasi Komponen/Modul/Subsistem
+Tabel 2.2. Identifikasi Komponen/Modul/Subsistem
 
 | Nama Komponen/Modul/Subsistem | Jenis | Penjelasan |
 | :--- | :--- | :--- |
@@ -256,7 +249,7 @@ Tabel 2.3. Identifikasi Komponen/Modul/Subsistem
 
 ## 2.4 Model Arsitektur Perangkat Lunak
 
-Model arsitektur RekanBumi disajikan dalam dua *view* yang saling melengkapi, yaitu *Logical View* yang menunjukkan pembagian tanggung jawab antarkomponen secara struktural mengikuti pola MVC, dan *Physical View* yang menunjukkan di mana komponen-komponen tersebut dijalankan serta bagaimana *node* saling berkomunikasi. Seluruh komponen pada kedua *view* konsisten dengan Tabel 2.3.
+Model arsitektur RekanBumi disajikan dalam dua *view* yang saling melengkapi, yaitu *Logical View* yang menunjukkan pembagian tanggung jawab antarkomponen secara struktural mengikuti pola MVC, dan *Physical View* yang menunjukkan di mana komponen-komponen tersebut dijalankan serta bagaimana *node* saling berkomunikasi. Seluruh komponen pada kedua *view* konsisten dengan Tabel 2.2.
 
 ### 2.4.1 Logical View
 
@@ -551,9 +544,9 @@ Gambar 3.13 menunjukkan diagram kelas UC04 yang terdiri atas kelas-kelas pada Ta
 
 ### 3.5.1 Identifikasi Kelas
 
-Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
+Tabel 3.5 memuat kelas perancangan yang terlibat dalam UC05 beserta kelas analisis terkait pada SKPL.
 
-Tabel 3.5.1 Identifikasi Kelas Use Case [UC05]
+Tabel 3.5. Identifikasi Kelas Use Case UC05
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
@@ -599,16 +592,16 @@ Gambar 3.16 menunjukkan diagram kelas UC05 yang terdiri atas kelas-kelas pada Ta
 </p>
 
 <br>
-## 3.6 Konfirmasi Status Pendaftaran
+## 3.6 Use Case Konfirmasi status pendaftaran
 
 **ID Use Case:** UC06 
 **Nama Use Case:** Konfirmasi Status Pendaftaran
 
 ### 3.6.1 Identifikasi Kelas
 
-Identifikasi kelas yang terkait dengan use case tersebut. Kelas di tahap perancangan dapat berbeda dengan dengan kelas di tahap analisis. Dapat menggunakan tabel di bawah:
+Tabel 3.6 memuat kelas perancangan yang terlibat dalam UC06 beserta kelas analisis terkait pada SKPL.
 
-Tabel 3.6.1 Identifikasi Kelas Use Case [UC05]
+Tabel 3.6. Identifikasi Kelas Use Case UC06
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
@@ -663,7 +656,7 @@ Relawan merupakan generalisasi dari Pengguna; Pengguna berasosiasi dengan Notifi
 
 <br>
 
-## 3.7 Use Case 07 : Memperbarui status program
+## 3.7 Use Case Memperbarui status program
 **ID Use Case:** UC07
 **Nama Use Case:** Memperbarui Status Program
 
@@ -671,7 +664,7 @@ Relawan merupakan generalisasi dari Pengguna; Pengguna berasosiasi dengan Notifi
 
 Tabel 3.7 memuat kelas perancangan yang terlibat dalam UC07 beserta kelas analisis terkait pada SKPL.
 
-Tabel 3.7. Identifikasi Kelas Use Case [UC07]
+Tabel 3.7. Identifikasi Kelas Use Case UC07
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:--- | :--- | :--- |
@@ -682,7 +675,7 @@ Tabel 3.7. Identifikasi Kelas Use Case [UC07]
 | 5 | C14 KelolaProgramPage | KelolaProgramPage |
 | 6 | C15 ProgramController | ProgramController |
 | 7 | C20 PresensiController	| PresensiController |
-| 8 | C21 CloudStorageAdapter | CloudStorageAdapter |
+| 8 | C21 CloudStorageAdapter | - (kelas baru tahap perancangan) |
 
 ### 3.7.2 Sequence Diagram
 
@@ -691,10 +684,10 @@ Tabel 3.7. Identifikasi Kelas Use Case [UC07]
 Gambar 3.20 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan membuka halaman kegiatan melalui AreaKegiatanPage, kemudian PresensiController memvalidasi status penerimaan relawan dan waktu pelaksanaan program melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Apabila kedua validasi berhasil, sistem mengaktifkan tombol check-in dan menampilkan keterangan waktu kegiatan. Ketika relawan melakukan check-in, PresensiController memproses pencatatan kehadiran melalui prosesCheckIn(). Setelah kehadiran berhasil dicatat, sistem memperbarui portofolio relawan dan menampilkan status check-in. Relawan juga dapat membuka portofolio untuk melihat total jam aksi melalui ambilTotalJamAksi() dan riwayat program melalui ambilRiwayatProgram(), yang kemudian ditampilkan oleh AreaKegiatanPage.
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(normal)_uc07.png" width="50%">
+<img alt="Sequence Diagram UC07 Skenario Normal" src="./assets/diagram/sd(normal)_uc07.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar 3.20 Sequence Diagram UC07 : Memperbarui Status Program </i>
+<i>Gambar 3.20. Sequence Diagram UC07 - Skenario Normal</i>
 </p>
 
 - **Skenario Alternatif 1 : Verifikator Menolak Laporan Akhir**
@@ -702,10 +695,10 @@ Gambar 3.20 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan mem
 Gambar 3.21 menunjukkan sequence diagram UC07 untuk skenario alternatif: Laporan Akhir Program Ditolak. Verifikator menolak laporan akhir program dan memberikan catatan revisi sehingga tolakLaporan() dipanggil. Akibatnya, status laporan diperbarui menjadi “Perlu Revisi” melalui updateStatus(), dan sistem mengirimkan notifikasi kepada Inisiator melalui buatNotifikasi() agar laporan dapat diperbaiki.
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(alt)_uc07.png" width="50%">
+<img alt="Sequence Diagram UC07 Skenario Alternatif 1: Verifikator Menolak Laporan Akhir" src="./assets/diagram/sd(alt)_uc07.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar 3.21 Sequence Diagram UC07 : Memperbarui Status Program - Verifikator Menolak Laporan Akhir</i>
+<i>Gambar 3.21. Sequence Diagram UC07 - Skenario Alternatif 1: Verifikator Menolak Laporan Akhir</i>
 </p>
 
 ### 3.7.3 Diagram Kelas
@@ -713,15 +706,15 @@ Gambar 3.21 menunjukkan sequence diagram UC07 untuk skenario alternatif: Laporan
 Gambar 3.22 menunjukkan diagram kelas UC07 yang terdiri atas kelas-kelas pada Tabel 3.7. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Seluruh operasi yang dipanggil pada *sequence diagram* 3.7.2 terdapat pada kelas yang bersangkutan
 
 <p align="center">
-<img alt="" src="./assets/diagram/cd_uc07.jpg" width="35%">
+<img alt="Diagram Kelas UC07" src="./assets/diagram/cd_uc07.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar 3.22 Diagram Kelas UC07 : Memperbarui Status Program</i>
+<i>Gambar 3.22. Diagram Kelas Use Case UC07 - Memperbarui status program</i>
 </p>
 
 <br>
 
-## 3.8 Use Case 08 : Konfirmasi kehadiran program
+## 3.8 Use Case Konfirmasi kehadiran program
 **ID Use Case:** UC08
 **Nama Use Case:** Konfirmasi Kehadiran Program
 
@@ -729,7 +722,7 @@ Gambar 3.22 menunjukkan diagram kelas UC07 yang terdiri atas kelas-kelas pada Ta
 
 Tabel 3.8 memuat kelas perancangan yang terlibat dalam UC08 beserta kelas analisis terkait pada SKPL.
 
-Tabel 3.8. Identifikasi Kelas Use Case [UC08]
+Tabel 3.8. Identifikasi Kelas Use Case UC08
 
 | No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
 |:---|:---|:---|
@@ -746,10 +739,10 @@ Tabel 3.8. Identifikasi Kelas Use Case [UC08]
 Gambar 3.23 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan membuka halaman kegiatan melalui AreaKegiatanPage, kemudian PresensiController memvalidasi status penerimaan relawan dan waktu pelaksanaan program melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Apabila kedua validasi berhasil, sistem mengaktifkan tombol check-in dan menampilkan keterangan waktu kegiatan. Ketika relawan melakukan check-in, PresensiController memproses pencatatan kehadiran melalui prosesCheckIn(). Setelah kehadiran berhasil dicatat, sistem memperbarui portofolio relawan dan menampilkan status check-in. Relawan juga dapat membuka portofolio untuk melihat total jam aksi melalui ambilTotalJamAksi() dan riwayat program melalui ambilRiwayatProgram(), yang kemudian ditampilkan oleh AreaKegiatanPage.
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(normal)_uc08.png" width="50%">
+<img alt="Sequence Diagram UC08 Skenario Normal" src="./assets/diagram/sd(normal)_uc08.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar 3.23 Sequence Diagram UC08 : Konfirmasi Kehadiran Program </i>
+<i>Gambar 3.23. Sequence Diagram UC08 - Skenario Normal</i>
 </p>
 
 - **Skenario Alternatif 1** : Check-in di Luar Waktu Pelaksanaan 
@@ -757,10 +750,10 @@ Gambar 3.23 menunjukkan sequence diagram UC08 untuk Skenario Normal. Relawan mem
 Gambar 3.24 menunjukkan sequence diagram UC08 untuk skenario alternatif: Relawan Membuka Halaman di Luar Jadwal Kegiatan. Sistem memvalidasi status relawan dan waktu pelaksanaan kegiatan melalui validasiStatusRelawan() dan validasiWaktuPelaksanaan(). Karena waktu akses berada di luar jadwal kegiatan, tombol check-in dinonaktifkan dan rentang waktu pelaksanaan ditampilkan kepada relawan. Akibatnya, catatKehadiran() tidak dipanggil sehingga catatan kehadiran tidak dibuat.
 
 <p align="center">
-<img alt="" src="./assets/diagram/sd(alt)_uc08.png" width="50%">
+<img alt="Sequence Diagram UC08 Skenario Alternatif 1: Check-in di Luar Waktu Pelaksanaan" src="./assets/diagram/sd(alt)_uc08.png" width="50%">
 </p>
 <p align="center">
-<i>Gambar 3.24 Sequence Diagram UC08 : Konfirmasi Kehadiran program - Check-in di Luar Waktu Pelaksanaan </i>
+<i>Gambar 3.24. Sequence Diagram UC08 - Skenario Alternatif 1: Check-in di Luar Waktu Pelaksanaan</i>
 </p>
 
 ### 3.8.3 Diagram Kelas
@@ -768,10 +761,10 @@ Gambar 3.24 menunjukkan sequence diagram UC08 untuk skenario alternatif: Relawan
 Gambar 3.25 menunjukkan diagram kelas UC08 yang terdiri atas kelas-kelas pada Tabel 3.8. Setiap kelas ditampilkan lengkap dengan atribut dan operasinya sesuai Tabel 4.1, dan relasi antarkelas mengikuti Tabel 4.2. Seluruh operasi yang dipanggil pada *sequence diagram* 3.8.2 terdapat pada kelas yang bersangkutan
 
 <p align="center">
-<img alt="" src="./assets/diagram/cd_uc08.jpg" width="35%">
+<img alt="Diagram Kelas UC08" src="./assets/diagram/cd_uc08.jpg" width="35%">
 </p>
 <p align="center">
-<i>Gambar 3.25 Diagram Kelas UC08 : Konfirmasi Kehadiran Program </i>
+<i>Gambar 3.25. Diagram Kelas Use Case UC08 - Konfirmasi kehadiran program</i>
 </p>
 
 ## 3.9 Use Case Memperbarui status akun relawan
@@ -837,8 +830,6 @@ Gambar 3.28 menunjukkan diagram kelas UC09 yang terdiri atas kelas-kelas pada Ta
 
 
 ---
-
-# BAB 4: Diagram Kelas Keseluruhan
 
 # BAB 4: Diagram Kelas Keseluruhan
 
@@ -1019,6 +1010,38 @@ Tabel 4.5. Operasi Baru pada Tahap Perancangan
 <br>
 
 ---
+
+# BAB 5: Perancangan Rinci Kelas
+
+Tabel 5.1 memuat daftar seluruh kelas perancangan beserta kelas analisis terkait. Setiap kelas kemudian dirinci pada subbab tersendiri.
+
+Tabel 5.1. Daftar Kelas Perancangan dan Kelas Analisis Terkait
+
+| No | Nama Kelas Perancangan | Nama Kelas Analisis Terkait |
+| :--- | :--- | :--- |
+| 1 | Program | Program |
+| 2 | Pendaftaran | Pendaftaran |
+| 3 | Relawan | Relawan |
+| 4 | Pengguna | Pengguna |
+| 5 | InisiatorProgram | InisiatorProgram |
+| 6 | Verifikator | Verifikator |
+| 7 | DokumenVerifikasi | DokumenVerifikasi |
+| 8 | Kehadiran | Kehadiran |
+| 9 | LaporanProgram | LaporanProgram |
+| 10 | Notifikasi | Notifikasi |
+| 11 | RiwayatKontribusi | RiwayatKontribusi |
+| 12 | KelolaAkunPage | KelolaAkunPage |
+| 13 | AuthController | AuthController |
+| 14 | KelolaProgramPage | KelolaProgramPage |
+| 15 | ProgramController | ProgramController |
+| 16 | EksplorasiProgramPage | EksplorasiProgramPage |
+| 17 | KelolaPendaftarPage | KelolaPendaftarPage |
+| 18 | SeleksiController | SeleksiController |
+| 19 | AreaKegiatanPage | AreaKegiatanPage |
+| 20 | PresensiController | PresensiController |
+| 21 | CloudStorageAdapter | [Baru] |
+| 22 | BetterAuth | [Baru] |
+
 ## 5.1 Kelas Program
 
 **Nama Kelas:** Program  
@@ -1905,7 +1928,7 @@ Query :
 ## 5.12 Kelas KelolaAkunPage
 
 **Nama Kelas:** KelolaAkunPage
-**ID Kelas:** C12
+**ID Kelas:** C12 (*boundary*)
 
 Tabel 5.12.1. Operasi Kelas KelolaAkunPage 
 
@@ -2153,8 +2176,8 @@ Tabel 5.13.1. Operasi Kelas AuthController
 | catatPercobaanGagal(ip: String): Integer | private | Menambah hitungan percobaan gagal IP dan mengembalikan jumlah terbarunya. |
 | blokirIP(ip: String): void | private | Menetapkan waktu blokir IP selama DURASI_BLOKIR_MENIT (KNF06). |
 | resetPercobaanGagal(ip: String): void | private | Menghapus hitungan percobaan gagal IP setelah login berhasil. |
-| mulaiSesi(idPengguna: String): String | private | Memanggil `BetterAuth.buatSesiMasuk() dan mengembalikan token sesi. |
-| ambilNotifikasi(idPengguna: String): List<Notifikasi> | public | Mengambil daftar notifikasi milik pengguna melalui `Pengguna.lihatNotifikasi(). |
+| mulaiSesi(idPengguna: String): String | private | Memanggil `BetterAuth.buatSesiMasuk()` dan mengembalikan token sesi. |
+| ambilNotifikasi(idPengguna: String): List<Notifikasi> | public | Mengambil daftar notifikasi milik pengguna melalui `Pengguna.lihatNotifikasi()`. |
 | bacaNotifikasi(idNotifikasi: String): Notifikasi | public | Menandai notifikasi terbaca (Notifikasi.baca()) dan mengambil isinya (showDetail()). |
 
 Tabel 5.13.2. Atribut Kelas AuthController
@@ -4158,7 +4181,7 @@ Tabel 6.14. Rancangan Antarmuka Keseluruhan
 
 Matriks kerunutan berikut memetakan setiap kelas perancangan pada BAB 4 terhadap *use case* yang direalisasikannya. Suatu kelas dinyatakan terkait dengan suatu *use case* apabila objek kelas tersebut terlibat pada *sequence diagram* skenario normal atau alternatif *use case* tersebut. Pemetaan ini merupakan pembaruan dari BAB 6 *Traceability* pada SKPL (revisi D) yang disesuaikan dengan realisasi *use case* pada tahap perancangan.
 
-Tabel 5.1. Matriks Kerunutan Kelas terhadap Use Case
+Tabel 7.1. Matriks Kerunutan Kelas terhadap Use Case
 
 | Kelas | Use Case Terkait |
 | :--- | :--- |
