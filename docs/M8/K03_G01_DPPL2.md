@@ -1276,6 +1276,74 @@ Tabel 5.1.3. Query Kelas Program
 *[Ulangi pola 5.1: nama dan ID kelas, tabel operasi, tabel atribut, serta subbab algoritma/query untuk operasi penting jika diperlukan.]*
 
 
+## 5.10 Kelas Notifikasi
+
+**Nama Kelas:** Notifikasi  
+**ID Kelas:** C10 (*entity*)
+
+Tabel 5.10.1. Operasi Kelas Notifikasi
+
+| Nama Operasi | Visibility | Keterangan |
+| :--- | :--- | :--- |
+| kirim(): void | public | Mengirim notifikasi kepada penerima dan menyimpannya. |
+| baca(): void | public | Menandai notifikasi sebagai sudah dibaca. |
+| showDetail(): String | public | Mengambil isi pesan notifikasi. |
+
+Tabel 5.10.2. Atribut Kelas Notifikasi
+
+| Nama Atribut | Visibility | Tipe |
+| :--- | :--- | :--- |
+| idNotifikasi | private | String |
+| pesan | private | String |
+| waktuKirim | private | DateTime |
+| statusDibaca | private | Boolean |
+
+### 5.10.1 Algoritma/Query
+
+**Nama Kelas :** Notifikasi  
+**Nama Operasi :** kirim()  
+**ID Algoritma :** (Algo-C10-01)
+
+```text
+Procedure kirim()
+    this.waktuKirim ← sekarang
+    this.statusDibaca ← false
+    DB_SERVICE.saveNotifikasi(this)
+```
+
+### 5.10.2 Algoritma/Query
+
+**Nama Kelas :** Notifikasi  
+**Nama Operasi :** baca()  
+**ID Algoritma :** (Algo-C10-02)
+
+```text
+Procedure baca()
+    if not this.statusDibaca then
+        this.statusDibaca ← true
+        DB_SERVICE.updateStatusDibaca(this.idNotifikasi, true)
+```
+
+### 5.10.3 Algoritma/Query
+
+**Nama Kelas :** Notifikasi  
+**Nama Operasi :** showDetail()  
+**ID Algoritma :** (Algo-C10-03)
+
+```text
+Function showDetail()
+    → this.pesan
+```
+
+Query :
+
+| No Query | Query | Keterangan |
+| :--- | :--- | :--- |
+| Q-C10-01 | kirim:<br>INSERT INTO tbl_notifikasi (idNotifikasi, idPenerima, pesan, waktuKirim, statusDibaca) VALUES (@idNotifikasi, @idPenerima, @pesan, CURRENT_TIMESTAMP, FALSE) | Menyimpan notifikasi baru untuk penerima. |
+| Q-C10-02 | baca:<br>UPDATE tbl_notifikasi SET statusDibaca = TRUE WHERE idNotifikasi = @idNotifikasi | Menandai notifikasi sebagai sudah dibaca. |
+| Q-C10-03 | showDetail:<br>SELECT pesan FROM tbl_notifikasi WHERE idNotifikasi = @idNotifikasi | Mengambil isi pesan notifikasi yang dipilih. |
+
+
 ## 5.11 Kelas RiwayatKontribusi
 
 **Nama Kelas:** RiwayatKontribusi  
