@@ -73,6 +73,11 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | :--- | :--- | :--- | :--- |
 | Claude | Membantu merancang langkah-langkah penyusunan diagram UML (Sequence & Class Diagram) serta memvalidasi kesesuaian rancangan DPPL dengan materi perkuliahan dan asistensi | Tolong bantu susun langkah-langkah logika pembuatan Sequence Diagram dan Class Diagram per Use Case, lalu validasi apakah struktur draf dokumen DPPL ini sudah sesuai dengan materi perkuliahan dan PPT asistensi akbar. | AI memberikan acuan alur interaksi antar-objek, saran struktur atribut/metode, dan catatan kesesuaian materi. Kami mengevaluasi seluruh masukan tersebut, merancang serta menggambar diagram, dan menyelaraskan penamaan fungsi agar konsisten di seluruh bab dan sesuai dengan dokumen sebelumnya. |
 
+### Milestone 8
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Claude | Membantu menyusun rancangan antarmuka (BAB 6) di Figma berdasarkan palet warna, font, dan daftar layar hasil diskusi kelompok | Buatkan rancangan antarmuka RekanBumi di Figma menggunakan warna primary #2D6A4F dan font Plus Jakarta Sans. | AI membuat draf rancangan intrface di Figma. Kami meninjau setiap layar, menentukan preferensi dan bagian terbaik dari rancangan anggota kelompok, memasukkan logo RekanBumi, dan menyesuaikan isi layar dengan use case dan kebutuhan pada SKPL. Sesuai hasil asistensi, hanya tampilan desktop yang dimasukkan ke dokumen. |
+
 ---
 ### Pernyataan Integritas dan Persetujuan
 
