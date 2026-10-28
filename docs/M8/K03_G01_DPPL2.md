@@ -2891,6 +2891,919 @@ Query :
 
 <br>
 
+
+## 5.16 Kelas EksplorasiProgramPage
+**Nama Kelas:** EksplorasiProgramPage
+**ID Kelas:** C16 (*boundary*)
+
+Tabel 5.16.1. Operasi Kelas EksplorasiProgramPage
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| bukaHalamanEksplorasi(): void | public | Membuka halaman eksplorasi dan menampilkan seluruh program aktif tanpa filter. |
+| terimaInputPencarian(kataKunci: String, kategori: KategoriProgram): void | public | Menerima kata kunci dan kategori, menyimpannya pada atribut, lalu meminta hasil pencarian ke ProgramController. |
+| tampilkanDaftarProgram(daftar: List<Program>): void | public | Menampilkan daftar ringkasan program hasil pencarian. |
+| tampilkanPesanTidakDitemukan(): void | public | Menampilkan pesan bahwa tidak ada program yang sesuai pencarian. |
+| pilihProgram(idProgram: String): void | public | Menyimpan program yang dipilih Relawan dan menampilkan detailnya. |
+| tampilkanDetailProgram(idProgram: String): void | public | Mengambil dan menampilkan detail program beserta status ketersediaan tautan situs resmi. |
+| klikTautanSitusResmi(): void | public | Menangani klik pada tautan situs resmi program terpilih. |
+| arahkanKeSitusResmi(url: String): void | public | Membuka tautan situs resmi pada tab peramban baru. |
+| nonaktifkanTautan(): void | public | Menonaktifkan elemen tautan situs resmi ketika tidak tersedia/tidak valid. |
+| pilihDaftarProgram(idProgram: String): void | public | Menangani klik tombol daftar; memeriksa sesi sebelum menampilkan formulir pendaftaran. |
+| tampilkanFormPendaftaran(): void | public | Menampilkan formulir permohonan pendaftaran (keterampilan, ketersediaan waktu). |
+| kirimPermohonanPendaftaran(keterampilan: String, ketersediaanWaktu: String): void | public | Mengirim permohonan pendaftaran ke SeleksiController. |
+| tampilkanNotifikasiBerhasil(): void | public | Menampilkan pemberitahuan keberhasilan suatu aksi. |
+| tampilkanPesanError(pesan: String): void | public | Menampilkan pesan kesalahan pada halaman. |
+
+Tabel 5.16.2. Atribut Kelas EksplorasiProgramPage
+
+| Nama Atribut | Visibility | Tipe |
+|:---|:---|:---|
+| kataKunciPencarian | private | String |
+| filterKategori | private | KategoriProgram |
+| idProgramTerpilih | private | String |
+
+### 5.16.1 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** bukaHalamanEksplorasi()
+**ID Algoritma :** (Algo-C16-01)
+
+```text
+Procedure bukaHalamanEksplorasi()
+    daftar ← ProgramController.cariProgram("", null)
+    // string kosong dan kategori null mengambil seluruh program yang aktif
+    if isEmpty(daftar) then
+        tampilkanPesanTidakDitemukan()
+    else
+        tampilkanDaftarProgram(daftar)
+```
+
+### 5.16.2 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** terimaInputPencarian(kataKunci, kategori)
+**ID Algoritma :** (Algo-C16-02)
+
+```text
+Procedure terimaInputPencarian(kataKunci, kategori)
+    this.kataKunciPencarian ← kataKunci
+    this.filterKategori ← kategori
+    daftar ← ProgramController.cariProgram(kataKunci, kategori)
+    if isEmpty(daftar) then
+        tampilkanPesanTidakDitemukan()
+    else
+        tampilkanDaftarProgram(daftar)
+```
+
+### 5.16.3 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanDaftarProgram(daftar)
+**ID Algoritma :** (Algo-C16-03)
+
+```text
+Procedure tampilkanDaftarProgram(daftar)
+    For each program in daftar
+        render kartu ringkasan program (namaProgram, kategori, status)
+```
+
+### 5.16.4 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanPesanTidakDitemukan()
+**ID Algoritma :** (Algo-C16-04)
+
+```text
+Procedure tampilkanPesanTidakDitemukan()
+    render pesan "Program tidak ditemukan"
+```
+
+### 5.16.5 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** pilihProgram(idProgram)
+**ID Algoritma :** (Algo-C16-05)
+
+```text
+Procedure pilihProgram(idProgram)
+    this.idProgramTerpilih ← idProgram
+    tampilkanDetailProgram(idProgram)
+```
+
+### 5.16.6 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanDetailProgram(idProgram)
+**ID Algoritma :** (Algo-C16-06)
+
+```text
+Procedure tampilkanDetailProgram(idProgram)
+    program ← ProgramController.ambilDetailProgram(idProgram)
+    render detail program (deskripsi, waktuMulai, waktuSelesai, tempatPelaksanaan, kuota, syaratKetentuan)
+    if program.tautanValid then
+        render tombol tautan situs resmi (aktif)
+    else
+        nonaktifkanTautan()
+```
+
+### 5.16.7 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** klikTautanSitusResmi()
+**ID Algoritma :** (Algo-C16-07)
+
+```text
+Procedure klikTautanSitusResmi()
+    program ← ProgramController.ambilDetailProgram(this.idProgramTerpilih)
+    if program.tautanValid then
+        arahkanKeSitusResmi(program.getTautan())
+```
+
+### 5.16.8 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** arahkanKeSitusResmi(url)
+**ID Algoritma :** (Algo-C16-08)
+
+```text
+Procedure arahkanKeSitusResmi(url)
+    buka url pada tab peramban baru
+```
+
+### 5.16.9 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** nonaktifkanTautan()
+**ID Algoritma :** (Algo-C16-09)
+
+```text
+Procedure nonaktifkanTautan()
+    render tombol tautan situs resmi (nonaktif) beserta keterangan "Situs resmi tidak tersedia"
+```
+
+### 5.16.10 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** pilihDaftarProgram(idProgram)
+**ID Algoritma :** (Algo-C16-10)
+
+```text
+Procedure pilihDaftarProgram(idProgram)
+    this.idProgramTerpilih ← idProgram
+    if not AuthController.cekSesi() then
+        KelolaAkunPage.arahkanKeLogin(urlHalamanIni())
+    else
+        tampilkanFormPendaftaran()
+```
+
+### 5.16.11 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanFormPendaftaran()
+**ID Algoritma :** (Algo-C16-11)
+
+```text
+Procedure tampilkanFormPendaftaran()
+    render formulir permohonan pendaftaran (kolom keterampilan, kolom ketersediaan waktu)
+```
+
+### 5.16.12 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** kirimPermohonanPendaftaran(keterampilan, ketersediaanWaktu)
+**ID Algoritma :** (Algo-C16-12)
+
+```text
+Procedure kirimPermohonanPendaftaran(keterampilan, ketersediaanWaktu)
+    // idRelawan diambil dari sesi aktif
+    hasil ← SeleksiController.ajukanPendaftaran(this.idProgramTerpilih, idRelawan, keterampilan, ketersediaanWaktu)
+    if hasil = error(pesan) then
+        tampilkanPesanError(pesan)
+    else
+        tampilkanNotifikasiBerhasil()
+```
+
+### 5.16.13 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanNotifikasiBerhasil()
+**ID Algoritma :** (Algo-C16-13)
+
+```text
+Procedure tampilkanNotifikasiBerhasil()
+    render pesan "Permohonan pendaftaran berhasil dikirim"
+```
+
+### 5.16.14 Algoritma/Query
+
+**Nama Kelas :** EksplorasiProgramPage
+**Nama Operasi :** tampilkanPesanError(pesan)
+**ID Algoritma :** (Algo-C16-14)
+
+```text
+Procedure tampilkanPesanError(pesan)
+    render pesan kesalahan pada halaman
+```
+
+Kelas EksplorasiProgramPage adalah kelas boundary sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
+
+
+## 5.17 Kelas KelolaPendaftarPage
+**Nama Kelas:** KelolaPendaftarPage
+**ID Kelas:** C17 (*boundary*)
+
+Tabel 5.17.1. Operasi Kelas KelolaPendaftarPage
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| bukaKelolaPendaftar(idProgram: String): void | public | Membuka halaman kelola pendaftar dan menampilkan daftar calon relawan beserta formulir seleksi. |
+| tampilkanDaftarPendaftar(daftar: List<Pendaftaran>): void | public | Menampilkan daftar calon relawan pendaftar. |
+| tampilkanFormSeleksi(): void | public | Menampilkan formulir pemilihan status seleksi untuk setiap pendaftar. |
+| pilihStatusSeleksi(idPendaftaran: String, status: StatusPendaftaran): void | public | Menyimpan keputusan status (Diterima/Ditolak) sementara pada state formulir. |
+| kirimHasilSeleksi(): void | public | Mengirim seluruh keputusan seleksi ke SeleksiController. |
+| kirimKonfirmasiHasil(): void | public | Mengirim konfirmasi pengiriman hasil seleksi ke SeleksiController. |
+| tampilkanKonfirmasiHasil(): void | public | Menampilkan pemberitahuan bahwa hasil seleksi telah dikonfirmasi. |
+| tampilkanNotifikasiBerhasil(): void | public | Menampilkan pemberitahuan keberhasilan suatu aksi. |
+| tampilkanPesanError(pesan: String): void | public | Menampilkan pesan kesalahan pada halaman. |
+
+Tabel 5.17.2. Atribut Kelas KelolaPendaftarPage
+
+Kelas KelolaPendaftarPage tidak memiliki atribut (-).
+
+### 5.17.1 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** bukaKelolaPendaftar(idProgram)
+**ID Algoritma :** (Algo-C17-01)
+
+```text
+Procedure bukaKelolaPendaftar(idProgram)
+    daftar ← SeleksiController.lihatDaftarRelawan(idProgram)
+    tampilkanDaftarPendaftar(daftar)
+    tampilkanFormSeleksi()
+```
+
+### 5.17.2 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** tampilkanDaftarPendaftar(daftar)
+**ID Algoritma :** (Algo-C17-02)
+
+```text
+Procedure tampilkanDaftarPendaftar(daftar)
+    For each pendaftaran in daftar
+        render baris pendaftar (nama relawan, keterampilan, ketersediaanWaktu, status)
+```
+
+### 5.17.3 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** tampilkanFormSeleksi()
+**ID Algoritma :** (Algo-C17-03)
+
+```text
+Procedure tampilkanFormSeleksi()
+    render formulir pilihan status (Diterima/Ditolak) untuk setiap pendaftar
+```
+
+### 5.17.4 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** pilihStatusSeleksi(idPendaftaran, status)
+**ID Algoritma :** (Algo-C17-04)
+
+```text
+Procedure pilihStatusSeleksi(idPendaftaran, status)
+    simpan status terpilih untuk idPendaftaran pada state formulir seleksi (keputusan)
+```
+
+### 5.17.5 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** kirimHasilSeleksi()
+**ID Algoritma :** (Algo-C17-05)
+
+```text
+Procedure kirimHasilSeleksi()
+    // idProgram diambil dari konteks halaman (route); keputusan dari state formulir seleksi
+    berhasil ← SeleksiController.simpanHasilSeleksi(idProgram, keputusan)
+    if berhasil then
+        tampilkanNotifikasiBerhasil()
+    else
+        tampilkanPesanError("Kuota relawan program telah terpenuhi")
+```
+
+### 5.17.6 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** kirimKonfirmasiHasil()
+**ID Algoritma :** (Algo-C17-06)
+
+```text
+Procedure kirimKonfirmasiHasil()
+    berhasil ← SeleksiController.konfirmasiHasilSeleksi(idProgram)
+    if berhasil then
+        tampilkanKonfirmasiHasil()
+    else
+        tampilkanPesanError("Masih terdapat pendaftar yang belum diseleksi")
+```
+
+### 5.17.7 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** tampilkanKonfirmasiHasil()
+**ID Algoritma :** (Algo-C17-07)
+
+```text
+Procedure tampilkanKonfirmasiHasil()
+    render pesan "Hasil seleksi telah dikonfirmasi dan notifikasi terkirim ke seluruh pendaftar"
+```
+
+### 5.17.8 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** tampilkanNotifikasiBerhasil()
+**ID Algoritma :** (Algo-C17-08)
+
+```text
+Procedure tampilkanNotifikasiBerhasil()
+    render pesan "Hasil seleksi berhasil disimpan"
+```
+
+### 5.17.9 Algoritma/Query
+
+**Nama Kelas :** KelolaPendaftarPage
+**Nama Operasi :** tampilkanPesanError(pesan)
+**ID Algoritma :** (Algo-C17-09)
+
+```text
+Procedure tampilkanPesanError(pesan)
+    render pesan kesalahan pada halaman
+```
+
+Kelas KelolaPendaftarPage adalah kelas boundary sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
+
+
+## 5.18 Kelas SeleksiController
+**Nama Kelas:** SeleksiController
+**ID Kelas:** C18 (*control*)
+
+Tabel 5.18.1. Operasi Kelas SeleksiController
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| ajukanPendaftaran(idProgram: String, idRelawan: String, keterampilan: String, ketersediaanWaktu: String): Pendaftaran | public | Memeriksa kelengkapan dan kelayakan Relawan serta ketersediaan kuota, lalu membuat objek Pendaftaran. |
+| lihatDaftarRelawan(idProgram: String): List<Pendaftaran> | public | Mengambil daftar pendaftar suatu program. |
+| validasiKuota(idProgram: String, jumlahDiterimaBaru: Integer): Boolean | private | Memeriksa apakah kuota program masih mencukupi untuk sejumlah penerimaan baru. |
+| simpanHasilSeleksi(idProgram: String, keputusan: Map<String, StatusPendaftaran>): Boolean | public | Memvalidasi kuota lalu menyimpan keputusan Diterima/Ditolak untuk setiap pendaftar. |
+| konfirmasiHasilSeleksi(idProgram: String): Boolean | public | Memastikan seluruh pendaftar sudah diputuskan, lalu memicu pengiriman notifikasi hasil seleksi. |
+| triggerNotifikasi(pendaftaran: Pendaftaran): Notifikasi | private | Membuat dan mengirim notifikasi hasil seleksi untuk satu pendaftaran. |
+
+Tabel 5.18.2. Atribut Kelas SeleksiController
+
+Kelas SeleksiController tidak memiliki atribut (-).
+
+### 5.18.1 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** ajukanPendaftaran(idProgram, idRelawan, keterampilan, ketersediaanWaktu)
+**ID Algoritma :** (Algo-C18-01)
+
+```text
+Function ajukanPendaftaran(idProgram, idRelawan, keterampilan, ketersediaanWaktu)
+    relawan ← DB_SERVICE.findRelawanByID(idRelawan)
+    if not relawan.cekKelengkapanData() then
+        → error "Data diri belum lengkap"
+    if not relawan.cekStatusKelayakan() then
+        → error "Relawan belum memenuhi syarat kelayakan (KF10)"
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    if not program.cekKuotaTersedia(1) then
+        → error "Kuota program sudah penuh"
+    pendaftaran ← new Pendaftaran(idProgram, idRelawan, keterampilan, ketersediaanWaktu, MENUNGGU)
+    DB_SERVICE.savePendaftaran(pendaftaran)
+    → pendaftaran
+```
+
+### 5.18.2 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** lihatDaftarRelawan(idProgram)
+**ID Algoritma :** (Algo-C18-02)
+
+```text
+Function lihatDaftarRelawan(idProgram)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    → program.daftarPendaftar()
+```
+
+### 5.18.3 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** validasiKuota(idProgram, jumlahDiterimaBaru)
+**ID Algoritma :** (Algo-C18-03)
+
+```text
+Function validasiKuota(idProgram, jumlahDiterimaBaru)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    → program.cekKuotaTersedia(jumlahDiterimaBaru)
+```
+
+### 5.18.4 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** simpanHasilSeleksi(idProgram, keputusan)
+**ID Algoritma :** (Algo-C18-04)
+
+```text
+Function simpanHasilSeleksi(idProgram, keputusan)
+    jumlahDiterimaBaru ← jumlah entri pada keputusan bernilai DITERIMA
+    if not validasiKuota(idProgram, jumlahDiterimaBaru) then
+        → false
+    For each (idPendaftaran, status) in keputusan
+        pendaftaran ← DB_SERVICE.findPendaftaranByID(idPendaftaran)
+        if status = DITERIMA then
+            pendaftaran.terima()
+        else
+            pendaftaran.tolak()
+    → true
+```
+
+### 5.18.5 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** konfirmasiHasilSeleksi(idProgram)
+**ID Algoritma :** (Algo-C18-05)
+
+```text
+Function konfirmasiHasilSeleksi(idProgram)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    daftarPendaftar ← program.daftarPendaftar()
+    For each pendaftaran in daftarPendaftar
+        if not pendaftaran.sudahDiputuskan() then
+            → false
+    For each pendaftaran in daftarPendaftar
+        triggerNotifikasi(pendaftaran)
+    → true
+```
+
+### 5.18.6 Algoritma/Query
+
+**Nama Kelas :** SeleksiController
+**Nama Operasi :** triggerNotifikasi(pendaftaran)
+**ID Algoritma :** (Algo-C18-06)
+
+```text
+Function triggerNotifikasi(pendaftaran)
+    if pendaftaran.isDiterima() then
+        pesan ← "Pendaftaran Anda diterima"
+    else
+        pesan ← "Pendaftaran Anda ditolak"
+    notifikasi ← new Notifikasi(pendaftaran.idRelawan, pesan, false)
+    notifikasi.kirim()
+    DB_SERVICE.saveNotifikasi(notifikasi)
+    → notifikasi
+```
+
+Tabel 5.18.3. Query Kelas SeleksiController
+
+| No Query | Query | Keterangan |
+|:---|:---|:---|
+| Q-C18-01 | INSERT INTO tbl_pendaftaran (idPendaftaran, idProgram, idRelawan, keterampilan, ketersediaanWaktu, status, waktuDaftar) VALUES (@idPendaftaran, @idProgram, @idRelawan, @keterampilan, @ketersediaanWaktu, 'MENUNGGU', CURRENT_TIMESTAMP) | Menyimpan permohonan pendaftaran baru dari Relawan. |
+| Q-C18-02 | INSERT INTO tbl_notifikasi (idNotifikasi, idPenerima, pesan, waktuKirim, statusDibaca) VALUES (@idNotifikasi, @idRelawan, @pesan, CURRENT_TIMESTAMP, FALSE) | Menyimpan notifikasi hasil seleksi untuk Relawan. |
+
+
+## 5.19 Kelas AreaKegiatanPage
+**Nama Kelas:** AreaKegiatanPage
+**ID Kelas:** C19 (*boundary*)
+
+Tabel 5.19.1. Operasi Kelas AreaKegiatanPage
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| bukaHalamanKegiatan(idProgram: String): void | public | Membuka halaman kegiatan dan memeriksa status relawan serta waktu pelaksanaan untuk menentukan ketersediaan tombol check-in. |
+| tampilkanTombolCheckIn(aktif: Boolean): void | public | Menampilkan tombol check-in sesuai status aktif/nonaktifnya. |
+| tampilkanKeteranganWaktu(keterangan: String): void | public | Menampilkan keterangan waktu pelaksanaan kegiatan. |
+| klikCheckIn(): void | public | Menangani aksi check-in yang dilakukan Relawan. |
+| tampilkanStatusCheckIn(berhasil: Boolean): void | public | Menampilkan status keberhasilan check-in. |
+| bukaPortofolio(): void | public | Membuka halaman portofolio dan meminta total jam aksi serta riwayat program Relawan. |
+| tampilkanPortofolio(totalJamAksi: Float): void | public | Menampilkan total jam aksi Relawan. |
+| tampilkanRiwayatProgram(daftar: List<Program>): void | public | Menampilkan daftar program yang telah diselesaikan Relawan. |
+
+Tabel 5.19.2. Atribut Kelas AreaKegiatanPage
+
+Kelas AreaKegiatanPage tidak memiliki atribut (-).
+
+### 5.19.1 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** bukaHalamanKegiatan(idProgram)
+**ID Algoritma :** (Algo-C19-01)
+
+```text
+Procedure bukaHalamanKegiatan(idProgram)
+    // idRelawan diambil dari sesi aktif
+    statusRelawan ← PresensiController.validasiStatusRelawan(idProgram, idRelawan)
+    waktuValid ← PresensiController.validasiWaktuPelaksanaan(idProgram, now())
+    tampilkanTombolCheckIn(statusRelawan and waktuValid)
+    if not waktuValid then
+        keterangan ← PresensiController.ambilKeteranganWaktu(idProgram)
+        tampilkanKeteranganWaktu(keterangan)
+```
+
+### 5.19.2 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** tampilkanTombolCheckIn(aktif)
+**ID Algoritma :** (Algo-C19-02)
+
+```text
+Procedure tampilkanTombolCheckIn(aktif)
+    render tombol check-in (aktif apabila parameter bernilai true, nonaktif jika sebaliknya)
+```
+
+### 5.19.3 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** tampilkanKeteranganWaktu(keterangan)
+**ID Algoritma :** (Algo-C19-03)
+
+```text
+Procedure tampilkanKeteranganWaktu(keterangan)
+    render keterangan waktu pelaksanaan kegiatan pada halaman
+```
+
+### 5.19.4 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** klikCheckIn()
+**ID Algoritma :** (Algo-C19-04)
+
+```text
+Procedure klikCheckIn()
+    // idProgram dari konteks halaman, idRelawan dari sesi aktif
+    hasil ← PresensiController.prosesCheckIn(idProgram, idRelawan)
+    tampilkanStatusCheckIn(hasil ≠ error)
+```
+
+### 5.19.5 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** tampilkanStatusCheckIn(berhasil)
+**ID Algoritma :** (Algo-C19-05)
+
+```text
+Procedure tampilkanStatusCheckIn(berhasil)
+    if berhasil then
+        render pesan "Kehadiran berhasil dikonfirmasi"
+    else
+        render pesan "Check-in gagal"
+```
+
+### 5.19.6 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** bukaPortofolio()
+**ID Algoritma :** (Algo-C19-06)
+
+```text
+Procedure bukaPortofolio()
+    // idRelawan diambil dari sesi aktif
+    total ← PresensiController.ambilTotalJamAksi(idRelawan)
+    daftar ← PresensiController.ambilRiwayatProgram(idRelawan)
+    tampilkanPortofolio(total)
+    tampilkanRiwayatProgram(daftar)
+```
+
+### 5.19.7 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** tampilkanPortofolio(totalJamAksi)
+**ID Algoritma :** (Algo-C19-07)
+
+```text
+Procedure tampilkanPortofolio(totalJamAksi)
+    render total jam aksi Relawan
+```
+
+### 5.19.8 Algoritma/Query
+
+**Nama Kelas :** AreaKegiatanPage
+**Nama Operasi :** tampilkanRiwayatProgram(daftar)
+**ID Algoritma :** (Algo-C19-08)
+
+```text
+Procedure tampilkanRiwayatProgram(daftar)
+    For each program in daftar
+        render baris riwayat program (namaProgram, waktuMulai, waktuSelesai)
+```
+
+Kelas AreaKegiatanPage adalah kelas boundary sehingga tidak mengakses basis data secara langsung dan tidak memiliki query.
+
+
+## 5.20 Kelas PresensiController
+**Nama Kelas:** PresensiController
+**ID Kelas:** C20 (*control*)
+
+Tabel 5.20.1. Operasi Kelas PresensiController
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| validasiStatusRelawan(idProgram: String, idRelawan: String): Boolean | public | Memeriksa apakah Relawan terdaftar dan diterima pada program. |
+| validasiWaktuPelaksanaan(idProgram: String, waktu: DateTime): Boolean | public | Memeriksa apakah suatu waktu berada dalam rentang pelaksanaan program. |
+| prosesCheckIn(idProgram: String, idRelawan: String): Kehadiran | public | Memvalidasi status dan waktu, lalu mencatat kehadiran Relawan. |
+| perbaruiPortofolioRelawan(idProgram: String): void | public | Mencatat kontribusi setiap relawan yang hadir pada program yang telah selesai, dipicu ProgramController setelah laporan disetujui. |
+| ambilKeteranganWaktu(idProgram: String): String | public | Mengambil keterangan waktu pelaksanaan program. |
+| ambilTotalJamAksi(idRelawan: String): Float | public | Mengambil total jam aksi seorang Relawan. |
+| ambilRiwayatProgram(idRelawan: String): List<Program> | public | Mengambil daftar program yang telah diselesaikan seorang Relawan. |
+
+Tabel 5.20.2. Atribut Kelas PresensiController
+
+Kelas PresensiController tidak memiliki atribut (-).
+
+### 5.20.1 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** validasiStatusRelawan(idProgram, idRelawan)
+**ID Algoritma :** (Algo-C20-01)
+
+```text
+Function validasiStatusRelawan(idProgram, idRelawan)
+    pendaftaran ← DB_SERVICE.findPendaftaranByProgramDanRelawan(idProgram, idRelawan)
+    if pendaftaran = null then
+        → false
+    → pendaftaran.isDiterima()
+```
+
+### 5.20.2 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** validasiWaktuPelaksanaan(idProgram, waktu)
+**ID Algoritma :** (Algo-C20-02)
+
+```text
+Function validasiWaktuPelaksanaan(idProgram, waktu)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    if program = null then
+        → false
+    → program.cekDalamWaktuPelaksanaan(waktu)
+```
+
+### 5.20.3 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** prosesCheckIn(idProgram, idRelawan)
+**ID Algoritma :** (Algo-C20-03)
+
+```text
+Function prosesCheckIn(idProgram, idRelawan)
+    if not validasiStatusRelawan(idProgram, idRelawan) then
+        → error "Relawan tidak terdaftar atau belum diterima pada program ini"
+    if not validasiWaktuPelaksanaan(idProgram, now()) then
+        → error "Check-in hanya dapat dilakukan selama waktu pelaksanaan program"
+    sudahHadir ← Kehadiran.untukProgram(idRelawan, idProgram)
+    if sudahHadir ≠ null then
+        → error "Kehadiran sudah tercatat sebelumnya"
+    kehadiran ← new Kehadiran(idRelawan, idProgram, now())
+    DB_SERVICE.saveKehadiran(kehadiran)
+    → kehadiran
+```
+
+### 5.20.4 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** perbaruiPortofolioRelawan(idProgram)
+**ID Algoritma :** (Algo-C20-04)
+
+```text
+Procedure perbaruiPortofolioRelawan(idProgram)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    daftarRelawan ← program.daftarRelawanDiterima()
+    For each relawan in daftarRelawan
+        if relawan.hadirPada(program) then
+            relawan.catatKontribusi(program)
+```
+
+### 5.20.5 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** ambilKeteranganWaktu(idProgram)
+**ID Algoritma :** (Algo-C20-05)
+
+```text
+Function ambilKeteranganWaktu(idProgram)
+    program ← DB_SERVICE.findProgramByID(idProgram)
+    → program.keteranganWaktu()
+```
+
+### 5.20.6 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** ambilTotalJamAksi(idRelawan)
+**ID Algoritma :** (Algo-C20-06)
+
+```text
+Function ambilTotalJamAksi(idRelawan)
+    relawan ← DB_SERVICE.findRelawanByID(idRelawan)
+    riwayat ← relawan.lihatPortofolio()
+    → riwayat.getTotalJamAksi()
+```
+
+### 5.20.7 Algoritma/Query
+
+**Nama Kelas :** PresensiController
+**Nama Operasi :** ambilRiwayatProgram(idRelawan)
+**ID Algoritma :** (Algo-C20-07)
+
+```text
+Function ambilRiwayatProgram(idRelawan)
+    relawan ← DB_SERVICE.findRelawanByID(idRelawan)
+    riwayat ← relawan.lihatPortofolio()
+    → riwayat.getDaftarProgramSelesai()
+```
+
+Tabel 5.20.3. Query Kelas PresensiController
+
+| No Query | Query | Keterangan |
+|:---|:---|:---|
+| Q-C20-01 | INSERT INTO tbl_kehadiran (idKehadiran, idRelawan, idProgram, waktuCheckIn) VALUES (@idKehadiran, @idRelawan, @idProgram, CURRENT_TIMESTAMP) | Mencatat kehadiran Relawan pada program saat check-in berhasil. |
+
+Catatan: operasi lain pada kelas ini (validasiStatusRelawan, validasiWaktuPelaksanaan, perbaruiPortofolioRelawan, ambilKeteranganWaktu, ambilTotalJamAksi, ambilRiwayatProgram) hanya membaca entitas melalui ID atau mendelegasikan logikanya ke operasi Program/Relawan/RiwayatKontribusi yang telah memiliki query sendiri (Tabel 5.1.3, 5.3.3, 5.11), sehingga tidak menambahkan query baru.
+
+
+## 5.21 Kelas CloudStorageAdapter
+**Nama Kelas:** CloudStorageAdapter
+**ID Kelas:** C21 (*adapter*)
+
+Tabel 5.21.1. Operasi Kelas CloudStorageAdapter
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| validasiBerkas(berkas: File): Boolean | public | Memeriksa ukuran (maksimal 2 MB, KNF03) dan tipe berkas sebelum diunggah. |
+| unggahBerkas(berkas: File): String | public | Mengunggah berkas ke layanan Cloud Storage eksternal dan mengembalikan URL-nya. |
+| ambilBerkas(url: String): File | public | Mengambil berkas dari layanan Cloud Storage eksternal berdasarkan URL. |
+
+Tabel 5.21.2. Atribut Kelas CloudStorageAdapter
+
+Kelas CloudStorageAdapter tidak memiliki atribut (-).
+
+### 5.21.1 Algoritma/Query
+
+**Nama Kelas :** CloudStorageAdapter
+**Nama Operasi :** validasiBerkas(berkas)
+**ID Algoritma :** (Algo-C21-01)
+
+```text
+Function validasiBerkas(berkas)
+    if berkas = null then
+        → false
+    if berkas.ukuran > 2_MB then
+        → false
+    if berkas.tipe not in {PDF, JPG, PNG} then
+        → false
+    → true
+```
+
+### 5.21.2 Algoritma/Query
+
+**Nama Kelas :** CloudStorageAdapter
+**Nama Operasi :** unggahBerkas(berkas)
+**ID Algoritma :** (Algo-C21-02)
+
+```text
+Function unggahBerkas(berkas)
+    if not validasiBerkas(berkas) then
+        → error "Berkas tidak valid"
+    url ← CLOUD_STORAGE_API.put(berkas)
+    → url
+```
+
+### 5.21.3 Algoritma/Query
+
+**Nama Kelas :** CloudStorageAdapter
+**Nama Operasi :** ambilBerkas(url)
+**ID Algoritma :** (Algo-C21-03)
+
+```text
+Function ambilBerkas(url)
+    berkas ← CLOUD_STORAGE_API.get(url)
+    if berkas = null then
+        → error "Berkas tidak ditemukan"
+    → berkas
+```
+
+Kelas CloudStorageAdapter merupakan kelas integrasi eksternal (adapter) yang memanggil layanan Cloud Storage pihak ketiga melalui CLOUD_STORAGE_API, bukan basis data RekanBumi, sehingga tidak memiliki query SQL.
+
+
+## 5.22 Kelas BetterAuth
+**Nama Kelas:** BetterAuth
+**ID Kelas:** C22 (*library*)
+
+Tabel 5.22.1. Operasi Kelas BetterAuth
+
+| Nama Operasi | Visibility | Keterangan |
+|:---|:---|:---|
+| daftarkanKredensial(email: String, kataSandi: String): String | public | Mendaftarkan kredensial baru (hashing kata sandi) dan mengembalikan idPengguna. |
+| hashKataSandi(kataSandi: String): String | private | Melakukan hashing kata sandi menggunakan algoritma bcrypt (KNF02). |
+| verifikasiKredensial(email: String, kataSandi: String): String | public | Memverifikasi kredensial saat login dan mengembalikan idPengguna bila cocok. |
+| cocokkanHash(kataSandi: String, hashKataSandi: String): Boolean | private | Mencocokkan kata sandi masukan dengan hash yang tersimpan. |
+| buatSesiMasuk(idPengguna: String): String | public | Membuat token sesi baru untuk pengguna yang berhasil masuk. |
+| ambilSesi(): String | public | Mengambil idPengguna dari sesi aktif saat ini (berdasarkan token pada permintaan). |
+
+Tabel 5.22.2. Atribut Kelas BetterAuth
+
+Kelas BetterAuth tidak memiliki atribut (-).
+
+### 5.22.1 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** daftarkanKredensial(email, kataSandi)
+**ID Algoritma :** (Algo-C22-01)
+
+```text
+Function daftarkanKredensial(email, kataSandi)
+    hash ← hashKataSandi(kataSandi)
+    idPengguna ← generateID()
+    DB_SERVICE.saveKredensial(idPengguna, email, hash)
+    → idPengguna
+```
+
+### 5.22.2 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** hashKataSandi(kataSandi)
+**ID Algoritma :** (Algo-C22-02)
+
+```text
+Function hashKataSandi(kataSandi)
+    → bcrypt.hash(kataSandi)
+```
+
+### 5.22.3 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** verifikasiKredensial(email, kataSandi)
+**ID Algoritma :** (Algo-C22-03)
+
+```text
+Function verifikasiKredensial(email, kataSandi)
+    kredensial ← DB_SERVICE.findKredensialByEmail(email)
+    if kredensial = null then
+        → null
+    if not cocokkanHash(kataSandi, kredensial.hashKataSandi) then
+        → null
+    → kredensial.idPengguna
+```
+
+### 5.22.4 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** cocokkanHash(kataSandi, hashKataSandi)
+**ID Algoritma :** (Algo-C22-04)
+
+```text
+Function cocokkanHash(kataSandi, hashKataSandi)
+    → bcrypt.compare(kataSandi, hashKataSandi)
+```
+
+### 5.22.5 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** buatSesiMasuk(idPengguna)
+**ID Algoritma :** (Algo-C22-05)
+
+```text
+Function buatSesiMasuk(idPengguna)
+    token ← generateToken()
+    DB_SERVICE.saveSesi(token, idPengguna, CURRENT_TIMESTAMP)
+    → token
+```
+
+### 5.22.6 Algoritma/Query
+
+**Nama Kelas :** BetterAuth
+**Nama Operasi :** ambilSesi()
+**ID Algoritma :** (Algo-C22-06)
+
+```text
+Function ambilSesi()
+    token ← ambil token dari cookie permintaan saat ini
+    sesi ← DB_SERVICE.findSesiByToken(token)
+    if sesi = null or sesi kedaluwarsa then
+        → null
+    → sesi.idPengguna
+```
+
+Tabel 5.22.3. Query Kelas BetterAuth
+
+| No Query | Query | Keterangan |
+|:---|:---|:---|
+| Q-C22-01 | INSERT INTO tbl_kredensial (idPengguna, email, hashKataSandi) VALUES (@idPengguna, @email, @hash) | Menyimpan kredensial akun baru (kata sandi dalam bentuk hash, KNF02). |
+| Q-C22-02 | SELECT * FROM tbl_kredensial WHERE email = @email | Mengambil kredensial tersimpan untuk diverifikasi saat login. |
+| Q-C22-03 | INSERT INTO tbl_sesi (token, idPengguna, waktuMulai) VALUES (@token, @idPengguna, CURRENT_TIMESTAMP) | Menyimpan sesi baru setelah pengguna berhasil masuk. |
+| Q-C22-04 | SELECT * FROM tbl_sesi WHERE token = @token | Mengambil sesi aktif berdasarkan token pada permintaan. |
+
+
 ---
 
 # BAB 6: Perancangan Antarmuka
