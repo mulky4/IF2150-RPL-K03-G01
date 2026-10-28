@@ -655,7 +655,7 @@ Gambar 3.19 menunjukkan diagram kelas UC06 yang terdiri atas kelas-kelas pada Ta
 Relawan merupakan generalisasi dari Pengguna; Pengguna berasosiasi dengan Notifikasi (1 : 0..*, "menerima"); Relawan dan Program masing-masing berasosiasi dengan Pendaftaran (1 : 0..*, "mengajukan" dan "untuk"); KelolaAkunPage bergantung pada AuthController dan KelolaPendaftarPage bergantung pada SeleksiController (memanggil); AuthController bergantung pada Relawan (membuat akun relawan) dan Notifikasi (mengambil notifikasi); serta SeleksiController bergantung pada Pendaftaran, Program, Relawan, dan Notifikasi. Seluruh operasi yang dipanggil pada sequence diagram 3.6.2 — konfirmasiHasilSeleksi(), daftarPendaftar(), sudahDiputuskan(), triggerNotifikasi(), kirim(), ambilNotifikasi(), lihatNotifikasi(), bacaNotifikasi(), baca(), showDetail(), kirimKonfirmasiHasil(), tampilkanKonfirmasiHasil(), tampilkanPesanError(), bukaMenuNotifikasi(), pilihNotifikasi(), tampilkanDaftarNotifikasi(), dan tampilkanDetailNotifikasi() — terdapat pada kelas yang bersangkutan.
 
 <p align="center">
-<img alt="Diagram Kelas UC06" src="./assets/diagram/CD_UC06 (!).png" width="100%">
+<img alt="Diagram Kelas UC06" src="./assets/diagram/CD_UC06 (1).png" width="100%">
 </p>
 <p align="center">
 <i>Gambar 3.19. Diagram Kelas Use Case UC06 - Konfirmasi status pendaftaran</i>
