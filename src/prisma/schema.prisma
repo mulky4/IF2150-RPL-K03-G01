@@ -1,0 +1,112 @@
+// Draft awal untuk pendaftaran dan seleksi (UC01, UC05, UC06).
+// Maish perlu dicocokkan dengan tim
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum KategoriProgram {
+  JAGA_ALAM
+  JAGA_IKLIM
+}
+
+enum StatusProgram {
+  MENUNGGU_VERIFIKASI
+  AKTIF
+  MENUNGGU_KONFIRMASI
+  PERLU_REVISI
+  SELESAI
+}
+
+enum StatusPendaftaran {
+  MENUNGGU
+  DITERIMA
+  DITOLAK
+}
+
+enum StatusVerifikasi {
+  MENUNGGU
+  TERVERIFIKASI
+  DITOLAK
+}
+
+model Pengguna {
+  id      String @id @default(cuid())
+  email   String @unique
+
+  relawan          Relawan?
+  inisiatorProgram InisiatorProgram?
+  dokumen          DokumenVerifikasi[]
+  notifikasi       Notifikasi[]
+}
+
+model Relawan {
+  id                String           @id @default(cuid())
+  nama              String
+  noTelepon         String?
+  domisili          String?
+  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
+  penggunaId        String           @unique
+  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+  pendaftaran       Pendaftaran[]
+}
+
+model InisiatorProgram {
+  id                String           @id @default(cuid())
+  namaLembaga       String
+  tautanSitusResmi  String?
+  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
+  penggunaId        String           @unique
+  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+  program           Program[]
+}
+
+model Program {
+  id                  String          @id @default(cuid())
+  namaProgram         String
+  deskripsi           String
+  kategori            KategoriProgram
+  tempatPelaksanaan   String
+  waktuMulai          DateTime
+  waktuSelesai        DateTime
+  kuota               Int
+  syaratKetentuan     String
+  status              StatusProgram   @default(MENUNGGU_VERIFIKASI)
+  inisiatorProgramId  String
+  inisiatorProgram    InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
+  pendaftaran         Pendaftaran[]
+}
+
+model Pendaftaran {
+  id                String            @id @default(cuid())
+  keterampilan      String
+  ketersediaanWaktu String
+  status            StatusPendaftaran @default(MENUNGGU)
+  waktuDaftar       DateTime          @default(now())
+  relawanId         String
+  programId         String
+  relawan           Relawan           @relation(fields: [relawanId], references: [id])
+  program           Program           @relation(fields: [programId], references: [id])
+}
+
+model DokumenVerifikasi {
+  id                String           @id @default(cuid())
+  jenisDokumen      String
+  urlFile           String
+  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
+  penggunaId        String
+  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+}
+
+model Notifikasi {
+  id            String   @id @default(cuid())
+  pesan         String
+  waktuKirim    DateTime @default(now())
+  statusDibaca  Boolean  @default(false)
+  penggunaId    String
+  pengguna      Pengguna @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+}
