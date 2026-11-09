@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Tema warna & tipografi lengkap dibuat Modul 5 (SPEC §2.3). */
+@theme {
+  --font-sans:
+    "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}

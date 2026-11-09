@@ -1,5 +1,6 @@
-// Draft awal untuk pendaftaran dan seleksi (UC01, UC05, UC06).
-// Maish perlu dicocokkan dengan tim
+// Skema basis data RekanBumi (PostgreSQL).
+// Aturan: model = nama kelas DPPL, @@map("tbl_snake_case"), kolom = nama atribut DPPL (camelCase).
+// Pemilik file: PIC Modul 3 (PR berlabel `db`). Entity C01–C11 ditambahkan Modul 3.
 generator client {
   provider = "prisma-client-js"
 }
@@ -34,51 +35,28 @@ enum StatusVerifikasi {
   DITOLAK
 }
 
-model Pengguna {
-  id      String @id @default(cuid())
-  email   String @unique
-
-  relawan          Relawan?
-  inisiatorProgram InisiatorProgram?
-  dokumen          DokumenVerifikasi[]
-  notifikasi       Notifikasi[]
-}
-
-model Relawan {
-  id                String           @id @default(cuid())
-  nama              String
-  noTelepon         String?
-  domisili          String?
-  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
-  penggunaId        String           @unique
-  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
-  pendaftaran       Pendaftaran[]
-}
-
-model InisiatorProgram {
-  id                String           @id @default(cuid())
-  namaLembaga       String
-  tautanSitusResmi  String?
-  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
-  penggunaId        String           @unique
-  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
-  program           Program[]
+enum Peran {
+  RELAWAN
+  INISIATOR
+  VERIFIKATOR
 }
 
 model Program {
-  id                  String          @id @default(cuid())
-  namaProgram         String
-  deskripsi           String
-  kategori            KategoriProgram
-  tempatPelaksanaan   String
-  waktuMulai          DateTime
-  waktuSelesai        DateTime
-  kuota               Int
-  syaratKetentuan     String
-  status              StatusProgram   @default(MENUNGGU_VERIFIKASI)
-  inisiatorProgramId  String
-  inisiatorProgram    InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
-  pendaftaran         Pendaftaran[]
+  id                 String          @id @default(cuid())
+  namaProgram        String
+  deskripsi          String
+  kategori           KategoriProgram
+  tempatPelaksanaan  String
+  waktuMulai         DateTime
+  waktuSelesai       DateTime
+  kuota              Int
+  syaratKetentuan    String
+  status             StatusProgram   @default(MENUNGGU_VERIFIKASI)
+  inisiatorProgramId String
+  inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
+  pendaftaran        Pendaftaran[]
+
+  @@map("tbl_program")
 }
 
 model Pendaftaran {
@@ -91,22 +69,122 @@ model Pendaftaran {
   programId         String
   relawan           Relawan           @relation(fields: [relawanId], references: [id])
   program           Program           @relation(fields: [programId], references: [id])
+
+  @@map("tbl_pendaftaran")
+}
+
+model Relawan {
+  id               String           @id @default(cuid())
+  nama             String
+  noTelepon        String?
+  domisili         String?
+  statusVerifikasi StatusVerifikasi  @default(MENUNGGU)
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pendaftaran      Pendaftaran[]
+
+  @@map("tbl_relawan")
+}
+
+model InisiatorProgram {
+  id               String           @id @default(cuid())
+  namaLembaga      String
+  tautanSitusResmi String?
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program          Program[]
+
+  @@map("tbl_inisiator_program")
 }
 
 model DokumenVerifikasi {
-  id                String           @id @default(cuid())
+  id               String           @id @default(cuid())
   jenisDokumen      String
-  urlFile           String
-  statusVerifikasi  StatusVerifikasi @default(MENUNGGU)
-  penggunaId        String
-  pengguna          Pengguna         @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+  urlFile          String
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tbl_dokumen_verifikasi")
 }
 
 model Notifikasi {
-  id            String   @id @default(cuid())
-  pesan         String
-  waktuKirim    DateTime @default(now())
-  statusDibaca  Boolean  @default(false)
-  penggunaId    String
-  pengguna      Pengguna @relation(fields: [penggunaId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  pesan        String
+  waktuKirim   DateTime @default(now())
+  statusDibaca Boolean  @default(false)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tbl_notifikasi")
+}
+
+// ---------------------------------------------------------------------------
+// Tabel bawaan Better Auth (Modul 1). Dipakai C04 Pengguna & C22 BetterAuth.
+// Nama tabel mengikuti Better Auth (user, session, account, verification),
+// lihat SPEC §7 no. 6. Field `peran` ditambahkan untuk memisahkan
+// Relawan / InisiatorProgram / Verifikator (SPEC §1).
+// ---------------------------------------------------------------------------
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  peran         Peran     @default(RELAWAN)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  relawan          Relawan?
+  inisiatorProgram InisiatorProgram?
+  dokumen          DokumenVerifikasi[]
+  notifikasi       Notifikasi[]
+  sessions         Session[]
+  accounts         Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
 }
