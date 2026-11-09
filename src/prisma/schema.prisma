@@ -1,0 +1,84 @@
+// Skema basis data RekanBumi (PostgreSQL).
+// Aturan: model = nama kelas DPPL, @@map("tbl_snake_case"), kolom = nama atribut DPPL (camelCase).
+// Pemilik file: PIC Modul 3 (PR berlabel `db`). Entity C01–C11 ditambahkan Modul 3.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Tabel bawaan Better Auth (Modul 1). Dipakai C04 Pengguna & C22 BetterAuth.
+// Nama tabel mengikuti Better Auth (user, session, account, verification),
+// lihat SPEC §7 no. 6. Field `peran` ditambahkan untuk memisahkan
+// Relawan / InisiatorProgram / Verifikator (SPEC §1).
+// ---------------------------------------------------------------------------
+
+enum Peran {
+  RELAWAN
+  INISIATOR
+  VERIFIKATOR
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  peran         Peran     @default(RELAWAN)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
