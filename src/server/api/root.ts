@@ -1,4 +1,5 @@
 import { authRouter } from "~/server/api/routers/auth";
+import { laporanRouter } from "~/server/api/routers/laporan";
 import { presensiRouter } from "~/server/api/routers/presensi";
 import { programRouter } from "~/server/api/routers/program";
 import { seleksiRouter } from "~/server/api/routers/seleksi";
@@ -9,6 +10,7 @@ export const appRouter = createTRPCRouter({
   program: programRouter,
   seleksi: seleksiRouter,
   presensi: presensiRouter,
+  laporan: laporanRouter,
 });
 
 export type AppRouter = typeof appRouter;
