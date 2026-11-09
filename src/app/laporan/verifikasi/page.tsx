@@ -2,180 +2,155 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Search, Eye } from 'lucide-react';
-import { api } from '~/trpc/react';
+import { useRouter } from 'next/navigation';
+import { Bell, ChevronDown, Search } from 'lucide-react';
 
-export default function LaporanMasukFigmaPage() {
-  const [filterStatus, setFilterStatus] = useState<'MENUNGGU' | 'DISETUJUI' | 'DITOLAK'>('MENUNGGU');
-  const [searchQuery, setSearchQuery] = useState('');
+export default function LaporanMasukPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>('Menunggu Tinjauan');
 
-  const { data: daftarLaporan, isLoading } = api.laporan.getAll.useQuery();
-
-  const countMenunggu = daftarLaporan?.filter(i => i.status === 'MENUNGGU').length || 0;
-  const countDisetujui = daftarLaporan?.filter(i => i.status === 'DISETUJUI').length || 0;
-  const countTolak = daftarLaporan?.filter(i => i.status === 'DITOLAK').length || 0;
-
-  const filteredData = daftarLaporan?.filter((item) => {
-    const matchStatus = item.status === filterStatus;
-    const matchSearch =
-      item.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.pengaju?.name ?? '').toLowerCase().includes(searchQuery.toLowerCase());
-    return matchStatus && matchSearch;
-  });
+  const laporanList = [
+    {
+      id: '1',
+      program: 'Penanaman 1.000 Mangrove PIK',
+      lembaga: 'Yayasan Mangrove Jakarta',
+      kategori: 'Jaga Iklim',
+      tanggal: '15 Nov 2026, 13.12 WIB',
+      status: 'Menunggu Konfirmasi',
+    },
+    {
+      id: '2',
+      program: 'Tanam Mangrove Muara Angke',
+      lembaga: 'Yayasan Mangrove Jakarta',
+      kategori: 'Jaga Iklim',
+      tanggal: '1 Nov 2026, 15.40 WIB',
+      status: 'Menunggu Konfirmasi',
+    },
+    {
+      id: '3',
+      program: 'Bersih Pantai Kuta',
+      lembaga: 'Komunitas Bali Bersih',
+      kategori: 'Jaga Alam',
+      tanggal: '22 Nov 2026, 09.05 WIB',
+      status: 'Menunggu Konfirmasi',
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#F4F6F4] text-gray-800">
-      
-      {/* Figma Desktop Header / Navigation Bar */}
-      <header className="bg-white border-b border-gray-200 px-8 py-3.5 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <span className="font-extrabold text-emerald-800 tracking-wider text-base">REKAN</span>
+    <div className="min-h-screen bg-[#EAF7EE] text-[#12372A] font-sans pb-16">
+      {/* Top Bar Verifikator */}
+      <header className="bg-white border-b border-[#D3DDD8]/60 px-10 py-3 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <span className="font-extrabold text-[#2D6A4F] tracking-wider text-lg">REKAN</span>
+          <div className="w-5 h-5 rounded-full bg-[#2D6A4F] text-white text-[10px] flex items-center justify-center font-bold">🌍</div>
         </div>
-        
-        <div className="flex items-center space-x-3 text-xs">
-          <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-[11px]">
-            YM
+
+        <nav>
+          <span className="px-4 py-1.5 rounded-full bg-[#D8F3DC] text-[#2D6A4F] font-bold text-xs">
+            Laporan Masuk
+          </span>
+        </nav>
+
+        <div className="flex items-center space-x-4">
+          <div className="relative cursor-pointer">
+            <Bell className="w-5 h-5 text-[#4F6B61]" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#B42318] text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
           </div>
-          <span className="font-medium text-gray-700">Yayasan Mangrove Jakarta</span>
+          <div className="flex items-center space-x-2 cursor-pointer">
+            <div className="w-7 h-7 rounded-full bg-[#B7E4C7] text-[#2D6A4F] text-xs font-bold flex items-center justify-center">VR</div>
+            <span className="text-xs font-bold text-[#12372A]">Verifikator</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#4F6B61]" />
+          </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-8 py-8 space-y-6">
-        
-        {/* Title Section */}
+      {/* Main Table Content */}
+      <main className="max-w-6xl mx-auto px-8 py-8 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Laporan Masuk</h1>
-          <p className="text-xs text-gray-500 mt-1">
-            Tinjau dan konfirmasi laporan kegiatan akhir dari inisiator program
-          </p>
+          <h1 className="text-3xl font-extrabold text-[#12372A]">Laporan Masuk</h1>
+          <p className="text-xs text-[#4F6B61] mt-1">Tinjau laporan akhir sebelum program ditandai selesai dan jam aksi relawan diperbarui.</p>
         </div>
 
-        {/* Status Filter Tabs & Search Bar (Figma Frame 1 Style) */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          
-          {/* Filter Pills */}
-          <div className="flex items-center space-x-2 bg-gray-200/60 p-1 rounded-full text-xs font-semibold">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-2">
             <button
-              type="button"
-              onClick={() => setFilterStatus('MENUNGGU')}
-              className={`px-4 py-1.5 rounded-full transition-all flex items-center space-x-1.5 ${
-                filterStatus === 'MENUNGGU'
-                  ? 'bg-emerald-800 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveTab('Menunggu Tinjauan')}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${
+                activeTab === 'Menunggu Tinjauan' ? 'bg-[#2D6A4F] text-white' : 'bg-white text-[#4F6B61]'
               }`}
             >
-              <span>Menunggu Verifikasi</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                filterStatus === 'MENUNGGU' ? 'bg-emerald-700 text-white' : 'bg-gray-300 text-gray-700'
-              }`}>
-                {countMenunggu}
-              </span>
+              Menunggu Tinjauan (3)
             </button>
-
             <button
-              type="button"
-              onClick={() => setFilterStatus('DISETUJUI')}
-              className={`px-4 py-1.5 rounded-full transition-all flex items-center space-x-1.5 ${
-                filterStatus === 'DISETUJUI'
-                  ? 'bg-emerald-800 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveTab('Disetujui')}
+              className={`px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
+                activeTab === 'Disetujui' ? 'bg-[#2D6A4F] text-white' : 'bg-white text-[#4F6B61]'
               }`}
             >
-              <span>Disetujui</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                filterStatus === 'DISETUJUI' ? 'bg-emerald-700 text-white' : 'bg-gray-300 text-gray-700'
-              }`}>
-                {countDisetujui}
-              </span>
+              Disetujui
             </button>
-
             <button
-              type="button"
-              onClick={() => setFilterStatus('DITOLAK')}
-              className={`px-4 py-1.5 rounded-full transition-all flex items-center space-x-1.5 ${
-                filterStatus === 'DITOLAK'
-                  ? 'bg-emerald-800 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+              onClick={() => setActiveTab('Ditolak')}
+              className={`px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
+                activeTab === 'Ditolak' ? 'bg-[#2D6A4F] text-white' : 'bg-white text-[#4F6B61]'
               }`}
             >
-              <span>Tolak / Revisi</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                filterStatus === 'DITOLAK' ? 'bg-emerald-700 text-white' : 'bg-gray-300 text-gray-700'
-              }`}>
-                {countTolak}
-              </span>
+              Ditolak
             </button>
           </div>
 
-          {/* Search Box Figma */}
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#4F6B61]" />
             <input
               type="text"
-              placeholder="Cari nama program..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-700"
+              placeholder="Cari program atau lembaga..."
+              className="w-full pl-9 pr-4 py-2 bg-white border border-[#D3DDD8] rounded-full text-xs text-[#12372A]"
             />
           </div>
         </div>
 
-        {/* Table Content Figma */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-[11px]">
-              <tr>
-                <th className="py-4 px-6">Nama Program</th>
-                <th className="py-4 px-6">Lembaga / Inisiator</th>
-                <th className="py-4 px-6">Tanggal Unggah</th>
-                <th className="py-4 px-6">Status</th>
-                <th className="py-4 px-6 text-center">Aksi</th>
+        {/* Tabel Laporan Masuk */}
+        <div className="bg-white rounded-2xl border border-[#D3DDD8]/60 shadow-sm overflow-hidden">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-[#D8F3DC] text-[11px] font-bold text-[#12372A] uppercase border-b border-[#D3DDD8]/60">
+                <th className="py-3.5 px-5">PROGRAM</th>
+                <th className="py-3.5 px-4">LEMBAGA</th>
+                <th className="py-3.5 px-4">KATEGORI</th>
+                <th className="py-3.5 px-4">TANGGAL PENGAJUAN</th>
+                <th className="py-3.5 px-4">STATUS</th>
+                <th className="py-3.5 px-5">AKSI</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 font-medium">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-gray-400">Memuat laporan masuk...</td>
+            <tbody className="divide-y divide-[#D3DDD8]/40">
+              {laporanList.map((row) => (
+                <tr key={row.id} className="hover:bg-[#EAF7EE]/30">
+                  <td className="py-4 px-5 font-bold text-[#12372A]">{row.program}</td>
+                  <td className="py-4 px-4 text-[#4F6B61]">{row.lembaga}</td>
+                  <td className="py-4 px-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#D8F3DC] text-[#2D6A4F]">
+                      {row.kategori}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-[#4F6B61]">{row.tanggal}</td>
+                  <td className="py-4 px-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#FFF4DB] text-[#856404]">
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-4 px-5">
+                    <button
+                      onClick={() => router.push(`/laporan/verifikasi/${row.id}`)}
+                      className="px-4 py-1.5 border border-[#2D6A4F] text-[#2D6A4F] font-bold rounded-lg hover:bg-[#D8F3DC] transition-colors"
+                    >
+                      Tinjau
+                    </button>
+                  </td>
                 </tr>
-              ) : !filteredData || filteredData.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-gray-400">Tidak ada laporan yang cocok.</td>
-                </tr>
-              ) : (
-                filteredData.map((laporan) => (
-                  <tr key={laporan.id} className="hover:bg-emerald-50/30 transition-colors">
-                    <td className="py-4 px-6 font-bold text-gray-900">{laporan.judul}</td>
-                    <td className="py-4 px-6 text-gray-600">
-                      {laporan.pengaju?.name ?? 'Yayasan Mangrove Jakarta'}
-                    </td>
-                    <td className="py-4 px-6 text-gray-500">14 Nov 2026</td>
-                    <td className="py-4 px-6">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                        laporan.status === 'DISETUJUI'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : laporan.status === 'DITOLAK'
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}>
-                        {laporan.status === 'MENUNGGU' ? 'Menunggu Konfirmasi' : laporan.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      <Link
-                        href={`/laporan/verifikasi/${laporan.id}`}
-                        className="inline-flex items-center justify-center px-4 py-1.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg font-semibold text-xs transition-colors shadow-sm"
-                      >
-                        Tinjau
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
-
       </main>
     </div>
   );
