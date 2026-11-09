@@ -143,6 +143,9 @@ model User {
   accounts         Account[]
 
   @@map("user")
+
+  laporanDibuat         Laporan[]
+  laporanDiverifikasi   Laporan[]   @relation("VerifikatorLaporan")
 }
 
 model Session {
@@ -187,4 +190,35 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Laporan & Verifikator
+// ---------------------------------------------------------------------------
+
+model Laporan {
+  id              String      @id @default(uuid())
+  judul           String
+  deskripsi       String
+  tautanDokumen   String?
+  status          StatusLaporan @default(MENUNGGU)
+  catatanVerifikasi String?
+  
+  // Relasi ke Program / Kegiatan (jika ada model Program, atau relasi ke User)
+  pengajuId       String
+  pengaju         User        @relation(fields: [pengajuId], references: [id], onDelete: Cascade)
+  
+  verifikatorId   String?
+  verifikator     User?       @relation("VerifikatorLaporan", fields: [verifikatorId], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("tbl_laporan")
+}
+
+enum StatusLaporan {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
 }
