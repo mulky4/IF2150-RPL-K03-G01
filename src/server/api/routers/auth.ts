@@ -6,10 +6,12 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { GalatValidasi } from "~/lib/galat";
 import {
   AuthController,
   GalatIPDiblokir,
   GalatTidakDitemukan,
+  type DataDiri,
 } from "~/server/controllers/AuthController";
 
 /** IP klien dari header proxy. Dipakai untuk blokir IP (KNF06). */
@@ -22,6 +24,52 @@ export function ambilIP(headers: Headers): string {
 export const authRouter = createTRPCRouter({
   /** Sesi pengguna saat ini, null kalau belum login. Dipakai Navbar & redirect. */
   sesiSaya: publicProcedure.query(({ ctx }) => ctx.session),
+
+  /**
+   * UC01 Registrasi (I-01). Input berupa FormData karena ada berkas dokumen.
+   * Field teks: peran, email, kataSandi, nama, noTelepon, domisili, jenisDokumen,
+   * namaLembaga, tautanSitusResmi. Field berkas: `berkas`. Isian diperiksa AuthController.
+   * Akun dibuat tanpa langsung login; pengguna lanjut masuk lewat I-02.
+   */
+  daftar: publicProcedure
+    .input(z.instanceof(FormData))
+    .mutation(async ({ input }) => {
+      const teks = (kunci: string) => {
+        const nilai = input.get(kunci);
+        return typeof nilai === "string" ? nilai : undefined;
+      };
+      const berkasMentah = input.get("berkas");
+      // Formulir tanpa berkas dikirim peramban sebagai file kosong. Itu dianggap tidak ada.
+      const berkas =
+        berkasMentah instanceof File && berkasMentah.size > 0
+          ? berkasMentah
+          : null;
+      try {
+        return await AuthController.buatAkunBaru(
+          {
+            peran: teks("peran") as DataDiri["peran"],
+            email: teks("email") ?? "",
+            kataSandi: teks("kataSandi") ?? "",
+            nama: teks("nama"),
+            noTelepon: teks("noTelepon"),
+            domisili: teks("domisili"),
+            jenisDokumen: teks("jenisDokumen"),
+            namaLembaga: teks("namaLembaga"),
+            tautanSitusResmi: teks("tautanSitusResmi"),
+          },
+          berkas,
+        );
+      } catch (galat) {
+        if (galat instanceof GalatValidasi) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: galat.message,
+            cause: galat,
+          });
+        }
+        throw galat;
+      }
+    }),
 
   /** UC02 Login (I-02). Berhasil → cookie sesi terpasang di respons. */
   masuk: publicProcedure

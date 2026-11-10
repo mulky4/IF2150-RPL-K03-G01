@@ -4,6 +4,8 @@ import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
 import {
   httpBatchLink,
   httpBatchStreamLink,
+  httpLink,
+  isNonJsonSerializable,
   loggerLink,
   splitLink,
 } from "@trpc/client";
@@ -43,18 +45,28 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             process.env.NODE_ENV === "development" ||
             (op.direction === "down" && op.result instanceof Error),
         }),
-        // Mutation tanpa streaming supaya Set-Cookie (mis. sesi login) ikut di header respons.
         splitLink({
-          condition: (op) => op.type === "mutation",
-          true: httpBatchLink({
+          // FormData (unggah berkas, mis. registrasi) tidak bisa digabung dalam batch.
+          condition: (op) => isNonJsonSerializable(op.input),
+          true: httpLink({
+            // Isi FormData dikirim apa adanya; transformer hanya untuk tipe router.
             transformer: superjson,
             url: getBaseUrl() + "/api/trpc",
             headers: () => new Headers({ "x-trpc-source": "nextjs-react" }),
           }),
-          false: httpBatchStreamLink({
-            transformer: superjson,
-            url: getBaseUrl() + "/api/trpc",
-            headers: () => new Headers({ "x-trpc-source": "nextjs-react" }),
+          // Mutation tanpa streaming supaya Set-Cookie (mis. sesi login) ikut di header respons.
+          false: splitLink({
+            condition: (op) => op.type === "mutation",
+            true: httpBatchLink({
+              transformer: superjson,
+              url: getBaseUrl() + "/api/trpc",
+              headers: () => new Headers({ "x-trpc-source": "nextjs-react" }),
+            }),
+            false: httpBatchStreamLink({
+              transformer: superjson,
+              url: getBaseUrl() + "/api/trpc",
+              headers: () => new Headers({ "x-trpc-source": "nextjs-react" }),
+            }),
           }),
         }),
       ],
