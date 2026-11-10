@@ -53,11 +53,23 @@ export class BetterAuth {
     return bcrypt.compare(kataSandi, hashKataSandi);
   }
 
-  /** Algo-C22-05. Membuat sesi untuk pengguna dan mengembalikan token sesi. Diisi bersama I-02 (login). */
-  static async buatSesiMasuk(idPengguna: string): Promise<string> {
-    throw new Error(
-      `Belum diimplementasi: BetterAuth.buatSesiMasuk(${idPengguna})`,
-    );
+  /**
+   * Algo-C22-05. Membuat sesi dan mengembalikan token sesi. Cookie sesi dipasang plugin
+   * nextCookies (server/auth.ts) ke respons request yang sedang berjalan.
+   * Beda dari DPPL: menerima email + kata sandi (bukan idPengguna), karena Better Auth
+   * hanya membuat sesi + cookie bertanda tangan lewat API sign-in (catat di B.1).
+   */
+  static async buatSesiMasuk(
+    email: string,
+    kataSandi: string,
+  ): Promise<string> {
+    const { auth } = await import("~/server/auth");
+    const { headers } = await import("next/headers");
+    const hasil = await auth.api.signInEmail({
+      body: { email, password: kataSandi },
+      headers: await headers(),
+    });
+    return hasil.token;
   }
 
   /** Algo-C22-06. Mengembalikan token sesi aktif dari cookie request, atau null. */
