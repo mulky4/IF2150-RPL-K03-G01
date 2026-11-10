@@ -1,10 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import {
   AuthController,
   GalatIPDiblokir,
+  GalatTidakDitemukan,
 } from "~/server/controllers/AuthController";
 
 /** IP klien dari header proxy. Dipakai untuk blokir IP (KNF06). */
@@ -51,4 +56,44 @@ export const authRouter = createTRPCRouter({
         throw galat;
       }
     }),
+
+  /** UC06 I-03: daftar notifikasi (Algo-C12-13 → Algo-C13-11), terbaru di atas. */
+  daftarNotifikasi: protectedProcedure.query(async ({ ctx }) => {
+    const daftar = await AuthController.ambilNotifikasi(
+      ctx.session.idPengguna,
+    ).catch(keTRPCError);
+    return daftar.map((notifikasi) => notifikasi.keData());
+  }),
+
+  /** Angka di ikon lonceng Navbar (I03-NAV-Navbar). */
+  jumlahBelumDibaca: protectedProcedure.query(async ({ ctx }) => {
+    const daftar = await AuthController.ambilNotifikasi(
+      ctx.session.idPengguna,
+    ).catch(keTRPCError);
+    return daftar.filter((notifikasi) => !notifikasi.keData().statusDibaca)
+      .length;
+  }),
+
+  /** UC06 I-03: buka satu notifikasi (Algo-C12-14 → Algo-C13-12), ditandai sudah dibaca. */
+  bacaNotifikasi: protectedProcedure
+    .input(z.object({ idNotifikasi: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const notifikasi = await AuthController.bacaNotifikasi(
+        input.idNotifikasi,
+        ctx.session.idPengguna,
+      ).catch(keTRPCError);
+      return { ...notifikasi.keData(), detail: notifikasi.showDetail() };
+    }),
 });
+
+/** GalatTidakDitemukan → 404 NOT_FOUND. Galat lain diteruskan apa adanya. */
+function keTRPCError(galat: unknown): never {
+  if (galat instanceof GalatTidakDitemukan) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: galat.message,
+      cause: galat,
+    });
+  }
+  throw galat;
+}

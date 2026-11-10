@@ -1,8 +1,9 @@
 import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
 import { BetterAuth } from "~/server/adapters/BetterAuth";
+import { db } from "~/server/db";
 import type { StatusVerifikasi, Peran } from "~/server/models/enums";
-import type { Notifikasi } from "~/server/models/Notifikasi";
-import type { Pengguna } from "~/server/models/Pengguna";
+import { Notifikasi } from "~/server/models/Notifikasi";
+import { Pengguna } from "~/server/models/Pengguna";
 
 /** Isian formulir registrasi (tipe FormData pada DPPL). */
 export type DataDiri = {
@@ -27,6 +28,14 @@ export class GalatIPDiblokir extends Error {
   constructor(public readonly sampai: Date) {
     super("IP diblokir sementara selama 5 menit");
     this.name = "GalatIPDiblokir";
+  }
+}
+
+/** Dilempar saat data yang diminta tidak ada atau bukan milik pengguna. */
+export class GalatTidakDitemukan extends Error {
+  constructor(pesan: string) {
+    super(pesan);
+    this.name = "GalatTidakDitemukan";
   }
 }
 
@@ -140,13 +149,32 @@ export class AuthController {
     return BetterAuth.buatSesiMasuk(email, kataSandi);
   }
 
-  /** Algo-C13-11 */
+  /** Algo-C13-11. Notifikasi milik pengguna, terbaru di atas (UC06). */
   static async ambilNotifikasi(idPengguna: string): Promise<Notifikasi[]> {
-    return belumDiimplementasi("AuthController.ambilNotifikasi", idPengguna);
+    const pengguna = await Pengguna.cari(idPengguna);
+    if (pengguna === null) {
+      throw new GalatTidakDitemukan("Pengguna tidak ditemukan");
+    }
+    return pengguna.lihatNotifikasi();
   }
 
-  /** Algo-C13-12 */
-  static async bacaNotifikasi(idNotifikasi: string): Promise<Notifikasi> {
-    return belumDiimplementasi("AuthController.bacaNotifikasi", idNotifikasi);
+  /**
+   * Algo-C13-12. Menandai notifikasi sudah dibaca lalu mengembalikannya (UC06).
+   * Beda dari DPPL: ada parameter idPengguna supaya pengguna hanya bisa membaca
+   * notifikasinya sendiri. Notifikasi milik orang lain dianggap tidak ada (catat di B.1).
+   */
+  static async bacaNotifikasi(
+    idNotifikasi: string,
+    idPengguna: string,
+  ): Promise<Notifikasi> {
+    const baris = await db.notifikasi.findUnique({
+      where: { id: idNotifikasi },
+    });
+    const notifikasi = baris ? Notifikasi.dariBaris(baris) : null;
+    if (notifikasi === null || !notifikasi.milik(idPengguna)) {
+      throw new GalatTidakDitemukan("Notifikasi tidak ditemukan");
+    }
+    await notifikasi.baca();
+    return notifikasi;
   }
 }
