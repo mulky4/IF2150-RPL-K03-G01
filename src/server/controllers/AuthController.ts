@@ -1,4 +1,5 @@
 import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
+import { BetterAuth } from "~/server/adapters/BetterAuth";
 import type { StatusVerifikasi, Peran } from "~/server/models/enums";
 import type { Notifikasi } from "~/server/models/Notifikasi";
 import type { Pengguna } from "~/server/models/Pengguna";
@@ -20,6 +21,14 @@ export type DataDiri = {
 
 /** Berkas unggahan (tipe File pada DPPL). */
 export type BerkasUnggahan = File | null;
+
+/** Dilempar validasiKredensial() saat IP sedang diblokir (UC02 alt. 2, KNF06). */
+export class GalatIPDiblokir extends Error {
+  constructor(public readonly sampai: Date) {
+    super("IP diblokir sementara selama 5 menit");
+    this.name = "GalatIPDiblokir";
+  }
+}
 
 /**
  * C13 AuthController «control» (Tabel 4.1 DPPL2).
@@ -59,59 +68,76 @@ export class AuthController {
 
   /** Algo-C13-04 */
   static async cekSesi(): Promise<boolean> {
-    return belumDiimplementasi("AuthController.cekSesi");
+    const sesi = await BetterAuth.ambilSesi();
+    return sesi !== null;
   }
 
-  /** Algo-C13-05 */
+  /**
+   * Algo-C13-05. true kalau kredensial benar dan sesi dibuat, false kalau salah.
+   * Melempar GalatIPDiblokir kalau IP sedang diblokir.
+   */
   static async validasiKredensial(
     email: string,
     kataSandi: string,
     ip: string,
   ): Promise<boolean> {
-    return belumDiimplementasi(
-      "AuthController.validasiKredensial",
-      email,
-      kataSandi,
-      ip,
-    );
+    if (AuthController.cekStatusBlokir(ip)) {
+      throw new GalatIPDiblokir(AuthController.waktuBlokir.get(ip)!);
+    }
+    const idPengguna = await BetterAuth.verifikasiKredensial(email, kataSandi);
+    if (idPengguna === null) {
+      const jumlah = AuthController.catatPercobaanGagal(ip);
+      if (jumlah >= AuthController.BATAS_PERCOBAAN) {
+        AuthController.blokirIP(ip);
+      }
+      return false;
+    }
+    AuthController.resetPercobaanGagal(ip);
+    await AuthController.mulaiSesi(email, kataSandi);
+    return true;
   }
 
   /** Algo-C13-06 */
   private static cekStatusBlokir(ip: string): boolean {
-    return belumDiimplementasi(
-      "AuthController.cekStatusBlokir",
-      ip,
-      AuthController.waktuBlokir,
-    );
+    const sampai = AuthController.waktuBlokir.get(ip);
+    if (sampai) {
+      if (new Date() < sampai) return true;
+      AuthController.waktuBlokir.delete(ip);
+      AuthController.resetPercobaanGagal(ip);
+    }
+    return false;
   }
 
   /** Algo-C13-07 */
   private static catatPercobaanGagal(ip: string): number {
-    return belumDiimplementasi(
-      "AuthController.catatPercobaanGagal",
-      ip,
-      AuthController.percobaanGagal,
-      AuthController.BATAS_PERCOBAAN,
-    );
+    const jumlah = (AuthController.percobaanGagal.get(ip) ?? 0) + 1;
+    AuthController.percobaanGagal.set(ip, jumlah);
+    return jumlah;
   }
 
   /** Algo-C13-08 */
   private static blokirIP(ip: string): void {
-    belumDiimplementasi(
-      "AuthController.blokirIP",
-      ip,
-      AuthController.DURASI_BLOKIR_MENIT,
+    const sampai = new Date(
+      Date.now() + AuthController.DURASI_BLOKIR_MENIT * 60 * 1000,
     );
+    AuthController.waktuBlokir.set(ip, sampai);
   }
 
   /** Algo-C13-09 */
   private static resetPercobaanGagal(ip: string): void {
-    belumDiimplementasi("AuthController.resetPercobaanGagal", ip);
+    AuthController.percobaanGagal.delete(ip);
   }
 
-  /** Algo-C13-10. Mengembalikan token sesi. */
-  private static async mulaiSesi(idPengguna: string): Promise<string> {
-    return belumDiimplementasi("AuthController.mulaiSesi", idPengguna);
+  /**
+   * Algo-C13-10. Mengembalikan token sesi.
+   * Beda dari DPPL: menerima email + kata sandi (bukan idPengguna), karena sesi dan
+   * cookie bertanda tangan Better Auth hanya dibuat lewat API sign-in-nya (catat di B.1).
+   */
+  private static async mulaiSesi(
+    email: string,
+    kataSandi: string,
+  ): Promise<string> {
+    return BetterAuth.buatSesiMasuk(email, kataSandi);
   }
 
   /** Algo-C13-11 */
