@@ -34,8 +34,8 @@ corepack enable
 pnpm install
 cp .env.example .env          # isi BETTER_AUTH_SECRET (openssl rand -base64 32)
 docker compose up -d          # PostgreSQL lokal (menyusul, Modul 3)
-pnpm prisma migrate dev
-pnpm db:seed                  # (menyusul, Modul 3)
+pnpm prisma migrate dev --name tabel_domain
+pnpm db:seed
 ```
 
 | Variabel              | Keterangan                                    |
@@ -56,7 +56,16 @@ pnpm build          # build produksi
 
 Link verifikasi email tidak dikirim lewat email, tetapi dicetak di terminal `pnpm dev`.
 
-## Akun Uji _(menyusul, dari seed)_
+## Akun Uji
+
+Semua akun uji menggunakan kata sandi `DemoRekanBumi2026!`.
+
+| Peran | Email |
+| --- | --- |
+| Inisiator | `inisiator@rekanbumi.example` |
+| Relawan | `relawan1@rekanbumi.example` |
+| Relawan | `relawan2@rekanbumi.example` |
+| Verifikator | `verifikator@rekanbumi.example` |
 
 ## Modul & Pembagian _(menyusul)_
 

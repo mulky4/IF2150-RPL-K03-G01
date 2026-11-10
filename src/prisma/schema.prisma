@@ -1,7 +1,6 @@
 // Skema basis data RekanBumi (PostgreSQL).
 // Aturan: model = nama kelas DPPL, @@map("tbl_snake_case"), kolom = nama atribut DPPL (camelCase).
 // Pemilik file: PIC Modul 3 (PR berlabel `db`). Entity C01–C11 ditambahkan Modul 3.
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,12 +10,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ---------------------------------------------------------------------------
-// Tabel bawaan Better Auth (Modul 1). Dipakai C04 Pengguna & C22 BetterAuth.
-// Nama tabel mengikuti Better Auth (user, session, account, verification),
-// lihat SPEC §7 no. 6. Field `peran` ditambahkan untuk memisahkan
-// Relawan / InisiatorProgram / Verifikator (SPEC §1).
-// ---------------------------------------------------------------------------
+enum KategoriProgram {
+  JAGA_ALAM
+  JAGA_IKLIM
+}
+
+enum StatusProgram {
+  MENUNGGU_VERIFIKASI
+  AKTIF
+  MENUNGGU_KONFIRMASI
+  PERLU_REVISI
+  SELESAI
+}
+
+enum StatusPendaftaran {
+  MENUNGGU
+  DITERIMA
+  DITOLAK
+}
+
+enum StatusVerifikasi {
+  MENUNGGU
+  TERVERIFIKASI
+  DITOLAK
+}
 
 enum Peran {
   RELAWAN
@@ -24,6 +41,91 @@ enum Peran {
   VERIFIKATOR
 }
 
+model Program {
+  id                 String          @id @default(cuid())
+  namaProgram        String
+  deskripsi          String
+  kategori           KategoriProgram
+  tempatPelaksanaan  String
+  waktuMulai         DateTime
+  waktuSelesai       DateTime
+  kuota              Int
+  syaratKetentuan    String
+  status             StatusProgram   @default(MENUNGGU_VERIFIKASI)
+  inisiatorProgramId String
+  inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
+  pendaftaran        Pendaftaran[]
+
+  @@map("tbl_program")
+}
+
+model Pendaftaran {
+  id                String            @id @default(cuid())
+  keterampilan      String
+  ketersediaanWaktu String
+  status            StatusPendaftaran @default(MENUNGGU)
+  waktuDaftar       DateTime          @default(now())
+  relawanId         String
+  programId         String
+  relawan           Relawan           @relation(fields: [relawanId], references: [id])
+  program           Program           @relation(fields: [programId], references: [id])
+
+  @@map("tbl_pendaftaran")
+}
+
+model Relawan {
+  id               String           @id @default(cuid())
+  nama             String
+  noTelepon        String?
+  domisili         String?
+  statusVerifikasi StatusVerifikasi  @default(MENUNGGU)
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pendaftaran      Pendaftaran[]
+
+  @@map("tbl_relawan")
+}
+
+model InisiatorProgram {
+  id               String           @id @default(cuid())
+  namaLembaga      String
+  tautanSitusResmi String?
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program          Program[]
+
+  @@map("tbl_inisiator_program")
+}
+
+model DokumenVerifikasi {
+  id               String           @id @default(cuid())
+  jenisDokumen      String
+  urlFile          String
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tbl_dokumen_verifikasi")
+}
+
+model Notifikasi {
+  id           String   @id @default(cuid())
+  pesan        String
+  waktuKirim   DateTime @default(now())
+  statusDibaca Boolean  @default(false)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tbl_notifikasi")
+}
+
+// ---------------------------------------------------------------------------
+// Tabel bawaan Better Auth (Modul 1). Dipakai C04 Pengguna & C22 BetterAuth.
+// Nama tabel mengikuti Better Auth (user, session, account, verification),
+// lihat SPEC §7 no. 6. Field `peran` ditambahkan untuk memisahkan
+// Relawan / InisiatorProgram / Verifikator (SPEC §1).
+// ---------------------------------------------------------------------------
 model User {
   id            String    @id
   name          String
@@ -33,8 +135,12 @@ model User {
   peran         Peran     @default(RELAWAN)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  relawan          Relawan?
+  inisiatorProgram InisiatorProgram?
+  dokumen          DokumenVerifikasi[]
+  notifikasi       Notifikasi[]
+  sessions         Session[]
+  accounts         Account[]
 
   @@map("user")
 }
