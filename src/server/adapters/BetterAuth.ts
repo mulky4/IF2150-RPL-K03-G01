@@ -11,14 +11,24 @@ import bcrypt from "bcryptjs";
 export class BetterAuth {
   private static readonly PUTARAN_SALT = 10;
 
-  /** Algo-C22-01. Mengembalikan idPengguna akun baru. */
+  /**
+   * Algo-C22-01. Mengembalikan idPengguna akun baru.
+   * Beda dari DPPL: ada parameter opsional `nama` dan `peran` supaya baris `user`
+   * langsung terisi nama dan perannya (tanpa itu: nama = email, peran = RELAWAN).
+   */
   static async daftarkanKredensial(
     email: string,
     kataSandi: string,
+    opsi: { nama?: string; peran?: string } = {},
   ): Promise<string> {
     const { auth } = await import("~/server/auth");
     const hasil = await auth.api.signUpEmail({
-      body: { email, password: kataSandi, name: email },
+      body: {
+        email,
+        password: kataSandi,
+        name: opsi.nama ?? email,
+        ...(opsi.peran ? { peran: opsi.peran } : {}),
+      },
     });
     return hasil.user.id;
   }

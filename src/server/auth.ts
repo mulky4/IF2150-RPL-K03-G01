@@ -16,6 +16,8 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     requireEmailVerification: false,
+    // Registrasi tidak langsung masuk: pengguna lanjut login lewat I-02 (UC01, I01-MSG-Berhasil).
+    autoSignIn: false,
     // KNF02: hashing bcrypt lewat operasi C22 (bukan scrypt bawaan Better Auth).
     password: {
       hash: (kataSandi) => BetterAuth.hashKataSandi(kataSandi),

@@ -1,7 +1,10 @@
-import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
+import { APIError } from "better-auth/api";
+
+import { GalatValidasi } from "~/lib/galat";
 import { BetterAuth } from "~/server/adapters/BetterAuth";
+import { CloudStorageAdapter } from "~/server/adapters/CloudStorageAdapter";
 import { db } from "~/server/db";
-import type { StatusVerifikasi, Peran } from "~/server/models/enums";
+import { Peran, StatusVerifikasi } from "~/server/models/enums";
 import { Notifikasi } from "~/server/models/Notifikasi";
 import { Pengguna } from "~/server/models/Pengguna";
 
@@ -18,7 +21,22 @@ export type DataDiri = {
   // InisiatorProgram
   namaLembaga?: string;
   tautanSitusResmi?: string;
+  /** Dipakai cekStatusVerifikasi(). Saat registrasi selalu belum terverifikasi. */
+  emailTerverifikasi?: boolean;
 };
+
+/** Hasil buatAkunBaru(). Pengganti tipe Pengguna di DPPL (lihat catatan di buatAkunBaru). */
+export type HasilRegistrasi = {
+  idPengguna: string;
+  email: string;
+  peran: Extract<Peran, "RELAWAN" | "INISIATOR">;
+  statusVerifikasi: StatusVerifikasi;
+  dokumenTerunggah: boolean;
+};
+
+const POLA_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const KATA_SANDI_MINIMAL = 8;
+const JENIS_DOKUMEN_BAWAAN = "Dokumen verifikasi diri";
 
 /** Berkas unggahan (tipe File pada DPPL). */
 export type BerkasUnggahan = File | null;
@@ -39,6 +57,15 @@ export class GalatTidakDitemukan extends Error {
   }
 }
 
+function adalahUrlWeb(teks: string): boolean {
+  try {
+    const url = new URL(teks);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 /**
  * C13 AuthController «control» (Tabel 4.1 DPPL2).
  * Registrasi (UC01), login + blokir IP (UC02, KNF06), dan notifikasi akun (UC06).
@@ -50,29 +77,166 @@ export class AuthController {
   private static readonly BATAS_PERCOBAAN = 5;
   private static readonly DURASI_BLOKIR_MENIT = 5;
 
-  /** Algo-C13-01 */
+  /**
+   * Algo-C13-01 (UC01). Membuat akun Relawan atau InisiatorProgram beserta dokumennya.
+   *
+   * Beda dari DPPL (catat di B.1):
+   * - Mengembalikan HasilRegistrasi, bukan objek Pengguna. Entity Relawan, InisiatorProgram,
+   *   dan DokumenVerifikasi milik Modul 3/5, jadi baris-barisnya disimpan lewat Prisma
+   *   di sini supaya AuthController tidak bergantung pada file model modul lain.
+   * - Berkas diperiksa dan email dicek dulu sebelum akun dibuat, supaya registrasi yang
+   *   gagal tidak meninggalkan akun setengah jadi. Kalau penyimpanan gagal sesudah akun
+   *   terbentuk, akun dan berkas yang sudah terunggah dihapus kembali.
+   */
   static async buatAkunBaru(
     dataDiri: DataDiri,
     berkas: BerkasUnggahan,
-  ): Promise<Pengguna> {
-    return belumDiimplementasi("AuthController.buatAkunBaru", dataDiri, berkas);
+  ): Promise<HasilRegistrasi> {
+    const data = AuthController.rapikanData(dataDiri);
+    const daftarGalat = AuthController.validasiKelengkapanData(data, berkas);
+    if (berkas !== null && !(await CloudStorageAdapter.validasiBerkas(berkas))) {
+      daftarGalat.push("Berkas tidak valid");
+    }
+    if (
+      POLA_EMAIL.test(data.email) &&
+      (await db.user.findUnique({ where: { email: data.email } })) !== null
+    ) {
+      daftarGalat.push("Email sudah terdaftar");
+    }
+    if (daftarGalat.length > 0) throw new GalatValidasi(daftarGalat);
+
+    const status = AuthController.cekStatusVerifikasi(data);
+    const urlBerkas =
+      berkas !== null ? await CloudStorageAdapter.unggahBerkas(berkas) : null;
+
+    let idPengguna: string;
+    try {
+      idPengguna = await BetterAuth.daftarkanKredensial(
+        data.email,
+        data.kataSandi,
+        { nama: data.nama ?? data.namaLembaga, peran: data.peran },
+      );
+    } catch (galat) {
+      if (urlBerkas !== null) await CloudStorageAdapter.hapusBerkas(urlBerkas);
+      // Dua registrasi bersamaan dengan email yang sama: yang kedua ditolak Better Auth.
+      if (galat instanceof APIError && galat.status === "UNPROCESSABLE_ENTITY") {
+        throw new GalatValidasi(["Email sudah terdaftar"]);
+      }
+      throw galat;
+    }
+
+    try {
+      await db.$transaction(async (tx) => {
+        if (data.peran === Peran.RELAWAN) {
+          await tx.relawan.create({
+            data: {
+              nama: data.nama!,
+              noTelepon: data.noTelepon,
+              domisili: data.domisili,
+              statusVerifikasi: status,
+              userId: idPengguna,
+            },
+          });
+        } else {
+          await tx.inisiatorProgram.create({
+            data: {
+              namaLembaga: data.namaLembaga!,
+              tautanSitusResmi: data.tautanSitusResmi || null,
+              statusVerifikasi: status,
+              userId: idPengguna,
+            },
+          });
+        }
+        if (urlBerkas !== null) {
+          await tx.dokumenVerifikasi.create({
+            data: {
+              jenisDokumen: data.jenisDokumen || JENIS_DOKUMEN_BAWAAN,
+              urlFile: urlBerkas,
+              statusVerifikasi: StatusVerifikasi.MENUNGGU,
+              userId: idPengguna,
+            },
+          });
+        }
+      });
+    } catch (galat) {
+      // Batalkan akun yang sudah terbentuk (baris terkait ikut terhapus lewat cascade).
+      await db.user.delete({ where: { id: idPengguna } }).catch(() => undefined);
+      if (urlBerkas !== null) await CloudStorageAdapter.hapusBerkas(urlBerkas);
+      throw galat;
+    }
+
+    return {
+      idPengguna,
+      email: data.email,
+      peran: data.peran,
+      statusVerifikasi: status,
+      dokumenTerunggah: urlBerkas !== null,
+    };
   }
 
-  /** Algo-C13-02. Mengembalikan daftar pesan galat (kosong kalau valid). */
+  /** Spasi di tepi isian dibuang dan email disamakan huruf kecilnya (seperti Better Auth). */
+  private static rapikanData(dataDiri: DataDiri): DataDiri {
+    const potong = (nilai?: string) => nilai?.trim();
+    return {
+      ...dataDiri,
+      email: (dataDiri.email ?? "").trim().toLowerCase(),
+      // Kata sandi tidak dipotong: spasi bagian dari kata sandi.
+      kataSandi: dataDiri.kataSandi ?? "",
+      nama: potong(dataDiri.nama),
+      noTelepon: potong(dataDiri.noTelepon),
+      domisili: potong(dataDiri.domisili),
+      jenisDokumen: potong(dataDiri.jenisDokumen),
+      namaLembaga: potong(dataDiri.namaLembaga),
+      tautanSitusResmi: potong(dataDiri.tautanSitusResmi),
+    };
+  }
+
+  /**
+   * Algo-C13-02. Mengembalikan daftar pesan galat (kosong kalau valid).
+   * Tambahan di luar DPPL, karena aturan Better Auth dan peran yang diizinkan:
+   * kata sandi minimal 8 karakter, peran harus Relawan/Inisiator, tautan situs harus URL.
+   */
   private static validasiKelengkapanData(
     dataDiri: DataDiri,
     berkas: BerkasUnggahan,
   ): string[] {
-    return belumDiimplementasi(
-      "AuthController.validasiKelengkapanData",
-      dataDiri,
-      berkas,
-    );
+    const galat: string[] = [];
+    const kosong = (nilai?: string) => !nilai || nilai.trim() === "";
+
+    if (kosong(dataDiri.email) || !POLA_EMAIL.test(dataDiri.email)) {
+      galat.push("Email tidak valid");
+    }
+    if (dataDiri.kataSandi === undefined || dataDiri.kataSandi === "") {
+      galat.push("Kata sandi wajib diisi");
+    } else if (dataDiri.kataSandi.length < KATA_SANDI_MINIMAL) {
+      galat.push(`Kata sandi minimal ${KATA_SANDI_MINIMAL} karakter`);
+    }
+
+    if (dataDiri.peran === Peran.RELAWAN) {
+      if (
+        kosong(dataDiri.nama) ||
+        kosong(dataDiri.noTelepon) ||
+        kosong(dataDiri.domisili)
+      ) {
+        galat.push("Data diri tidak lengkap");
+      }
+      if (berkas === null) galat.push("Dokumen verifikasi wajib diunggah");
+    } else if (dataDiri.peran === Peran.INISIATOR) {
+      if (kosong(dataDiri.namaLembaga)) galat.push("Nama lembaga wajib diisi");
+      if (!kosong(dataDiri.tautanSitusResmi) && !adalahUrlWeb(dataDiri.tautanSitusResmi!)) {
+        galat.push("Tautan situs resmi tidak valid");
+      }
+    } else {
+      galat.push("Peran tidak valid");
+    }
+    return galat;
   }
 
-  /** Algo-C13-03 */
+  /** Algo-C13-03. Saat registrasi email belum diverifikasi, jadi hasilnya MENUNGGU. */
   private static cekStatusVerifikasi(dataDiri: DataDiri): StatusVerifikasi {
-    return belumDiimplementasi("AuthController.cekStatusVerifikasi", dataDiri);
+    return dataDiri.emailTerverifikasi === true
+      ? StatusVerifikasi.TERVERIFIKASI
+      : StatusVerifikasi.MENUNGGU;
   }
 
   /** Algo-C13-04 */
