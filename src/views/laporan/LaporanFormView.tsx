@@ -3,14 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Info,
-  Image as ImageIcon,
-  Bell,
-  ChevronDown,
-} from "lucide-react";
 import { api } from "~/trpc/react";
+import { Banner } from "~/views/components/Banner";
+import { Ikon } from "~/views/components/Ikon";
 
 // Batasan KNF03: 2 MB dan format berkas yang diizinkan
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
@@ -27,8 +22,8 @@ export function LaporanFormView() {
   const programsQuery = api.laporan.programUntukLaporan.useQuery();
   const createMutation = api.laporan.buatLaporan.useMutation({
     onSuccess: ({ status }) => {
-      alert(`Laporan terkirim. Status program: ${status}.`);
-      router.push("/dashboard/inisiator");
+      setPesanSukses(`Laporan terkirim. Status program: ${status}.`);
+      setTimeout(() => router.push("/dashboard/inisiator"), 1500);
     },
     onError: (error) => setErrorMessage(error.message),
   });
@@ -37,6 +32,7 @@ export function LaporanFormView() {
   const [dokumentasiText, setDokumentasiText] = useState("");
   const [ringkasan, setRingkasan] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [pesanSukses, setPesanSukses] = useState("");
 
   // State pendukung unggah berkas fisik (KNF03)
   const [fileError, setFileError] = useState<string | null>(null);
@@ -134,7 +130,7 @@ export function LaporanFormView() {
           </Link>
           <Link
             href="/program/daftar"
-            className="rounded-full px-4 py-1.5 text-xs font-semibold text-[#4F6B61] hover:text-[#2D6A4F]"
+            className="text-text-secondary rounded-full px-4 py-1.5 text-xs font-semibold hover:text-[#2D6A4F]"
           >
             Daftarkan Program
           </Link>
@@ -142,7 +138,7 @@ export function LaporanFormView() {
 
         <div className="flex items-center space-x-4">
           <div className="relative cursor-pointer">
-            <Bell className="h-5 w-5 text-[#4F6B61]" />
+            <Ikon nama="bell" ukuran={20} className="text-text-secondary" />
             <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#B42318] text-[9px] font-bold text-white">
               1
             </span>
@@ -154,7 +150,11 @@ export function LaporanFormView() {
             <span className="text-xs font-bold text-[#12372A]">
               Yayasan Mangrove Jakarta
             </span>
-            <ChevronDown className="h-3.5 w-3.5 text-[#4F6B61]" />
+            <Ikon
+              nama="chevron-down"
+              ukuran={14}
+              className="text-text-secondary"
+            />
           </div>
         </div>
       </header>
@@ -165,7 +165,7 @@ export function LaporanFormView() {
           href="/dashboard/inisiator"
           className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#2D6A4F] hover:underline"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <Ikon nama="back" ukuran={16} />
           <span>Kembali ke Program Saya</span>
         </Link>
 
@@ -176,7 +176,7 @@ export function LaporanFormView() {
         {/* Card Header Info Program */}
         <div className="flex items-center space-x-4 rounded-2xl border border-[#D3DDD8]/60 bg-white p-5 shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#D8F3DC] text-[#2D6A4F]">
-            <ImageIcon className="h-7 w-7" />
+            <Ikon nama="file" ukuran={28} />
           </div>
           <div>
             <span className="rounded-full bg-[#D8F3DC] px-2.5 py-0.5 text-[10px] font-bold text-[#2D6A4F]">
@@ -185,7 +185,7 @@ export function LaporanFormView() {
             <h2 className="mt-1 text-base font-bold text-[#12372A]">
               {selectedProgram?.namaProgram ?? "Pilih program"}
             </h2>
-            <p className="text-xs text-[#4F6B61]">
+            <p className="text-text-secondary text-xs">
               {selectedProgram
                 ? `Status: ${selectedProgram.status}`
                 : "Pilih program aktif untuk mengajukan laporan akhir"}
@@ -198,21 +198,15 @@ export function LaporanFormView() {
           onSubmit={handleSubmit}
           className="space-y-6 rounded-2xl border border-[#D3DDD8]/60 bg-white p-8 shadow-sm"
         >
-          {errorMessage && (
-            <p
-              role="alert"
-              className="rounded-lg bg-red-50 p-3 text-sm text-red-700"
-            >
-              {errorMessage}
-            </p>
-          )}
+          {pesanSukses && <Banner nada="sukses">{pesanSukses}</Banner>}
+          {errorMessage && <Banner nada="error">{errorMessage}</Banner>}
           {programsQuery.isLoading && (
-            <p className="text-sm text-[#4F6B61]">Memuat program...</p>
+            <p className="text-text-secondary text-sm">Memuat program...</p>
           )}
           {programsQuery.isError && (
-            <p role="alert" className="text-sm text-red-700">
+            <Banner nada="error">
               Gagal memuat program: {programsQuery.error.message}
-            </p>
+            </Banner>
           )}
           <div className="space-y-2">
             <label
@@ -236,7 +230,7 @@ export function LaporanFormView() {
               ))}
             </select>
             {programsQuery.data?.length === 0 && (
-              <p className="text-xs text-[#4F6B61]">
+              <p className="text-text-secondary text-xs">
                 Belum ada program aktif atau program yang memerlukan revisi.
               </p>
             )}
@@ -256,11 +250,11 @@ export function LaporanFormView() {
                 type="file"
                 accept=".jpg,.jpeg,.png,.webp,.pdf"
                 onChange={handleFileChange}
-                className="w-full text-xs text-[#4F6B61] file:mr-4 file:rounded-xl file:border-0 file:bg-[#D8F3DC] file:px-4 file:py-2 file:text-xs file:font-bold file:text-[#2D6A4F] hover:file:bg-[#B7E4C7]"
+                className="text-text-secondary w-full text-xs file:mr-4 file:rounded-xl file:border-0 file:bg-[#D8F3DC] file:px-4 file:py-2 file:text-xs file:font-bold file:text-[#2D6A4F] hover:file:bg-[#B7E4C7]"
               />
             </div>
             {fileError && (
-              <p className="text-xs font-medium text-red-600">{fileError}</p>
+              <Banner nada="error">{fileError}</Banner>
             )}
             {selectedFile && !fileError && (
               <p className="text-xs font-medium text-[#2D6A4F]">
@@ -268,7 +262,7 @@ export function LaporanFormView() {
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
-            <p className="text-[10px] text-[#4F6B61]">
+            <p className="text-text-secondary text-[10px]">
               Format diizinkan: JPG, PNG, WEBP, atau PDF. Ukuran maks: 2 MB.
             </p>
           </div>
@@ -289,7 +283,7 @@ export function LaporanFormView() {
               placeholder="Tempel satu tautan HTTP/HTTPS per baris"
               className="w-full rounded-lg border border-[#D3DDD8] bg-white p-3 text-xs"
             />
-            <p className="text-[10px] text-[#4F6B61]">
+            <p className="text-text-secondary text-[10px]">
               Unggah dokumentasi ke penyimpanan yang digunakan tim, lalu tempel
               tautannya di sini.
             </p>
@@ -307,13 +301,17 @@ export function LaporanFormView() {
               required
               className="w-full rounded-lg border border-[#D3DDD8] bg-white p-3 text-xs text-[#12372A] focus:ring-1 focus:ring-[#2D6A4F]"
             />
-            <p className="text-[10px] text-[#4F6B61]">
+            <p className="text-text-secondary text-[10px]">
               Tampil di halaman publik program setelah disetujui
             </p>
           </div>
 
           <div className="flex items-start space-x-3 rounded-xl border border-[#D3DDD8]/60 bg-[#F2F4F7] p-4 text-xs">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#4F6B61]" />
+            <Ikon
+              nama="alert-info"
+              ukuran={16}
+              className="text-text-secondary mt-0.5"
+            />
             <p className="leading-relaxed text-[#12372A]">
               Setelah dikirim, status program menjadi{" "}
               <span className="rounded bg-[#FFE58F] px-1 py-0.5 font-bold text-[#12372A]">
@@ -335,6 +333,7 @@ export function LaporanFormView() {
               type="submit"
               disabled={
                 createMutation.isPending ||
+                !!pesanSukses ||
                 programsQuery.isLoading ||
                 programsQuery.data?.length === 0 ||
                 !!fileError

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, ChevronDown, Search } from 'lucide-react';
+import { Ikon } from "~/views/components/Ikon";
 
 export default function LaporanMasukView() {
   const router = useRouter();
@@ -52,13 +52,13 @@ export default function LaporanMasukView() {
 
         <div className="flex items-center space-x-4">
           <div className="relative cursor-pointer">
-            <Bell className="w-5 h-5 text-[#4F6B61]" />
+            <Ikon nama="bell" ukuran={20} className="text-text-secondary" />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#B42318] text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="w-7 h-7 rounded-full bg-[#B7E4C7] text-[#2D6A4F] text-xs font-bold flex items-center justify-center">VR</div>
             <span className="text-xs font-bold text-[#12372A]">Verifikator</span>
-            <ChevronDown className="w-3.5 h-3.5 text-[#4F6B61]" />
+            <Ikon nama="chevron-down" ukuran={14} className="text-text-secondary" />
           </div>
         </div>
       </header>
@@ -99,7 +99,7 @@ export default function LaporanMasukView() {
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#4F6B61]" />
+            <Ikon nama="search" ukuran={16} className="absolute left-3 top-2.5 text-text-secondary" />
             <input
               type="text"
               placeholder="Cari program atau lembaga..."

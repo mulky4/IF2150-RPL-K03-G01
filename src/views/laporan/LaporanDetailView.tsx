@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import { Banner } from "~/views/components/Banner";
 
 export function LaporanDetailView({ id }: { id: string }) {
   const router = useRouter();
   const [catatan, setCatatan] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [pesanSukses, setPesanSukses] = useState("");
 
   // Jalankan query HANYA jika id valid (bukan string kosong dan bukan literal "[id]")
   const isValidId = Boolean(id) && id !== "[id]";
@@ -19,8 +21,8 @@ export function LaporanDetailView({ id }: { id: string }) {
 
   const verifikasiMutation = api.laporan.verifikasiLaporan.useMutation({
     onSuccess: ({ statusProgram }) => {
-      alert(`Peninjauan berhasil. Status program: ${statusProgram}.`);
-      router.push("/laporan/verifikasi");
+      setPesanSukses(`Peninjauan berhasil. Status program: ${statusProgram}.`);
+      setTimeout(() => router.push("/laporan/verifikasi"), 1500);
     },
     onError: (error) => setErrorMessage(error.message),
   });
@@ -141,11 +143,8 @@ export function LaporanDetailView({ id }: { id: string }) {
 
         {masihMenunggu && (
           <section className="space-y-3 border-t border-gray-200 pt-5">
-            {errorMessage && (
-              <p role="alert" className="text-sm text-red-700">
-                {errorMessage}
-              </p>
-            )}
+            {pesanSukses && <Banner nada="sukses">{pesanSukses}</Banner>}
+            {errorMessage && <Banner nada="error">{errorMessage}</Banner>}
             <label
               htmlFor="catatan"
               className="block text-sm font-semibold text-gray-900"
@@ -163,7 +162,7 @@ export function LaporanDetailView({ id }: { id: string }) {
             <div className="flex flex-wrap justify-end gap-3">
               <button
                 type="button"
-                disabled={verifikasiMutation.isPending}
+                disabled={verifikasiMutation.isPending || !!pesanSukses}
                 onClick={() => verifikasi("DITOLAK")}
                 className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
               >
@@ -173,7 +172,7 @@ export function LaporanDetailView({ id }: { id: string }) {
               </button>
               <button
                 type="button"
-                disabled={verifikasiMutation.isPending}
+                disabled={verifikasiMutation.isPending || !!pesanSukses}
                 onClick={() => verifikasi("DISETUJUI")}
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
               >
