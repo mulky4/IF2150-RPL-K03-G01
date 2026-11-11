@@ -34,7 +34,7 @@ corepack enable
 pnpm install
 cp .env.example .env          # isi BETTER_AUTH_SECRET (openssl rand -base64 32)
 docker compose up -d          # PostgreSQL lokal (menyusul, Modul 3)
-pnpm prisma migrate dev --name tabel_domain
+pnpm prisma migrate dev
 pnpm db:seed
 ```
 
@@ -83,4 +83,7 @@ prisma/       skema, migrasi, seed
 tests/unit/   unit test
 ```
 
-## Tabel Basis Data _(menyusul, Modul 3)_
+## Skema Basis Data
+
+Skema, migrasi, dan seed Prisma berada di `src/prisma/`. Database lokal PostgreSQL
+dapat dijalankan melalui Docker Compose dengan `docker compose up -d`.
