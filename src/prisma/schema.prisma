@@ -42,7 +42,7 @@ enum Peran {
 }
 
 model Program {
-  id                 String          @id @default(cuid())
+  id                 String           @id @default(cuid())
   namaProgram        String
   deskripsi          String
   kategori           KategoriProgram
@@ -51,10 +51,11 @@ model Program {
   waktuSelesai       DateTime
   kuota              Int
   syaratKetentuan    String
-  status             StatusProgram   @default(MENUNGGU_VERIFIKASI)
+  status             StatusProgram    @default(MENUNGGU_VERIFIKASI)
   inisiatorProgramId String
   inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
   pendaftaran        Pendaftaran[]
+  laporanAkhir       LaporanProgram[]
 
   @@map("tbl_program")
 }
@@ -78,7 +79,7 @@ model Relawan {
   nama             String
   noTelepon        String?
   domisili         String?
-  statusVerifikasi StatusVerifikasi  @default(MENUNGGU)
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
   userId           String           @unique
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   pendaftaran      Pendaftaran[]
@@ -100,7 +101,7 @@ model InisiatorProgram {
 
 model DokumenVerifikasi {
   id               String           @id @default(cuid())
-  jenisDokumen      String
+  jenisDokumen     String
   urlFile          String
   statusVerifikasi StatusVerifikasi @default(MENUNGGU)
   userId           String
@@ -127,20 +128,22 @@ model Notifikasi {
 // Relawan / InisiatorProgram / Verifikator (SPEC §1).
 // ---------------------------------------------------------------------------
 model User {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  peran         Peran     @default(RELAWAN)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String              @id
+  name             String
+  email            String              @unique
+  emailVerified    Boolean             @default(false)
+  image            String?
+  peran            Peran               @default(RELAWAN)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
   relawan          Relawan?
   inisiatorProgram InisiatorProgram?
   dokumen          DokumenVerifikasi[]
   notifikasi       Notifikasi[]
   sessions         Session[]
   accounts         Account[]
+
+  laporanProgramDiverifikasi LaporanProgram[] @relation("VerifikatorLaporanProgram")
 
   @@map("user")
 }
@@ -187,4 +190,31 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Laporan & Verifikator
+// ---------------------------------------------------------------------------
+
+enum StatusPeninjauan {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+}
+
+model LaporanProgram {
+  id               String           @id @default(cuid())
+  dokumentasiAkhir String[]         @default([])
+  ringkasanCapaian String
+  catatanRevisi    String?
+  statusPeninjauan StatusPeninjauan @default(MENUNGGU)
+  waktuPengajuan   DateTime         @default(now())
+  programId        String
+  program          Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
+  verifikatorId    String?
+  verifikator      User?            @relation("VerifikatorLaporanProgram", fields: [verifikatorId], references: [id], onDelete: SetNull)
+
+  @@index([statusPeninjauan, waktuPengajuan])
+  @@index([programId])
+  @@map("tbl_laporan_program")
 }

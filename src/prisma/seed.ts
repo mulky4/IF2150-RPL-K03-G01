@@ -13,7 +13,7 @@ type AkunSeed = {
 };
 
 async function seedAkun({ email, nama, peran }: AkunSeed): Promise<string> {
-  let user = await db.user.findUnique({ where: { email } });
+  let user = await db.user.findUnique({ where: { email }});
 
   if (!user) {
     const userId = await BetterAuth.daftarkanKredensial(
@@ -101,7 +101,7 @@ async function main() {
     relawan.push({ ...data, profil });
   }
 
-  await seedAkun({
+  const verifikatorId = await seedAkun({
     email: "verifikator@rekanbumi.example",
     nama: "Verifikator Contoh",
     peran: Peran.VERIFIKATOR,
@@ -173,8 +173,74 @@ async function main() {
     });
   }
 
+  // Data laporan akhir (UC07): satu menunggu ditinjau, satu perlu revisi.
+  const dasarProgramLaporan = {
+    deskripsi: "Program fiktif untuk mencoba alur laporan akhir dan verifikasi.",
+    kategori: "JAGA_ALAM",
+    tempatPelaksanaan: "Taman Kota Contoh",
+    waktuMulai: new Date("2026-11-01T01:00:00.000Z"),
+    waktuSelesai: new Date("2026-11-01T05:00:00.000Z"),
+    kuota: 20,
+    syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+    inisiatorProgramId: inisiator.id,
+  } as const;
+
+  const programMenunggu = await db.program.upsert({
+    where: { id: "seed-program-laporan-menunggu" },
+    update: { status: "MENUNGGU_KONFIRMASI" },
+    create: {
+      id: "seed-program-laporan-menunggu",
+      namaProgram: "Tanam Mangrove Muara Angke",
+      ...dasarProgramLaporan,
+      status: "MENUNGGU_KONFIRMASI",
+    },
+  });
+  const programRevisi = await db.program.upsert({
+    where: { id: "seed-program-laporan-revisi" },
+    update: { status: "PERLU_REVISI" },
+    create: {
+      id: "seed-program-laporan-revisi",
+      namaProgram: "Bersih Kali Ciliwung",
+      ...dasarProgramLaporan,
+      status: "PERLU_REVISI",
+    },
+  });
+
+  await db.laporanProgram.upsert({
+    where: { id: "seed-laporan-menunggu" },
+    update: { statusPeninjauan: "MENUNGGU", catatanRevisi: null, verifikatorId: null },
+    create: {
+      id: "seed-laporan-menunggu",
+      programId: programMenunggu.id,
+      ringkasanCapaian:
+        "1.000 bibit mangrove tertanam di zona abrasi bersama 23 relawan yang hadir.",
+      dokumentasiAkhir: [
+        "https://example.org/dokumentasi/muara-angke-1",
+        "https://example.org/dokumentasi/muara-angke-2",
+      ],
+      statusPeninjauan: "MENUNGGU",
+    },
+  });
+  await db.laporanProgram.upsert({
+    where: { id: "seed-laporan-revisi" },
+    update: {
+      statusPeninjauan: "DITOLAK",
+      catatanRevisi: "Foto kurang jelas dan jumlah bibit belum sesuai.",
+      verifikatorId,
+    },
+    create: {
+      id: "seed-laporan-revisi",
+      programId: programRevisi.id,
+      ringkasanCapaian: "Pembersihan bantaran Ciliwung bersama 20 relawan.",
+      dokumentasiAkhir: ["https://example.org/dokumentasi/ciliwung-1"],
+      statusPeninjauan: "DITOLAK",
+      catatanRevisi: "Foto kurang jelas dan jumlah bibit belum sesuai.",
+      verifikatorId,
+    },
+  });
+
   console.log(
-    "Seed selesai: 1 program, 1 inisiator, 2 relawan, 1 verifikator, 2 pendaftaran.",
+    "Seed selesai: 3 program, 1 inisiator, 2 relawan, 1 verifikator, 2 pendaftaran, 2 laporan.",
   );
 }
 
