@@ -74,6 +74,7 @@ const { dbPalsu, tabel } = vi.hoisted(() => {
           ...baris,
           user: { email: "relawan@rekanbumi.test" },
           kehadiran: tabel.kehadiran.filter((k) => k.relawanId === where.id),
+          riwayatKontribusi: null,
         };
       },
     },
