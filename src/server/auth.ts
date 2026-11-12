@@ -4,6 +4,7 @@ import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 
 import { BetterAuth } from "~/server/adapters/BetterAuth";
+import { AuthController } from "~/server/controllers/AuthController";
 import { db } from "~/server/db";
 import { Peran } from "~/server/models/enums";
 
@@ -27,6 +28,10 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
+    // Issue #8: email terverifikasi → status verifikasi Relawan ikut TERVERIFIKASI.
+    afterEmailVerification: async (user) => {
+      await AuthController.sinkronStatusVerifikasi(user.id);
+    },
     // Tanpa SMTP: link verifikasi cukup dicetak ke console (SPEC §1).
     sendVerificationEmail: async ({ user, url }) => {
       console.info(

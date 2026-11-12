@@ -1,6 +1,6 @@
 // Skema basis data RekanBumi (PostgreSQL).
 // Aturan: model = nama kelas DPPL, @@map("tbl_snake_case"), kolom = nama atribut DPPL (camelCase).
-// Pemilik file: PIC Modul 3 (PR berlabel `db`). Entity C01–C11 ditambahkan Modul 3.
+// Entity C01–C11 dimodelkan di src/server/models dan skema Prisma.
 generator client {
   provider = "prisma-client-js"
 }
@@ -35,6 +35,12 @@ enum StatusVerifikasi {
   DITOLAK
 }
 
+enum StatusPeninjauan {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+}
+
 enum Peran {
   RELAWAN
   INISIATOR
@@ -55,7 +61,9 @@ model Program {
   inisiatorProgramId String
   inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
   pendaftaran        Pendaftaran[]
+  kehadiran          Kehadiran[]
   laporanAkhir       LaporanProgram[]
+  riwayatProgram     RiwayatProgram[]
 
   @@map("tbl_program")
 }
@@ -79,10 +87,15 @@ model Relawan {
   nama             String
   noTelepon        String?
   domisili         String?
-  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+
+  statusVerifikasi StatusVerifikasi  @default(MENUNGGU)
+  totalJamAksi     Float             @default(0)
+
   userId           String           @unique
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   pendaftaran      Pendaftaran[]
+  kehadiran        Kehadiran[]
+  riwayatKontribusi  RiwayatKontribusi?
 
   @@map("tbl_relawan")
 }
@@ -119,6 +132,38 @@ model Notifikasi {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tbl_notifikasi")
+}
+
+model Kehadiran {
+  id              String   @id @default(cuid())
+  waktuKehadiran  DateTime @default(now())
+  relawanId       String
+  programId       String
+  relawan         Relawan  @relation(fields: [relawanId], references: [id], onDelete: Cascade)
+  program         Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([relawanId, programId])
+  @@map("tbl_kehadiran")
+}
+
+model RiwayatKontribusi {
+  id            String          @id @default(cuid())
+  totalJamAksi  Float           @default(0)
+  relawanId     String          @unique
+  relawan       Relawan         @relation(fields: [relawanId], references: [id], onDelete: Cascade)
+  programSelesai RiwayatProgram[]
+
+  @@map("tbl_riwayat_kontribusi")
+}
+
+model RiwayatProgram {
+  riwayatId String
+  programId String
+  riwayat   RiwayatKontribusi @relation(fields: [riwayatId], references: [id], onDelete: Cascade)
+  program   Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@id([riwayatId, programId])
+  @@map("tbl_riwayat_program")
 }
 
 // ---------------------------------------------------------------------------
@@ -195,12 +240,6 @@ model Verification {
 // ---------------------------------------------------------------------------
 // Laporan & Verifikator
 // ---------------------------------------------------------------------------
-
-enum StatusPeninjauan {
-  MENUNGGU
-  DISETUJUI
-  DITOLAK
-}
 
 model LaporanProgram {
   id               String           @id @default(cuid())

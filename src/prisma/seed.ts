@@ -98,6 +98,11 @@ async function main() {
         userId,
       },
     });
+    await db.riwayatKontribusi.upsert({
+      where: { relawanId: profil.id },
+      update: {},
+      create: { relawanId: profil.id },
+    });
     relawan.push({ ...data, profil });
   }
 
