@@ -239,6 +239,24 @@ export class AuthController {
       : StatusVerifikasi.MENUNGGU;
   }
 
+  /**
+   * Issue #8. Dipanggil Better Auth sesudah email pengguna berhasil diverifikasi
+   * (`emailVerification.afterEmailVerification` di server/auth.ts).
+   * Relawan yang statusnya MENUNGGU menjadi TERVERIFIKASI. Status DITOLAK tidak diubah,
+   * dan Inisiator tidak ikut karena akunnya diverifikasi lewat dokumen (UC Verifikator).
+   * Mengembalikan true kalau ada status yang berubah. Aman dipanggil berulang.
+   */
+  static async sinkronStatusVerifikasi(idPengguna: string): Promise<boolean> {
+    const { count } = await db.relawan.updateMany({
+      where: {
+        userId: idPengguna,
+        statusVerifikasi: StatusVerifikasi.MENUNGGU,
+      },
+      data: { statusVerifikasi: StatusVerifikasi.TERVERIFIKASI },
+    });
+    return count > 0;
+  }
+
   /** Algo-C13-04 */
   static async cekSesi(): Promise<boolean> {
     const sesi = await BetterAuth.ambilSesi();
