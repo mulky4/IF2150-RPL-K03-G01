@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
 import { GalatValidasi } from "~/lib/galat";
 import { db } from "~/server/db";
+import type { KategoriProgram, StatusPendaftaran } from "~/server/models/enums";
 import { Kehadiran } from "~/server/models/Kehadiran";
 import { Pendaftaran } from "~/server/models/Pendaftaran";
 import { Program } from "~/server/models/Program";
@@ -14,12 +15,70 @@ export const PESAN_DI_LUAR_WAKTU =
   "Check-in hanya dapat dilakukan selama waktu pelaksanaan program";
 export const PESAN_SUDAH_HADIR = "Kehadiran sudah tercatat sebelumnya";
 
+/** Satu baris di daftar Kegiatan Saya, dikirim apa adanya ke halaman. */
+export type KegiatanRelawan = {
+  idProgram: string;
+  namaProgram: string;
+  kategori: KategoriProgram;
+  tempatPelaksanaan: string;
+  waktuMulai: Date;
+  waktuSelesai: Date;
+  statusPendaftaran: StatusPendaftaran;
+  /** Waktu check-in, null kalau belum check-in. */
+  waktuKehadiran: Date | null;
+};
+
 /**
  * Mengatur presensi (check-in) dan portofolio relawan.
  * Keputusan diserahkan ke model: Pendaftaran menilai status diterima,
  * Program menilai waktu pelaksanaan, Relawan menilai sudah hadir atau belum.
  */
 export class PresensiController {
+  /** id relawan milik akun yang sedang login, null kalau akun ini bukan relawan. */
+  static async cariIdRelawan(idPengguna: string): Promise<string | null> {
+    const baris = await db.relawan.findUnique({
+      where: { userId: idPengguna },
+      select: { id: true },
+    });
+    return baris?.id ?? null;
+  }
+
+  /**
+   * Semua program yang didaftari relawan, diurutkan dari yang paling dekat
+   * waktunya. Program yang sudah lewat ditaruh di akhir.
+   */
+  static async ambilDaftarKegiatan(
+    idRelawan: string,
+  ): Promise<KegiatanRelawan[]> {
+    const daftar = await db.pendaftaran.findMany({
+      where: { relawanId: idRelawan },
+      include: { program: true },
+      orderBy: { program: { waktuMulai: "asc" } },
+    });
+    const kehadiran = await db.kehadiran.findMany({
+      where: { relawanId: idRelawan },
+      select: { programId: true, waktuKehadiran: true },
+    });
+    const sekarang = new Date();
+    const kegiatan = daftar.map(({ program, status }): KegiatanRelawan => ({
+      idProgram: program.id,
+      namaProgram: program.namaProgram,
+      kategori: program.kategori,
+      tempatPelaksanaan: program.tempatPelaksanaan,
+      waktuMulai: program.waktuMulai,
+      waktuSelesai: program.waktuSelesai,
+      statusPendaftaran: status,
+      waktuKehadiran:
+        kehadiran.find((k) => k.programId === program.id)?.waktuKehadiran ??
+        null,
+    }));
+    const sudahLewat = (k: KegiatanRelawan) => k.waktuSelesai < sekarang;
+    return [
+      ...kegiatan.filter((k) => !sudahLewat(k)),
+      ...kegiatan.filter(sudahLewat),
+    ];
+  }
+
   /** Relawan dianggap valid kalau pendaftarannya di program ini sudah diterima. */
   static async validasiStatusRelawan(
     idProgram: string,
