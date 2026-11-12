@@ -1,8 +1,9 @@
+import { db } from "~/server/db";
 import {
   StatusVerifikasi,
   type StatusVerifikasi as TipeStatusVerifikasi,
 } from "~/server/models/enums";
-import type { Kehadiran } from "~/server/models/Kehadiran";
+import { Kehadiran } from "~/server/models/Kehadiran";
 import type { Program } from "~/server/models/Program";
 import { Pengguna } from "~/server/models/Pengguna";
 import type { RiwayatKontribusi } from "~/server/models/RiwayatKontribusi";
@@ -70,8 +71,35 @@ export class Relawan extends Pengguna {
     return true;
   }
 
-  private hadirPada(program: Program): boolean {
+  /**
+   * Dibuat public karena PresensiController juga butuh cek ini, untuk menolak
+   * check-in ganda dan untuk memilih relawan yang dapat jam aksi.
+   */
+  hadirPada(program: Program): boolean {
     return this.kehadiran.some((catatan) => catatan.untukProgram(program));
+  }
+
+  /**
+   * Ambil relawan beserta semua catatan kehadirannya dari database.
+   * Hasilnya null kalau id relawan tidak ada.
+   */
+  static async cari(idRelawan: string): Promise<Relawan | null> {
+    const baris = await db.relawan.findUnique({
+      where: { id: idRelawan },
+      include: { user: { select: { email: true } }, kehadiran: true },
+    });
+    if (baris === null) return null;
+    return new Relawan({
+      idPengguna: baris.userId,
+      email: baris.user.email,
+      idRelawan: baris.id,
+      nama: baris.nama,
+      noTelepon: baris.noTelepon,
+      domisili: baris.domisili,
+      statusVerifikasi: baris.statusVerifikasi,
+      totalJamAksi: baris.totalJamAksi,
+      kehadiran: baris.kehadiran.map((data) => Kehadiran.dariBaris(data)),
+    });
   }
 
   getIdRelawan(): string {
