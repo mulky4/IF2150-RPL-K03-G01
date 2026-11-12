@@ -1,16 +1,10 @@
-import { authRouter } from "~/server/api/routers/auth";
-import { presensiRouter } from "~/server/api/routers/presensi";
-import { programRouter } from "~/server/api/routers/program";
-import { seleksiRouter } from "~/server/api/routers/seleksi";
-import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { createTRPCRouter } from "./trpc";
+import { laporanRouter } from "./routers/laporan";
+import { programRouter } from "./routers/program";
 
 export const appRouter = createTRPCRouter({
-  auth: authRouter,
+  laporan: laporanRouter,
   program: programRouter,
-  seleksi: seleksiRouter,
-  presensi: presensiRouter,
 });
 
 export type AppRouter = typeof appRouter;
-
-export const createCaller = createCallerFactory(appRouter);
