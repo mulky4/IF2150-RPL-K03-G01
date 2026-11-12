@@ -2,8 +2,6 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
-import type { Program } from "~/server/models/Program";
 import { api } from "~/trpc/react";
 
 /**
@@ -80,15 +78,38 @@ export function useAreaKegiatanPage() {
     klikCheckIn: () => {
       if (adaProgram) checkIn.mutate({ idProgram });
     },
+  };
+}
 
-    bukaPortofolio: () => belumDiimplementasi("bukaPortofolio"),
-    tampilkanPortofolio: (totalJamAksi: number) =>
-      belumDiimplementasi("tampilkanPortofolio", totalJamAksi),
-    tampilkanRiwayatProgram: (daftarProgram: Program[]) =>
-      belumDiimplementasi("tampilkanRiwayatProgram", daftarProgram),
+/**
+ * Data halaman Portofolio: profil, total jam aksi, riwayat program selesai,
+ * dan program yang masih diikuti (sudah diterima tapi belum masuk riwayat).
+ */
+export function usePortofolio() {
+  const profil = api.presensi.ambilProfilRelawan.useQuery();
+  const totalJamAksi = api.presensi.ambilTotalJamAksi.useQuery();
+  const riwayat = api.presensi.ambilRiwayatProgram.useQuery();
+  const kegiatan = api.presensi.daftarKegiatan.useQuery();
+
+  const daftarRiwayat = riwayat.data ?? [];
+  const idSelesai = new Set(daftarRiwayat.map((p) => p.idProgram));
+  const sedangDiikuti = (kegiatan.data ?? []).filter(
+    (k) => k.statusPendaftaran === "DITERIMA" && !idSelesai.has(k.idProgram),
+  );
+
+  const semua = [profil, totalJamAksi, riwayat, kegiatan];
+  return {
+    memuat: semua.some((q) => q.isPending),
+    gagalMemuat: semua.some((q) => q.isError),
+    profil: profil.data ?? null,
+    totalJamAksi: totalJamAksi.data ?? 0,
+    riwayat: daftarRiwayat,
+    sedangDiikuti,
   };
 }
 
 export type KegiatanDiLayar = NonNullable<
   ReturnType<typeof useAreaKegiatanPage>["kegiatan"]
 >;
+
+export type ItemRiwayat = ReturnType<typeof usePortofolio>["riwayat"][number];
