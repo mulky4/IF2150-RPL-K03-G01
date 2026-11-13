@@ -1,4 +1,4 @@
-import type { PrismaClient, StatusProgram } from "@prisma/client";
+import { Prisma, type PrismaClient, type StatusProgram } from "@prisma/client";
 import { db } from "~/server/db";
 import { LaporanProgram } from "~/server/models/LaporanProgram";
 import { hitungStatistik } from "~/lib/programSaya";
@@ -106,14 +106,27 @@ export class ProgramController {
       );
     }
 
-    return this.database.pendaftaran.create({
-      data: {
-        programId: program.id,
-        relawanId: relawan.id,
-        keterampilan: data.keterampilan,
-        ketersediaanWaktu: data.ketersediaanWaktu,
-      },
-    });
+    try {
+      return await this.database.pendaftaran.create({
+        data: {
+          programId: program.id,
+          relawanId: relawan.id,
+          keterampilan: data.keterampilan,
+          ketersediaanWaktu: data.ketersediaanWaktu,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new GalatProgram(
+          "Kamu sudah mendaftar di program ini.",
+          "CONFLICT",
+        );
+      }
+      throw error;
+    }
   }
 
   async ambilProgramUntukLaporan(idPengguna: string) {

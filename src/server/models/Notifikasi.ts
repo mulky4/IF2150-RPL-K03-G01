@@ -100,4 +100,15 @@ export class Notifikasi {
       statusDibaca: this.statusDibaca,
     };
   }
+
+  /** Bentuk persistence untuk penulisan notifikasi di dalam transaksi controller. */
+  keDataUntukPenyimpanan(): BarisNotifikasi {
+    return {
+      id: this.idNotifikasi,
+      userId: this.idPenerima,
+      pesan: this.pesan,
+      waktuKirim: this.waktuKirim,
+      statusDibaca: this.statusDibaca,
+    };
+  }
 }

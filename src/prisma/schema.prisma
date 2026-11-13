@@ -48,22 +48,23 @@ enum Peran {
 }
 
 model Program {
-  id                 String           @id @default(cuid())
-  namaProgram        String
-  deskripsi          String
-  kategori           KategoriProgram
-  tempatPelaksanaan  String
-  waktuMulai         DateTime
-  waktuSelesai       DateTime
-  kuota              Int
-  syaratKetentuan    String
-  status             StatusProgram    @default(MENUNGGU_VERIFIKASI)
-  inisiatorProgramId String
-  inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
-  pendaftaran        Pendaftaran[]
-  kehadiran          Kehadiran[]
-  laporanAkhir       LaporanProgram[]
-  riwayatProgram     RiwayatProgram[]
+  id                      String           @id @default(cuid())
+  namaProgram             String
+  deskripsi               String
+  kategori                KategoriProgram
+  tempatPelaksanaan       String
+  waktuMulai              DateTime
+  waktuSelesai            DateTime
+  kuota                   Int
+  syaratKetentuan         String
+  status                  StatusProgram    @default(MENUNGGU_VERIFIKASI)
+  hasilSeleksiDiumumkanAt DateTime?
+  inisiatorProgramId      String
+  inisiatorProgram        InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
+  pendaftaran             Pendaftaran[]
+  kehadiran               Kehadiran[]
+  laporanAkhir            LaporanProgram[]
+  riwayatProgram          RiwayatProgram[]
 
   @@map("tbl_program")
 }
@@ -79,6 +80,7 @@ model Pendaftaran {
   relawan           Relawan           @relation(fields: [relawanId], references: [id])
   program           Program           @relation(fields: [programId], references: [id])
 
+  @@unique([programId, relawanId])
   @@map("tbl_pendaftaran")
 }
 

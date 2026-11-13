@@ -19,9 +19,6 @@ import { useProgramSaya } from "./useProgramSaya";
 
 const HREF_DAFTAR_BARU = "/inisiator/program/baru";
 const HREF_UNGGAH_LAPORAN = "/laporan"; // I-09
-// I-11 milik Modul 3. Sesuaikan kalau rutenya berbeda.
-// Ubah ke true setelah halaman I-11 ada (sementara 404).
-const HALAMAN_KELOLA_PENDAFTAR_ADA = false;
 const hrefKelolaPendaftar = (id: string) =>
   `/inisiator/program/${id}/pendaftar`;
 
@@ -191,10 +188,7 @@ export function ProgramSayaView() {
                                 <ButtonLink
                                   varian="secondary"
                                   href={hrefKelolaPendaftar(p.id)}
-                                  nonaktif={
-                                    !HALAMAN_KELOLA_PENDAFTAR_ADA ||
-                                    !aksi.kelolaPendaftarAktif
-                                  }
+                                  nonaktif={!aksi.kelolaPendaftarAktif}
                                 >
                                   Kelola Pendaftar
                                 </ButtonLink>
