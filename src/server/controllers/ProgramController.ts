@@ -4,6 +4,7 @@ import { GalatValidasi } from "~/lib/galat";
 import { PresensiController } from "~/server/controllers/PresensiController";
 import { LaporanProgram } from "~/server/models/LaporanProgram";
 import { hitungStatistik } from "~/lib/programSaya";
+import { InisiatorProgram } from "~/server/models/InisiatorProgram";
 import { Program } from "~/server/models/Program";
 
 export type KodeGalatProgram =
@@ -29,6 +30,51 @@ export type DataProgramBaru = {
   kuota: number;
   syaratKetentuan: string;
   urlDokumenLegalitas: string;
+};
+
+/** Satu baris di daftar Eksplorasi (I-04). */
+export type RingkasanProgram = {
+  idProgram: string;
+  namaProgram: string;
+  kategori: "JAGA_ALAM" | "JAGA_IKLIM";
+  tempatPelaksanaan: string;
+  waktuMulai: Date;
+  waktuSelesai: Date;
+  kuota: number;
+  jumlahDiterima: number;
+  namaLembaga: string;
+  lembagaTerverifikasi: boolean;
+};
+
+/** Hasil pencarian: paling banyak `batas` program dan penanda masih ada hasil lain. */
+export type HasilPencarianProgram = {
+  daftar: RingkasanProgram[];
+  adaLagi: boolean;
+};
+
+/** Isi halaman Detail Program (I-05). */
+export type DetailProgram = RingkasanProgram & {
+  deskripsi: string;
+  syaratKetentuan: string;
+  status: StatusProgram;
+  keteranganWaktu: string;
+  kuotaTersedia: boolean;
+  /** Tautan situs resmi lembaga; null kalau kosong atau bukan http/https (UC04 alt. 1). */
+  tautanSitusResmi: string | null;
+  /** Hanya terisi untuk program SELESAI yang laporannya sudah disetujui (UC07). */
+  capaian: {
+    ringkasan: string;
+    dokumentasi: string[];
+  } | null;
+};
+
+const MUAT_UNTUK_EKSPLORASI = {
+  inisiatorProgram: {
+    select: { namaLembaga: true, statusVerifikasi: true },
+  },
+  _count: {
+    select: { pendaftaran: { where: { status: "DITERIMA" as const } } },
+  },
 };
 
 export class ProgramController {
@@ -235,6 +281,137 @@ export class ProgramController {
       "DITOLAK",
       catatanRevisi,
     );
+  }
+
+  /**
+   * Algo-C15-03 (UC03, KF03, KF04). Mencari program AKTIF; kata kunci dicocokkan ke
+   * nama dan deskripsi tanpa membedakan huruf, kategori opsional. Hasil dibatasi
+   * `batas` agar waktu respons tetap ≤ 2 detik pada banyak program (KNF01):
+   * diambil satu baris lebih banyak untuk tahu apakah masih ada hasil lain.
+   */
+  async cariProgram(
+    kataKunci: string,
+    kategori: "JAGA_ALAM" | "JAGA_IKLIM" | null | undefined,
+    batas: number,
+  ): Promise<HasilPencarianProgram> {
+    const kata = kataKunci.trim();
+    const baris = await this.database.program.findMany({
+      where: {
+        status: "AKTIF",
+        ...(kategori ? { kategori } : {}),
+        ...(kata
+          ? {
+              OR: [
+                { namaProgram: { contains: kata, mode: "insensitive" } },
+                { deskripsi: { contains: kata, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      include: MUAT_UNTUK_EKSPLORASI,
+      orderBy: { waktuMulai: "asc" },
+      take: batas + 1,
+    });
+
+    return {
+      daftar: baris.slice(0, batas).map((b) => ({
+        idProgram: b.id,
+        namaProgram: b.namaProgram,
+        kategori: b.kategori,
+        tempatPelaksanaan: b.tempatPelaksanaan,
+        waktuMulai: b.waktuMulai,
+        waktuSelesai: b.waktuSelesai,
+        kuota: b.kuota,
+        jumlahDiterima: b._count.pendaftaran,
+        namaLembaga: b.inisiatorProgram.namaLembaga,
+        lembagaTerverifikasi:
+          b.inisiatorProgram.statusVerifikasi === "TERVERIFIKASI",
+      })),
+      adaLagi: baris.length > batas,
+    };
+  }
+
+  /**
+   * Algo-C15-04 (UC04, KF02). Mengambil detail program beserta pengelolanya.
+   * Program yang masih MENUNGGU_VERIFIKASI tidak boleh tampil ke publik.
+   */
+  async ambilDetailProgram(idProgram: string): Promise<DetailProgram> {
+    const baris = await this.database.program.findUnique({
+      where: { id: idProgram },
+      include: {
+        inisiatorProgram: { include: { user: { select: { email: true } } } },
+        _count: MUAT_UNTUK_EKSPLORASI._count,
+      },
+    });
+    if (!baris || baris.status === "MENUNGGU_VERIFIKASI") {
+      throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+    }
+
+    const lembaga = baris.inisiatorProgram;
+    const program = Program.dariBaris(baris, {
+      pengelola: new InisiatorProgram({
+        idPengguna: lembaga.userId,
+        email: lembaga.user.email,
+        idInisiator: lembaga.id,
+        namaLembaga: lembaga.namaLembaga,
+        tautanSitusResmi: lembaga.tautanSitusResmi,
+        statusVerifikasi: lembaga.statusVerifikasi,
+      }),
+    });
+    const jumlahDiterima = baris._count.pendaftaran;
+    const tautan = program.getTautan();
+
+    return {
+      idProgram: baris.id,
+      namaProgram: baris.namaProgram,
+      kategori: baris.kategori,
+      tempatPelaksanaan: baris.tempatPelaksanaan,
+      waktuMulai: baris.waktuMulai,
+      waktuSelesai: baris.waktuSelesai,
+      kuota: baris.kuota,
+      jumlahDiterima,
+      namaLembaga: lembaga.namaLembaga,
+      lembagaTerverifikasi: program.ambilPengelola().cekStatusVerifikasi(),
+      deskripsi: baris.deskripsi,
+      syaratKetentuan: baris.syaratKetentuan,
+      status: baris.status,
+      keteranganWaktu: program.keteranganWaktu(),
+      kuotaTersedia: jumlahDiterima < baris.kuota,
+      tautanSitusResmi: this.validasiTautanSitus(tautan) ? tautan : null,
+      capaian: await this.ambilCapaianPublik(baris.id, baris.status),
+    };
+  }
+
+  /** Algo-C15-05. Tautan situs resmi valid kalau berupa URL http atau https. */
+  private validasiTautanSitus(url: string): boolean {
+    if (!url.trim()) return false;
+    try {
+      const { protocol } = new URL(url);
+      return protocol === "http:" || protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+
+  /** Capaian publik (UC07 langkah 3): ringkasan dari laporan akhir yang disetujui. */
+  private async ambilCapaianPublik(
+    idProgram: string,
+    status: StatusProgram,
+  ): Promise<DetailProgram["capaian"]> {
+    if (status !== "SELESAI") return null;
+    const baris = await this.database.laporanProgram.findFirst({
+      where: { programId: idProgram, statusPeninjauan: "DISETUJUI" },
+      orderBy: { waktuPengajuan: "desc" },
+    });
+    if (!baris) return null;
+    const laporan = new LaporanProgram(
+      baris.ringkasanCapaian,
+      baris.dokumentasiAkhir,
+    );
+    return {
+      ringkasan: laporan.showSummary(),
+      dokumentasi: laporan.showDokumentasi(),
+    };
   }
 
   async ambilProgramSaya(idPengguna: string) {
