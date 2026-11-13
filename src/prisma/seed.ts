@@ -140,7 +140,6 @@ async function main() {
       kuota: 1,
       syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
       status: "AKTIF",
-      hasilSeleksiDiumumkanAt: null,
       inisiatorProgramId: inisiator.id,
     },
     create: {
@@ -154,7 +153,6 @@ async function main() {
       kuota: 1,
       syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
       status: "AKTIF",
-      hasilSeleksiDiumumkanAt: null,
       inisiatorProgramId: inisiator.id,
     },
   });
@@ -167,6 +165,7 @@ async function main() {
         keterampilan: data.keterampilan,
         ketersediaanWaktu: data.ketersediaanWaktu,
         status,
+        notifikasiTerkirimAt: null,
         relawanId: data.profil.id,
         programId: program.id,
       },
@@ -175,6 +174,7 @@ async function main() {
         keterampilan: data.keterampilan,
         ketersediaanWaktu: data.ketersediaanWaktu,
         status,
+        notifikasiTerkirimAt: null,
         relawanId: data.profil.id,
         programId: program.id,
       },
@@ -194,7 +194,6 @@ async function main() {
       kuota: 10,
       syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
       status: "AKTIF",
-      hasilSeleksiDiumumkanAt: null,
       inisiatorProgramId: inisiator.id,
     },
     create: {
@@ -216,6 +215,7 @@ async function main() {
     keterampilan: relawan[1]!.keterampilan,
     ketersediaanWaktu: relawan[1]!.ketersediaanWaktu,
     status: "DITERIMA" as const,
+    notifikasiTerkirimAt: null,
     relawanId: relawan[1]!.profil.id,
     programId: programBerlangsung.id,
   };
@@ -229,6 +229,7 @@ async function main() {
     keterampilan: relawan[0]!.keterampilan,
     ketersediaanWaktu: relawan[0]!.ketersediaanWaktu,
     status: "MENUNGGU" as const,
+    notifikasiTerkirimAt: null,
     relawanId: relawan[0]!.profil.id,
     programId: programBerlangsung.id,
   };
@@ -272,6 +273,7 @@ async function main() {
     keterampilan: relawan[0]!.keterampilan,
     ketersediaanWaktu: relawan[0]!.ketersediaanWaktu,
     status: "DITERIMA" as const,
+    notifikasiTerkirimAt: null,
     relawanId: relawan[0]!.profil.id,
     programId: programSelesai.id,
   };

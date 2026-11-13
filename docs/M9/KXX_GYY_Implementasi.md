@@ -191,7 +191,7 @@ Tabel B.1. Perubahan dari DPPL
 | No | Bagian DPPL | Rancangan Awal | Implementasi Akhir | Alasan |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | C18 SeleksiController dan I-11 Kelola Pendaftar | Keputusan pendaftaran disimpan dan dikonfirmasi; validasi kuota direncanakan melalui `Program.cekKuotaTersedia()`. | Seleksi menggunakan prosedur tRPC khusus Inisiator, menyimpan keputusan dalam transaksi serializable, lalu mengirim notifikasi ketika hasil dikonfirmasi. Halaman I-11 tersedia di `/inisiator/program/[id]/pendaftar`. | Kuota dihitung dari data database aktual di dalam transaksi untuk mencegah keputusan bersamaan melampaui kuota; identitas pemilik diverifikasi dari sesi. |
-| 2 | C01 Program dan C18 SeleksiController | Program dan seleksi mengikuti atribut serta operasi pada DPPL. | Ditambahkan `hasilSeleksiDiumumkanAt` pada Program serta batas unik `(programId, relawanId)` pada Pendaftaran. | Penanda pengumuman membuat pengiriman hasil idempoten; batas unik menjaga satu relawan hanya mendaftar sekali per program. |
+| 2 | C02 Pendaftaran dan C18 SeleksiController | Pendaftaran menyimpan keputusan seleksi; controller mengirim notifikasi hasil. | Ditambahkan `notifikasiTerkirimAt` pada Pendaftaran serta batas unik `(programId, relawanId)`. Konfirmasi mengirim notifikasi hanya untuk pendaftaran yang belum pernah diberi hasil. | Penanda per pendaftaran mencegah duplikasi sekaligus memungkinkan program aktif menerima pendaftar baru setelah pengumuman sebelumnya. |
 | 3 | C16 EksplorasiProgramPage | DPPL merancang halaman eksplorasi, pencarian, filter, detail, dan permohonan pendaftaran. | Halaman eksplorasi dan route daftar program belum tersedia; hanya komponen kartu program dan route formulir daftar yang ada. | Implementasi C16 bukan bagian dari lingkup seleksi Modul 3 pada branch ini. |
 
 ## B.2 Bukti Penerapan Best Practices
@@ -200,10 +200,10 @@ Tabel B.2. Bukti Best Practices
 
 | Praktik | Bukti | Keterangan |
 | :--- | :--- | :--- |
-| Branching | Branch lokal `feat/modul3-selection-seed-docs` | Branch fitur dibuat dari `origin/develop`; belum dipush. |
-| Semantic commit | Belum ada commit atas perubahan branch ini | Perubahan belum di-commit; tidak ada riwayat commit fitur untuk dilaporkan saat ini. |
+| Branching | Branch `feat/modul3-selection-seed-docs` | Branch fitur dibuat dari `develop` dan dipush sebagai pull request. |
+| Semantic commit | `feat(seleksi): implement kelola pendaftar` | Perubahan I-11 dan seleksi dilakukan pada branch fitur terpisah. |
 | Track tasks | Lingkup I-11 yang sudah disepakati | Tidak membuat issue baru untuk I-06 atau I-08. |
-| Pull request dan review | Belum ada | PR belum dibuka dan belum ada review untuk perubahan branch ini. |
+| Pull request dan review | Pull request fitur seleksi | Mendapat review anggota kelompok; perbaikan temuan review dicatat pada commit lanjutan. |
 | Pengujian | `src/tests/unit/SeleksiController.test.ts` | Mencakup otorisasi pemilik, validasi kuota, penyimpanan keputusan, konfirmasi, dan notifikasi. Jalankan `pnpm test -- tests/unit/SeleksiController.test.ts`; belum dijalankan di environment implementasi ini karena Node.js/pnpm tidak tersedia. |
 
 ### B.2.1 Profiling dan Optimasi
@@ -226,6 +226,7 @@ Jika tidak ada perbaikan yang perlu dilakukan, jelaskan hasil profiling dan alas
 - Halaman EksplorasiProgramPage (C16) belum diimplementasikan; route formulir daftar program belum didahului route katalog/detail.
 - Operasi portofolio C19/C20 masih berupa stub pada `PresensiController` dan hook kegiatan.
 - Profiling performa belum dilakukan untuk perubahan ini.
+- Sebelum menjalankan migrasi constraint unik `(programId, relawanId)`, periksa kemungkinan pendaftaran ganda dengan query `SELECT "programId", "relawanId", COUNT(*) FROM "tbl_pendaftaran" GROUP BY "programId", "relawanId" HAVING COUNT(*) > 1;`. Jika ada hasil, tinjau dan bersihkan duplikat sebelum migrasi; migrasi tidak menghapus data otomatis.
 
 ## B.4 Kontribusi Anggota
 

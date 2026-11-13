@@ -58,7 +58,6 @@ model Program {
   kuota                   Int
   syaratKetentuan         String
   status                  StatusProgram    @default(MENUNGGU_VERIFIKASI)
-  hasilSeleksiDiumumkanAt DateTime?
   inisiatorProgramId      String
   inisiatorProgram        InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
   pendaftaran             Pendaftaran[]
@@ -70,15 +69,16 @@ model Program {
 }
 
 model Pendaftaran {
-  id                String            @id @default(cuid())
-  keterampilan      String
-  ketersediaanWaktu String
-  status            StatusPendaftaran @default(MENUNGGU)
-  waktuDaftar       DateTime          @default(now())
-  relawanId         String
-  programId         String
-  relawan           Relawan           @relation(fields: [relawanId], references: [id])
-  program           Program           @relation(fields: [programId], references: [id])
+  id                   String            @id @default(cuid())
+  keterampilan         String
+  ketersediaanWaktu    String
+  status               StatusPendaftaran @default(MENUNGGU)
+  waktuDaftar          DateTime          @default(now())
+  notifikasiTerkirimAt DateTime?
+  relawanId            String
+  programId            String
+  relawan              Relawan           @relation(fields: [relawanId], references: [id])
+  program              Program           @relation(fields: [programId], references: [id])
 
   @@unique([programId, relawanId])
   @@map("tbl_pendaftaran")

@@ -92,8 +92,8 @@ merujuk pada nama field Prisma; relasi dan batas unik selengkapnya ada di
 
 | Tabel | Atribut |
 | --- | --- |
-| `tbl_program` | `id`, `namaProgram`, `deskripsi`, `kategori`, `tempatPelaksanaan`, `waktuMulai`, `waktuSelesai`, `kuota`, `syaratKetentuan`, `status`, `hasilSeleksiDiumumkanAt`, `inisiatorProgramId` |
-| `tbl_pendaftaran` | `id`, `keterampilan`, `ketersediaanWaktu`, `status`, `waktuDaftar`, `relawanId`, `programId` |
+| `tbl_program` | `id`, `namaProgram`, `deskripsi`, `kategori`, `tempatPelaksanaan`, `waktuMulai`, `waktuSelesai`, `kuota`, `syaratKetentuan`, `status`, `inisiatorProgramId` |
+| `tbl_pendaftaran` | `id`, `keterampilan`, `ketersediaanWaktu`, `status`, `waktuDaftar`, `notifikasiTerkirimAt`, `relawanId`, `programId` |
 | `tbl_relawan` | `id`, `nama`, `noTelepon`, `domisili`, `statusVerifikasi`, `totalJamAksi`, `userId` |
 | `tbl_inisiator_program` | `id`, `namaLembaga`, `tautanSitusResmi`, `statusVerifikasi`, `userId` |
 | `tbl_dokumen_verifikasi` | `id`, `jenisDokumen`, `urlFile`, `statusVerifikasi`, `userId` |

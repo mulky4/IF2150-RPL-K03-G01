@@ -13,7 +13,6 @@ const program = {
   namaProgram: "Penanaman Pohon",
   status: "AKTIF",
   kuota: 2,
-  hasilSeleksiDiumumkanAt: null,
   inisiatorProgram: { userId: "inisiator-1" },
 };
 
@@ -21,6 +20,7 @@ function buatController({
   programBaris = program,
   pendaftar = [],
   jumlahDiterima = 0,
+  kuota,
 }: {
   programBaris?: typeof program | null;
   pendaftar?: Array<{
@@ -29,28 +29,33 @@ function buatController({
     keterampilan?: string;
     ketersediaanWaktu?: string;
     waktuDaftar?: Date;
+    notifikasiTerkirimAt?: Date | null;
     relawan?: { userId: string };
   }>;
   jumlahDiterima?: number;
+  kuota?: number;
 } = {}) {
+  const programUntukTes = {
+    ...(programBaris ?? program),
+    kuota: kuota ?? programBaris?.kuota ?? program.kuota,
+  };
   const pendaftaranFindMany = vi.fn().mockResolvedValue(
     pendaftar.map((baris, index) => ({
       id: baris.id ?? `pendaftaran-${index + 1}`,
       keterampilan: baris.keterampilan ?? "Menanam",
       ketersediaanWaktu: baris.ketersediaanWaktu ?? "Akhir pekan",
       waktuDaftar: baris.waktuDaftar ?? new Date("2026-11-13T10:00:00Z"),
+      notifikasiTerkirimAt: baris.notifikasiTerkirimAt ?? null,
       status: baris.status,
       relawan: baris.relawan ?? { userId: `relawan-${index + 1}` },
     })),
   );
   const pendaftaranUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
   const pendaftaranCount = vi.fn().mockResolvedValue(jumlahDiterima);
-  const programUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
   const notifikasiCreate = vi.fn().mockResolvedValue({});
   const tx = {
     program: {
-      findUnique: vi.fn().mockResolvedValue(programBaris),
-      updateMany: programUpdateMany,
+      findUnique: vi.fn().mockResolvedValue(programUntukTes),
     },
     pendaftaran: {
       findMany: pendaftaranFindMany,
@@ -60,7 +65,7 @@ function buatController({
     notifikasi: { create: notifikasiCreate },
   };
   const database = {
-    program: { findUnique: vi.fn().mockResolvedValue(programBaris) },
+    program: { findUnique: vi.fn().mockResolvedValue(programUntukTes) },
     pendaftaran: { findMany: pendaftaranFindMany },
     $transaction: vi.fn(
       async (callback: (client: typeof tx) => Promise<unknown>) => callback(tx),
@@ -72,17 +77,30 @@ function buatController({
     pendaftaranFindMany,
     pendaftaranUpdateMany,
     pendaftaranCount,
-    programUpdateMany,
     notifikasiCreate,
   };
 }
 
-describe("SeleksiController (C18)", () => {
+describe("SeleksiController", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("hanya menampilkan daftar pendaftar kepada pemilik program", async () => {
+  it("menampilkan daftar pendaftar kepada pemilik program", async () => {
+    const { controller, pendaftaranFindMany } = buatController({
+      pendaftar: [{ status: "MENUNGGU" }],
+    });
+
+    await expect(
+      controller.lihatDaftarRelawan("inisiator-1", "program-1"),
+    ).resolves.toMatchObject({
+      program: { id: "program-1", namaProgram: "Penanaman Pohon" },
+      pendaftar: [{ id: "pendaftaran-1", status: "MENUNGGU" }],
+    });
+    expect(pendaftaranFindMany).toHaveBeenCalledOnce();
+  });
+
+  it("menolak daftar pendaftar untuk pengguna yang bukan pemilik", async () => {
     const { controller, pendaftaranFindMany } = buatController({
       programBaris: {
         ...program,
@@ -100,16 +118,36 @@ describe("SeleksiController (C18)", () => {
     const { controller, pendaftaranUpdateMany, pendaftaranCount } =
       buatController({
         jumlahDiterima: 1,
-        pendaftar: [{ status: "MENUNGGU" }],
+        kuota: 2,
+        pendaftar: [
+          { status: "MENUNGGU" },
+          { status: "MENUNGGU" },
+        ],
       });
 
     await expect(
       controller.simpanHasilSeleksi("inisiator-1", "program-1", [
         { idPendaftaran: "pendaftaran-1", status: "DITERIMA" },
+        { idPendaftaran: "pendaftaran-2", status: "DITERIMA" },
       ]),
     ).rejects.toMatchObject({ code: "CONFLICT" });
     expect(pendaftaranCount).toHaveBeenCalled();
     expect(pendaftaranUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("mengizinkan keputusan tepat sampai batas kuota", async () => {
+    const { controller, pendaftaranUpdateMany } = buatController({
+      jumlahDiterima: 1,
+      kuota: 2,
+      pendaftar: [{ status: "MENUNGGU" }],
+    });
+
+    await expect(
+      controller.simpanHasilSeleksi("inisiator-1", "program-1", [
+        { idPendaftaran: "pendaftaran-1", status: "DITERIMA" },
+      ]),
+    ).resolves.toBe(true);
+    expect(pendaftaranUpdateMany).toHaveBeenCalledOnce();
   });
 
   it("menolak perubahan seleksi oleh pengguna yang bukan pemilik program", async () => {
@@ -146,7 +184,7 @@ describe("SeleksiController (C18)", () => {
   });
 
   it("mengumumkan hasil satu kali dan mengirim notifikasi ke tiap pendaftar", async () => {
-    const { controller, programUpdateMany, notifikasiCreate } =
+    const { controller, pendaftaranUpdateMany, notifikasiCreate } =
       buatController({
         pendaftar: [
           { status: "DITERIMA", relawan: { userId: "relawan-1" } },
@@ -157,11 +195,7 @@ describe("SeleksiController (C18)", () => {
     await expect(
       controller.konfirmasiHasilSeleksi("inisiator-1", "program-1"),
     ).resolves.toBe(true);
-    expect(programUpdateMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: "program-1", hasilSeleksiDiumumkanAt: null },
-      }),
-    );
+    expect(pendaftaranUpdateMany).toHaveBeenCalledTimes(2);
     expect(notifikasiCreate).toHaveBeenCalledTimes(2);
     expect(notifikasiCreate).toHaveBeenNthCalledWith(
       1,
@@ -184,31 +218,71 @@ describe("SeleksiController (C18)", () => {
   });
 
   it("belum mengirim hasil jika masih ada pendaftar yang menunggu", async () => {
-    const { controller, programUpdateMany, notifikasiCreate } = buatController({
-      pendaftar: [{ status: "MENUNGGU" }],
-    });
+    const { controller, pendaftaranUpdateMany, notifikasiCreate } =
+      buatController({
+        pendaftar: [{ status: "MENUNGGU" }],
+      });
 
     await expect(
       controller.konfirmasiHasilSeleksi("inisiator-1", "program-1"),
     ).rejects.toMatchObject({ code: "CONFLICT" });
-    expect(programUpdateMany).not.toHaveBeenCalled();
+    expect(pendaftaranUpdateMany).not.toHaveBeenCalled();
     expect(notifikasiCreate).not.toHaveBeenCalled();
   });
 
-  it("tidak mengirim notifikasi ulang setelah hasil pernah diumumkan", async () => {
-    const { controller, programUpdateMany, notifikasiCreate } = buatController({
-      programBaris: {
-        ...program,
-        hasilSeleksiDiumumkanAt: new Date("2026-11-13T11:00:00Z"),
-      },
-      pendaftar: [{ status: "DITERIMA" }],
-    });
+  it("tidak mengirim notifikasi ulang untuk pendaftaran yang sudah diberi hasil", async () => {
+    const { controller, pendaftaranUpdateMany, notifikasiCreate } =
+      buatController({
+        pendaftar: [
+          {
+            status: "DITERIMA",
+            notifikasiTerkirimAt: new Date("2026-11-13T11:00:00Z"),
+          },
+        ],
+      });
 
     await expect(
       controller.konfirmasiHasilSeleksi("inisiator-1", "program-1"),
     ).rejects.toMatchObject({ code: "CONFLICT" });
-    expect(programUpdateMany).not.toHaveBeenCalled();
+    expect(pendaftaranUpdateMany).not.toHaveBeenCalled();
     expect(notifikasiCreate).not.toHaveBeenCalled();
+  });
+
+  it("mengirim hanya notifikasi baru tanpa mengunci program", async () => {
+    const { controller, pendaftaranUpdateMany, notifikasiCreate } =
+      buatController({
+        pendaftar: [
+          {
+            status: "DITERIMA",
+            notifikasiTerkirimAt: new Date("2026-11-13T11:00:00Z"),
+            relawan: { userId: "relawan-lama" },
+          },
+          {
+            status: "DITOLAK",
+            notifikasiTerkirimAt: null,
+            relawan: { userId: "relawan-baru" },
+          },
+        ],
+      });
+
+    await expect(
+      controller.konfirmasiHasilSeleksi("inisiator-1", "program-1"),
+    ).resolves.toBe(true);
+    expect(pendaftaranUpdateMany).toHaveBeenCalledOnce();
+    expect(pendaftaranUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "pendaftaran-2",
+          notifikasiTerkirimAt: null,
+        }),
+      }),
+    );
+    expect(notifikasiCreate).toHaveBeenCalledOnce();
+    expect(notifikasiCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ userId: "relawan-baru" }),
+      }),
+    );
   });
 
   it("menolak keputusan untuk pendaftar dari program lain", async () => {
