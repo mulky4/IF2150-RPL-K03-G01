@@ -11,10 +11,8 @@ import { Button } from "./Button";
 import { Footer } from "./Footer";
 import { Modal } from "./Modal";
 import { Navbar } from "./Navbar";
-import type { PeranNavigasi } from "./navigasi";
+import { PERAN_VALID, type PeranNavigasi } from "./navigasi";
 import { TopBar } from "./TopBar";
-
-const PERAN_VALID: PeranNavigasi[] = ["RELAWAN", "INISIATOR", "VERIFIKATOR"];
 
 /**
  * Layout utama: navbar di desktop, top bar + bottom nav di mobile.
