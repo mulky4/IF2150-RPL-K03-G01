@@ -27,11 +27,20 @@ const hrefKelolaPendaftar = (id: string) =>
 
 const formatTanggal = (nilai: Date | string) => tanggal(new Date(nilai));
 
-function KartuStatistik({ label, nilai }: { label: string; nilai: number }) {
+function KartuStatistik({
+  label,
+  nilai,
+  sublabel,
+}: {
+  label: string;
+  nilai: number;
+  sublabel: string;
+}) {
   return (
     <div className="bg-card shadow-card rounded-2xl p-5">
       <p className="text-label text-text-secondary">{label}</p>
       <p className="text-h2 text-text mt-1">{nilai}</p>
+      <p className="text-label text-text-secondary mt-1">{sublabel}</p>
     </div>
   );
 }
@@ -93,14 +102,17 @@ export function ProgramSayaView() {
             <KartuStatistik
               label="Program aktif"
               nilai={data.statistik.programAktif}
+              sublabel="Sedang membuka pendaftaran"
             />
             <KartuStatistik
               label="Pendaftar menunggu seleksi"
               nilai={data.statistik.pendaftarMenunggu}
+              sublabel="Menunggu seleksi Anda"
             />
             <KartuStatistik
               label="Laporan perlu revisi"
               nilai={data.statistik.laporanPerluRevisi}
+              sublabel="Perlu revisi dari Verifikator"
             />
           </section>
 
@@ -147,74 +159,83 @@ export function ProgramSayaView() {
                   }
                 />
               ) : (
-                <div className="bg-card shadow-card overflow-x-auto rounded-2xl">
-                  <table className="w-full min-w-[56rem] text-left">
-                    <thead className="text-label text-text-secondary border-border border-b">
-                      <tr>
-                        <th className="px-4 py-3">Nama Program</th>
-                        <th className="px-4 py-3">Kategori</th>
-                        <th className="px-4 py-3">Jadwal</th>
-                        <th className="px-4 py-3">Diterima/Kuota</th>
-                        <th className="px-4 py-3">Status</th>
-                        <th className="px-4 py-3">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {daftar.map((p) => {
-                        const aksi = aksiProgram(p.status);
-                        return (
-                          <tr
-                            key={p.id}
-                            className="border-border border-b last:border-b-0"
-                          >
-                            <td className="text-body-medium text-text px-4 py-4">
-                              {p.namaProgram}
-                            </td>
-                            <td className="px-4 py-4">
-                              <Badge nada="kategori">
-                                {labelKategori(p.kategori)}
-                              </Badge>
-                            </td>
-                            <td className="text-body text-text px-4 py-4">
-                              {formatTanggal(p.waktuMulai)}
-                            </td>
-                            <td className="px-4 py-4">
-                              <BarKuota diterima={p.diterima} kuota={p.kuota} />
-                            </td>
-                            <td className="px-4 py-4">
-                              <Badge nada={nadaStatus(p.status)}>
-                                {labelStatus(p.status)}
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                <ButtonLink
-                                  varian="secondary"
-                                  href={hrefKelolaPendaftar(p.id)}
-                                  nonaktif={
-                                    !HALAMAN_KELOLA_PENDAFTAR_ADA ||
-                                    !aksi.kelolaPendaftarAktif
-                                  }
-                                >
-                                  Kelola Pendaftar
-                                </ButtonLink>
-                                {aksi.laporan && (
+                <>
+                  <div className="bg-card shadow-card overflow-x-auto rounded-2xl">
+                    <table className="w-full min-w-[56rem] text-left">
+                      <thead className="text-label text-text-secondary border-border border-b">
+                        <tr>
+                          <th className="px-4 py-3">Nama Program</th>
+                          <th className="px-4 py-3">Kategori</th>
+                          <th className="px-4 py-3">Jadwal</th>
+                          <th className="px-4 py-3">Diterima/Kuota</th>
+                          <th className="px-4 py-3">Status</th>
+                          <th className="px-4 py-3">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {daftar.map((p) => {
+                          const aksi = aksiProgram(p.status);
+                          return (
+                            <tr
+                              key={p.id}
+                              className="border-border border-b last:border-b-0"
+                            >
+                              <td className="text-body-medium text-text px-4 py-4">
+                                {p.namaProgram}
+                              </td>
+                              <td className="px-4 py-4">
+                                <Badge nada="kategori">
+                                  {labelKategori(p.kategori)}
+                                </Badge>
+                              </td>
+                              <td className="text-body text-text px-4 py-4">
+                                {formatTanggal(p.waktuMulai)}
+                              </td>
+                              <td className="px-4 py-4">
+                                <BarKuota
+                                  diterima={p.diterima}
+                                  kuota={p.kuota}
+                                />
+                              </td>
+                              <td className="px-4 py-4">
+                                <Badge nada={nadaStatus(p.status)}>
+                                  {labelStatus(p.status)}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-4">
+                                <div className="flex flex-wrap gap-2">
                                   <ButtonLink
                                     varian="ghost"
-                                    href={HREF_UNGGAH_LAPORAN}
-                                    nonaktif={!aksi.laporan.aktif}
+                                    href={hrefKelolaPendaftar(p.id)}
+                                    nonaktif={
+                                      !HALAMAN_KELOLA_PENDAFTAR_ADA ||
+                                      !aksi.kelolaPendaftarAktif
+                                    }
                                   >
-                                    {aksi.laporan.teks}
+                                    Kelola Pendaftar
                                   </ButtonLink>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                                  {aksi.laporan && (
+                                    <ButtonLink
+                                      varian="ghost"
+                                      href={HREF_UNGGAH_LAPORAN}
+                                      nonaktif={!aksi.laporan.aktif}
+                                    >
+                                      {aksi.laporan.teks}
+                                    </ButtonLink>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-label text-text-secondary">
+                    Menampilkan {daftar.length} dari {data.program.length}{" "}
+                    program
+                  </p>
+                </>
               )}
             </>
           )}
