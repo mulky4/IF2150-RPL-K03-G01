@@ -1,5 +1,5 @@
-import { VerifikatorDashboardView } from "~/views/VerifikatorDashboardPage/VerifikatorDashboardView";
+import { DashboardVerifikator } from "~/views/KelolaProgramPage/DashboardVerifikator";
 
 export default function Page() {
-  return <VerifikatorDashboardView />;
+  return <DashboardVerifikator />;
 }

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { api } from "~/trpc/react";
 
 /** State dan aksi untuk Dashboard Verifikator (verifikasi program). */
-export function useVerifikasiProgram() {
+export function useDashboardVerifikator() {
   const utils = api.useUtils();
   const query = api.program.programMenungguVerifikasi.useQuery();
   const [idTerpilih, setIdTerpilih] = useState<string | null>(null);
@@ -13,12 +13,15 @@ export function useVerifikasiProgram() {
   const [galatAksi, setGalatAksi] = useState<string | null>(null);
 
   const setujui = api.program.setujuiProgram.useMutation({
-    onSuccess: async () => {
-      const nama = query.data?.find((p) => p.id === idTerpilih)?.namaProgram;
+    onSuccess: async (_hasil, variabel) => {
+      // Nama diambil dari daftar sebelum dimuat ulang, bukan dari state yang di-reset.
+      const nama = query.data?.find(
+        (p) => p.id === variabel.idProgram,
+      )?.namaProgram;
       setPesanSukses(
         nama
           ? `Program "${nama}" disetujui dan kini aktif.`
-          : "Program disetujui.",
+          : "Program disetujui dan kini aktif.",
       );
       setGalatAksi(null);
       setIdTerpilih(null);
@@ -41,7 +44,10 @@ export function useVerifikasiProgram() {
     galat: query.error?.message ?? null,
     programTerpilih,
     pilihProgram: (id: string) => setIdTerpilih(id),
-    batalPilih: () => setIdTerpilih(null),
+    // Tidak bisa ditutup selagi persetujuan diproses.
+    batalPilih: () => {
+      if (!setujui.isPending) setIdTerpilih(null);
+    },
     konfirmasiSetujui: () => {
       if (idTerpilih) setujui.mutate({ idProgram: idTerpilih });
     },

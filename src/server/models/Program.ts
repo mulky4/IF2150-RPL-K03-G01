@@ -64,12 +64,12 @@ export class Program {
       .length;
   }
 
-    aktifkan(): TipeStatusProgram {
-      if (this.status !== StatusProgram.MENUNGGU_VERIFIKASI) {
-        throw new Error("Program tidak sedang menunggu verifikasi");
-      }
-      this.status = StatusProgram.AKTIF;
-      return this.status;
+  aktifkan(): TipeStatusProgram {
+    if (this.status !== StatusProgram.MENUNGGU_VERIFIKASI) {
+      throw new Error("Program tidak sedang menunggu verifikasi");
+    }
+    this.status = StatusProgram.AKTIF;
+    return this.status;
   }
 
   ajukanKonfirmasi(): TipeStatusProgram {
@@ -107,7 +107,9 @@ export class Program {
   }
 
   hitungDurasiJam(): number {
-    return (this.waktuSelesai.getTime() - this.waktuMulai.getTime()) / 3_600_000;
+    return (
+      (this.waktuSelesai.getTime() - this.waktuMulai.getTime()) / 3_600_000
+    );
   }
 
   getTautan(): string {
@@ -131,7 +133,9 @@ export class Program {
     _kataKunci: string,
     _kategori: TipeKategoriProgram | null,
   ): Program[] {
-    throw new Error("Pencarian program harus dilakukan melalui repositori data");
+    throw new Error(
+      "Pencarian program harus dilakukan melalui repositori data",
+    );
   }
 
   getIdProgram(): string {

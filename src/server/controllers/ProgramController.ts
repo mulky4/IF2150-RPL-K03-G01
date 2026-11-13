@@ -325,11 +325,17 @@ export class ProgramController {
       let statusBaru: StatusProgram;
       try {
         statusBaru = entitas.aktifkan();
-      } catch {
-        throw new GalatProgram(
-          "Program tidak sedang menunggu verifikasi.",
-          "CONFLICT",
-        );
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Program tidak sedang menunggu verifikasi"
+        ) {
+          throw new GalatProgram(
+            "Program tidak sedang menunggu verifikasi.",
+            "CONFLICT",
+          );
+        }
+        throw error;
       }
 
       // Syarat status di WHERE mencegah dua verifikator menyetujui bersamaan.
