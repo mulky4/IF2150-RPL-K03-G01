@@ -234,7 +234,7 @@ export class ProgramController {
     );
   }
 
-    async ambilProgramSaya(idPengguna: string) {
+  async ambilProgramSaya(idPengguna: string) {
     const inisiator = await this.database.inisiatorProgram.findUnique({
       where: { userId: idPengguna },
     });

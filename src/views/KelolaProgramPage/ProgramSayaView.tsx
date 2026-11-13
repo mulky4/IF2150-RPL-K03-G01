@@ -19,7 +19,8 @@ import { useProgramSaya } from "./useProgramSaya";
 const HREF_DAFTAR_BARU = "/inisiator/program/baru";
 const HREF_UNGGAH_LAPORAN = "/laporan"; // I-09
 // I-11 milik Modul 3. Sesuaikan kalau rutenya berbeda.
-const hrefKelolaPendaftar = (id: string) => `/inisiator/program/${id}/pendaftar`;
+const hrefKelolaPendaftar = (id: string) =>
+  `/inisiator/program/${id}/pendaftar`;
 
 const formatTanggal = (nilai: Date | string) =>
   new Intl.DateTimeFormat("id-ID", {
@@ -80,7 +81,9 @@ export function ProgramSayaView() {
             </div>
           )}
         </div>
-        <ButtonLink href={HREF_DAFTAR_BARU}>+ Daftarkan Program Baru</ButtonLink>
+        <ButtonLink href={HREF_DAFTAR_BARU}>
+          + Daftarkan Program Baru
+        </ButtonLink>
       </div>
 
       {sedangMemuat && <Banner nada="info">Memuat program...</Banner>}
@@ -115,7 +118,11 @@ export function ProgramSayaView() {
             />
           ) : (
             <>
-              <div className="flex flex-wrap gap-2" role="group" aria-label="Filter status">
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Filter status"
+              >
                 {FILTER_PROGRAM.map((f) => (
                   <Chip
                     key={f.nilai}
@@ -133,7 +140,10 @@ export function ProgramSayaView() {
                   deskripsi="Belum ada program dengan status ini."
                   ikon="search"
                   aksi={
-                    <Button varian="secondary" onClick={() => setFilter("SEMUA")}>
+                    <Button
+                      varian="secondary"
+                      onClick={() => setFilter("SEMUA")}
+                    >
                       Tampilkan Semua
                     </Button>
                   }
@@ -155,7 +165,10 @@ export function ProgramSayaView() {
                       {daftar.map((p) => {
                         const aksi = aksiProgram(p.status);
                         return (
-                          <tr key={p.id} className="border-border border-b last:border-b-0">
+                          <tr
+                            key={p.id}
+                            className="border-border border-b last:border-b-0"
+                          >
                             <td className="text-body-medium text-text px-4 py-4">
                               {p.namaProgram}
                             </td>

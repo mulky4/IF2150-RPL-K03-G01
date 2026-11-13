@@ -123,7 +123,7 @@ export const programRouter = createTRPCRouter({
         });
       }
     }),
-    programSaya: inisiatorProcedure.query(async ({ ctx }) => {
+  programSaya: inisiatorProcedure.query(async ({ ctx }) => {
     try {
       return await controller.ambilProgramSaya(ctx.session.idPengguna);
     } catch (error) {

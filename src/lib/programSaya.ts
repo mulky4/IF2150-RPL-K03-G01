@@ -1,8 +1,7 @@
 import type { StatusProgram } from "@prisma/client";
 
 export type FilterProgram =
-  | "SEMUA"
-  | Exclude<StatusProgram, "MENUNGGU_VERIFIKASI">;
+  "SEMUA" | Exclude<StatusProgram, "MENUNGGU_VERIFIKASI">;
 
 /** Chip filter I07-CHP-FilterStatus. */
 export const FILTER_PROGRAM: { nilai: FilterProgram; label: string }[] = [
@@ -95,7 +94,9 @@ export function saringProgram<T extends { status: StatusProgram }>(
   daftar: T[],
   filter: FilterProgram,
 ): T[] {
-  return filter === "SEMUA" ? daftar : daftar.filter((p) => p.status === filter);
+  return filter === "SEMUA"
+    ? daftar
+    : daftar.filter((p) => p.status === filter);
 }
 
 /** Persentase untuk progress bar kuota (0 sampai 100). */

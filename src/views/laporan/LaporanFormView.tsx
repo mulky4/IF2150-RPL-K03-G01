@@ -253,9 +253,7 @@ export function LaporanFormView() {
                 className="text-text-secondary w-full text-xs file:mr-4 file:rounded-xl file:border-0 file:bg-[#D8F3DC] file:px-4 file:py-2 file:text-xs file:font-bold file:text-[#2D6A4F] hover:file:bg-[#B7E4C7]"
               />
             </div>
-            {fileError && (
-              <Banner nada="error">{fileError}</Banner>
-            )}
+            {fileError && <Banner nada="error">{fileError}</Banner>}
             {selectedFile && !fileError && (
               <p className="text-xs font-medium text-[#2D6A4F]">
                 ✓ Berkas terpilih: {selectedFile.name} (
