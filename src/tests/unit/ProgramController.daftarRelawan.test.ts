@@ -12,15 +12,17 @@ type Dasar = {
   relawan: unknown;
   program: unknown;
   sudahDaftar: unknown;
+  jumlahDiterima?: number;
 };
 
-function buat({ relawan, program, sudahDaftar }: Dasar) {
+function buat({ relawan, program, sudahDaftar, jumlahDiterima = 0 }: Dasar) {
   const create = vi.fn().mockResolvedValue({ id: "p1" });
   const database = {
     relawan: { findUnique: vi.fn().mockResolvedValue(relawan) },
     program: { findUnique: vi.fn().mockResolvedValue(program) },
     pendaftaran: {
       findFirst: vi.fn().mockResolvedValue(sudahDaftar),
+      count: vi.fn().mockResolvedValue(jumlahDiterima),
       create,
     },
   } as unknown as PrismaClient;
@@ -32,8 +34,14 @@ const input = {
   keterampilan: "Menanam",
   ketersediaanWaktu: "Akhir pekan",
 };
-const relawanOk = { id: "rel1", statusVerifikasi: "TERVERIFIKASI" };
-const programAktif = { id: "prog1", status: "AKTIF" };
+const relawanOk = {
+  id: "rel1",
+  nama: "Ayu",
+  noTelepon: "081200000001",
+  domisili: "Bandung",
+  statusVerifikasi: "TERVERIFIKASI",
+};
+const programAktif = { id: "prog1", status: "AKTIF", kuota: 2 };
 
 describe("ProgramController.daftarRelawan", () => {
   it("berhasil dan memakai id relawan (bukan id user)", async () => {
@@ -55,7 +63,7 @@ describe("ProgramController.daftarRelawan", () => {
 
   it("menolak relawan yang belum terverifikasi", async () => {
     const { controller } = buat({
-      relawan: { id: "rel1", statusVerifikasi: "MENUNGGU" },
+      relawan: { ...relawanOk, statusVerifikasi: "MENUNGGU" },
       program: programAktif,
       sudahDaftar: null,
     });
@@ -78,7 +86,7 @@ describe("ProgramController.daftarRelawan", () => {
   it("menolak program yang tidak aktif", async () => {
     const { controller } = buat({
       relawan: relawanOk,
-      program: { id: "prog1", status: "SELESAI" },
+      program: { ...programAktif, status: "SELESAI" },
       sudahDaftar: null,
     });
     await expect(
@@ -96,5 +104,50 @@ describe("ProgramController.daftarRelawan", () => {
       controller.daftarRelawan("user1", input),
     ).rejects.toMatchObject({ code: "CONFLICT" });
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["nomor telepon", { noTelepon: null }],
+    ["domisili", { domisili: "   " }],
+  ])("menolak relawan yang %s-nya kosong", async (_, kosong) => {
+    const { controller, create } = buat({
+      relawan: { ...relawanOk, ...kosong },
+      program: programAktif,
+      sudahDaftar: null,
+    });
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+      message: expect.stringContaining("belum lengkap") as string,
+    });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it("menolak pendaftaran kalau kuota program sudah penuh", async () => {
+    const { controller, create } = buat({
+      relawan: relawanOk,
+      program: programAktif,
+      sudahDaftar: null,
+      jumlahDiterima: 2,
+    });
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "Kuota program sudah penuh.",
+    });
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it("masih menerima pendaftaran selama kuota belum penuh", async () => {
+    const { controller, create } = buat({
+      relawan: relawanOk,
+      program: programAktif,
+      sudahDaftar: null,
+      jumlahDiterima: 1,
+    });
+    await controller.daftarRelawan("user1", input);
+    expect(create).toHaveBeenCalledOnce();
   });
 });
