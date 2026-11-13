@@ -19,6 +19,7 @@ export type NamaIkon =
   | "next"
   | "pin"
   | "plus"
+  | "search"
   | "shield"
   | "target"
   | "upload"
