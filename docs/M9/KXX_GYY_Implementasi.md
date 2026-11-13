@@ -190,8 +190,10 @@ Tabel B.1. Perubahan dari DPPL
 
 | No | Bagian DPPL | Rancangan Awal | Implementasi Akhir | Alasan |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | *[mis. Kelas C05, layar I-03, tabel `orders`]* | *[Yang direncanakan]* | *[Yang dibuat]* | *[Alasan perubahan]* |
-| *...* | *...* | *...* | *...* | *...* |
+| 1 | C18 SeleksiController dan I-11 Kelola Pendaftar | Keputusan pendaftaran disimpan dan dikonfirmasi; validasi kuota direncanakan melalui `Program.cekKuotaTersedia()`. | Seleksi menggunakan prosedur tRPC khusus Inisiator, menyimpan keputusan dalam transaksi serializable, lalu mengirim notifikasi ketika hasil dikonfirmasi. Halaman I-11 tersedia di `/inisiator/program/[id]/pendaftar`. | Kuota dihitung dari data database aktual di dalam transaksi untuk mencegah keputusan bersamaan melampaui kuota; identitas pemilik diverifikasi dari sesi. |
+| 2 | C02 Pendaftaran dan C18 SeleksiController | Pendaftaran menyimpan keputusan seleksi; controller mengirim notifikasi hasil. | Ditambahkan `notifikasiTerkirimAt` pada Pendaftaran serta batas unik `(programId, relawanId)`. Konfirmasi mengirim notifikasi hanya untuk pendaftaran yang belum pernah diberi hasil. | Penanda per pendaftaran mencegah duplikasi sekaligus memungkinkan program aktif menerima pendaftar baru setelah pengumuman sebelumnya. |
+| 3 | C15 ProgramController dan C16 EksplorasiProgramPage | Pencarian program lewat `Program.cari()` atas daftar program di memori. | Pencarian dijalankan di database lewat satu query di `ProgramController.cariProgram` (24 program per muat, maksimum 120, dengan penanda "masih ada lagi"); detail program mengirim `tahapWaktu` dan `bisaDaftar` dari server. | Tidak perlu memuat semua program ke memori, dan status tombol daftar ditentukan di satu tempat. |
+| 4 | C10 Notifikasi | Notifikasi dibuat dan disimpan lewat operasi kirim pada kelas Notifikasi. | Ditambah `keDataUntukPenyimpanan()` yang mengubah objek Notifikasi menjadi baris tabel, supaya `SeleksiController` bisa menyimpannya di dalam transaksi yang sama dengan keputusan seleksi. | Notifikasi hasil dan penanda `notifikasiTerkirimAt` harus tersimpan bersama; kalau salah satu gagal, keduanya dibatalkan. |
 
 ## B.2 Bukti Penerapan Best Practices
 
@@ -203,7 +205,7 @@ Tabel B.2. Bukti Best Practices
 | Semantic commit | *[Tautan ke riwayat commit]* | *[Ringkasan]* |
 | Track tasks | *[Tautan ke Issues/Projects]* | *[Jumlah issue, pembagian]* |
 | Pull request dan review | *[Tautan ke 2-3 PR representatif]* | *[Siapa me-review siapa]* |
-| Pengujian | *[Tautan ke `src/tests/` dan hasil test]* | *[Apa yang diuji, cara menjalankan]* |
+| Pengujian | [`src/tests/unit/`](../../src/tests/unit) dan [`src/tests/beban/`](../../src/tests/beban) | Unit test (Vitest) untuk controller dan model tiap modul, termasuk 12 test seleksi (otorisasi pemilik program, validasi kuota, penyimpanan keputusan, konfirmasi, notifikasi hasil); uji beban check-in 50 request bersamaan. Jalankan `pnpm test` dari folder `src`. |
 
 ### B.2.1 Profiling dan Optimasi
 
@@ -221,7 +223,7 @@ Jika tidak ada perbaikan yang perlu dilakukan, jelaskan hasil profiling dan alas
 
 ## B.3 Kendala dan Catatan Penting
 
-Tuliskan kendala yang ditemui, fitur yang belum sempurna (*known issues*), serta hal yang perlu diketahui asisten saat menjalankan atau menilai aplikasi (misalnya akun uji khusus, urutan menjalankan, atau batasan).
+- Sebelum menjalankan migrasi constraint unik `(programId, relawanId)`, periksa kemungkinan pendaftaran ganda dengan query `SELECT "programId", "relawanId", COUNT(*) FROM "tbl_pendaftaran" GROUP BY "programId", "relawanId" HAVING COUNT(*) > 1;`. Jika ada hasil, tinjau dan bersihkan duplikat sebelum migrasi; migrasi tidak menghapus data otomatis.
 
 ## B.4 Kontribusi Anggota
 
@@ -240,10 +242,28 @@ Tabel B.5. Traceability Kelas Perancangan ke Implementasi
 
 | ID Kelas | Nama Kelas Perancangan | Bentuk Implementasi | Lokasi (File dan Nama) | Keterangan |
 | :--- | :--- | :--- | :--- | :--- |
-| *[C01]* | *[Nama kelas pada DPPL]* | *[mis. Kelas / Fungsi / Komponen / Route / Tabel]* | *[mis. `src/models/user.py` - `User`]* | *[Cara atribut dan operasi kelas diwujudkan; "-" jika tidak ada penjelasan tambahan]* |
-| *[C02]* | *[Nama kelas pada DPPL]* | *[Bentuk implementasi]* | *[mis. `src/components/LoginForm.tsx` - `LoginForm`]* | *[mis. atribut menjadi *state*, operasi menjadi *handler*]* |
-| *[C03]* | *[Nama kelas pada DPPL]* | *[Bentuk implementasi]* | *[mis. `src/routes/auth.js` - `POST /login`]* | *[Keterangan]* |
-| *...* | *...* | *...* | *...* | *...* |
+| C01 | Program | Kelas + tabel Prisma | `src/server/models/Program.ts` - `Program`; `src/prisma/schema.prisma` - `Program` | Aturan domain dan atribut program; daftar relasi disimpan lewat Prisma. |
+| C02 | Pendaftaran | Kelas + tabel Prisma | `src/server/models/Pendaftaran.ts` - `Pendaftaran`; `src/prisma/schema.prisma` - `Pendaftaran` | Transisi terima/tolak dan status keputusan; unik per pasangan program-relawan. |
+| C03 | Relawan | Kelas + tabel Prisma | `src/server/models/Relawan.ts` - `Relawan`; `src/prisma/schema.prisma` - `Relawan` | Profil, verifikasi, kehadiran, dan akses portofolio. |
+| C04 | Pengguna | Kelas abstrak + tabel Better Auth | `src/server/models/Pengguna.ts` - `Pengguna`; `src/prisma/schema.prisma` - `User` | Identitas dan notifikasi; akun dipersistenkan pada tabel `user`. |
+| C05 | InisiatorProgram | Kelas + tabel Prisma | `src/server/models/InisiatorProgram.ts` - `InisiatorProgram`; `src/prisma/schema.prisma` - `InisiatorProgram` | Status verifikasi, tautan, dan data lembaga. |
+| C06 | Verifikator | Kelas | `src/server/models/Verifikator.ts` - `Verifikator` | Operasi domain menyetujui atau menolak laporan. |
+| C07 | DokumenVerifikasi | Kelas + tabel Prisma | `src/server/models/DokumenVerifikasi.ts` - `DokumenVerifikasi`; `src/prisma/schema.prisma` - `DokumenVerifikasi` | Metadata dokumen dan status verifikasi. |
+| C08 | Kehadiran | Kelas + tabel Prisma | `src/server/models/Kehadiran.ts` - `Kehadiran`; `src/prisma/schema.prisma` - `Kehadiran` | Catatan waktu check-in unik per relawan-program. |
+| C09 | LaporanProgram | Kelas + tabel Prisma | `src/server/models/LaporanProgram.ts` - `LaporanProgram`; `src/prisma/schema.prisma` - `LaporanProgram` | Dokumentasi, ringkasan, revisi, dan status peninjauan. |
+| C10 | Notifikasi | Kelas + tabel Prisma | `src/server/models/Notifikasi.ts` - `Notifikasi`; `src/prisma/schema.prisma` - `Notifikasi` | Kirim, baca, dan detail; controller seleksi membuat notifikasi di transaksi. |
+| C11 | RiwayatKontribusi | Kelas + tabel Prisma | `src/server/models/RiwayatKontribusi.ts` - `RiwayatKontribusi`; `src/prisma/schema.prisma` - `RiwayatKontribusi`, `RiwayatProgram` | Total jam dan relasi ke program selesai. |
+| C12 | KelolaAkunPage | View, hook, dan route | `src/views/KelolaAkunPage/`; `src/app/login/`, `src/app/registrasi/`, `src/app/notifikasi/` | Form dan operasi akun/notifikasi diwujudkan sebagai state, handler, dan komponen. |
+| C13 | AuthController | Controller + router tRPC | `src/server/controllers/AuthController.ts`; `src/server/api/routers/auth.ts` | Sesi, kredensial, proteksi login, dan notifikasi pengguna. |
+| C14 | KelolaProgramPage | View, hook, dan route | `src/views/KelolaProgramPage/`; `src/app/inisiator/program/` | Pembuatan program, daftar program, dan pengajuan laporan. |
+| C15 | ProgramController | Controller + router tRPC | `src/server/controllers/ProgramController.ts`; `src/server/api/routers/program.ts` | Operasi program baru, pencarian dan detail program, pendaftaran relawan, persetujuan program, serta pengajuan dan peninjauan laporan akhir. |
+| C16 | EksplorasiProgramPage | View, hook, dan route | `src/views/EksplorasiProgramPage/Eksplorasi.tsx`, `DetailProgram.tsx`, `useEksplorasiProgramPage.ts`; `src/app/program/page.tsx`, `src/app/program/[id]/page.tsx` | Pencarian dengan jeda ketik, filter kategori, dan muat bertahap menjadi *state* hook; detail program menampilkan kuota, tautan situs resmi, dan capaian program selesai. |
+| C17 | KelolaPendaftarPage | View, hook, dan route | `src/views/KelolaPendaftarPage/KelolaPendaftarView.tsx`; `src/views/KelolaPendaftarPage/useKelolaPendaftarPage.ts`; `src/app/inisiator/program/[id]/pendaftar/page.tsx` | Memilih keputusan, menyimpan hasil, dan meminta konfirmasi pengumuman. |
+| C18 | SeleksiController | Controller + router tRPC | `src/server/controllers/SeleksiController.ts`; `src/server/api/routers/seleksi.ts` | Daftar pendaftar, validasi kuota, keputusan transaksional, dan notifikasi hasil. |
+| C19 | AreaKegiatanPage | View, hook, dan route | `src/views/AreaKegiatanPage/AreaKegiatan.tsx`, `Portofolio.tsx`, `useAreaKegiatanPage.ts`; `src/app/kegiatan/`, `src/app/portofolio/` | Daftar kegiatan dan tombol check-in; portofolio menampilkan total jam aksi dan riwayat program selesai. |
+| C20 | PresensiController | Controller + router tRPC | `src/server/controllers/PresensiController.ts`; `src/server/api/routers/presensi.ts` | `ambilDaftarKegiatan`, `prosesCheckIn` (validasi status relawan dan waktu pelaksanaan), serta `perbaruiPortofolioRelawan` yang menambah jam aksi saat laporan akhir disetujui. |
+| C21 | CloudStorageAdapter | Adapter | `src/server/adapters/CloudStorageAdapter.ts` - `CloudStorageAdapter` | Validasi dan penyimpanan berkas lokal sebagai adapter; layanan cloud belum dipilih. |
+| C22 | BetterAuth | Adapter pustaka | `src/server/adapters/BetterAuth.ts` - `BetterAuth`; `src/server/auth.ts` | Kredensial, hash kata sandi, verifikasi, dan sesi melalui Better Auth. |
 
 Catatan:
 - Satu kelas perancangan boleh diwujudkan oleh beberapa file/unit, dan satu file/unit boleh mewujudkan beberapa kelas perancangan. Tuliskan semuanya.

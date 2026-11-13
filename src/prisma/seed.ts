@@ -13,13 +13,10 @@ type AkunSeed = {
 };
 
 async function seedAkun({ email, nama, peran }: AkunSeed): Promise<string> {
-  let user = await db.user.findUnique({ where: { email }});
+  let user = await db.user.findUnique({ where: { email } });
 
   if (!user) {
-    const userId = await BetterAuth.daftarkanKredensial(
-      email,
-      KATA_SANDI_UJI,
-    );
+    const userId = await BetterAuth.daftarkanKredensial(email, KATA_SANDI_UJI);
     user = await db.user.findUniqueOrThrow({ where: { id: userId } });
   }
 
@@ -49,6 +46,31 @@ async function seedAkun({ email, nama, peran }: AkunSeed): Promise<string> {
     data: { name: nama, peran, emailVerified: true },
   });
   return user.id;
+}
+
+type PendaftaranSeed = {
+  id: string;
+  keterampilan: string;
+  ketersediaanWaktu: string;
+  status: "MENUNGGU" | "DITERIMA" | "DITOLAK";
+  notifikasiTerkirimAt: Date | null;
+  relawanId: string;
+  programId: string;
+};
+
+// Kunci pasangan program-relawan, bukan id, supaya seed tetap jalan walaupun
+// relawan yang sama sudah mendaftar manual ke program itu sebelumnya.
+async function seedPendaftaran({ id, ...data }: PendaftaranSeed) {
+  await db.pendaftaran.upsert({
+    where: {
+      programId_relawanId: {
+        programId: data.programId,
+        relawanId: data.relawanId,
+      },
+    },
+    update: data,
+    create: { id, ...data },
+  });
 }
 
 async function main() {
@@ -157,30 +179,177 @@ async function main() {
     },
   });
 
-  for (const data of relawan) {
-    await db.pendaftaran.upsert({
-      where: { id: data.pendaftaranId },
-      update: {
-        keterampilan: data.keterampilan,
-        ketersediaanWaktu: data.ketersediaanWaktu,
-        status: "MENUNGGU",
-        relawanId: data.profil.id,
-        programId: program.id,
-      },
-      create: {
-        id: data.pendaftaranId,
-        keterampilan: data.keterampilan,
-        ketersediaanWaktu: data.ketersediaanWaktu,
-        status: "MENUNGGU",
-        relawanId: data.profil.id,
-        programId: program.id,
-      },
+  for (const [indeks, data] of relawan.entries()) {
+    const status = indeks === 0 ? "DITERIMA" : "MENUNGGU";
+    await seedPendaftaran({
+      id: data.pendaftaranId,
+      keterampilan: data.keterampilan,
+      ketersediaanWaktu: data.ketersediaanWaktu,
+      status,
+      notifikasiTerkirimAt: null,
+      relawanId: data.profil.id,
+      programId: program.id,
     });
   }
 
+  const sekarang = new Date();
+  const programBerlangsung = await db.program.upsert({
+    where: { id: "seed-program-berlangsung" },
+    update: {
+      namaProgram: "Aksi Bersih Sungai",
+      deskripsi: "Program fiktif yang sedang berlangsung untuk uji check-in.",
+      kategori: "JAGA_ALAM",
+      tempatPelaksanaan: "Sungai Contoh",
+      waktuMulai: new Date(sekarang.getTime() - 60 * 60 * 1000),
+      waktuSelesai: new Date(sekarang.getTime() + 3 * 60 * 60 * 1000),
+      kuota: 10,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "AKTIF",
+      inisiatorProgramId: inisiator.id,
+    },
+    create: {
+      id: "seed-program-berlangsung",
+      namaProgram: "Aksi Bersih Sungai",
+      deskripsi: "Program fiktif yang sedang berlangsung untuk uji check-in.",
+      kategori: "JAGA_ALAM",
+      tempatPelaksanaan: "Sungai Contoh",
+      waktuMulai: new Date(sekarang.getTime() - 60 * 60 * 1000),
+      waktuSelesai: new Date(sekarang.getTime() + 3 * 60 * 60 * 1000),
+      kuota: 10,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "AKTIF",
+      inisiatorProgramId: inisiator.id,
+    },
+  });
+  const pendaftaranBerlangsung = {
+    id: "seed-pendaftaran-berlangsung",
+    keterampilan: relawan[1]!.keterampilan,
+    ketersediaanWaktu: relawan[1]!.ketersediaanWaktu,
+    status: "DITERIMA" as const,
+    notifikasiTerkirimAt: null,
+    relawanId: relawan[1]!.profil.id,
+    programId: programBerlangsung.id,
+  };
+  await seedPendaftaran(pendaftaranBerlangsung);
+  const pendaftaranBerlangsungMenunggu = {
+    id: "seed-pendaftaran-berlangsung-menunggu",
+    keterampilan: relawan[0]!.keterampilan,
+    ketersediaanWaktu: relawan[0]!.ketersediaanWaktu,
+    status: "MENUNGGU" as const,
+    notifikasiTerkirimAt: null,
+    relawanId: relawan[0]!.profil.id,
+    programId: programBerlangsung.id,
+  };
+  await seedPendaftaran(pendaftaranBerlangsungMenunggu);
+
+  const waktuSelesai = new Date(sekarang.getTime() - 24 * 60 * 60 * 1000);
+  const programSelesai = await db.program.upsert({
+    where: { id: "seed-program-selesai" },
+    update: {
+      namaProgram: "Penanaman Mangrove Selesai",
+      deskripsi: "Program fiktif selesai untuk uji portofolio.",
+      kategori: "JAGA_ALAM",
+      tempatPelaksanaan: "Pesisir Contoh",
+      waktuMulai: new Date(waktuSelesai.getTime() - 4 * 60 * 60 * 1000),
+      waktuSelesai,
+      kuota: 10,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "SELESAI",
+      inisiatorProgramId: inisiator.id,
+    },
+    create: {
+      id: "seed-program-selesai",
+      namaProgram: "Penanaman Mangrove Selesai",
+      deskripsi: "Program fiktif selesai untuk uji portofolio.",
+      kategori: "JAGA_ALAM",
+      tempatPelaksanaan: "Pesisir Contoh",
+      waktuMulai: new Date(waktuSelesai.getTime() - 4 * 60 * 60 * 1000),
+      waktuSelesai,
+      kuota: 10,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "SELESAI",
+      inisiatorProgramId: inisiator.id,
+    },
+  });
+  const pendaftaranSelesai = {
+    id: "seed-pendaftaran-selesai",
+    keterampilan: relawan[0]!.keterampilan,
+    ketersediaanWaktu: relawan[0]!.ketersediaanWaktu,
+    status: "DITERIMA" as const,
+    notifikasiTerkirimAt: null,
+    relawanId: relawan[0]!.profil.id,
+    programId: programSelesai.id,
+  };
+  await seedPendaftaran(pendaftaranSelesai);
+  const kehadiranSelesai = {
+    relawanId: relawan[0]!.profil.id,
+    programId: programSelesai.id,
+    waktuKehadiran: new Date(waktuSelesai.getTime() - 3 * 60 * 60 * 1000),
+  };
+  await db.kehadiran.upsert({
+    where: {
+      relawanId_programId: {
+        relawanId: kehadiranSelesai.relawanId,
+        programId: kehadiranSelesai.programId,
+      },
+    },
+    update: { waktuKehadiran: kehadiranSelesai.waktuKehadiran },
+    create: kehadiranSelesai,
+  });
+  const riwayatRelawan = relawan[0]!.profil.id;
+  const riwayat = await db.riwayatKontribusi.upsert({
+    where: { relawanId: riwayatRelawan },
+    update: { totalJamAksi: 4 },
+    create: { relawanId: riwayatRelawan, totalJamAksi: 4 },
+  });
+  await db.riwayatProgram.upsert({
+    where: {
+      riwayatId_programId: {
+        riwayatId: riwayat.id,
+        programId: programSelesai.id,
+      },
+    },
+    update: {},
+    create: { riwayatId: riwayat.id, programId: programSelesai.id },
+  });
+
+  await db.program.upsert({
+    where: { id: "seed-program-menunggu-verifikasi" },
+    update: {
+      namaProgram: "Program Menunggu Verifikasi",
+      deskripsi: "Program fiktif untuk menguji status verifikasi program.",
+      kategori: "JAGA_IKLIM",
+      tempatPelaksanaan: "Kota Contoh",
+      waktuMulai: new Date(sekarang.getTime() + 7 * 24 * 60 * 60 * 1000),
+      waktuSelesai: new Date(
+        sekarang.getTime() + 7 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000,
+      ),
+      kuota: 5,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "MENUNGGU_VERIFIKASI",
+      inisiatorProgramId: inisiator.id,
+    },
+    create: {
+      id: "seed-program-menunggu-verifikasi",
+      namaProgram: "Program Menunggu Verifikasi",
+      deskripsi: "Program fiktif untuk menguji status verifikasi program.",
+      kategori: "JAGA_IKLIM",
+      tempatPelaksanaan: "Kota Contoh",
+      waktuMulai: new Date(sekarang.getTime() + 7 * 24 * 60 * 60 * 1000),
+      waktuSelesai: new Date(
+        sekarang.getTime() + 7 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000,
+      ),
+      kuota: 5,
+      syaratKetentuan: "Tidak ada syarat khusus untuk data uji.",
+      status: "MENUNGGU_VERIFIKASI",
+      inisiatorProgramId: inisiator.id,
+    },
+  });
+
   // Data laporan akhir (UC07): satu menunggu ditinjau, satu perlu revisi.
   const dasarProgramLaporan = {
-    deskripsi: "Program fiktif untuk mencoba alur laporan akhir dan verifikasi.",
+    deskripsi:
+      "Program fiktif untuk mencoba alur laporan akhir dan verifikasi.",
     kategori: "JAGA_ALAM",
     tempatPelaksanaan: "Taman Kota Contoh",
     waktuMulai: new Date("2026-11-01T01:00:00.000Z"),
@@ -213,7 +382,11 @@ async function main() {
 
   await db.laporanProgram.upsert({
     where: { id: "seed-laporan-menunggu" },
-    update: { statusPeninjauan: "MENUNGGU", catatanRevisi: null, verifikatorId: null },
+    update: {
+      statusPeninjauan: "MENUNGGU",
+      catatanRevisi: null,
+      verifikatorId: null,
+    },
     create: {
       id: "seed-laporan-menunggu",
       programId: programMenunggu.id,
@@ -245,7 +418,7 @@ async function main() {
   });
 
   console.log(
-    "Seed selesai: 3 program, 1 inisiator, 2 relawan, 1 verifikator, 2 pendaftaran, 2 laporan.",
+    "Seed selesai: 6 program, 1 inisiator, 2 relawan, 1 verifikator, 5 pendaftaran, 2 laporan.",
   );
 }
 

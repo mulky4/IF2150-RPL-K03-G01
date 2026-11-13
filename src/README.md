@@ -33,7 +33,7 @@ nvm use
 corepack enable
 pnpm install
 cp .env.example .env          # isi BETTER_AUTH_SECRET (openssl rand -base64 32)
-docker compose up -d          # PostgreSQL lokal (menyusul, Modul 3)
+docker compose up -d          # PostgreSQL lokal
 pnpm prisma migrate dev
 pnpm db:seed
 ```
@@ -60,11 +60,11 @@ Link verifikasi email tidak dikirim lewat email, tetapi dicetak di terminal `pnp
 
 Semua akun uji menggunakan kata sandi `DemoRekanBumi2026!`.
 
-| Peran | Email |
-| --- | --- |
-| Inisiator | `inisiator@rekanbumi.example` |
-| Relawan | `relawan1@rekanbumi.example` |
-| Relawan | `relawan2@rekanbumi.example` |
+| Peran       | Email                           |
+| ----------- | ------------------------------- |
+| Inisiator   | `inisiator@rekanbumi.example`   |
+| Relawan     | `relawan1@rekanbumi.example`    |
+| Relawan     | `relawan2@rekanbumi.example`    |
 | Verifikator | `verifikator@rekanbumi.example` |
 
 ## Modul & Pembagian _(menyusul)_
@@ -85,5 +85,28 @@ tests/unit/   unit test
 
 ## Skema Basis Data
 
-Skema, migrasi, dan seed Prisma berada di `src/prisma/`. Database lokal PostgreSQL
-dapat dijalankan melalui Docker Compose dengan `docker compose up -d`.
+Skema, migrasi, dan seed Prisma berada di `prisma/`. PostgreSQL lokal dapat
+dijalankan melalui Docker Compose dengan `docker compose up -d`. Atribut di bawah
+merujuk pada nama field Prisma; relasi dan batas unik selengkapnya ada di
+[`prisma/schema.prisma`](prisma/schema.prisma).
+
+| Tabel                        | Atribut                                                                                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tbl_program`                | `id`, `namaProgram`, `deskripsi`, `kategori`, `tempatPelaksanaan`, `waktuMulai`, `waktuSelesai`, `kuota`, `syaratKetentuan`, `status`, `inisiatorProgramId`                         |
+| `tbl_pendaftaran`            | `id`, `keterampilan`, `ketersediaanWaktu`, `status`, `waktuDaftar`, `notifikasiTerkirimAt`, `relawanId`, `programId`                                                                |
+| `tbl_relawan`                | `id`, `nama`, `noTelepon`, `domisili`, `statusVerifikasi`, `totalJamAksi`, `userId`                                                                                                 |
+| `tbl_inisiator_program`      | `id`, `namaLembaga`, `tautanSitusResmi`, `statusVerifikasi`, `userId`                                                                                                               |
+| `tbl_dokumen_verifikasi`     | `id`, `jenisDokumen`, `urlFile`, `statusVerifikasi`, `userId`                                                                                                                       |
+| `tbl_notifikasi`             | `id`, `pesan`, `waktuKirim`, `statusDibaca`, `userId`                                                                                                                               |
+| `tbl_kehadiran`              | `id`, `waktuKehadiran`, `relawanId`, `programId`                                                                                                                                    |
+| `tbl_riwayat_kontribusi`     | `id`, `totalJamAksi`, `relawanId`                                                                                                                                                   |
+| `tbl_riwayat_program`        | `riwayatId`, `programId`                                                                                                                                                            |
+| `tbl_laporan_program`        | `id`, `dokumentasiAkhir`, `ringkasanCapaian`, `catatanRevisi`, `statusPeninjauan`, `waktuPengajuan`, `programId`, `verifikatorId`                                                   |
+| `user` (Better Auth)         | `id`, `name`, `email`, `emailVerified`, `image`, `peran`, `createdAt`, `updatedAt`                                                                                                  |
+| `session` (Better Auth)      | `id`, `expiresAt`, `token`, `createdAt`, `updatedAt`, `ipAddress`, `userAgent`, `userId`                                                                                            |
+| `account` (Better Auth)      | `id`, `accountId`, `providerId`, `userId`, `accessToken`, `refreshToken`, `idToken`, `accessTokenExpiresAt`, `refreshTokenExpiresAt`, `scope`, `password`, `createdAt`, `updatedAt` |
+| `verification` (Better Auth) | `id`, `identifier`, `value`, `expiresAt`, `createdAt`, `updatedAt`                                                                                                                  |
+
+Seed menyediakan program kuota penuh untuk seleksi, program aktif yang sedang
+berlangsung, program selesai dengan kehadiran/riwayat kontribusi, program yang
+menunggu verifikasi, serta dua skenario laporan akhir.
