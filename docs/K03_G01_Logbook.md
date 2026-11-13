@@ -5,7 +5,7 @@
 | Informasi | Keterangan |
 |---|---|
 | Kelas | K03 |
-| Nomor Kelompok | G03 |
+| Nomor Kelompok | G01 |
 | Nama Kelompok | rplsukses |
 | Nama Perangkat Lunak | RekanBumi |
 
@@ -30,6 +30,7 @@
 * [Milestone 6](#milestone-6)
 * [Milestone 7](#milestone-7)
 * [Milestone 8](#milestone-8)
+* [Milestone 9](#milestone-9)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -145,5 +146,27 @@
 | 26-10-2026  - 28-10-2026 | Mulky Siraj Firizqi | Mengerjakan bab 6.1 - 6.7 | 6 | Done | - |
 | 26-10-2026  - 28-10-2026 | Avicenna Ananda Musthafa | Mengerjakan bab 6 | 6 | Done | - |
 | 28-10-2026 | Kairenzo Vemil | Mengerjakan bab 5 C16-C22 | 3 | Done | - |
+
+### Milestone 9
+**Periode:** 28 Oktober 2026 - 13 November 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 07-11-2026 | Mulky Siraj Firizqi | Scaffold proyek Next.js + tRPC + Prisma + tooling di `src/`, template issue dan PR, konfigurasi Better Auth (bcrypt, field peran, procedure per peran), migrasi tabel Better Auth, dan kerangka kelas C04, C10, C12, C13 | 6 (perkiraan) | Done | - |
+| 09-11-2026 | Mulky Siraj Firizqi | Merge PR #9 (scaffold fondasi dan auth) ke develop | 0,5 (perkiraan) | Done | - |
+| 10-11-2026 | Mulky Siraj Firizqi | Implementasi login dan blokir IP setelah 5 kali gagal (`AuthController.validasiKredensial`, prosedur `auth.masuk`, unit test) | 4 (perkiraan) | Done | Cookie sesi Better Auth hanya terpasang lewat `auth.api.signInEmail`, sedangkan link tRPC streaming membuang `Set-Cookie`, jadi mutation dipindah ke `httpBatchLink` |
+| 10-11-2026 | Mulky Siraj Firizqi | Review PR #25 (skema Prisma, seed, migrasi tabel domain) milik Ribka: menjalankan migrasi, seed, dan test di lokal, lalu approve | 1,5 (perkiraan) | Done | Sempat gagal karena perintah `pnpm` dijalankan di root repo (harus di `src/`) dan PostgreSQL lokal belum berjalan |
+| 10-11-2026 | Mulky Siraj Firizqi | Merapikan riwayat commit PR login dan membuat ulang PR sebagai #28 setelah develop dikembalikan ke kondisi sebelumnya | 1,5 (perkiraan) | Done | Develop sempat ter-reset sehingga isi PR #10 dan #27 hilang dari develop; dipulihkan lewat PR baru dari branch bersih |
+| 10-11-2026 | Mulky Siraj Firizqi | Model Notifikasi (C10), `Pengguna.lihatNotifikasi` (C04), `AuthController.ambilNotifikasi` dan `bacaNotifikasi`, prosedur tRPC notifikasi, dan 10 unit test (PR #29) | 3 (perkiraan) | Done | Patch pertama gagal dipasang karena dibuat di develop sebelum #28 ter-merge, lalu diulang dari branch yang benar |
+| 10-11-2026 | Mulky Siraj Firizqi | `CloudStorageAdapter` (C21) dan registrasi Relawan/Inisiator (`buatAkunBaru`, `auth.daftar` dengan FormData, validasi berkas) beserta 30 unit test (PR #30) | 4 (perkiraan) | Done | Input FormData tidak bisa lewat link batch JSON, jadi link tRPC dipisah supaya input non-JSON memakai `httpLink` |
+| 10-11-2026 | Mulky Siraj Firizqi | Sinkron status verifikasi Relawan setelah email terverifikasi (#8, PR #33) | 1,5 (perkiraan) | Done | Menunggu #29 dan #30 ter-merge sebelum dibuat PR-nya |
+| 10-11-2026 | Mulky Siraj Firizqi | Mengisi Logbook dan Deklarasi Penggunaan AI Milestone 9 | 1 (perkiraan) | Done | - |
+| 11-11-2026 | Mulky Siraj Firizqi | Halaman I-01 Registrasi, I-02 Login (banner redirect dan blokir IP), I-03 Notifikasi dan angka lonceng di Navbar sesuai Figma (PR #36) | 5 (perkiraan) | Done | - |
+| 12-11-2026 | Mulky Siraj Firizqi | Review PR #26 (laporan dan verifikasi) dan #32 (pendaftaran relawan) milik Gie, termasuk uji di lokal | 2 (perkiraan) | Done | `relawanId` di #32 memakai id tabel user sehingga insert gagal; diminta diperbaiki |
+| 13-11-2026 | Mulky Siraj Firizqi | Perbaikan hasil review PR #36 (urlKembali, domisili, teks sesuai Figma) dan merge ke develop | 2 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Diagnosis router `auth`, `seleksi`, `presensi` yang hilang dari `appRouter` setelah #26 (login gagal "No procedure found") | 1 (perkiraan) | Done | Diperbaiki di #44; PR hotfix #45 ditutup karena isinya sama |
+| 13-11-2026 | Mulky Siraj Firizqi | Review ulang dan approve PR #32, #37, #48 milik Gie (cek konflik, Prettier, test, tampilan di browser) | 2 (perkiraan) | Done | #32 dan #37 sempat konflik karena newline di akhir `program.ts` |
+| 13-11-2026 | Mulky Siraj Firizqi | Melengkapi `src/README.md` (modul dan pembagian, cara pakai per peran), Logbook, dan Deklarasi AI Milestone 9 | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Menyusun bahan laporan M9: B.2 Best Practices, baris Modul 1 untuk B.1 dan B.5, dan pengecekan checklist rilis | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Konfirmasi perubahan `Notifikasi.ts` pada PR #51, review PR #63 dan #65, uji lokal alur I-11 (simpan, konfirmasi, notifikasi relawan), dan perbaikan beranda `/` sesuai peran pengguna | 2 (perkiraan) | Done | Beranda diarahkan ke menu pertama tiap peran |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
