@@ -1,6 +1,7 @@
 import type { PrismaClient, StatusProgram } from "@prisma/client";
 import { db } from "~/server/db";
 import { LaporanProgram } from "~/server/models/LaporanProgram";
+import { hitungStatistik } from "~/lib/programSaya";
 
 export type KodeGalatProgram =
   "BAD_REQUEST" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT";
@@ -231,6 +232,41 @@ export class ProgramController {
       "DITOLAK",
       catatanRevisi,
     );
+  }
+
+  async ambilProgramSaya(idPengguna: string) {
+    const inisiator = await this.database.inisiatorProgram.findUnique({
+      where: { userId: idPengguna },
+    });
+    if (!inisiator) {
+      throw new GalatProgram("Akun inisiator tidak ditemukan.", "NOT_FOUND");
+    }
+
+    const daftar = await this.database.program.findMany({
+      where: { inisiatorProgramId: inisiator.id },
+      orderBy: { waktuMulai: "desc" },
+      include: { pendaftaran: { select: { status: true } } },
+    });
+
+    const program = daftar.map((p) => ({
+      id: p.id,
+      namaProgram: p.namaProgram,
+      kategori: p.kategori,
+      waktuMulai: p.waktuMulai,
+      kuota: p.kuota,
+      status: p.status,
+      diterima: p.pendaftaran.filter((x) => x.status === "DITERIMA").length,
+      menunggu: p.pendaftaran.filter((x) => x.status === "MENUNGGU").length,
+    }));
+
+    return {
+      lembaga: {
+        namaLembaga: inisiator.namaLembaga,
+        statusVerifikasi: inisiator.statusVerifikasi,
+      },
+      statistik: hitungStatistik(program),
+      program,
+    };
   }
 
   private validasiDataProgram(data: DataProgramBaru): string[] {

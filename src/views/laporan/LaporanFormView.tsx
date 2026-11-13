@@ -23,7 +23,7 @@ export function LaporanFormView() {
   const createMutation = api.laporan.buatLaporan.useMutation({
     onSuccess: ({ status }) => {
       setPesanSukses(`Laporan terkirim. Status program: ${status}.`);
-      setTimeout(() => router.push("/dashboard/inisiator"), 1500);
+      setTimeout(() => router.push("/inisiator/program"), 1500);
     },
     onError: (error) => setErrorMessage(error.message),
   });
@@ -123,7 +123,7 @@ export function LaporanFormView() {
 
         <nav className="flex items-center space-x-2">
           <Link
-            href="/dashboard/inisiator"
+            href="/inisiator/program"
             className="rounded-full bg-[#D8F3DC] px-4 py-1.5 text-xs font-bold text-[#2D6A4F]"
           >
             Program Saya
@@ -162,7 +162,7 @@ export function LaporanFormView() {
       {/* Main Container */}
       <main className="mx-auto max-w-3xl space-y-6 px-6 py-8">
         <Link
-          href="/dashboard/inisiator"
+          href="/inisiator/program"
           className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#2D6A4F] hover:underline"
         >
           <Ikon nama="back" ukuran={16} />
@@ -253,9 +253,7 @@ export function LaporanFormView() {
                 className="text-text-secondary w-full text-xs file:mr-4 file:rounded-xl file:border-0 file:bg-[#D8F3DC] file:px-4 file:py-2 file:text-xs file:font-bold file:text-[#2D6A4F] hover:file:bg-[#B7E4C7]"
               />
             </div>
-            {fileError && (
-              <Banner nada="error">{fileError}</Banner>
-            )}
+            {fileError && <Banner nada="error">{fileError}</Banner>}
             {selectedFile && !fileError && (
               <p className="text-xs font-medium text-[#2D6A4F]">
                 ✓ Berkas terpilih: {selectedFile.name} (

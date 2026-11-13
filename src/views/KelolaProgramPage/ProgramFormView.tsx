@@ -23,7 +23,7 @@ export function ProgramFormView() {
   const createProgramMutation = api.program.createProgram.useMutation({
     onSuccess: () => {
       alert("Program berhasil dibuat!");
-      router.push("/dashboard/inisiator");
+      router.push("/inisiator/program");
     },
     onError: (err: { message: string }) => {
       setErrorMessage(err.message);
