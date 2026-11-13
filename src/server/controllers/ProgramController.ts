@@ -64,6 +64,57 @@ export class ProgramController {
     });
   }
 
+  async daftarRelawan(
+    idPengguna: string,
+    data: {
+      programId: string;
+      keterampilan: string;
+      ketersediaanWaktu: string;
+    },
+  ) {
+    const relawan = await this.database.relawan.findUnique({
+      where: { userId: idPengguna },
+    });
+    if (!relawan) {
+      throw new GalatProgram("Profil relawan tidak ditemukan.", "NOT_FOUND");
+    }
+    if (relawan.statusVerifikasi !== "TERVERIFIKASI") {
+      throw new GalatProgram("Akunmu belum terverifikasi.", "FORBIDDEN");
+    }
+
+    const program = await this.database.program.findUnique({
+      where: { id: data.programId },
+    });
+    if (!program) {
+      throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+    }
+    if (program.status !== "AKTIF") {
+      throw new GalatProgram(
+        "Program tidak menerima pendaftaran.",
+        "BAD_REQUEST",
+      );
+    }
+
+    const sudahDaftar = await this.database.pendaftaran.findFirst({
+      where: { programId: program.id, relawanId: relawan.id },
+    });
+    if (sudahDaftar) {
+      throw new GalatProgram(
+        "Kamu sudah mendaftar di program ini.",
+        "CONFLICT",
+      );
+    }
+
+    return this.database.pendaftaran.create({
+      data: {
+        programId: program.id,
+        relawanId: relawan.id,
+        keterampilan: data.keterampilan,
+        ketersediaanWaktu: data.ketersediaanWaktu,
+      },
+    });
+  }
+
   async ambilProgramUntukLaporan(idPengguna: string) {
     return this.database.program.findMany({
       where: {
