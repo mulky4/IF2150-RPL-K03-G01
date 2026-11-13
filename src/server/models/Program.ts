@@ -97,6 +97,14 @@ export class Program {
       .length;
   }
 
+  aktifkan(): TipeStatusProgram {
+    if (this.status !== StatusProgram.MENUNGGU_VERIFIKASI) {
+      throw new Error("Program tidak sedang menunggu verifikasi");
+    }
+    this.status = StatusProgram.AKTIF;
+    return this.status;
+  }
+
   ajukanKonfirmasi(): TipeStatusProgram {
     if (this.status !== StatusProgram.AKTIF) {
       throw new Error("Program tidak dapat diajukan konfirmasi");

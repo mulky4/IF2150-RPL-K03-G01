@@ -64,7 +64,12 @@ export const MENU: Record<PeranNavigasi, ItemMenu[]> = {
       href: "/verifikator/laporan",
       ikon: "clipboard",
     },
-    // TODO: tambah menu "Verifikasi Program" ke /verifikator.
+    {
+      label: "Verifikasi Program",
+      labelMobile: "Verifikasi",
+      href: "/verifikator",
+      ikon: "shield",
+    },
     NOTIFIKASI,
   ],
 };

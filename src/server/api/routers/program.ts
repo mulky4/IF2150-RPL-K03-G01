@@ -5,6 +5,7 @@ import {
   inisiatorProcedure,
   publicProcedure,
   relawanProcedure,
+  verifikatorProcedure,
 } from "~/server/api/trpc";
 import {
   GalatProgram,
@@ -73,6 +74,21 @@ export const programRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         return await controller.daftarRelawan(ctx.session.idPengguna, input);
+      } catch (error) {
+        ubahGalatProgram(error);
+      }
+    }),
+
+  programMenungguVerifikasi: verifikatorProcedure.query(() =>
+    controller.ambilProgramMenungguVerifikasi(),
+  ),
+
+  setujuiProgram: verifikatorProcedure
+    .input(z.object({ idProgram: z.string().min(1) }))
+    .mutation(async ({ input }) => {
+      try {
+        const status = await controller.setujuiProgram(input.idProgram);
+        return { status };
       } catch (error) {
         ubahGalatProgram(error);
       }

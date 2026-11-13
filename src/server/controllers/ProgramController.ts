@@ -2,6 +2,7 @@ import type { PrismaClient, StatusProgram } from "@prisma/client";
 import { db } from "~/server/db";
 import { LaporanProgram } from "~/server/models/LaporanProgram";
 import { hitungStatistik } from "~/lib/programSaya";
+import { Program } from "~/server/models/Program";
 
 export type KodeGalatProgram =
   "BAD_REQUEST" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT";
@@ -267,6 +268,93 @@ export class ProgramController {
       statistik: hitungStatistik(program),
       program,
     };
+  }
+  async ambilProgramMenungguVerifikasi() {
+    const daftar = await this.database.program.findMany({
+      where: { status: "MENUNGGU_VERIFIKASI" },
+      orderBy: { waktuMulai: "asc" },
+      include: {
+        inisiatorProgram: { select: { namaLembaga: true, userId: true } },
+      },
+    });
+    if (daftar.length === 0) return [];
+
+    // Dokumen legalitas hanya terhubung ke akun inisiator, bukan ke program.
+    // Yang ditampilkan: dokumen terbaru (id cuid urut waktu) per inisiator.
+    const dokumen = await this.database.dokumenVerifikasi.findMany({
+      where: {
+        userId: { in: daftar.map((p) => p.inisiatorProgram.userId) },
+        jenisDokumen: "Legalitas lembaga",
+      },
+      orderBy: { id: "desc" },
+      select: { userId: true, urlFile: true },
+    });
+
+    return daftar.map(({ inisiatorProgram, ...program }) => ({
+      ...program,
+      namaLembaga: inisiatorProgram.namaLembaga,
+      urlDokumenLegalitas:
+        dokumen.find((d) => d.userId === inisiatorProgram.userId)?.urlFile ??
+        null,
+    }));
+  }
+
+  async setujuiProgram(idProgram: string): Promise<StatusProgram> {
+    return this.database.$transaction(async (tx) => {
+      const baris = await tx.program.findUnique({
+        where: { id: idProgram },
+        include: { inisiatorProgram: true },
+      });
+      if (!baris) {
+        throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+      }
+
+      const entitas = new Program({
+        idProgram: baris.id,
+        namaProgram: baris.namaProgram,
+        deskripsi: baris.deskripsi,
+        kategori: baris.kategori,
+        tempatPelaksanaan: baris.tempatPelaksanaan,
+        waktuMulai: baris.waktuMulai,
+        waktuSelesai: baris.waktuSelesai,
+        kuota: baris.kuota,
+        syaratKetentuan: baris.syaratKetentuan,
+        status: baris.status,
+      });
+
+      let statusBaru: StatusProgram;
+      try {
+        statusBaru = entitas.aktifkan();
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Program tidak sedang menunggu verifikasi"
+        ) {
+          throw new GalatProgram(
+            "Program tidak sedang menunggu verifikasi.",
+            "CONFLICT",
+          );
+        }
+        throw error;
+      }
+
+      // Syarat status di WHERE mencegah dua verifikator menyetujui bersamaan.
+      const pembaruan = await tx.program.updateMany({
+        where: { id: idProgram, status: "MENUNGGU_VERIFIKASI" },
+        data: { status: statusBaru },
+      });
+      if (pembaruan.count !== 1) {
+        throw new GalatProgram("Program sudah diproses.", "CONFLICT");
+      }
+
+      await tx.notifikasi.create({
+        data: {
+          userId: baris.inisiatorProgram.userId,
+          pesan: `Program "${baris.namaProgram}" sudah diverifikasi dan kini aktif.`,
+        },
+      });
+      return statusBaru;
+    });
   }
 
   private validasiDataProgram(data: DataProgramBaru): string[] {
