@@ -18,6 +18,8 @@ export const PESAN_BELUM_DITERIMA =
 export const PESAN_DI_LUAR_WAKTU =
   "Check-in hanya dapat dilakukan selama waktu pelaksanaan program";
 export const PESAN_SUDAH_HADIR = "Kehadiran sudah tercatat sebelumnya";
+export const PESAN_PROGRAM_TIDAK_AKTIF =
+  "Check-in hanya dapat dilakukan pada program yang sedang aktif";
 export const PESAN_PROGRAM_TIDAK_ADA = "Program tidak ditemukan";
 export const PESAN_PROGRAM_BELUM_SELESAI =
   "Portofolio hanya diperbarui untuk program yang sudah selesai";
@@ -126,30 +128,36 @@ export class PresensiController {
   }
 
   /**
-   * Mencatat kehadiran relawan. Ditolak kalau relawan belum diterima,
-   * di luar waktu pelaksanaan, atau sudah pernah check-in di program ini.
+   * Mencatat kehadiran relawan. Ditolak kalau relawan belum diterima, program
+   * tidak sedang aktif, di luar waktu pelaksanaan, atau relawan sudah pernah
+   * check-in di program ini.
    */
   static async prosesCheckIn(
     idProgram: string,
     idRelawan: string,
   ): Promise<Kehadiran> {
-    if (
-      !(await PresensiController.validasiStatusRelawan(idProgram, idRelawan))
-    ) {
+    const sekarang = new Date();
+    // Pendaftaran dan program dibaca sekali saja dan bersamaan, karena
+    // endpoint ini bisa diserbu banyak relawan di awal kegiatan.
+    const [diterima, program] = await Promise.all([
+      PresensiController.validasiStatusRelawan(idProgram, idRelawan),
+      PresensiController.cariProgram(idProgram),
+    ]);
+    if (!diterima || program === null) {
       throw new GalatValidasi([PESAN_BELUM_DITERIMA]);
     }
-    if (
-      !(await PresensiController.validasiWaktuPelaksanaan(
-        idProgram,
-        new Date(),
-      ))
-    ) {
+    if (program.getStatus() !== StatusProgram.AKTIF) {
+      throw new GalatValidasi([PESAN_PROGRAM_TIDAK_AKTIF]);
+    }
+    if (!program.cekDalamWaktuPelaksanaan(sekarang)) {
       throw new GalatValidasi([PESAN_DI_LUAR_WAKTU]);
     }
 
-    const program = await PresensiController.cariProgram(idProgram);
-    const relawan = await Relawan.cari(idRelawan);
-    if (program === null || relawan === null) {
+    const relawan = await PresensiController.cariRelawanUntukCheckIn(
+      idRelawan,
+      idProgram,
+    );
+    if (relawan === null) {
       throw new GalatValidasi([PESAN_BELUM_DITERIMA]);
     }
     if (relawan.hadirPada(program)) {
@@ -281,6 +289,25 @@ export class PresensiController {
     const relawan = await Relawan.cari(idRelawan);
     if (relawan === null) throw new GalatValidasi([PESAN_RELAWAN_TIDAK_ADA]);
     return relawan;
+  }
+
+  /**
+   * Versi ringan Relawan.cari() untuk check-in: cukup catatan kehadiran di
+   * program ini, tanpa riwayat kontribusi yang tidak dipakai di sini.
+   */
+  private static async cariRelawanUntukCheckIn(
+    idRelawan: string,
+    idProgram: string,
+  ): Promise<Relawan | null> {
+    const baris = await db.relawan.findUnique({
+      where: { id: idRelawan },
+      include: {
+        user: { select: { email: true } },
+        kehadiran: { where: { programId: idProgram } },
+      },
+    });
+    if (baris === null) return null;
+    return Relawan.dariBaris({ ...baris, riwayatKontribusi: null });
   }
 
   private static async cariProgram(idProgram: string): Promise<Program | null> {
