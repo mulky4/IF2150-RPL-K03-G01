@@ -7,6 +7,7 @@ import {
   relawanProcedure,
   verifikatorProcedure,
 } from "~/server/api/trpc";
+import { MAKS_DIMUAT, JUMLAH_PER_MUAT } from "~/lib/pencarianProgram";
 import {
   GalatProgram,
   ProgramController,
@@ -22,6 +23,44 @@ function ubahGalatProgram(error: unknown): never {
 }
 
 export const programRouter = createTRPCRouter({
+  /** Pencarian untuk halaman Eksplorasi. Kata kunci kosong dan tanpa kategori = semua program aktif. */
+  cari: publicProcedure
+    .input(
+      z.object({
+        kataKunci: z.string().max(100).default(""),
+        kategori: z.enum(["JAGA_ALAM", "JAGA_IKLIM"]).nullish(),
+        /** Jumlah program yang dimuat; membatasi ukuran respons agar tetap cepat. */
+        batas: z
+          .number()
+          .int()
+          .min(1)
+          .max(MAKS_DIMUAT)
+          .default(JUMLAH_PER_MUAT),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        return await controller.cariProgram(
+          input.kataKunci,
+          input.kategori,
+          input.batas,
+        );
+      } catch (error) {
+        ubahGalatProgram(error);
+      }
+    }),
+
+  /** Detail satu program untuk halaman Detail Program. */
+  detail: publicProcedure
+    .input(z.object({ idProgram: z.string().min(1) }))
+    .query(async ({ input }) => {
+      try {
+        return await controller.ambilDetailProgram(input.idProgram);
+      } catch (error) {
+        ubahGalatProgram(error);
+      }
+    }),
+
   createProgram: inisiatorProcedure
     .input(
       z
