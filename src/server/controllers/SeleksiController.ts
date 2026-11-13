@@ -10,10 +10,7 @@ export type KeputusanSeleksi = {
 };
 
 export type KodeGalatSeleksi =
-  | "BAD_REQUEST"
-  | "FORBIDDEN"
-  | "NOT_FOUND"
-  | "CONFLICT";
+  "BAD_REQUEST" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT";
 
 export class GalatSeleksi extends Error {
   constructor(

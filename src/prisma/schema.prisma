@@ -48,22 +48,22 @@ enum Peran {
 }
 
 model Program {
-  id                      String           @id @default(cuid())
-  namaProgram             String
-  deskripsi               String
-  kategori                KategoriProgram
-  tempatPelaksanaan       String
-  waktuMulai              DateTime
-  waktuSelesai            DateTime
-  kuota                   Int
-  syaratKetentuan         String
-  status                  StatusProgram    @default(MENUNGGU_VERIFIKASI)
-  inisiatorProgramId      String
-  inisiatorProgram        InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
-  pendaftaran             Pendaftaran[]
-  kehadiran               Kehadiran[]
-  laporanAkhir            LaporanProgram[]
-  riwayatProgram          RiwayatProgram[]
+  id                 String           @id @default(cuid())
+  namaProgram        String
+  deskripsi          String
+  kategori           KategoriProgram
+  tempatPelaksanaan  String
+  waktuMulai         DateTime
+  waktuSelesai       DateTime
+  kuota              Int
+  syaratKetentuan    String
+  status             StatusProgram    @default(MENUNGGU_VERIFIKASI)
+  inisiatorProgramId String
+  inisiatorProgram   InisiatorProgram @relation(fields: [inisiatorProgramId], references: [id])
+  pendaftaran        Pendaftaran[]
+  kehadiran          Kehadiran[]
+  laporanAkhir       LaporanProgram[]
+  riwayatProgram     RiwayatProgram[]
 
   @@map("tbl_program")
 }
@@ -85,19 +85,19 @@ model Pendaftaran {
 }
 
 model Relawan {
-  id               String           @id @default(cuid())
-  nama             String
-  noTelepon        String?
-  domisili         String?
+  id        String  @id @default(cuid())
+  nama      String
+  noTelepon String?
+  domisili  String?
 
-  statusVerifikasi StatusVerifikasi  @default(MENUNGGU)
-  totalJamAksi     Float             @default(0)
+  statusVerifikasi StatusVerifikasi @default(MENUNGGU)
+  totalJamAksi     Float            @default(0)
 
-  userId           String           @unique
-  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pendaftaran      Pendaftaran[]
-  kehadiran        Kehadiran[]
-  riwayatKontribusi  RiwayatKontribusi?
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pendaftaran       Pendaftaran[]
+  kehadiran         Kehadiran[]
+  riwayatKontribusi RiwayatKontribusi?
 
   @@map("tbl_relawan")
 }
@@ -137,22 +137,22 @@ model Notifikasi {
 }
 
 model Kehadiran {
-  id              String   @id @default(cuid())
-  waktuKehadiran  DateTime @default(now())
-  relawanId       String
-  programId       String
-  relawan         Relawan  @relation(fields: [relawanId], references: [id], onDelete: Cascade)
-  program         Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  waktuKehadiran DateTime @default(now())
+  relawanId      String
+  programId      String
+  relawan        Relawan  @relation(fields: [relawanId], references: [id], onDelete: Cascade)
+  program        Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@unique([relawanId, programId])
   @@map("tbl_kehadiran")
 }
 
 model RiwayatKontribusi {
-  id            String          @id @default(cuid())
-  totalJamAksi  Float           @default(0)
-  relawanId     String          @unique
-  relawan       Relawan         @relation(fields: [relawanId], references: [id], onDelete: Cascade)
+  id             String           @id @default(cuid())
+  totalJamAksi   Float            @default(0)
+  relawanId      String           @unique
+  relawan        Relawan          @relation(fields: [relawanId], references: [id], onDelete: Cascade)
   programSelesai RiwayatProgram[]
 
   @@map("tbl_riwayat_kontribusi")

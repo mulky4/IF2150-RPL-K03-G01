@@ -13,13 +13,10 @@ type AkunSeed = {
 };
 
 async function seedAkun({ email, nama, peran }: AkunSeed): Promise<string> {
-  let user = await db.user.findUnique({ where: { email }});
+  let user = await db.user.findUnique({ where: { email } });
 
   if (!user) {
-    const userId = await BetterAuth.daftarkanKredensial(
-      email,
-      KATA_SANDI_UJI,
-    );
+    const userId = await BetterAuth.daftarkanKredensial(email, KATA_SANDI_UJI);
     user = await db.user.findUniqueOrThrow({ where: { id: userId } });
   }
 
@@ -349,7 +346,8 @@ async function main() {
 
   // Data laporan akhir (UC07): satu menunggu ditinjau, satu perlu revisi.
   const dasarProgramLaporan = {
-    deskripsi: "Program fiktif untuk mencoba alur laporan akhir dan verifikasi.",
+    deskripsi:
+      "Program fiktif untuk mencoba alur laporan akhir dan verifikasi.",
     kategori: "JAGA_ALAM",
     tempatPelaksanaan: "Taman Kota Contoh",
     waktuMulai: new Date("2026-11-01T01:00:00.000Z"),
@@ -382,7 +380,11 @@ async function main() {
 
   await db.laporanProgram.upsert({
     where: { id: "seed-laporan-menunggu" },
-    update: { statusPeninjauan: "MENUNGGU", catatanRevisi: null, verifikatorId: null },
+    update: {
+      statusPeninjauan: "MENUNGGU",
+      catatanRevisi: null,
+      verifikatorId: null,
+    },
     create: {
       id: "seed-laporan-menunggu",
       programId: programMenunggu.id,

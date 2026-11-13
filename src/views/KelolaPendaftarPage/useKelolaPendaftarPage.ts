@@ -34,21 +34,18 @@ export function useKelolaPendaftarPage(idProgram: string) {
     },
   });
 
-  const perubahan = useMemo(
-    () => {
-      return (query.data?.pendaftar ?? []).flatMap((pendaftar) => {
-        const status = pilihan[pendaftar.id];
-        if (
-          pendaftar.status !== "MENUNGGU" ||
-          (status !== "DITERIMA" && status !== "DITOLAK")
-        ) {
-          return [];
-        }
-        return [{ idPendaftaran: pendaftar.id, status }];
-      });
-    },
-    [pilihan, query.data],
-  );
+  const perubahan = useMemo(() => {
+    return (query.data?.pendaftar ?? []).flatMap((pendaftar) => {
+      const status = pilihan[pendaftar.id];
+      if (
+        pendaftar.status !== "MENUNGGU" ||
+        (status !== "DITERIMA" && status !== "DITOLAK")
+      ) {
+        return [];
+      }
+      return [{ idPendaftaran: pendaftar.id, status }];
+    });
+  }, [pilihan, query.data]);
   const semuaDiputuskan =
     query.data !== undefined &&
     query.data.pendaftar.length > 0 &&
@@ -67,8 +64,7 @@ export function useKelolaPendaftarPage(idProgram: string) {
     galatMutasi: simpan.error?.message ?? konfirmasi.error?.message ?? null,
     berhasilSimpan: simpan.isSuccess,
     berhasilUmumkan: konfirmasi.isSuccess,
-    simpanHasil: () =>
-      simpan.mutate({ idProgram, keputusan: perubahan }),
+    simpanHasil: () => simpan.mutate({ idProgram, keputusan: perubahan }),
     umumkanHasil: () => konfirmasi.mutate({ idProgram }),
   };
 }

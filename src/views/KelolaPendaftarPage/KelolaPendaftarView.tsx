@@ -42,9 +42,8 @@ const formatWaktuDaftar = (waktu: Date | string) =>
 
 export function KelolaPendaftarView({ idProgram }: Props) {
   const [konfirmasiTerbuka, setKonfirmasiTerbuka] = useState(false);
-  const [filter, setFilter] = useState<(typeof opsiFilter)[number]["nilai"]>(
-    "SEMUA",
-  );
+  const [filter, setFilter] =
+    useState<(typeof opsiFilter)[number]["nilai"]>("SEMUA");
   const {
     data,
     sedangMemuat,
@@ -89,9 +88,11 @@ export function KelolaPendaftarView({ idProgram }: Props) {
   const pendaftarTerfilter =
     data?.pendaftar.filter((pendaftar) => {
       if (filter === "SEMUA") return true;
-      return (pendaftar.status === "MENUNGGU"
-        ? pilihan[pendaftar.id]
-        : pendaftar.status) === filter;
+      return (
+        (pendaftar.status === "MENUNGGU"
+          ? pilihan[pendaftar.id]
+          : pendaftar.status) === filter
+      );
     }) ?? [];
 
   return (
@@ -191,10 +192,7 @@ export function KelolaPendaftarView({ idProgram }: Props) {
                 deskripsi="Tidak ada pendaftar dengan status ini."
                 ikon="search"
                 aksi={
-                  <Button
-                    varian="secondary"
-                    onClick={() => setFilter("SEMUA")}
-                  >
+                  <Button varian="secondary" onClick={() => setFilter("SEMUA")}>
                     Tampilkan Semua
                   </Button>
                 }
@@ -240,9 +238,7 @@ export function KelolaPendaftarView({ idProgram }: Props) {
                               label={`Keputusan untuk ${pendaftar.relawan.nama}`}
                               className="min-w-36"
                               opsi={opsiStatus}
-                              value={
-                                pilihan[pendaftar.id] ?? pendaftar.status
-                              }
+                              value={pilihan[pendaftar.id] ?? pendaftar.status}
                               disabled={sedangMenyimpan}
                               onChange={(event) => {
                                 const status = event.currentTarget.value;
@@ -290,14 +286,10 @@ export function KelolaPendaftarView({ idProgram }: Props) {
               <Button
                 onClick={simpanHasil}
                 disabled={
-                  perubahan.length === 0 ||
-                  sedangMenyimpan ||
-                  !dapatMengubah
+                  perubahan.length === 0 || sedangMenyimpan || !dapatMengubah
                 }
               >
-                {sedangMenyimpan
-                  ? "Menyimpan..."
-                  : "Simpan Hasil Seleksi"}
+                {sedangMenyimpan ? "Menyimpan..." : "Simpan Hasil Seleksi"}
               </Button>
               {semuaDiputuskan &&
                 data.pendaftar.some(

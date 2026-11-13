@@ -192,7 +192,7 @@ Tabel B.1. Perubahan dari DPPL
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | C18 SeleksiController dan I-11 Kelola Pendaftar | Keputusan pendaftaran disimpan dan dikonfirmasi; validasi kuota direncanakan melalui `Program.cekKuotaTersedia()`. | Seleksi menggunakan prosedur tRPC khusus Inisiator, menyimpan keputusan dalam transaksi serializable, lalu mengirim notifikasi ketika hasil dikonfirmasi. Halaman I-11 tersedia di `/inisiator/program/[id]/pendaftar`. | Kuota dihitung dari data database aktual di dalam transaksi untuk mencegah keputusan bersamaan melampaui kuota; identitas pemilik diverifikasi dari sesi. |
 | 2 | C02 Pendaftaran dan C18 SeleksiController | Pendaftaran menyimpan keputusan seleksi; controller mengirim notifikasi hasil. | Ditambahkan `notifikasiTerkirimAt` pada Pendaftaran serta batas unik `(programId, relawanId)`. Konfirmasi mengirim notifikasi hanya untuk pendaftaran yang belum pernah diberi hasil. | Penanda per pendaftaran mencegah duplikasi sekaligus memungkinkan program aktif menerima pendaftar baru setelah pengumuman sebelumnya. |
-| 3 | C16 EksplorasiProgramPage | DPPL merancang halaman eksplorasi, pencarian, filter, detail, dan permohonan pendaftaran. | Halaman eksplorasi dan route daftar program belum tersedia; hanya komponen kartu program dan route formulir daftar yang ada. | Implementasi C16 bukan bagian dari lingkup seleksi Modul 3 pada branch ini. |
+| 3 | C15 ProgramController dan C16 EksplorasiProgramPage | Pencarian program lewat `Program.cari()` atas daftar program di memori. | Pencarian dijalankan di database lewat satu query di `ProgramController.cariProgram` (24 program per muat, maksimum 120, dengan penanda "masih ada lagi"); detail program mengirim `tahapWaktu` dan `bisaDaftar` dari server. | Tidak perlu memuat semua program ke memori, dan status tombol daftar ditentukan di satu tempat. |
 
 ## B.2 Bukti Penerapan Best Practices
 
@@ -200,11 +200,11 @@ Tabel B.2. Bukti Best Practices
 
 | Praktik | Bukti | Keterangan |
 | :--- | :--- | :--- |
-| Branching | Branch `feat/modul3-selection-seed-docs` | Branch fitur dibuat dari `develop` dan dipush sebagai pull request. |
-| Semantic commit | `feat(seleksi): implement kelola pendaftar` | Perubahan I-11 dan seleksi dilakukan pada branch fitur terpisah. |
-| Track tasks | Lingkup I-11 yang sudah disepakati | Tidak membuat issue baru untuk I-06 atau I-08. |
-| Pull request dan review | Pull request fitur seleksi | Mendapat review anggota kelompok; perbaikan temuan review dicatat pada commit lanjutan. |
-| Pengujian | `src/tests/unit/SeleksiController.test.ts` | Mencakup otorisasi pemilik, validasi kuota, penyimpanan keputusan, konfirmasi, dan notifikasi. Jalankan `pnpm test -- tests/unit/SeleksiController.test.ts`; belum dijalankan di environment implementasi ini karena Node.js/pnpm tidak tersedia. |
+| Branching | *[Tautan ke daftar branch / graph commit]* | *[Skema yang dipakai]* |
+| Semantic commit | *[Tautan ke riwayat commit]* | *[Ringkasan]* |
+| Track tasks | *[Tautan ke Issues/Projects]* | *[Jumlah issue, pembagian]* |
+| Pull request dan review | *[Tautan ke 2-3 PR representatif]* | *[Siapa me-review siapa]* |
+| Pengujian | [`src/tests/unit/`](../../src/tests/unit) dan [`src/tests/beban/`](../../src/tests/beban) | Unit test (Vitest) untuk controller dan model tiap modul, termasuk 12 test seleksi (otorisasi pemilik program, validasi kuota, penyimpanan keputusan, konfirmasi, notifikasi hasil); uji beban check-in 50 request bersamaan. Jalankan `pnpm test` dari folder `src`. |
 
 ### B.2.1 Profiling dan Optimasi
 
@@ -212,20 +212,16 @@ Pilih minimal satu fitur yang diprofil.
 
 | Informasi | Keterangan |
 | :--- | :--- |
-| Fitur / proses yang diprofil | Belum dilakukan pada lingkup perubahan ini. |
-| Alat | - |
-| Temuan (sebelum) | Belum ada pengukuran. |
-| Perbaikan | Tidak ada klaim optimasi performa pada lingkup ini. |
-| Hasil (sesudah) | Belum ada pengukuran pembanding. |
+| Fitur / proses yang diprofil | *[Nama fitur]* |
+| Alat | *[mis. Chrome DevTools, cProfile, EXPLAIN]* |
+| Temuan (sebelum) | *[Bottleneck yang ditemukan, sertakan angka/tangkapan layar]* |
+| Perbaikan | *[Yang diubah]* |
+| Hasil (sesudah) | *[Perbandingan dengan sebelumnya]* |
 
 Jika tidak ada perbaikan yang perlu dilakukan, jelaskan hasil profiling dan alasan kenapa fitur tersebut sudah memadai.
 
 ## B.3 Kendala dan Catatan Penting
 
-- Unit test seleksi sudah ditambahkan, tetapi belum dapat dijalankan di environment ini karena Node.js dan pnpm tidak tersedia. Jalankan perintah pada B.2 setelah toolchain tersedia.
-- Halaman EksplorasiProgramPage (C16) belum diimplementasikan; route formulir daftar program belum didahului route katalog/detail.
-- Operasi portofolio C19/C20 masih berupa stub pada `PresensiController` dan hook kegiatan.
-- Profiling performa belum dilakukan untuk perubahan ini.
 - Sebelum menjalankan migrasi constraint unik `(programId, relawanId)`, periksa kemungkinan pendaftaran ganda dengan query `SELECT "programId", "relawanId", COUNT(*) FROM "tbl_pendaftaran" GROUP BY "programId", "relawanId" HAVING COUNT(*) > 1;`. Jika ada hasil, tinjau dan bersihkan duplikat sebelum migrasi; migrasi tidak menghapus data otomatis.
 
 ## B.4 Kontribusi Anggota
@@ -259,12 +255,12 @@ Tabel B.5. Traceability Kelas Perancangan ke Implementasi
 | C12 | KelolaAkunPage | View, hook, dan route | `src/views/KelolaAkunPage/`; `src/app/login/`, `src/app/registrasi/`, `src/app/notifikasi/` | Form dan operasi akun/notifikasi diwujudkan sebagai state, handler, dan komponen. |
 | C13 | AuthController | Controller + router tRPC | `src/server/controllers/AuthController.ts`; `src/server/api/routers/auth.ts` | Sesi, kredensial, proteksi login, dan notifikasi pengguna. |
 | C14 | KelolaProgramPage | View, hook, dan route | `src/views/KelolaProgramPage/`; `src/app/inisiator/program/` | Pembuatan program, daftar program, dan pengajuan laporan. |
-| C15 | ProgramController | Controller + router tRPC | `src/server/controllers/ProgramController.ts`; `src/server/api/routers/program.ts` | Operasi program, pendaftaran, dan laporan akhir. |
-| C16 | EksplorasiProgramPage | Belum diimplementasikan; komponen parsial | `src/views/EksplorasiProgramPage/.gitkeep`; `src/views/components/ProgramCard.tsx`; `src/app/program/[id]/daftar/page.tsx` | Halaman eksplorasi, pencarian/filter, dan detail belum tersedia; route formulir pendaftaran sudah ada. |
+| C15 | ProgramController | Controller + router tRPC | `src/server/controllers/ProgramController.ts`; `src/server/api/routers/program.ts` | Operasi program baru, pencarian dan detail program, pendaftaran relawan, persetujuan program, serta pengajuan dan peninjauan laporan akhir. |
+| C16 | EksplorasiProgramPage | View, hook, dan route | `src/views/EksplorasiProgramPage/Eksplorasi.tsx`, `DetailProgram.tsx`, `useEksplorasiProgramPage.ts`; `src/app/program/page.tsx`, `src/app/program/[id]/page.tsx` | Pencarian dengan jeda ketik, filter kategori, dan muat bertahap menjadi *state* hook; detail program menampilkan kuota, tautan situs resmi, dan capaian program selesai. |
 | C17 | KelolaPendaftarPage | View, hook, dan route | `src/views/KelolaPendaftarPage/KelolaPendaftarView.tsx`; `src/views/KelolaPendaftarPage/useKelolaPendaftarPage.ts`; `src/app/inisiator/program/[id]/pendaftar/page.tsx` | Memilih keputusan, menyimpan hasil, dan meminta konfirmasi pengumuman. |
 | C18 | SeleksiController | Controller + router tRPC | `src/server/controllers/SeleksiController.ts`; `src/server/api/routers/seleksi.ts` | Daftar pendaftar, validasi kuota, keputusan transaksional, dan notifikasi hasil. |
-| C19 | AreaKegiatanPage | View, hook, dan route | `src/views/AreaKegiatanPage/`; `src/app/kegiatan/`, `src/app/portofolio/` | Kegiatan relawan dan presensi; operasi portofolio yang belum tersedia dicatat sebagai kendala. |
-| C20 | PresensiController | Controller + router tRPC | `src/server/controllers/PresensiController.ts`; `src/server/api/routers/presensi.ts` | Validasi status/waktu dan check-in; operasi portofolio masih memiliki stub. |
+| C19 | AreaKegiatanPage | View, hook, dan route | `src/views/AreaKegiatanPage/AreaKegiatan.tsx`, `Portofolio.tsx`, `useAreaKegiatanPage.ts`; `src/app/kegiatan/`, `src/app/portofolio/` | Daftar kegiatan dan tombol check-in; portofolio menampilkan total jam aksi dan riwayat program selesai. |
+| C20 | PresensiController | Controller + router tRPC | `src/server/controllers/PresensiController.ts`; `src/server/api/routers/presensi.ts` | `ambilDaftarKegiatan`, `prosesCheckIn` (validasi status relawan dan waktu pelaksanaan), serta `perbaruiPortofolioRelawan` yang menambah jam aksi saat laporan akhir disetujui. |
 | C21 | CloudStorageAdapter | Adapter | `src/server/adapters/CloudStorageAdapter.ts` - `CloudStorageAdapter` | Validasi dan penyimpanan berkas lokal sebagai adapter; layanan cloud belum dipilih. |
 | C22 | BetterAuth | Adapter pustaka | `src/server/adapters/BetterAuth.ts` - `BetterAuth`; `src/server/auth.ts` | Kredensial, hash kata sandi, verifikasi, dan sesi melalui Better Auth. |
 

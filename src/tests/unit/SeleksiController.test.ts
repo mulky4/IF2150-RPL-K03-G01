@@ -119,10 +119,7 @@ describe("SeleksiController", () => {
       buatController({
         jumlahDiterima: 1,
         kuota: 2,
-        pendaftar: [
-          { status: "MENUNGGU" },
-          { status: "MENUNGGU" },
-        ],
+        pendaftar: [{ status: "MENUNGGU" }, { status: "MENUNGGU" }],
       });
 
     await expect(

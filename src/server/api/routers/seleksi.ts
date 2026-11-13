@@ -1,10 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  inisiatorProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, inisiatorProcedure } from "~/server/api/trpc";
 import {
   GalatSeleksi,
   SeleksiController,
