@@ -179,6 +179,18 @@ export class ProgramController {
         data: { status: "MENUNGGU_KONFIRMASI" },
         select: { status: true },
       });
+      const verifikator = await tx.user.findMany({
+        where: { peran: "VERIFIKATOR" },
+        select: { id: true },
+      });
+      if (verifikator.length > 0) {
+        await tx.notifikasi.createMany({
+          data: verifikator.map(({ id }) => ({
+            userId: id,
+            pesan: `Laporan akhir program "${program.namaProgram}" menunggu peninjauan.`,
+          })),
+        });
+      }
       return updatedProgram.status;
     });
   }
