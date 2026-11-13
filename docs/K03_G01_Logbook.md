@@ -5,7 +5,7 @@
 | Informasi | Keterangan |
 |---|---|
 | Kelas | K03 |
-| Nomor Kelompok | G03 |
+| Nomor Kelompok | G01 |
 | Nama Kelompok | rplsukses |
 | Nama Perangkat Lunak | RekanBumi |
 
@@ -30,6 +30,7 @@
 * [Milestone 6](#milestone-6)
 * [Milestone 7](#milestone-7)
 * [Milestone 8](#milestone-8)
+* [Milestone 9](#milestone-9)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -145,5 +146,40 @@
 | 26-10-2026  - 28-10-2026 | Mulky Siraj Firizqi | Mengerjakan bab 6.1 - 6.7 | 6 | Done | - |
 | 26-10-2026  - 28-10-2026 | Avicenna Ananda Musthafa | Mengerjakan bab 6 | 6 | Done | - |
 | 28-10-2026 | Kairenzo Vemil | Mengerjakan bab 5 C16-C22 | 3 | Done | - |
+
+### Milestone 9
+**Periode:** 28 Oktober 2026 - 13 November 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 07-11-2026 | Mulky Siraj Firizqi | Scaffold proyek Next.js + tRPC + Prisma + tooling di `src/`, template issue dan PR, konfigurasi Better Auth (bcrypt, field peran, procedure per peran), migrasi tabel Better Auth, dan kerangka kelas C04, C10, C12, C13 | 6 (perkiraan) | Done | - |
+| 09-11-2026 | Mulky Siraj Firizqi | Merge PR #9 (scaffold fondasi dan auth) ke develop | 0,5 (perkiraan) | Done | - |
+| 10-11-2026 | Mulky Siraj Firizqi | Implementasi login dan blokir IP setelah 5 kali gagal (`AuthController.validasiKredensial`, prosedur `auth.masuk`, unit test) | 4 (perkiraan) | Done | Cookie sesi Better Auth hanya terpasang lewat `auth.api.signInEmail`, sedangkan link tRPC streaming membuang `Set-Cookie`, jadi mutation dipindah ke `httpBatchLink` |
+| 10-11-2026 | Mulky Siraj Firizqi | Review PR #25 (skema Prisma, seed, migrasi tabel domain) milik Ribka: menjalankan migrasi, seed, dan test di lokal, lalu approve | 1,5 (perkiraan) | Done | Sempat gagal karena perintah `pnpm` dijalankan di root repo (harus di `src/`) dan PostgreSQL lokal belum berjalan |
+| 10-11-2026 | Mulky Siraj Firizqi | Merapikan riwayat commit PR login dan membuat ulang PR sebagai #28 setelah develop dikembalikan ke kondisi sebelumnya | 1,5 (perkiraan) | Done | Develop sempat ter-reset sehingga isi PR #10 dan #27 hilang dari develop; dipulihkan lewat PR baru dari branch bersih |
+| 10-11-2026 | Mulky Siraj Firizqi | Model Notifikasi (C10), `Pengguna.lihatNotifikasi` (C04), `AuthController.ambilNotifikasi` dan `bacaNotifikasi`, prosedur tRPC notifikasi, dan 10 unit test (PR #29) | 3 (perkiraan) | Done | Patch pertama gagal dipasang karena dibuat di develop sebelum #28 ter-merge, lalu diulang dari branch yang benar |
+| 10-11-2026 | Mulky Siraj Firizqi | `CloudStorageAdapter` (C21) dan registrasi Relawan/Inisiator (`buatAkunBaru`, `auth.daftar` dengan FormData, validasi berkas) beserta 30 unit test (PR #30) | 4 (perkiraan) | Done | Input FormData tidak bisa lewat link batch JSON, jadi link tRPC dipisah supaya input non-JSON memakai `httpLink` |
+| 10-11-2026 | Mulky Siraj Firizqi | Sinkron status verifikasi Relawan setelah email terverifikasi (#8, PR #33) | 1,5 (perkiraan) | Done | Menunggu #29 dan #30 ter-merge sebelum dibuat PR-nya |
+| 10-11-2026 | Mulky Siraj Firizqi | Mengisi Logbook dan Deklarasi Penggunaan AI Milestone 9 | 1 (perkiraan) | Done | - |
+| 11-11-2026 | Mulky Siraj Firizqi | Halaman I-01 Registrasi, I-02 Login (banner redirect dan blokir IP), I-03 Notifikasi dan angka lonceng di Navbar sesuai Figma (PR #36) | 5 (perkiraan) | Done | - |
+| 12-11-2026 | Mulky Siraj Firizqi | Review PR #26 (laporan dan verifikasi) dan #32 (pendaftaran relawan) milik Gie, termasuk uji di lokal | 2 (perkiraan) | Done | `relawanId` di #32 memakai id tabel user sehingga insert gagal; diminta diperbaiki |
+| 13-11-2026 | Mulky Siraj Firizqi | Perbaikan hasil review PR #36 (urlKembali, domisili, teks sesuai Figma) dan merge ke develop | 2 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Diagnosis router `auth`, `seleksi`, `presensi` yang hilang dari `appRouter` setelah #26 (login gagal "No procedure found") | 1 (perkiraan) | Done | Diperbaiki di #44; PR hotfix #45 ditutup karena isinya sama |
+| 13-11-2026 | Mulky Siraj Firizqi | Review ulang dan approve PR #32, #37, #48 milik Gie (cek konflik, Prettier, test, tampilan di browser) | 2 (perkiraan) | Done | #32 dan #37 sempat konflik karena newline di akhir `program.ts` |
+| 13-11-2026 | Mulky Siraj Firizqi | Melengkapi `src/README.md` (modul dan pembagian, cara pakai per peran), Logbook, dan Deklarasi AI Milestone 9 | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Menyusun bahan laporan M9: B.2 Best Practices, baris Modul 1 untuk B.1 dan B.5, dan pengecekan checklist rilis | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Mulky Siraj Firizqi | Konfirmasi perubahan `Notifikasi.ts` pada PR #51, review PR #63 dan #65, uji lokal alur I-11 (simpan, konfirmasi, notifikasi relawan), dan perbaikan beranda `/` sesuai peran pengguna | 2 (perkiraan) | Done | Beranda diarahkan ke menu pertama tiap peran |
+| 11-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Implementasi awal pendaftaran relawan (daftarRelawan), formulir unggah laporan akhir (I-09), panel verifikasi laporan (I-10), serta migrasi ikon ke komponen Ikon dan Banner (menghapus lucide-react) | 5 (perkiraan) | Done | - |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Penyesuaian model Verifikator dengan LaporanProgram(verifikatorId), sinkronisasi dengan develop, dan merge PR #26 (Modul 4 Laporan & Verifikasi) | 2 (perkiraan) | Done | Sempat menimpa pendaftaran router auth, seleksi, dan presensi di appRouter saat merge dari branch lama |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Penyelesaian halaman pendaftaran relawan ke program (I-06) menggunakan design system, ProgramController.daftarRelawan, unit test, formatting Prettier, dan merge PR #32 | 3 (perkiraan) | Done | Perbaikan pencocokan relawanId (profil tbl_relawan vs userId) dan penyesuaian newline di program.ts sebelum merge |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Implementasi halaman Program Saya untuk Inisiator (I-07) di /inisiator/program, pemetaan status program, format tanggal WIB, unit test ambilProgramSaya, dan merge PR #37 | 4 (perkiraan) | Done | Tombol "Kelola Pendaftar" dinonaktifkan sementara menunggu halaman I-11 (Modul 3) selesai di-merge |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review dan merge PR #44 (feat/presensi-checkin milik Modul 5) ke develop | 1 (perkiraan) | Done | - |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Pemindahan rute verifikasi laporan dari /laporan/verifikasi ke /verifikator/laporan agar sesuai navigasi.ts, serta merge PR #48 | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Implementasi Dashboard Verifikator (/verifikator), operasi Program.aktifkan(), dan ProgramController.setujuiProgram() beserta penyesuaian view ke KelolaProgramPage (PR #50) | 4 (perkiraan) | Done | Tolak program belum didukung karena enum StatusProgram belum memiliki status ditolak (dicatat di B.3) |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Integrasi pembaruan portofolio relawan (PresensiController.perbaruiPortofolioRelawan) di dalam transaksi selesaikanPeninjauan saat laporan disetujui beserta unit test, dan merge PR #53 | 2 (perkiraan) | Done | Harus menjaga atomisitas transaksi Prisma dan membungkus GalatValidasi menjadi GalatProgram |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Implementasi pengiriman notifikasi otomatis ke seluruh Verifikator saat laporan akhir diajukan (ajukanLaporanAkhir) beserta unit test, dan merge PR #54 | 2 (perkiraan) | Done | Menggunakan transaksi Prisma (tx.notifikasi.createMany) agar atomik dengan perubahan status laporan |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Perbaikan tampilan halaman Program Saya (sublabel kartu statistik, tautan teks ghost, dan jumlah program) sesuai review PR #37, dan merge PR #56 | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review dan merge PR #63 (perbaikan kredensial .env.example) dan PR #65 (unit test transisi status Pendaftaran) milik Modul 3 | 1 (perkiraan) | Done | - |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review PR #67 (seed akun dan skenario uji seleksi) dan PR #68 (validasi kelengkapan data dan kuota pada daftarRelawan), termasuk cek lokal test, lint, dan build, serta merge | 2 (perkiraan) | Done | Repo tanpa CI, sehingga test, lint, dan build harus dijalankan manual di lokal; lokasi logika di ProgramController belum tercatat di B.1 DPPL |
+| 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review PR #71 (unit test model Program: cekKuotaTersedia, cekDalamWaktuPelaksanaan, hitungDurasiJam) termasuk cek lokal test, lint, dan tsc, serta merge | 1 (perkiraan) | Done | Jumlah test di deskripsi PR (212) berbeda dengan hasil lokal (191) |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
