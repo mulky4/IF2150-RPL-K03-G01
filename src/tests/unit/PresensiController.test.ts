@@ -45,9 +45,29 @@ const { dbPalsu, tabel } = vi.hoisted(() => {
             }
           : null;
       },
+      findMany: async ({ where }: { where: { relawanId: string } }) =>
+        tabel.pendaftaran
+          .filter((p) => p.relawanId === where.relawanId)
+          .map((p) => ({
+            ...p,
+            program: tabel.program.find((pr) => pr.id === p.programId)!,
+          }))
+          .sort(
+            (a, b) =>
+              (a.program.waktuMulai as Date).getTime() -
+              (b.program.waktuMulai as Date).getTime(),
+          ),
     },
     relawan: {
-      findUnique: async ({ where }: { where: { id: string } }) => {
+      findUnique: async ({
+        where,
+      }: {
+        where: { id?: string; userId?: string };
+      }) => {
+        if (where.userId !== undefined) {
+          const milik = tabel.relawan.find((r) => r.userId === where.userId);
+          return milik ? { id: milik.id } : null;
+        }
         const baris = tabel.relawan.find((r) => r.id === where.id);
         if (!baris) return null;
         return {
@@ -77,6 +97,8 @@ const { dbPalsu, tabel } = vi.hoisted(() => {
         tabel.kehadiran.push(baris);
         return baris;
       },
+      findMany: async ({ where }: { where: { relawanId: string } }) =>
+        tabel.kehadiran.filter((k) => k.relawanId === where.relawanId),
     },
   };
   return { dbPalsu, tabel };
@@ -268,5 +290,70 @@ describe("PresensiController.prosesCheckIn", () => {
       PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
       PESAN_SUDAH_HADIR,
     );
+  });
+});
+
+describe("PresensiController.cariIdRelawan", () => {
+  it("mengembalikan id relawan milik akun", async () => {
+    await expect(PresensiController.cariIdRelawan("user-1")).resolves.toBe(
+      RELAWAN,
+    );
+  });
+
+  it("null kalau akun tidak punya data relawan", async () => {
+    await expect(
+      PresensiController.cariIdRelawan("user-inisiator"),
+    ).resolves.toBeNull();
+  });
+});
+
+describe("PresensiController.ambilDaftarKegiatan", () => {
+  beforeEach(() => {
+    tabel.program.push(
+      {
+        ...tabel.program[0],
+        id: "program-lama",
+        namaProgram: "Bersih Sungai",
+        waktuMulai: new Date("2026-10-01T08:00:00.000Z"),
+        waktuSelesai: new Date("2026-10-01T10:00:00.000Z"),
+      },
+      {
+        ...tabel.program[0],
+        id: "program-akhir",
+        namaProgram: "Tanam Pohon Kota",
+        waktuMulai: new Date("2026-12-20T08:00:00.000Z"),
+        waktuSelesai: new Date("2026-12-20T10:00:00.000Z"),
+      },
+    );
+    tabel.pendaftaran.push(
+      { programId: "program-akhir", relawanId: RELAWAN, status: "MENUNGGU" },
+      { programId: "program-lama", relawanId: RELAWAN, status: "DITERIMA" },
+      { programId: PROGRAM, relawanId: "relawan-lain", status: "DITERIMA" },
+    );
+  });
+
+  it("yang terdekat di atas, yang sudah lewat di bawah, dan hanya milik relawan itu", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-12T08:00:00.000Z"));
+    const daftar = await PresensiController.ambilDaftarKegiatan(RELAWAN);
+    expect(daftar.map((k) => k.idProgram)).toEqual([
+      PROGRAM,
+      "program-akhir",
+      "program-lama",
+    ]);
+    expect(daftar[1]?.statusPendaftaran).toBe("MENUNGGU");
+  });
+
+  it("menandai kegiatan yang sudah di-check-in", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
+    const daftar = await PresensiController.ambilDaftarKegiatan(RELAWAN);
+    expect(daftar.find((k) => k.idProgram === PROGRAM)?.waktuKehadiran).toEqual(
+      SAAT_KEGIATAN,
+    );
+    expect(
+      daftar.find((k) => k.idProgram === "program-akhir")?.waktuKehadiran,
+    ).toBeNull();
   });
 });
