@@ -48,6 +48,31 @@ async function seedAkun({ email, nama, peran }: AkunSeed): Promise<string> {
   return user.id;
 }
 
+type PendaftaranSeed = {
+  id: string;
+  keterampilan: string;
+  ketersediaanWaktu: string;
+  status: "MENUNGGU" | "DITERIMA" | "DITOLAK";
+  notifikasiTerkirimAt: Date | null;
+  relawanId: string;
+  programId: string;
+};
+
+// Kunci pasangan program-relawan, bukan id, supaya seed tetap jalan walaupun
+// relawan yang sama sudah mendaftar manual ke program itu sebelumnya.
+async function seedPendaftaran({ id, ...data }: PendaftaranSeed) {
+  await db.pendaftaran.upsert({
+    where: {
+      programId_relawanId: {
+        programId: data.programId,
+        relawanId: data.relawanId,
+      },
+    },
+    update: data,
+    create: { id, ...data },
+  });
+}
+
 async function main() {
   const inisiatorId = await seedAkun({
     email: "inisiator@rekanbumi.example",
@@ -156,25 +181,14 @@ async function main() {
 
   for (const [indeks, data] of relawan.entries()) {
     const status = indeks === 0 ? "DITERIMA" : "MENUNGGU";
-    await db.pendaftaran.upsert({
-      where: { id: data.pendaftaranId },
-      update: {
-        keterampilan: data.keterampilan,
-        ketersediaanWaktu: data.ketersediaanWaktu,
-        status,
-        notifikasiTerkirimAt: null,
-        relawanId: data.profil.id,
-        programId: program.id,
-      },
-      create: {
-        id: data.pendaftaranId,
-        keterampilan: data.keterampilan,
-        ketersediaanWaktu: data.ketersediaanWaktu,
-        status,
-        notifikasiTerkirimAt: null,
-        relawanId: data.profil.id,
-        programId: program.id,
-      },
+    await seedPendaftaran({
+      id: data.pendaftaranId,
+      keterampilan: data.keterampilan,
+      ketersediaanWaktu: data.ketersediaanWaktu,
+      status,
+      notifikasiTerkirimAt: null,
+      relawanId: data.profil.id,
+      programId: program.id,
     });
   }
 
@@ -216,11 +230,7 @@ async function main() {
     relawanId: relawan[1]!.profil.id,
     programId: programBerlangsung.id,
   };
-  await db.pendaftaran.upsert({
-    where: { id: pendaftaranBerlangsung.id },
-    update: pendaftaranBerlangsung,
-    create: pendaftaranBerlangsung,
-  });
+  await seedPendaftaran(pendaftaranBerlangsung);
   const pendaftaranBerlangsungMenunggu = {
     id: "seed-pendaftaran-berlangsung-menunggu",
     keterampilan: relawan[0]!.keterampilan,
@@ -230,11 +240,7 @@ async function main() {
     relawanId: relawan[0]!.profil.id,
     programId: programBerlangsung.id,
   };
-  await db.pendaftaran.upsert({
-    where: { id: pendaftaranBerlangsungMenunggu.id },
-    update: pendaftaranBerlangsungMenunggu,
-    create: pendaftaranBerlangsungMenunggu,
-  });
+  await seedPendaftaran(pendaftaranBerlangsungMenunggu);
 
   const waktuSelesai = new Date(sekarang.getTime() - 24 * 60 * 60 * 1000);
   const programSelesai = await db.program.upsert({
@@ -274,11 +280,7 @@ async function main() {
     relawanId: relawan[0]!.profil.id,
     programId: programSelesai.id,
   };
-  await db.pendaftaran.upsert({
-    where: { id: pendaftaranSelesai.id },
-    update: pendaftaranSelesai,
-    create: pendaftaranSelesai,
-  });
+  await seedPendaftaran(pendaftaranSelesai);
   const kehadiranSelesai = {
     relawanId: relawan[0]!.profil.id,
     programId: programSelesai.id,
