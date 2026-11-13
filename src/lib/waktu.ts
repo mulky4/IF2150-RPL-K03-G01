@@ -20,6 +20,16 @@ const formatJamMenit = new Intl.DateTimeFormat("id-ID", {
   hour12: false,
 });
 
+const formatBulanTahun = new Intl.DateTimeFormat("id-ID", {
+  timeZone: ZONA,
+  month: "short",
+  year: "numeric",
+});
+
+const formatAngkaJam = new Intl.NumberFormat("id-ID", {
+  maximumFractionDigits: 1,
+});
+
 /** "Sab, 14 Nov 2026" */
 export function tanggal(waktu: Date): string {
   const bagian = formatTanggal.formatToParts(waktu);
@@ -47,6 +57,16 @@ export function rentangWaktu(mulai: Date, selesai: Date): string {
     return `${tanggalJam(mulai)}–${jam(selesai)} WIB`;
   }
   return `${tanggalJam(mulai)} – ${tanggalJam(selesai)} WIB`;
+}
+
+/** "Mar 2026" */
+export function bulanTahun(waktu: Date): string {
+  return formatBulanTahun.format(waktu);
+}
+
+/** Jumlah jam dengan paling banyak satu angka desimal: 4 → "4", 2.5 → "2,5". */
+export function angkaJam(jumlah: number): string {
+  return formatAngkaJam.format(jumlah);
 }
 
 // Waktu relatif untuk notifikasi.

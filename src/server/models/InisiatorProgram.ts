@@ -34,4 +34,8 @@ export class InisiatorProgram extends Pengguna {
   getTautan(): string {
     return this.tautanSitusResmi ?? "";
   }
+
+  getNamaLembaga(): string {
+    return this.namaLembaga;
+  }
 }

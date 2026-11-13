@@ -1,19 +1,27 @@
 import { Prisma } from "@prisma/client";
 
-import { belumDiimplementasi } from "~/lib/belumDiimplementasi";
 import { GalatValidasi } from "~/lib/galat";
 import { db } from "~/server/db";
-import type { KategoriProgram, StatusPendaftaran } from "~/server/models/enums";
+import {
+  StatusPendaftaran,
+  StatusProgram,
+  StatusVerifikasi,
+  type KategoriProgram,
+} from "~/server/models/enums";
 import { Kehadiran } from "~/server/models/Kehadiran";
 import { Pendaftaran } from "~/server/models/Pendaftaran";
 import { Program } from "~/server/models/Program";
-import { Relawan } from "~/server/models/Relawan";
+import { Relawan, SERTAKAN_RELAWAN } from "~/server/models/Relawan";
 
 export const PESAN_BELUM_DITERIMA =
   "Relawan tidak terdaftar atau belum diterima pada program ini";
 export const PESAN_DI_LUAR_WAKTU =
   "Check-in hanya dapat dilakukan selama waktu pelaksanaan program";
 export const PESAN_SUDAH_HADIR = "Kehadiran sudah tercatat sebelumnya";
+export const PESAN_PROGRAM_TIDAK_ADA = "Program tidak ditemukan";
+export const PESAN_PROGRAM_BELUM_SELESAI =
+  "Portofolio hanya diperbarui untuk program yang sudah selesai";
+export const PESAN_RELAWAN_TIDAK_ADA = "Relawan tidak ditemukan";
 
 /** Satu baris di daftar Kegiatan Saya, dikirim apa adanya ke halaman. */
 export type KegiatanRelawan = {
@@ -26,6 +34,15 @@ export type KegiatanRelawan = {
   statusPendaftaran: StatusPendaftaran;
   /** Waktu check-in, null kalau belum check-in. */
   waktuKehadiran: Date | null;
+};
+
+/** Identitas relawan di bagian atas halaman Portofolio. */
+export type ProfilRelawan = {
+  nama: string;
+  domisili: string | null;
+  terverifikasi: boolean;
+  /** Waktu akun dibuat. */
+  relawanSejak: Date;
 };
 
 /**
@@ -157,11 +174,70 @@ export class PresensiController {
     }
   }
 
-  static async perbaruiPortofolioRelawan(idProgram: string): Promise<void> {
-    return belumDiimplementasi(
-      "PresensiController.perbaruiPortofolioRelawan",
-      idProgram,
+  /**
+   * Menambah jam aksi setiap relawan diterima yang hadir di program ini.
+   * Dipanggil setelah laporan akhir disetujui dan program berstatus SELESAI.
+   * Aman dipanggil ulang: relawan yang programnya sudah tercatat dilewati.
+   *
+   * Kalau `tx` diberikan, semua baca dan tulis ikut transaksi pemanggil, jadi
+   * status SELESAI yang belum di-commit sudah terbaca dan semuanya batal
+   * bersama kalau ada yang gagal. Tanpa `tx`, fungsi ini membuka transaksinya
+   * sendiri.
+   */
+  static async perbaruiPortofolioRelawan(
+    idProgram: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    if (tx) return PresensiController.catatJamAksiProgram(idProgram, tx);
+    return db.$transaction((klien) =>
+      PresensiController.catatJamAksiProgram(idProgram, klien),
     );
+  }
+
+  private static async catatJamAksiProgram(
+    idProgram: string,
+    klien: Prisma.TransactionClient,
+  ): Promise<void> {
+    const baris = await klien.program.findUnique({
+      where: { id: idProgram },
+      include: {
+        pendaftaran: {
+          where: { status: StatusPendaftaran.DITERIMA },
+          include: { relawan: { include: SERTAKAN_RELAWAN } },
+        },
+      },
+    });
+    if (baris === null) throw new GalatValidasi([PESAN_PROGRAM_TIDAK_ADA]);
+    const program = Program.dariBaris(baris, {
+      relawanDiterima: baris.pendaftaran.map((p) =>
+        Relawan.dariBaris(p.relawan),
+      ),
+    });
+    if (program.getStatus() !== StatusProgram.SELESAI) {
+      throw new GalatValidasi([PESAN_PROGRAM_BELUM_SELESAI]);
+    }
+
+    const tambahan: { idRelawan: string; jamAksi: number }[] = [];
+    for (const relawan of program.daftarRelawanDiterima()) {
+      if (!relawan.hadirPada(program)) continue;
+      if (relawan.lihatPortofolio().mencatat(program)) continue;
+      const sebelum = relawan.getTotalJamAksi();
+      relawan.catatKontribusi(program);
+      tambahan.push({
+        idRelawan: relawan.getIdRelawan(),
+        jamAksi: relawan.getTotalJamAksi() - sebelum,
+      });
+    }
+    for (const { idRelawan, jamAksi } of tambahan) {
+      const riwayat = await klien.riwayatKontribusi.upsert({
+        where: { relawanId: idRelawan },
+        create: { relawanId: idRelawan, totalJamAksi: jamAksi },
+        update: { totalJamAksi: { increment: jamAksi } },
+      });
+      await klien.riwayatProgram.create({
+        data: { riwayatId: riwayat.id, programId: idProgram },
+      });
+    }
   }
 
   /** Teks status waktu program, misalnya "Belum dimulai" atau "Sudah selesai". */
@@ -172,33 +248,43 @@ export class PresensiController {
   }
 
   static async ambilTotalJamAksi(idRelawan: string): Promise<number> {
-    return belumDiimplementasi(
-      "PresensiController.ambilTotalJamAksi",
-      idRelawan,
-    );
+    const relawan = await PresensiController.cariRelawan(idRelawan);
+    return relawan.lihatPortofolio().getTotalJamAksi();
   }
 
+  /** Program selesai yang dihadiri relawan, yang paling baru di atas. */
   static async ambilRiwayatProgram(idRelawan: string): Promise<Program[]> {
-    return belumDiimplementasi(
-      "PresensiController.ambilRiwayatProgram",
-      idRelawan,
-    );
+    const relawan = await PresensiController.cariRelawan(idRelawan);
+    return relawan.lihatPortofolio().getDaftarProgramSelesai();
+  }
+
+  static async ambilProfilRelawan(idRelawan: string): Promise<ProfilRelawan> {
+    const baris = await db.relawan.findUnique({
+      where: { id: idRelawan },
+      select: {
+        nama: true,
+        domisili: true,
+        statusVerifikasi: true,
+        user: { select: { createdAt: true } },
+      },
+    });
+    if (baris === null) throw new GalatValidasi([PESAN_RELAWAN_TIDAK_ADA]);
+    return {
+      nama: baris.nama,
+      domisili: baris.domisili,
+      terverifikasi: baris.statusVerifikasi === StatusVerifikasi.TERVERIFIKASI,
+      relawanSejak: baris.user.createdAt,
+    };
+  }
+
+  private static async cariRelawan(idRelawan: string): Promise<Relawan> {
+    const relawan = await Relawan.cari(idRelawan);
+    if (relawan === null) throw new GalatValidasi([PESAN_RELAWAN_TIDAK_ADA]);
+    return relawan;
   }
 
   private static async cariProgram(idProgram: string): Promise<Program | null> {
     const baris = await db.program.findUnique({ where: { id: idProgram } });
-    if (baris === null) return null;
-    return new Program({
-      idProgram: baris.id,
-      namaProgram: baris.namaProgram,
-      deskripsi: baris.deskripsi,
-      kategori: baris.kategori,
-      tempatPelaksanaan: baris.tempatPelaksanaan,
-      waktuMulai: baris.waktuMulai,
-      waktuSelesai: baris.waktuSelesai,
-      kuota: baris.kuota,
-      syaratKetentuan: baris.syaratKetentuan,
-      status: baris.status,
-    });
+    return baris === null ? null : Program.dariBaris(baris);
   }
 }
