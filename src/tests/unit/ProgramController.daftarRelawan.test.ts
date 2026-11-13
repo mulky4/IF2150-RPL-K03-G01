@@ -59,9 +59,9 @@ describe("ProgramController.daftarRelawan", () => {
       program: programAktif,
       sudahDaftar: null,
     });
-    await expect(controller.daftarRelawan("user1", input)).rejects.toMatchObject(
-      { code: "FORBIDDEN" },
-    );
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("menolak program yang tidak ada", async () => {
@@ -70,9 +70,9 @@ describe("ProgramController.daftarRelawan", () => {
       program: null,
       sudahDaftar: null,
     });
-    await expect(controller.daftarRelawan("user1", input)).rejects.toMatchObject(
-      { code: "NOT_FOUND" },
-    );
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
 
   it("menolak program yang tidak aktif", async () => {
@@ -81,9 +81,9 @@ describe("ProgramController.daftarRelawan", () => {
       program: { id: "prog1", status: "SELESAI" },
       sudahDaftar: null,
     });
-    await expect(controller.daftarRelawan("user1", input)).rejects.toBeInstanceOf(
-      GalatProgram,
-    );
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toBeInstanceOf(GalatProgram);
   });
 
   it("menolak pendaftaran ganda", async () => {
@@ -92,9 +92,9 @@ describe("ProgramController.daftarRelawan", () => {
       program: programAktif,
       sudahDaftar: { id: "x" },
     });
-    await expect(controller.daftarRelawan("user1", input)).rejects.toMatchObject(
-      { code: "CONFLICT" },
-    );
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({ code: "CONFLICT" });
     expect(create).not.toHaveBeenCalled();
   });
 });

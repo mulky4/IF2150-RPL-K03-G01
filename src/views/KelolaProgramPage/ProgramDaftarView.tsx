@@ -11,9 +11,18 @@ import { TextArea } from "../components/TextArea";
 import { useProgramDaftar } from "./useProgramDaftar";
 
 const OPSI_WAKTU = [
-  { nilai: "Bisa hadir penuh (07.00–12.00 WIB)", label: "Bisa hadir penuh (07.00–12.00 WIB)" },
-  { nilai: "Hanya sesi pagi (07.00–10.00 WIB)", label: "Hanya sesi pagi (07.00–10.00 WIB)" },
-  { nilai: "Hanya sesi siang (10.00–12.00 WIB)", label: "Hanya sesi siang (10.00–12.00 WIB)" },
+  {
+    nilai: "Bisa hadir penuh (07.00–12.00 WIB)",
+    label: "Bisa hadir penuh (07.00–12.00 WIB)",
+  },
+  {
+    nilai: "Hanya sesi pagi (07.00–10.00 WIB)",
+    label: "Hanya sesi pagi (07.00–10.00 WIB)",
+  },
+  {
+    nilai: "Hanya sesi siang (10.00–12.00 WIB)",
+    label: "Hanya sesi siang (10.00–12.00 WIB)",
+  },
 ];
 
 export function ProgramDaftarView({ programId }: { programId: string }) {

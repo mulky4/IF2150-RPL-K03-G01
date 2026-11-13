@@ -64,7 +64,7 @@ export class ProgramController {
     });
   }
 
-    async daftarRelawan(
+  async daftarRelawan(
     idPengguna: string,
     data: {
       programId: string;

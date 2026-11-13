@@ -64,7 +64,10 @@ export const programRouter = createTRPCRouter({
       z.object({
         programId: z.string().min(1),
         keterampilan: z.string().trim().min(1, "Keterampilan wajib diisi"),
-        ketersediaanWaktu: z.string().trim().min(1, "Ketersediaan waktu wajib diisi"),
+        ketersediaanWaktu: z
+          .string()
+          .trim()
+          .min(1, "Ketersediaan waktu wajib diisi"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
