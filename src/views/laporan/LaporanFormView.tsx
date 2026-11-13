@@ -23,7 +23,7 @@ export function LaporanFormView() {
   const createMutation = api.laporan.buatLaporan.useMutation({
     onSuccess: ({ status }) => {
       setPesanSukses(`Laporan terkirim. Status program: ${status}.`);
-      setTimeout(() => router.push("/dashboard/inisiator"), 1500);
+      setTimeout(() => router.push("/inisiator/program"), 1500);
     },
     onError: (error) => setErrorMessage(error.message),
   });
@@ -123,7 +123,7 @@ export function LaporanFormView() {
 
         <nav className="flex items-center space-x-2">
           <Link
-            href="/dashboard/inisiator"
+            href="/inisiator/program"
             className="rounded-full bg-[#D8F3DC] px-4 py-1.5 text-xs font-bold text-[#2D6A4F]"
           >
             Program Saya
@@ -162,7 +162,7 @@ export function LaporanFormView() {
       {/* Main Container */}
       <main className="mx-auto max-w-3xl space-y-6 px-6 py-8">
         <Link
-          href="/dashboard/inisiator"
+          href="/inisiator/program"
           className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#2D6A4F] hover:underline"
         >
           <Ikon nama="back" ukuran={16} />
