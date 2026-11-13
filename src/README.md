@@ -2,8 +2,6 @@
 
 Platform web yang menghubungkan relawan dengan program aksi lingkungan (Jaga Alam & Jaga Iklim) dari lembaga terverifikasi. Tugas Besar IF2150 Rekayasa Perangkat Lunak, K03 – G01.
 
-> Draft README (Modul 1). Bagian bertanda _(menyusul)_ dilengkapi seiring implementasi.
-
 ## Teknologi
 
 | Komponen                     | Versi                                                                  |
@@ -67,7 +65,26 @@ Semua akun uji menggunakan kata sandi `DemoRekanBumi2026!`.
 | Relawan     | `relawan2@rekanbumi.example`    |
 | Verifikator | `verifikator@rekanbumi.example` |
 
-## Modul & Pembagian _(menyusul)_
+## Modul & Pembagian
+
+| Modul                                | PIC (NIM)                                       | Layar dan kelas DPPL                                                                               | Kontributor implementasi (PR)                                                                                                              |
+| ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. Auth & Notifikasi + Fondasi A     | Mulky Siraj Firizqi (13525069)                  | I-01 Registrasi, I-02 Login, I-03 Notifikasi · C04, C10, C12, C13, C22                             | Mulky: scaffold, Better Auth + bcrypt, blokir IP, notifikasi, sinkron status verifikasi, CloudStorageAdapter (#9, #28, #29, #30, #33, #36) |
+| 2. Program & Eksplorasi              | Kairenzo Vemil (13525063)                       | I-04 Eksplorasi, I-05 Detail, I-08 Daftarkan Program · C01, C05, C07, C15, C16, C21                | Kairenzo: eksplorasi, detail, pencarian (#57) · I-08: Gie (#26, #37)                                                                       |
+| 3. Pendaftaran & Seleksi + Fondasi B | Ribka Kaylena Sanjaya (13525045)                | I-06 Formulir Pendaftaran, I-11 Kelola Pendaftar · C02, C17, C18                                   | Ribka: skema Prisma, migrasi, seed, Seleksi (#25, #34, #51) · I-06: Gie (#32)                                                              |
+| 4. Laporan & Verifikator             | Three Gie Gendhis Sekar Ayoe Jatmiko (13525144) | I-07 Program Saya, I-09 Unggah Laporan, I-10 Tinjau Laporan, Dashboard Verifikator · C06, C09, C14 | Gie (#26, #37, #48, #50, #53, #54, #56)                                                                                                    |
+| 5. Presensi & Portofolio + Fondasi C | Avicenna Ananda Musthafa (13525018)             | I-12 Kegiatan Saya, I-13 Portofolio · C03, C08, C11, C19, C20                                      | Avicenna: design system, check-in, jam aksi, portofolio, uji beban (#18, #35, #44, #49, #52, #55)                                          |
+
+### Cara pakai per peran
+
+| Peran       | Alur                                                                                                                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pengunjung  | `/program` cari dan filter program → buka detail → Daftar Program diarahkan ke login                                                                                                      |
+| Relawan     | Registrasi → klik link verifikasi di terminal → masuk → daftar program → tunggu hasil seleksi di Notifikasi → check-in di Kegiatan Saya saat program berlangsung → jam aksi di Portofolio |
+| Inisiator   | Masuk → Daftarkan Program (menunggu verifikasi) → Program Saya → Kelola Pendaftar → unggah laporan akhir setelah program selesai                                                          |
+| Verifikator | Masuk → Verifikasi Program (aktifkan program baru) → Laporan Masuk → setujui atau tolak laporan akhir                                                                                     |
+
+Setelah menarik perubahan skema dari `develop`, jalankan `pnpm prisma migrate dev` lalu `pnpm db:seed`.
 
 ## Struktur Folder
 
