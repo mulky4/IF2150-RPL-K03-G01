@@ -1,5 +1,7 @@
 import type { PrismaClient, StatusProgram } from "@prisma/client";
 import { db } from "~/server/db";
+import { GalatValidasi } from "~/lib/galat";
+import { PresensiController } from "~/server/controllers/PresensiController";
 import { LaporanProgram } from "~/server/models/LaporanProgram";
 import { hitungStatistik } from "~/lib/programSaya";
 import { Program } from "~/server/models/Program";
@@ -442,6 +444,23 @@ export class ProgramController {
         where: { id: laporan.programId },
         data: { status: statusProgram },
       });
+      if (keputusan === "DISETUJUI") {
+        // Status SELESAI sudah ditulis di tx ini, jadi ikut terbaca. Kalau gagal, semuanya batal.
+        try {
+          await PresensiController.perbaruiPortofolioRelawan(
+            laporan.programId,
+            tx,
+          );
+        } catch (error) {
+          if (error instanceof GalatValidasi) {
+            throw new GalatProgram(
+              `Portofolio relawan gagal diperbarui: ${error.message}`,
+              "CONFLICT",
+            );
+          }
+          throw error;
+        }
+      }
       await tx.notifikasi.create({
         data: {
           userId: laporan.program.inisiatorProgram.userId,
