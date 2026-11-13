@@ -17,16 +17,17 @@ type Dasar = {
 
 function buat({ relawan, program, sudahDaftar, jumlahDiterima = 0 }: Dasar) {
   const create = vi.fn().mockResolvedValue({ id: "p1" });
+  const count = vi.fn().mockResolvedValue(jumlahDiterima);
   const database = {
     relawan: { findUnique: vi.fn().mockResolvedValue(relawan) },
     program: { findUnique: vi.fn().mockResolvedValue(program) },
     pendaftaran: {
       findFirst: vi.fn().mockResolvedValue(sudahDaftar),
-      count: vi.fn().mockResolvedValue(jumlahDiterima),
+      count,
       create,
     },
   } as unknown as PrismaClient;
-  return { controller: new ProgramController(database), create };
+  return { controller: new ProgramController(database), create, count };
 }
 
 const input = {
@@ -125,7 +126,7 @@ describe("ProgramController.daftarRelawan", () => {
   });
 
   it("menolak pendaftaran kalau kuota program sudah penuh", async () => {
-    const { controller, create } = buat({
+    const { controller, create, count } = buat({
       relawan: relawanOk,
       program: programAktif,
       sudahDaftar: null,
@@ -137,7 +138,25 @@ describe("ProgramController.daftarRelawan", () => {
       code: "CONFLICT",
       message: "Kuota program sudah penuh.",
     });
+    expect(count).toHaveBeenCalledWith({
+      where: { programId: "prog1", status: "DITERIMA" },
+    });
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it("relawan yang sudah terdaftar di program penuh mendapat pesan sudah mendaftar", async () => {
+    const { controller } = buat({
+      relawan: relawanOk,
+      program: programAktif,
+      sudahDaftar: { id: "x" },
+      jumlahDiterima: 2,
+    });
+    await expect(
+      controller.daftarRelawan("user1", input),
+    ).rejects.toMatchObject({
+      code: "CONFLICT",
+      message: "Kamu sudah mendaftar di program ini.",
+    });
   });
 
   it("masih menerima pendaftaran selama kuota belum penuh", async () => {

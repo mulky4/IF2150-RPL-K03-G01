@@ -166,13 +166,6 @@ export class ProgramController {
         "BAD_REQUEST",
       );
     }
-    const jumlahDiterima = await this.database.pendaftaran.count({
-      where: { programId: program.id, status: "DITERIMA" },
-    });
-    if (jumlahDiterima >= program.kuota) {
-      throw new GalatProgram("Kuota program sudah penuh.", "CONFLICT");
-    }
-
     const sudahDaftar = await this.database.pendaftaran.findFirst({
       where: { programId: program.id, relawanId: relawan.id },
     });
@@ -181,6 +174,13 @@ export class ProgramController {
         "Kamu sudah mendaftar di program ini.",
         "CONFLICT",
       );
+    }
+
+    const jumlahDiterima = await this.database.pendaftaran.count({
+      where: { programId: program.id, status: "DITERIMA" },
+    });
+    if (jumlahDiterima >= program.kuota) {
+      throw new GalatProgram("Kuota program sudah penuh.", "CONFLICT");
     }
 
     try {
