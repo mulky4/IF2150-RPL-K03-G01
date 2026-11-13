@@ -13,6 +13,7 @@ import {
   nadaStatus,
   persenKuota,
 } from "~/lib/programSaya";
+import { tanggal } from "~/lib/waktu";
 
 import { useProgramSaya } from "./useProgramSaya";
 
@@ -22,12 +23,7 @@ const HREF_UNGGAH_LAPORAN = "/laporan"; // I-09
 const hrefKelolaPendaftar = (id: string) =>
   `/inisiator/program/${id}/pendaftar`;
 
-const formatTanggal = (nilai: Date | string) =>
-  new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(nilai));
+const formatTanggal = (nilai: Date | string) => tanggal(new Date(nilai));
 
 function KartuStatistik({ label, nilai }: { label: string; nilai: number }) {
   return (
