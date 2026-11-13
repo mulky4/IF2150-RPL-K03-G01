@@ -241,10 +241,17 @@ Jika tidak ada perbaikan yang perlu dilakukan, jelaskan hasil profiling dan alas
 
 Tabel B.4. Kontribusi Anggota
 
+## B.4 Kontribusi Anggota
+
+Tabel B.4. Kontribusi Anggota
+
 | NIM | Nama | Modul / Fitur yang Dikerjakan | Persentase Kontribusi |
 | :--- | :--- | :--- | :--- |
-| *[NIM 1]* | *[Nama]* | *[Modul/fitur]* | *[%]* |
-| *...* | *...* | *...* | *...* |
+| 13525018 | Avicenna Ananda Musthafa | Presensi & Portofolio :** I-12 check-in dan halaman Kegiatan Saya, I-13 Portofolio relawan, model `Kehadiran` dan `RiwayatKontribusi`, `perbaruiPortofolioRelawan()` untuk pembaruan jam aksi, skenario alternatif UC08 dan unit test presensi, uji beban check-in 50 request bersamaan (KNF04). **Di luar Modul 5:** Fondasi C (tema Tailwind, layout global, komponen UI design system). | |
+| 13525045 | Ribka Kaylena Sanjaya | (Pendaftaran & Seleksi) I-11 Kelola Pendaftar dan seleksi relawan, data seed untuk skenario uji, unit test transisi status `Pendaftaran`, perbaikan kredensial DB `.env.example` agar sama dengan docker-compose. |  |
+| 13525063 | Kairenzo Vemil | (Program & Eksplorasi) I-04 halaman eksplorasi program, I-05 detail program, dan pencarian program. |  |
+| 13525069 | Mulky Siraj Firizqi | **Modul 1 (Auth & Notifikasi):** I-01 registrasi Relawan/Inisiator, I-02 login dan redirect `urlKembali`, I-03 notifikasi dan badge di Navbar, blokir IP setelah 5 kali gagal (KNF06), sinkron status verifikasi relawan. **Di luar Modul 1:** Fondasi A (scaffold Next.js, tRPC, Prisma, tooling, Better Auth + bcrypt, procedure per peran, kerangka kelas C04, C10, C12, C13). |  |
+| 13525144 | Three Gie Gendhis Sekar Ayoe Jatmiko | (Laporan dan Verifikator) I-09 unggah laporan akhir, I-10 peninjauan dan persetujuan laporan (`LaporanProgram`, `Verifikator`, `ProgramController` bagian laporan), I-07 Program Saya, Dashboard Verifikator dan persetujuan program, notifikasi ke Verifikator saat laporan diajukan, integrasi persetujuan laporan ke portofolio relawan. **Di luar Modul 4:** I-08 formulir daftar program (PR #31), I-06 pendaftaran relawan (PR #32), dan review PR modul lain. |  |
 
 ## B.5 Traceability Kelas Perancangan ke Implementasi
 
