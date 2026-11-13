@@ -88,7 +88,6 @@ async function main() {
       noTelepon: "081200000001",
       domisili: "Kota Contoh",
       relawanId: "seed-relawan-1",
-      pendaftaranId: "seed-pendaftaran-1",
     },
     {
       email: "relawan2@rekanbumi.example",
@@ -98,7 +97,6 @@ async function main() {
       noTelepon: "081200000002",
       domisili: "Kota Contoh",
       relawanId: "seed-relawan-2",
-      pendaftaranId: "seed-pendaftaran-2",
     },
     // Profil sengaja belum lengkap (tanpa nomor telepon dan domisili) untuk
     // menguji penolakan pendaftaran relawan yang datanya belum lengkap.
@@ -110,7 +108,6 @@ async function main() {
       noTelepon: null,
       domisili: null,
       relawanId: "seed-relawan-3",
-      pendaftaranId: "seed-pendaftaran-3",
     },
   ];
 
@@ -222,7 +219,7 @@ async function main() {
   for (const [indeks, data] of relawan.slice(0, 2).entries()) {
     const status = indeks === 0 ? "DITERIMA" : "MENUNGGU";
     await seedPendaftaran({
-      id: data.pendaftaranId,
+      id: `seed-pendaftaran-${indeks + 1}`,
       keterampilan: data.keterampilan,
       ketersediaanWaktu: data.ketersediaanWaktu,
       status,
