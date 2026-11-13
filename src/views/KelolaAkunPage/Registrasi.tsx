@@ -19,13 +19,13 @@ type Peran = "RELAWAN" | "INISIATOR";
 
 const PILIHAN_PERAN: { nilai: Peran; label: string }[] = [
   { nilai: "RELAWAN", label: "Relawan" },
-  { nilai: "INISIATOR", label: "Inisiator" },
+  { nilai: "INISIATOR", label: "Inisiator Program" },
 ];
 
 const POIN_PROMO = [
-  "Temukan program lingkungan di dekatmu",
-  "Daftar dan pantau kegiatanmu di satu tempat",
-  "Dapatkan sertifikat setelah kegiatan selesai",
+  "Program dari lembaga yang sudah diverifikasi",
+  "Daftar sekali, ikut banyak aksi lingkungan",
+  "Jam aksi tercatat otomatis di portofolio",
 ];
 
 type Isian = {
@@ -72,9 +72,9 @@ export function Registrasi() {
     formulir.set("peran", peran);
     formulir.set("email", isian.email);
     formulir.set("kataSandi", isian.kataSandi);
-    formulir.set("noTelepon", isian.noTelepon);
     if (relawan) {
       formulir.set("nama", isian.nama);
+      formulir.set("noTelepon", isian.noTelepon);
       formulir.set(
         "domisili",
         isian.domisili === "Lainnya" && isian.domisiliLain.trim()
@@ -99,6 +99,11 @@ export function Registrasi() {
         <Logo warna="putih" />
         <div className="flex flex-col gap-6">
           <h2 className="text-h1">Satu aksi kecil, dampak besar untuk bumi.</h2>
+          <p className="text-body">
+            Bergabung sebagai Relawan untuk ikut program aksi lingkungan, atau
+            sebagai Inisiator Program untuk mengajak relawan ke program
+            lembagamu.
+          </p>
           <ul className="flex flex-col gap-3">
             {POIN_PROMO.map((poin) => (
               <li key={poin} className="text-body flex items-start gap-3">
@@ -118,8 +123,8 @@ export function Registrasi() {
             <Banner nada="sukses">Akun berhasil dibuat.</Banner>
             <p className="text-body text-text-secondary">
               Tautan verifikasi email untuk {isian.email} sudah dibuat
-              (sementara dicetak di terminal server, belum dikirim lewat
-              surel). Kamu sudah bisa masuk untuk mulai memakai RekanBumi.
+              (sementara dicetak di terminal server, belum dikirim lewat surel).
+              Kamu sudah bisa masuk untuk mulai memakai RekanBumi.
             </p>
             <ButtonLink href="/login" lebarPenuh>
               Lanjut ke halaman masuk
@@ -182,6 +187,7 @@ export function Registrasi() {
             <Input
               label={relawan ? "Nama lengkap" : "Nama penanggung jawab"}
               autoComplete="name"
+              placeholder={relawan ? "contoh: Siti Rahma" : undefined}
               bantuan={relawan ? "Sesuai kartu identitas" : undefined}
               value={isian.nama}
               onChange={(e) => ubah("nama")(e.target.value)}
@@ -200,6 +206,7 @@ export function Registrasi() {
               label="Email"
               type="email"
               autoComplete="email"
+              placeholder="nama@email.com"
               bantuan="Dipakai untuk masuk"
               value={isian.email}
               onChange={(e) => ubah("email")(e.target.value)}
@@ -213,17 +220,18 @@ export function Registrasi() {
               onChange={(e) => ubah("kataSandi")(e.target.value)}
               disabled={sedangMengirim}
             />
-            <Input
-              label="Nomor telepon"
-              type="tel"
-              autoComplete="tel"
-              bantuan="Untuk dihubungi lembaga"
-              value={isian.noTelepon}
-              onChange={(e) => ubah("noTelepon")(e.target.value)}
-              disabled={sedangMengirim}
-            />
             {relawan ? (
               <>
+                <Input
+                  label="No. telepon"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="08xxxxxxxxxx"
+                  bantuan="Untuk dihubungi lembaga"
+                  value={isian.noTelepon}
+                  onChange={(e) => ubah("noTelepon")(e.target.value)}
+                  disabled={sedangMengirim}
+                />
                 <Select
                   label="Domisili"
                   placeholder="Pilih kota/kabupaten"
@@ -243,7 +251,7 @@ export function Registrasi() {
                   />
                 )}
                 <FileDropzone
-                  label="Dokumen verifikasi"
+                  label="Dokumen verifikasi diri"
                   bantuan="Kartu identitas · PDF, JPG, atau PNG · maksimal 2 MB"
                   accept=".pdf,.jpg,.jpeg,.png"
                   namaBerkas={berkas ? [berkas.name] : []}
@@ -270,7 +278,7 @@ export function Registrasi() {
                 disabled={sedangMengirim}
                 className="accent-primary mt-1 size-5 shrink-0"
               />
-              Saya menyetujui syarat dan ketentuan serta kebijakan privasi
+              Saya menyetujui Syarat &amp; Ketentuan serta Kebijakan Privasi
               RekanBumi.
             </label>
 
