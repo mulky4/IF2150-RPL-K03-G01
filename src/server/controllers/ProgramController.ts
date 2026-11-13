@@ -1,0 +1,733 @@
+import { Prisma, type PrismaClient, type StatusProgram } from "@prisma/client";
+import { db } from "~/server/db";
+import { GalatValidasi } from "~/lib/galat";
+import { PresensiController } from "~/server/controllers/PresensiController";
+import { LaporanProgram } from "~/server/models/LaporanProgram";
+import { hitungStatistik } from "~/lib/programSaya";
+import { InisiatorProgram } from "~/server/models/InisiatorProgram";
+import { Program } from "~/server/models/Program";
+import { Relawan } from "~/server/models/Relawan";
+
+export type KodeGalatProgram =
+  "BAD_REQUEST" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT";
+
+export class GalatProgram extends Error {
+  constructor(
+    message: string,
+    public readonly code: KodeGalatProgram,
+  ) {
+    super(message);
+    this.name = "GalatProgram";
+  }
+}
+
+export type DataProgramBaru = {
+  namaProgram: string;
+  deskripsi: string;
+  kategori: "JAGA_ALAM" | "JAGA_IKLIM";
+  tempatPelaksanaan: string;
+  waktuMulai: Date;
+  waktuSelesai: Date;
+  kuota: number;
+  syaratKetentuan: string;
+  urlDokumenLegalitas: string;
+};
+
+/** Satu baris di daftar Eksplorasi. */
+export type RingkasanProgram = {
+  idProgram: string;
+  namaProgram: string;
+  kategori: "JAGA_ALAM" | "JAGA_IKLIM";
+  tempatPelaksanaan: string;
+  waktuMulai: Date;
+  waktuSelesai: Date;
+  kuota: number;
+  jumlahDiterima: number;
+  namaLembaga: string;
+  lembagaTerverifikasi: boolean;
+};
+
+export type TahapWaktuProgram = "BELUM_DIMULAI" | "BERLANGSUNG" | "SELESAI";
+
+/** Hasil pencarian: paling banyak `batas` program dan penanda masih ada hasil lain. */
+export type HasilPencarianProgram = {
+  daftar: RingkasanProgram[];
+  adaLagi: boolean;
+};
+
+/** Isi halaman Detail Program. */
+export type DetailProgram = RingkasanProgram & {
+  deskripsi: string;
+  syaratKetentuan: string;
+  status: StatusProgram;
+  keteranganWaktu: string;
+  /** Tahap waktu pelaksanaan, dihitung dari tanggal program (bukan dari teks keterangan). */
+  tahapWaktu: TahapWaktuProgram;
+  kuotaTersedia: boolean;
+  /** Apakah relawan boleh mendaftar: program AKTIF, kuota masih ada, dan belum selesai. */
+  bisaDaftar: boolean;
+  /** Tautan situs resmi lembaga; null kalau kosong atau bukan http/https. */
+  tautanSitusResmi: string | null;
+  /** Hanya terisi untuk program SELESAI yang laporannya sudah disetujui. */
+  capaian: {
+    ringkasan: string;
+    dokumentasi: string[];
+  } | null;
+};
+
+const MUAT_UNTUK_EKSPLORASI = {
+  inisiatorProgram: {
+    select: { namaLembaga: true, statusVerifikasi: true },
+  },
+  _count: {
+    select: { pendaftaran: { where: { status: "DITERIMA" as const } } },
+  },
+};
+
+export class ProgramController {
+  constructor(private readonly database: PrismaClient = db) {}
+
+  async simpanProgramBaru(idPengguna: string, data: DataProgramBaru) {
+    const galat = this.validasiDataProgram(data);
+    if (galat.length > 0) {
+      throw new GalatProgram(galat.join(" "), "BAD_REQUEST");
+    }
+
+    const inisiator = await this.database.inisiatorProgram.findUnique({
+      where: { userId: idPengguna },
+    });
+    if (!inisiator || inisiator.statusVerifikasi !== "TERVERIFIKASI") {
+      throw new GalatProgram("Lembaga belum terverifikasi.", "FORBIDDEN");
+    }
+
+    const { urlDokumenLegalitas, ...dataProgram } = data;
+    return this.database.$transaction(async (tx) => {
+      await tx.dokumenVerifikasi.create({
+        data: {
+          userId: idPengguna,
+          jenisDokumen: "Legalitas lembaga",
+          urlFile: urlDokumenLegalitas,
+          statusVerifikasi: "MENUNGGU",
+        },
+      });
+
+      return tx.program.create({
+        data: {
+          ...dataProgram,
+          status: "MENUNGGU_VERIFIKASI",
+          inisiatorProgramId: inisiator.id,
+        },
+      });
+    });
+  }
+
+  async daftarRelawan(
+    idPengguna: string,
+    data: {
+      programId: string;
+      keterampilan: string;
+      ketersediaanWaktu: string;
+    },
+  ) {
+    const relawan = await this.database.relawan.findUnique({
+      where: { userId: idPengguna },
+    });
+    if (!relawan) {
+      throw new GalatProgram("Profil relawan tidak ditemukan.", "NOT_FOUND");
+    }
+    if (relawan.statusVerifikasi !== "TERVERIFIKASI") {
+      throw new GalatProgram("Akunmu belum terverifikasi.", "FORBIDDEN");
+    }
+    const profil = new Relawan({
+      idPengguna,
+      email: "",
+      idRelawan: relawan.id,
+      nama: relawan.nama,
+      noTelepon: relawan.noTelepon,
+      domisili: relawan.domisili,
+      statusVerifikasi: relawan.statusVerifikasi,
+    });
+    if (!profil.cekKelengkapanData()) {
+      throw new GalatProgram(
+        "Data profilmu belum lengkap. Lengkapi nama, nomor telepon, dan domisili sebelum mendaftar.",
+        "BAD_REQUEST",
+      );
+    }
+
+    const program = await this.database.program.findUnique({
+      where: { id: data.programId },
+    });
+    if (!program) {
+      throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+    }
+    if (program.status !== "AKTIF") {
+      throw new GalatProgram(
+        "Program tidak menerima pendaftaran.",
+        "BAD_REQUEST",
+      );
+    }
+    const sudahDaftar = await this.database.pendaftaran.findFirst({
+      where: { programId: program.id, relawanId: relawan.id },
+    });
+    if (sudahDaftar) {
+      throw new GalatProgram(
+        "Kamu sudah mendaftar di program ini.",
+        "CONFLICT",
+      );
+    }
+
+    const jumlahDiterima = await this.database.pendaftaran.count({
+      where: { programId: program.id, status: "DITERIMA" },
+    });
+    if (jumlahDiterima >= program.kuota) {
+      throw new GalatProgram("Kuota program sudah penuh.", "CONFLICT");
+    }
+
+    try {
+      return await this.database.pendaftaran.create({
+        data: {
+          programId: program.id,
+          relawanId: relawan.id,
+          keterampilan: data.keterampilan,
+          ketersediaanWaktu: data.ketersediaanWaktu,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new GalatProgram(
+          "Kamu sudah mendaftar di program ini.",
+          "CONFLICT",
+        );
+      }
+      throw error;
+    }
+  }
+
+  async ambilProgramUntukLaporan(idPengguna: string) {
+    return this.database.program.findMany({
+      where: {
+        inisiatorProgram: { userId: idPengguna },
+        status: { in: ["AKTIF", "PERLU_REVISI"] },
+      },
+      orderBy: { waktuMulai: "desc" },
+      select: {
+        id: true,
+        namaProgram: true,
+        status: true,
+        waktuMulai: true,
+      },
+    });
+  }
+
+  async ajukanLaporanAkhir(
+    idPengguna: string,
+    input: {
+      programId: string;
+      dokumentasi: string[];
+      ringkasanCapaian: string;
+    },
+  ): Promise<StatusProgram> {
+    this.validasiLaporan(input.dokumentasi, input.ringkasanCapaian);
+    const program = await this.database.program.findUnique({
+      where: { id: input.programId },
+      include: { inisiatorProgram: true },
+    });
+    if (!program) {
+      throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+    }
+    if (program.inisiatorProgram.userId !== idPengguna) {
+      throw new GalatProgram("Program ini bukan milik akun Anda.", "FORBIDDEN");
+    }
+    if (program.status !== "AKTIF" && program.status !== "PERLU_REVISI") {
+      throw new GalatProgram(
+        "Program belum dapat mengajukan laporan akhir.",
+        "CONFLICT",
+      );
+    }
+
+    const laporan = new LaporanProgram(input.ringkasanCapaian);
+    for (const url of input.dokumentasi) {
+      laporan.uploadDokumentasi(url);
+    }
+
+    return this.database.$transaction(async (tx) => {
+      await tx.laporanProgram.create({
+        data: {
+          programId: program.id,
+          dokumentasiAkhir: laporan.showDokumentasi(),
+          ringkasanCapaian: laporan.showSummary(),
+        },
+      });
+      const updatedProgram = await tx.program.update({
+        where: { id: program.id },
+        data: { status: "MENUNGGU_KONFIRMASI" },
+        select: { status: true },
+      });
+      const verifikator = await tx.user.findMany({
+        where: { peran: "VERIFIKATOR" },
+        select: { id: true },
+      });
+      if (verifikator.length > 0) {
+        await tx.notifikasi.createMany({
+          data: verifikator.map(({ id }) => ({
+            userId: id,
+            pesan: `Laporan akhir program "${program.namaProgram}" menunggu peninjauan.`,
+          })),
+        });
+      }
+      return updatedProgram.status;
+    });
+  }
+
+  async ambilDaftarLaporan() {
+    return this.database.laporanProgram.findMany({
+      include: {
+        program: {
+          include: {
+            inisiatorProgram: { select: { namaLembaga: true } },
+          },
+        },
+      },
+      orderBy: { waktuPengajuan: "asc" },
+    });
+  }
+
+  async tinjauLaporan(idLaporan: string) {
+    const laporan = await this.database.laporanProgram.findUnique({
+      where: { id: idLaporan },
+      include: {
+        program: {
+          include: {
+            inisiatorProgram: { select: { namaLembaga: true, userId: true } },
+          },
+        },
+        verifikator: { select: { name: true } },
+      },
+    });
+    if (!laporan) {
+      throw new GalatProgram("Laporan tidak ditemukan.", "NOT_FOUND");
+    }
+    return laporan;
+  }
+
+  async konfirmasiLaporan(
+    idLaporan: string,
+    idVerifikator: string,
+  ): Promise<StatusProgram> {
+    return this.selesaikanPeninjauan(idLaporan, idVerifikator, "DISETUJUI");
+  }
+
+  async tolakLaporan(
+    idLaporan: string,
+    idVerifikator: string,
+    catatanRevisi: string,
+  ): Promise<StatusProgram> {
+    if (!catatanRevisi.trim()) {
+      throw new GalatProgram("Catatan revisi wajib diisi.", "BAD_REQUEST");
+    }
+    return this.selesaikanPeninjauan(
+      idLaporan,
+      idVerifikator,
+      "DITOLAK",
+      catatanRevisi,
+    );
+  }
+
+  /**
+   * Mencari program AKTIF; kata kunci dicocokkan ke nama dan deskripsi tanpa
+   * membedakan huruf, kategori opsional. Hasil dibatasi `batas` agar respons tetap
+   * cepat saat programnya banyak: diambil satu baris lebih banyak untuk tahu apakah
+   * masih ada hasil lain.
+   */
+  async cariProgram(
+    kataKunci: string,
+    kategori: "JAGA_ALAM" | "JAGA_IKLIM" | null | undefined,
+    batas: number,
+  ): Promise<HasilPencarianProgram> {
+    const kata = kataKunci.trim();
+    const baris = await this.database.program.findMany({
+      where: {
+        status: "AKTIF",
+        ...(kategori ? { kategori } : {}),
+        ...(kata
+          ? {
+              OR: [
+                { namaProgram: { contains: kata, mode: "insensitive" } },
+                { deskripsi: { contains: kata, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      include: MUAT_UNTUK_EKSPLORASI,
+      orderBy: { waktuMulai: "asc" },
+      take: batas + 1,
+    });
+
+    return {
+      daftar: baris.slice(0, batas).map((b) => ({
+        idProgram: b.id,
+        namaProgram: b.namaProgram,
+        kategori: b.kategori,
+        tempatPelaksanaan: b.tempatPelaksanaan,
+        waktuMulai: b.waktuMulai,
+        waktuSelesai: b.waktuSelesai,
+        kuota: b.kuota,
+        jumlahDiterima: b._count.pendaftaran,
+        namaLembaga: b.inisiatorProgram.namaLembaga,
+        lembagaTerverifikasi:
+          b.inisiatorProgram.statusVerifikasi === "TERVERIFIKASI",
+      })),
+      adaLagi: baris.length > batas,
+    };
+  }
+
+  /**
+   * Mengambil detail program beserta pengelolanya.
+   * Program yang masih MENUNGGU_VERIFIKASI tidak boleh tampil ke publik.
+   */
+  async ambilDetailProgram(idProgram: string): Promise<DetailProgram> {
+    const baris = await this.database.program.findUnique({
+      where: { id: idProgram },
+      include: {
+        inisiatorProgram: { include: { user: { select: { email: true } } } },
+        _count: MUAT_UNTUK_EKSPLORASI._count,
+      },
+    });
+    if (!baris || baris.status === "MENUNGGU_VERIFIKASI") {
+      throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+    }
+
+    const lembaga = baris.inisiatorProgram;
+    const program = Program.dariBaris(baris, {
+      pengelola: new InisiatorProgram({
+        idPengguna: lembaga.userId,
+        email: lembaga.user.email,
+        idInisiator: lembaga.id,
+        namaLembaga: lembaga.namaLembaga,
+        tautanSitusResmi: lembaga.tautanSitusResmi,
+        statusVerifikasi: lembaga.statusVerifikasi,
+      }),
+    });
+    const jumlahDiterima = baris._count.pendaftaran;
+    const tautan = program.getTautan();
+    const tahapWaktu = this.tentukanTahapWaktu(
+      baris.waktuMulai,
+      baris.waktuSelesai,
+    );
+    const kuotaTersedia = jumlahDiterima < baris.kuota;
+
+    return {
+      idProgram: baris.id,
+      namaProgram: baris.namaProgram,
+      kategori: baris.kategori,
+      tempatPelaksanaan: baris.tempatPelaksanaan,
+      waktuMulai: baris.waktuMulai,
+      waktuSelesai: baris.waktuSelesai,
+      kuota: baris.kuota,
+      jumlahDiterima,
+      namaLembaga: lembaga.namaLembaga,
+      lembagaTerverifikasi: program.ambilPengelola().cekStatusVerifikasi(),
+      deskripsi: baris.deskripsi,
+      syaratKetentuan: baris.syaratKetentuan,
+      status: baris.status,
+      keteranganWaktu: program.keteranganWaktu(),
+      tahapWaktu,
+      kuotaTersedia,
+      bisaDaftar:
+        baris.status === "AKTIF" && kuotaTersedia && tahapWaktu !== "SELESAI",
+      tautanSitusResmi: this.validasiTautanSitus(tautan) ? tautan : null,
+      capaian: await this.ambilCapaianPublik(baris.id, baris.status),
+    };
+  }
+
+  private tentukanTahapWaktu(
+    mulai: Date,
+    selesai: Date,
+    sekarang = new Date(),
+  ): TahapWaktuProgram {
+    if (sekarang < mulai) return "BELUM_DIMULAI";
+    if (sekarang <= selesai) return "BERLANGSUNG";
+    return "SELESAI";
+  }
+
+  /** Tautan situs resmi valid kalau berupa URL http atau https. */
+  private validasiTautanSitus(url: string): boolean {
+    if (!url.trim()) return false;
+    try {
+      const { protocol } = new URL(url);
+      return protocol === "http:" || protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+
+  /** Capaian publik: ringkasan dari laporan akhir yang disetujui. */
+  private async ambilCapaianPublik(
+    idProgram: string,
+    status: StatusProgram,
+  ): Promise<DetailProgram["capaian"]> {
+    if (status !== "SELESAI") return null;
+    const baris = await this.database.laporanProgram.findFirst({
+      where: { programId: idProgram, statusPeninjauan: "DISETUJUI" },
+      orderBy: { waktuPengajuan: "desc" },
+    });
+    if (!baris) return null;
+    const laporan = new LaporanProgram(
+      baris.ringkasanCapaian,
+      baris.dokumentasiAkhir,
+    );
+    return {
+      ringkasan: laporan.showSummary(),
+      dokumentasi: laporan.showDokumentasi(),
+    };
+  }
+
+  async ambilProgramSaya(idPengguna: string) {
+    const inisiator = await this.database.inisiatorProgram.findUnique({
+      where: { userId: idPengguna },
+    });
+    if (!inisiator) {
+      throw new GalatProgram("Akun inisiator tidak ditemukan.", "NOT_FOUND");
+    }
+
+    const daftar = await this.database.program.findMany({
+      where: { inisiatorProgramId: inisiator.id },
+      orderBy: { waktuMulai: "desc" },
+      include: { pendaftaran: { select: { status: true } } },
+    });
+
+    const program = daftar.map((p) => ({
+      id: p.id,
+      namaProgram: p.namaProgram,
+      kategori: p.kategori,
+      waktuMulai: p.waktuMulai,
+      kuota: p.kuota,
+      status: p.status,
+      diterima: p.pendaftaran.filter((x) => x.status === "DITERIMA").length,
+      menunggu: p.pendaftaran.filter((x) => x.status === "MENUNGGU").length,
+    }));
+
+    return {
+      lembaga: {
+        namaLembaga: inisiator.namaLembaga,
+        statusVerifikasi: inisiator.statusVerifikasi,
+      },
+      statistik: hitungStatistik(program),
+      program,
+    };
+  }
+  async ambilProgramMenungguVerifikasi() {
+    const daftar = await this.database.program.findMany({
+      where: { status: "MENUNGGU_VERIFIKASI" },
+      orderBy: { waktuMulai: "asc" },
+      include: {
+        inisiatorProgram: { select: { namaLembaga: true, userId: true } },
+      },
+    });
+    if (daftar.length === 0) return [];
+
+    // Dokumen legalitas hanya terhubung ke akun inisiator, bukan ke program.
+    // Yang ditampilkan: dokumen terbaru (id cuid urut waktu) per inisiator.
+    const dokumen = await this.database.dokumenVerifikasi.findMany({
+      where: {
+        userId: { in: daftar.map((p) => p.inisiatorProgram.userId) },
+        jenisDokumen: "Legalitas lembaga",
+      },
+      orderBy: { id: "desc" },
+      select: { userId: true, urlFile: true },
+    });
+
+    return daftar.map(({ inisiatorProgram, ...program }) => ({
+      ...program,
+      namaLembaga: inisiatorProgram.namaLembaga,
+      urlDokumenLegalitas:
+        dokumen.find((d) => d.userId === inisiatorProgram.userId)?.urlFile ??
+        null,
+    }));
+  }
+
+  async setujuiProgram(idProgram: string): Promise<StatusProgram> {
+    return this.database.$transaction(async (tx) => {
+      const baris = await tx.program.findUnique({
+        where: { id: idProgram },
+        include: { inisiatorProgram: true },
+      });
+      if (!baris) {
+        throw new GalatProgram("Program tidak ditemukan.", "NOT_FOUND");
+      }
+
+      const entitas = new Program({
+        idProgram: baris.id,
+        namaProgram: baris.namaProgram,
+        deskripsi: baris.deskripsi,
+        kategori: baris.kategori,
+        tempatPelaksanaan: baris.tempatPelaksanaan,
+        waktuMulai: baris.waktuMulai,
+        waktuSelesai: baris.waktuSelesai,
+        kuota: baris.kuota,
+        syaratKetentuan: baris.syaratKetentuan,
+        status: baris.status,
+      });
+
+      let statusBaru: StatusProgram;
+      try {
+        statusBaru = entitas.aktifkan();
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Program tidak sedang menunggu verifikasi"
+        ) {
+          throw new GalatProgram(
+            "Program tidak sedang menunggu verifikasi.",
+            "CONFLICT",
+          );
+        }
+        throw error;
+      }
+
+      // Syarat status di WHERE mencegah dua verifikator menyetujui bersamaan.
+      const pembaruan = await tx.program.updateMany({
+        where: { id: idProgram, status: "MENUNGGU_VERIFIKASI" },
+        data: { status: statusBaru },
+      });
+      if (pembaruan.count !== 1) {
+        throw new GalatProgram("Program sudah diproses.", "CONFLICT");
+      }
+
+      await tx.notifikasi.create({
+        data: {
+          userId: baris.inisiatorProgram.userId,
+          pesan: `Program "${baris.namaProgram}" sudah diverifikasi dan kini aktif.`,
+        },
+      });
+      return statusBaru;
+    });
+  }
+
+  private validasiDataProgram(data: DataProgramBaru): string[] {
+    const galat: string[] = [];
+    if (
+      !data.namaProgram.trim() ||
+      !data.deskripsi.trim() ||
+      !data.tempatPelaksanaan.trim() ||
+      !data.syaratKetentuan.trim()
+    ) {
+      galat.push("Data program tidak lengkap.");
+    }
+    if (data.waktuSelesai.getTime() <= data.waktuMulai.getTime()) {
+      galat.push("Rentang waktu tidak valid.");
+    }
+    if (!Number.isInteger(data.kuota) || data.kuota <= 0) {
+      galat.push("Kuota harus lebih dari 0.");
+    }
+    if (!this.isHttpUrl(data.urlDokumenLegalitas)) {
+      galat.push("Dokumen legalitas harus berupa tautan HTTP atau HTTPS.");
+    }
+    return galat;
+  }
+
+  private validasiLaporan(
+    dokumentasi: string[],
+    ringkasanCapaian: string,
+  ): void {
+    if (dokumentasi.length === 0) {
+      throw new GalatProgram(
+        "Dokumentasi akhir wajib diunggah.",
+        "BAD_REQUEST",
+      );
+    }
+    if (!ringkasanCapaian.trim()) {
+      throw new GalatProgram("Ringkasan capaian wajib diisi.", "BAD_REQUEST");
+    }
+    if (dokumentasi.some((url) => !this.isHttpUrl(url))) {
+      throw new GalatProgram(
+        "Setiap dokumentasi harus berupa tautan HTTP atau HTTPS.",
+        "BAD_REQUEST",
+      );
+    }
+  }
+
+  private async selesaikanPeninjauan(
+    idLaporan: string,
+    idVerifikator: string,
+    keputusan: "DISETUJUI" | "DITOLAK",
+    catatanRevisi?: string,
+  ): Promise<StatusProgram> {
+    return this.database.$transaction(async (tx) => {
+      const laporan = await tx.laporanProgram.findUnique({
+        where: { id: idLaporan },
+        include: { program: { include: { inisiatorProgram: true } } },
+      });
+      if (!laporan) {
+        throw new GalatProgram("Laporan tidak ditemukan.", "NOT_FOUND");
+      }
+
+      const entitas = new LaporanProgram(
+        laporan.ringkasanCapaian,
+        laporan.dokumentasiAkhir,
+      );
+      if (keputusan === "DISETUJUI") {
+        entitas.setujui(idVerifikator);
+      } else {
+        entitas.tolak(idVerifikator, catatanRevisi ?? "");
+      }
+
+      const statusProgram: StatusProgram =
+        keputusan === "DISETUJUI" ? "SELESAI" : "PERLU_REVISI";
+      const pembaruanLaporan = await tx.laporanProgram.updateMany({
+        where: { id: idLaporan, statusPeninjauan: "MENUNGGU" },
+        data: {
+          statusPeninjauan: entitas.getStatusPeninjauan(),
+          catatanRevisi: entitas.getCatatanRevisi(),
+          verifikatorId: entitas.getVerifikatorId(),
+        },
+      });
+      if (pembaruanLaporan.count !== 1) {
+        throw new GalatProgram("Laporan sudah ditinjau.", "CONFLICT");
+      }
+      await tx.program.update({
+        where: { id: laporan.programId },
+        data: { status: statusProgram },
+      });
+      if (keputusan === "DISETUJUI") {
+        // Status SELESAI sudah ditulis di tx ini, jadi ikut terbaca. Kalau gagal, semuanya batal.
+        try {
+          await PresensiController.perbaruiPortofolioRelawan(
+            laporan.programId,
+            tx,
+          );
+        } catch (error) {
+          if (error instanceof GalatValidasi) {
+            throw new GalatProgram(
+              `Portofolio relawan gagal diperbarui: ${error.message}`,
+              "CONFLICT",
+            );
+          }
+          throw error;
+        }
+      }
+      await tx.notifikasi.create({
+        data: {
+          userId: laporan.program.inisiatorProgram.userId,
+          pesan:
+            keputusan === "DISETUJUI"
+              ? "Laporan akhir disetujui."
+              : `Laporan perlu revisi: ${catatanRevisi!.trim()}`,
+        },
+      });
+      return statusProgram;
+    });
+  }
+
+  private isHttpUrl(value: string): boolean {
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  }
+}

@@ -25,6 +25,12 @@
 * [Milestone 1](#milestone-1)
 * [Milestone 2](#milestone-2)
 * [Milestone 3](#milestone-3)
+* [Milestone 4](#milestone-4)
+* [Milestone 5](#milestone-5)
+* [Milestone 6](#milestone-6)
+* [Milestone 7](#milestone-7)
+* [Milestone 8](#milestone-8)
+* [Milestone 9](#milestone-9)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 ---
@@ -77,6 +83,21 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
 | :--- | :--- | :--- | :--- |
 | Claude | Membantu menyusun rancangan antarmuka (BAB 6) di Figma berdasarkan palet warna, font, dan daftar layar hasil diskusi kelompok | Buatkan rancangan antarmuka RekanBumi di Figma menggunakan warna primary #2D6A4F dan font Plus Jakarta Sans. | AI membuat draf rancangan intrface di Figma. Kami meninjau setiap layar, menentukan preferensi dan bagian terbaik dari rancangan anggota kelompok, memasukkan logo RekanBumi, dan menyesuaikan isi layar dengan use case dan kebutuhan pada SKPL. Sesuai hasil asistensi, hanya tampilan desktop yang dimasukkan ke dokumen. |
+
+### Milestone 9
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Claude Code | Menyusun scaffold Next.js + tRPC + Prisma + Better Auth dan kerangka kelas Modul 1 (C04, C10, C12, C13) sesuai DPPL2 | Buat scaffold proyek di `src/` sesuai SPEC dan kerangka kelas Modul 1 dengan atribut dan operasi seperti Tabel 4.1 DPPL2 | AI menghasilkan struktur folder, konfigurasi, dan kelas kerangka. Kami menjalankan `pnpm lint`, `pnpm test`, dan `pnpm build` di komputer sendiri, memeriksa nama kelas dan operasi terhadap Tabel 4.1, lalu PR direview anggota lain sebelum di-merge. |
+| Claude Code | Mengimplementasikan login dan blokir IP setelah 5 kali gagal (UC02, KNF06) | Implementasikan `validasiKredensial` dan blokir IP sesuai Algo-C13-04 sampai Algo-C13-10, lengkap dengan unit test | AI menulis `AuthController`, prosedur `auth.masuk`, dan unit test. Kami meninjau kodenya terhadap algoritma DPPL2, menjalankan test di lokal, dan memakai hasil uji ke PostgreSQL yang dijalankan AI sebagai bukti di deskripsi PR. Perbedaan dari DPPL kami catat untuk bagian B.1 laporan. |
+| Claude Code | Mengimplementasikan Notifikasi (UC06), `CloudStorageAdapter` (C21), registrasi Relawan/Inisiator (UC01), dan sinkron status verifikasi (#8) | Implementasikan model Notifikasi, `buatAkunBaru` dengan unggah berkas, dan `CloudStorageAdapter` sesuai Algo-C10, C13-01 sampai C13-03, dan C21-01 sampai C21-03 | AI menulis kode dan 44 unit test baru. Kami memeriksa keputusan rancangan yang menyimpang dari DPPL (validasi sebelum akun dibuat, cek isi berkas, `autoSignIn` dimatikan), menjalankan test di lokal, lalu PR direview anggota lain. Penyimpangan dicatat untuk B.1. |
+| Claude Code | Membantu debugging Git dan merapikan PR (develop ter-reset, `git am` gagal, riwayat commit) | Kenapa `git am` gagal dan bagaimana mengembalikan develop tanpa menghilangkan hasil PR sebelumnya | AI menjelaskan penyebab dan memberi urutan perintah. Kami menjalankan sendiri perintahnya, memeriksa hasil `git log` setelah tiap langkah, dan memastikan isi branch sama dengan yang diharapkan sebelum membuat PR. |
+| Claude Code | Membuat halaman I-01, I-02, I-03 sesuai Figma dan menguji alurnya di browser | Sesuaikan halaman Registrasi, Login, dan Notifikasi dengan frame Figma I-01 sampai I-03 dan komponen di `views/components/` | AI menulis komponen dan menjalankan uji browser otomatis di lingkungannya. Kami membandingkan hasil dengan frame Figma, mencoba alur di komputer sendiri, lalu memperbaiki temuan review Gie dan Ribka sebelum merge. |
+| Claude Code | Membantu me-review PR anggota lain (#26, #32, #37, #48) | Review PR ini terhadap SPEC dan DPPL: cek MVC, test, konflik dengan develop, dan jalankan di browser | AI menyusun daftar temuan dan simulasi merge. Kami memilih temuan yang dikirim, menulis komentar review sendiri, dan keputusan approve atau request changes tetap diambil oleh reviewer. |
+| Claude Code | Membantu mengimplementasikan fitur sesuai DPPL (controller, model, halaman) | Implementasikan operasi ini sesuai algoritma dan Tabel 4.1 DPPL2, lengkap dengan unit test | AI menulis draf kode dan test. Kami membaca ulang kodenya terhadap DPPL, menjalankan lint, test, dan build di komputer sendiri, mencoba alurnya di browser, lalu PR direview anggota lain sebelum di-merge. |
+| Claude Code | Membantu menulis unit test dan skenario uji | Buatkan unit test untuk skenario normal dan alternatif operasi ini | AI menyusun kasus uji. Kami memeriksa bahwa kasus uji sesuai skenario use case, menjalankan test sendiri, dan menambah atau membuang kasus yang tidak relevan. |
+| Claude Code | Membantu mencari penyebab error dan menyelesaikan konflik Git | Kenapa error ini muncul dan bagaimana menyelesaikan konflik saat merge dengan develop | AI menjelaskan penyebab dan memberi langkah perbaikan. Kami menjalankan sendiri perintahnya, memeriksa hasilnya, dan memastikan perubahan anggota lain tidak hilang. |
+| Claude Code | Membantu me-review PR anggota lain | Review PR ini terhadap SPEC dan DPPL: cek test, format, dan konflik dengan develop | AI menyusun daftar temuan. Kami memilih temuan yang dikirim, menulis komentar review sendiri, dan keputusan approve atau request changes tetap diambil oleh reviewer. |
+| Claude Code | Membantu mengecek isi laporan M9 terhadap PR, DPPL, dan kode | Cek apakah isi bagian laporan ini sudah sesuai dengan deskripsi PR, DPPL, dan kode di develop, dan sebutkan yang kurang atau keliru | AI menunjukkan bagian yang kurang, keliru, atau tidak sesuai kode. Kami memutuskan perbaikannya, memeriksa ulang terhadap kode dan PR, dan memastikan tidak ada klaim yang tidak bisa dibuktikan. |
 
 ---
 ### Pernyataan Integritas dan Persetujuan

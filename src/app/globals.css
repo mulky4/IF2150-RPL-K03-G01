@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+/*
+ * Warna dan font diambil dari design system di Figma.
+ * Di komponen pakai kelas token (bg-primary, text-text-secondary, dll.),
+ * jangan tulis kode hex langsung.
+ */
+@theme {
+  --font-sans:
+    "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui,
+    sans-serif;
+
+  /* warna utama */
+  --color-primary: #2d6a4f;
+  --color-primary-hover: #1b4332;
+  --color-secondary: #52b788;
+  --color-brand-light: #b7e4c7;
+
+  /* latar */
+  --color-background: #eaf7ee;
+  --color-card: #ffffff;
+  --color-subtle: #d8f3dc;
+
+  /* teks dan border */
+  --color-text: #12372a;
+  --color-text-secondary: #4f6b61;
+  --color-on-primary: #ffffff;
+  --color-border: #d3ddd8;
+
+  /* status */
+  --color-success: #2d6a4f;
+  --color-success-bg: #d8f3dc;
+  --color-warning: #8a5a00;
+  --color-warning-bg: #fff4db;
+  --color-error: #b42318;
+  --color-error-bg: #fdecea;
+  --color-neutral: #475467;
+  --color-neutral-bg: #f2f4f7;
+  --color-disabled: #667085;
+  --color-disabled-bg: #e4e7ec;
+
+  --shadow-card: 0 4px 16px rgb(18 55 42 / 0.08);
+}
+
+/* Ukuran teks dari Figma. H1 dan H2 otomatis lebih kecil di mobile. */
+@utility text-h1 {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  @media (width >= 48rem) {
+    font-size: 40px;
+    line-height: 48px;
+  }
+}
+@utility text-h2 {
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 700;
+  @media (width >= 48rem) {
+    font-size: 28px;
+    line-height: 36px;
+  }
+}
+@utility text-h3 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+@utility text-body {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+@utility text-body-medium {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+@utility text-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+@utility text-caption {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+@utility text-button {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+@utility text-stat {
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 700;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
