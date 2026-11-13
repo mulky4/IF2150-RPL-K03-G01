@@ -32,7 +32,7 @@ export type DataProgramBaru = {
   urlDokumenLegalitas: string;
 };
 
-/** Satu baris di daftar Eksplorasi (I-04). */
+/** Satu baris di daftar Eksplorasi. */
 export type RingkasanProgram = {
   idProgram: string;
   namaProgram: string;
@@ -46,22 +46,28 @@ export type RingkasanProgram = {
   lembagaTerverifikasi: boolean;
 };
 
+export type TahapWaktuProgram = "BELUM_DIMULAI" | "BERLANGSUNG" | "SELESAI";
+
 /** Hasil pencarian: paling banyak `batas` program dan penanda masih ada hasil lain. */
 export type HasilPencarianProgram = {
   daftar: RingkasanProgram[];
   adaLagi: boolean;
 };
 
-/** Isi halaman Detail Program (I-05). */
+/** Isi halaman Detail Program. */
 export type DetailProgram = RingkasanProgram & {
   deskripsi: string;
   syaratKetentuan: string;
   status: StatusProgram;
   keteranganWaktu: string;
+  /** Tahap waktu pelaksanaan, dihitung dari tanggal program (bukan dari teks keterangan). */
+  tahapWaktu: TahapWaktuProgram;
   kuotaTersedia: boolean;
-  /** Tautan situs resmi lembaga; null kalau kosong atau bukan http/https (UC04 alt. 1). */
+  /** Apakah relawan boleh mendaftar: program AKTIF, kuota masih ada, dan belum selesai. */
+  bisaDaftar: boolean;
+  /** Tautan situs resmi lembaga; null kalau kosong atau bukan http/https. */
   tautanSitusResmi: string | null;
-  /** Hanya terisi untuk program SELESAI yang laporannya sudah disetujui (UC07). */
+  /** Hanya terisi untuk program SELESAI yang laporannya sudah disetujui. */
   capaian: {
     ringkasan: string;
     dokumentasi: string[];
@@ -284,10 +290,10 @@ export class ProgramController {
   }
 
   /**
-   * Algo-C15-03 (UC03, KF03, KF04). Mencari program AKTIF; kata kunci dicocokkan ke
-   * nama dan deskripsi tanpa membedakan huruf, kategori opsional. Hasil dibatasi
-   * `batas` agar waktu respons tetap ≤ 2 detik pada banyak program (KNF01):
-   * diambil satu baris lebih banyak untuk tahu apakah masih ada hasil lain.
+   * Mencari program AKTIF; kata kunci dicocokkan ke nama dan deskripsi tanpa
+   * membedakan huruf, kategori opsional. Hasil dibatasi `batas` agar respons tetap
+   * cepat saat programnya banyak: diambil satu baris lebih banyak untuk tahu apakah
+   * masih ada hasil lain.
    */
   async cariProgram(
     kataKunci: string,
@@ -332,7 +338,7 @@ export class ProgramController {
   }
 
   /**
-   * Algo-C15-04 (UC04, KF02). Mengambil detail program beserta pengelolanya.
+   * Mengambil detail program beserta pengelolanya.
    * Program yang masih MENUNGGU_VERIFIKASI tidak boleh tampil ke publik.
    */
   async ambilDetailProgram(idProgram: string): Promise<DetailProgram> {
@@ -360,6 +366,11 @@ export class ProgramController {
     });
     const jumlahDiterima = baris._count.pendaftaran;
     const tautan = program.getTautan();
+    const tahapWaktu = this.tentukanTahapWaktu(
+      baris.waktuMulai,
+      baris.waktuSelesai,
+    );
+    const kuotaTersedia = jumlahDiterima < baris.kuota;
 
     return {
       idProgram: baris.id,
@@ -376,13 +387,26 @@ export class ProgramController {
       syaratKetentuan: baris.syaratKetentuan,
       status: baris.status,
       keteranganWaktu: program.keteranganWaktu(),
-      kuotaTersedia: jumlahDiterima < baris.kuota,
+      tahapWaktu,
+      kuotaTersedia,
+      bisaDaftar:
+        baris.status === "AKTIF" && kuotaTersedia && tahapWaktu !== "SELESAI",
       tautanSitusResmi: this.validasiTautanSitus(tautan) ? tautan : null,
       capaian: await this.ambilCapaianPublik(baris.id, baris.status),
     };
   }
 
-  /** Algo-C15-05. Tautan situs resmi valid kalau berupa URL http atau https. */
+  private tentukanTahapWaktu(
+    mulai: Date,
+    selesai: Date,
+    sekarang = new Date(),
+  ): TahapWaktuProgram {
+    if (sekarang < mulai) return "BELUM_DIMULAI";
+    if (sekarang <= selesai) return "BERLANGSUNG";
+    return "SELESAI";
+  }
+
+  /** Tautan situs resmi valid kalau berupa URL http atau https. */
   private validasiTautanSitus(url: string): boolean {
     if (!url.trim()) return false;
     try {
@@ -393,7 +417,7 @@ export class ProgramController {
     }
   }
 
-  /** Capaian publik (UC07 langkah 3): ringkasan dari laporan akhir yang disetujui. */
+  /** Capaian publik: ringkasan dari laporan akhir yang disetujui. */
   private async ambilCapaianPublik(
     idProgram: string,
     status: StatusProgram,

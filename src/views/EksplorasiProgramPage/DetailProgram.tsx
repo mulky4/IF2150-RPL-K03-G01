@@ -1,8 +1,10 @@
 "use client";
 
+import { labelKategori } from "~/lib/programSaya";
 import { rentangWaktu } from "~/lib/waktu";
 import { api } from "~/trpc/react";
 import { Badge, type NadaBadge } from "~/views/components/Badge";
+import { Banner } from "~/views/components/Banner";
 import { Button, ButtonLink } from "~/views/components/Button";
 import { EmptyState } from "~/views/components/EmptyState";
 import { FotoProgram } from "~/views/components/FotoProgram";
@@ -10,18 +12,19 @@ import { Ikon } from "~/views/components/Ikon";
 
 import { useEksplorasiProgramPage } from "./useEksplorasiProgramPage";
 
-const NADA_WAKTU: Record<string, NadaBadge> = {
-  "Belum dimulai": "peringatan",
-  "Sedang berlangsung": "sukses",
-  "Sudah selesai": "menunggu",
+const NADA_WAKTU: Record<
+  "BELUM_DIMULAI" | "BERLANGSUNG" | "SELESAI",
+  NadaBadge
+> = {
+  BELUM_DIMULAI: "peringatan",
+  BERLANGSUNG: "sukses",
+  SELESAI: "menunggu",
 };
 
 /**
- * I-05 Detail Program (C16 EksplorasiProgramPage), UC04, KF02.
- * Tombol situs resmi aktif kalau tautan valid; kalau tidak, dinonaktifkan
- * (Algo-C16-09 nonaktifkanTautan()).
- * Program SELESAI menampilkan capaian dari LaporanProgram.showSummary() dan
- * showDokumentasi() (UC07 langkah 3).
+ * Halaman Detail Program. Tombol situs resmi aktif kalau tautannya valid, kalau
+ * tidak dinonaktifkan. Program yang sudah SELESAI menampilkan capaiannya dari
+ * laporan akhir yang disetujui.
  */
 export function DetailProgram({ idProgram }: { idProgram: string }) {
   const { klikTautanSitusResmi } = useEksplorasiProgramPage();
@@ -55,16 +58,20 @@ export function DetailProgram({ idProgram }: { idProgram: string }) {
     );
   }
 
-  const bisaDaftar =
-    program.status === "AKTIF" &&
-    program.kuotaTersedia &&
-    program.keteranganWaktu !== "Sudah selesai";
+  const { bisaDaftar } = program;
   const labelDaftar = !program.kuotaTersedia
     ? "Kuota Penuh"
     : bisaDaftar
       ? "Daftar Program"
       : "Pendaftaran Ditutup";
   const sisa = Math.max(program.kuota - program.jumlahDiterima, 0);
+  const persenKuota =
+    program.kuota > 0
+      ? Math.min(
+          Math.round((program.jumlahDiterima / program.kuota) * 100),
+          100,
+        )
+      : 0;
 
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 md:py-10">
@@ -77,13 +84,15 @@ export function DetailProgram({ idProgram }: { idProgram: string }) {
         <FotoProgram kategori={program.kategori} />
         <div className="flex flex-col gap-4 p-5 md:p-8">
           <div className="flex flex-wrap gap-2">
-            <Badge nada="kategori">
-              {program.kategori === "JAGA_ALAM" ? "Jaga Alam" : "Jaga Iklim"}
-            </Badge>
-            <Badge nada={NADA_WAKTU[program.keteranganWaktu] ?? "menunggu"}>
+            <Badge nada="kategori">{labelKategori(program.kategori)}</Badge>
+            <Badge nada={NADA_WAKTU[program.tahapWaktu]}>
               {program.keteranganWaktu}
             </Badge>
           </div>
+
+          {!program.kuotaTersedia && program.tahapWaktu !== "SELESAI" && (
+            <Banner nada="peringatan">Kuota program sudah penuh.</Banner>
+          )}
 
           <h1 className="text-h2 md:text-h1 text-text">
             {program.namaProgram}
@@ -121,6 +130,20 @@ export function DetailProgram({ idProgram }: { idProgram: string }) {
               </dd>
             </div>
           </dl>
+
+          <div
+            role="progressbar"
+            aria-label="Kuota relawan terisi"
+            aria-valuemin={0}
+            aria-valuemax={program.kuota}
+            aria-valuenow={program.jumlahDiterima}
+            className="bg-brand-light h-2 w-full overflow-hidden rounded-full"
+          >
+            <div
+              className="bg-primary h-full rounded-full"
+              style={{ width: `${persenKuota}%` }}
+            />
+          </div>
 
           <section className="flex flex-col gap-1.5">
             <h2 className="text-h3 text-text">Deskripsi</h2>

@@ -2,6 +2,7 @@
 
 import { keepPreviousData } from "@tanstack/react-query";
 
+import { MAKS_DIMUAT } from "~/lib/pencarianProgram";
 import { rentangWaktu } from "~/lib/waktu";
 import { api } from "~/trpc/react";
 import { Banner } from "~/views/components/Banner";
@@ -22,7 +23,7 @@ const FILTER: { label: string; nilai: FilterKategori }[] = [
   { label: "Jaga Iklim", nilai: "JAGA_IKLIM" },
 ];
 
-/** I-04 Eksplorasi Program (C16 EksplorasiProgramPage), UC03, KF03 & KF04. */
+/** Halaman Eksplorasi Program: cari dan filter program aktif, lalu buka detailnya. */
 export function Eksplorasi() {
   const {
     masukanPencarian,
@@ -31,7 +32,6 @@ export function Eksplorasi() {
     terimaInputPencarian,
     batas,
     muatLebihBanyak,
-    batasMaksimum,
   } = useEksplorasiProgramPage();
 
   const {
@@ -45,6 +45,8 @@ export function Eksplorasi() {
   );
   const daftar = hasil?.daftar ?? [];
   const adaLagi = hasil?.adaLagi ?? false;
+  const adaPencarian =
+    masukanPencarian.trim() !== "" || filterKategori !== null;
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 md:px-8 md:py-10">
@@ -89,13 +91,18 @@ export function Eksplorasi() {
           Memuat program…
         </p>
       ) : daftar.length === 0 ? (
-        // Algo-C16-04 tampilkanPesanTidakDitemukan()
         <EmptyState
           judul="Program tidak ditemukan"
           deskripsi="Coba kata kunci lain atau ubah filter kategori."
+          aksi={
+            adaPencarian ? (
+              <Button onClick={() => terimaInputPencarian("", null)}>
+                Lihat Semua Program
+              </Button>
+            ) : undefined
+          }
         />
       ) : (
-        // Algo-C16-03 tampilkanDaftarProgram()
         <>
           <p role="status" className="text-label text-text-secondary">
             Menampilkan {daftar.length} program
@@ -120,7 +127,7 @@ export function Eksplorasi() {
               </li>
             ))}
           </ul>
-          {adaLagi && daftar.length < batasMaksimum && (
+          {adaLagi && daftar.length < MAKS_DIMUAT && (
             <Button
               varian="secondary"
               className="self-center"
@@ -130,7 +137,7 @@ export function Eksplorasi() {
               {isFetching ? "Memuat…" : "Muat Lebih Banyak"}
             </Button>
           )}
-          {adaLagi && daftar.length >= batasMaksimum && (
+          {adaLagi && daftar.length >= MAKS_DIMUAT && (
             <p className="text-body text-text-secondary text-center">
               Masih ada program lain. Persempit pencarian dengan kata kunci atau
               kategori.

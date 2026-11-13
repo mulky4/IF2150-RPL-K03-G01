@@ -63,7 +63,7 @@ async function galatDari(janji: Promise<unknown>): Promise<unknown> {
   throw new Error("Seharusnya melempar galat");
 }
 
-describe("ProgramController.cariProgram (UC03, KF03/KF04, KNF01)", () => {
+describe("ProgramController.cariProgram", () => {
   it("selalu membatasi ke program AKTIF", async () => {
     const { controller, findMany } = buatDb();
     await controller.cariProgram("mangrove", null, 24);
@@ -132,7 +132,7 @@ describe("ProgramController.cariProgram (UC03, KF03/KF04, KNF01)", () => {
   });
 });
 
-describe("ProgramController.ambilDetailProgram (UC04, KF02)", () => {
+describe("ProgramController.ambilDetailProgram", () => {
   it("NOT_FOUND kalau program tidak ada", async () => {
     const { controller } = buatDb();
     const galat = await galatDari(controller.ambilDetailProgram("x"));
@@ -167,7 +167,41 @@ describe("ProgramController.ambilDetailProgram (UC04, KF02)", () => {
     );
   });
 
-  it("tautan kosong, bukan URL, atau bukan http/https → null (UC04 alt. 1)", async () => {
+  it("tahap waktu dan bisaDaftar dihitung dari tanggal, kuota, dan status", async () => {
+    vi.useFakeTimers();
+    try {
+      const detail = async (ubah: Record<string, unknown> = {}) =>
+        buatDb({
+          findUnique: barisProgram(ubah),
+        }).controller.ambilDetailProgram("prog-1");
+
+      vi.setSystemTime(new Date("2026-12-01T00:00:00.000Z"));
+      let hasil = await detail();
+      expect(hasil.tahapWaktu).toBe("BELUM_DIMULAI");
+      expect(hasil.bisaDaftar).toBe(true);
+
+      vi.setSystemTime(new Date("2026-12-05T10:00:00.000Z"));
+      hasil = await detail();
+      expect(hasil.tahapWaktu).toBe("BERLANGSUNG");
+      expect(hasil.bisaDaftar).toBe(true);
+
+      hasil = await detail({ _count: { pendaftaran: 10 } });
+      expect(hasil.bisaDaftar).toBe(false);
+
+      vi.setSystemTime(new Date("2026-12-06T00:00:00.000Z"));
+      hasil = await detail();
+      expect(hasil.tahapWaktu).toBe("SELESAI");
+      expect(hasil.bisaDaftar).toBe(false);
+
+      vi.setSystemTime(new Date("2026-12-01T00:00:00.000Z"));
+      hasil = await detail({ status: "PERLU_REVISI" });
+      expect(hasil.bisaDaftar).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("tautan kosong, bukan URL, atau bukan http/https → null", async () => {
     for (const tautan of [
       null,
       "   ",
