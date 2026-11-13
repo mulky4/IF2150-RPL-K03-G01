@@ -123,4 +123,11 @@ export const programRouter = createTRPCRouter({
         });
       }
     }),
+    programSaya: inisiatorProcedure.query(async ({ ctx }) => {
+    try {
+      return await controller.ambilProgramSaya(ctx.session.idPengguna);
+    } catch (error) {
+      ubahGalatProgram(error);
+    }
+  }),
 });
