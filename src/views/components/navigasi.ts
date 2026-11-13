@@ -4,6 +4,13 @@ import type { NamaIkon } from "./Ikon";
 export type PeranNavigasi =
   "PENGUNJUNG" | "RELAWAN" | "INISIATOR" | "VERIFIKATOR";
 
+/** Peran yang boleh dimiliki user yang sudah login. */
+export const PERAN_VALID: PeranNavigasi[] = [
+  "RELAWAN",
+  "INISIATOR",
+  "VERIFIKATOR",
+];
+
 export type ItemMenu = {
   label: string;
   /** Label pendek untuk bottom nav. Kalau kosong, pakai label biasa. */

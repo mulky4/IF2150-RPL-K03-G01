@@ -2,13 +2,18 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "~/server/auth";
-import { MENU, type PeranNavigasi } from "~/views/components/navigasi";
+import {
+  MENU,
+  PERAN_VALID,
+  type PeranNavigasi,
+} from "~/views/components/navigasi";
 
 // Beranda tidak punya tampilan sendiri: pengunjung diarahkan ke Eksplorasi
-// Program (I-04), pengguna yang sudah login ke menu pertama perannya.
+// Program, pengguna yang sudah login ke menu pertama perannya.
 export default async function Beranda() {
   const sesi = await auth.api.getSession({ headers: await headers() });
-  const peran = (sesi?.user.peran ?? "PENGUNJUNG") as PeranNavigasi;
-  const tujuan = MENU[peran]?.[0]?.href ?? "/program";
-  redirect(tujuan);
+  const peranSesi = sesi?.user.peran as PeranNavigasi | undefined;
+  const peran: PeranNavigasi =
+    peranSesi && PERAN_VALID.includes(peranSesi) ? peranSesi : "PENGUNJUNG";
+  redirect(MENU[peran][0]?.href ?? "/program");
 }
