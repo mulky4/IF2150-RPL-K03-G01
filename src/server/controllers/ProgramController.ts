@@ -6,6 +6,7 @@ import { LaporanProgram } from "~/server/models/LaporanProgram";
 import { hitungStatistik } from "~/lib/programSaya";
 import { InisiatorProgram } from "~/server/models/InisiatorProgram";
 import { Program } from "~/server/models/Program";
+import { Relawan } from "~/server/models/Relawan";
 
 export type KodeGalatProgram =
   "BAD_REQUEST" | "FORBIDDEN" | "NOT_FOUND" | "CONFLICT";
@@ -137,6 +138,21 @@ export class ProgramController {
     if (relawan.statusVerifikasi !== "TERVERIFIKASI") {
       throw new GalatProgram("Akunmu belum terverifikasi.", "FORBIDDEN");
     }
+    const profil = new Relawan({
+      idPengguna,
+      email: "",
+      idRelawan: relawan.id,
+      nama: relawan.nama,
+      noTelepon: relawan.noTelepon,
+      domisili: relawan.domisili,
+      statusVerifikasi: relawan.statusVerifikasi,
+    });
+    if (!profil.cekKelengkapanData()) {
+      throw new GalatProgram(
+        "Data profilmu belum lengkap. Lengkapi nama, nomor telepon, dan domisili sebelum mendaftar.",
+        "BAD_REQUEST",
+      );
+    }
 
     const program = await this.database.program.findUnique({
       where: { id: data.programId },
@@ -150,7 +166,6 @@ export class ProgramController {
         "BAD_REQUEST",
       );
     }
-
     const sudahDaftar = await this.database.pendaftaran.findFirst({
       where: { programId: program.id, relawanId: relawan.id },
     });
@@ -159,6 +174,13 @@ export class ProgramController {
         "Kamu sudah mendaftar di program ini.",
         "CONFLICT",
       );
+    }
+
+    const jumlahDiterima = await this.database.pendaftaran.count({
+      where: { programId: program.id, status: "DITERIMA" },
+    });
+    if (jumlahDiterima >= program.kuota) {
+      throw new GalatProgram("Kuota program sudah penuh.", "CONFLICT");
     }
 
     try {

@@ -58,12 +58,14 @@ Link verifikasi email tidak dikirim lewat email, tetapi dicetak di terminal `pnp
 
 Semua akun uji menggunakan kata sandi `DemoRekanBumi2026!`.
 
-| Peran       | Email                           |
-| ----------- | ------------------------------- |
-| Inisiator   | `inisiator@rekanbumi.example`   |
-| Relawan     | `relawan1@rekanbumi.example`    |
-| Relawan     | `relawan2@rekanbumi.example`    |
-| Verifikator | `verifikator@rekanbumi.example` |
+| Peran       | Email                           | Keterangan                                                                                                        |
+| ----------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Inisiator   | `inisiator@rekanbumi.example`   | Lembaga terverifikasi, pemilik semua program seed                                                                 |
+| Inisiator   | `inisiator2@rekanbumi.example`  | Lembaga masih menunggu verifikasi                                                                                 |
+| Relawan     | `relawan1@rekanbumi.example`    | Data lengkap; diterima di Penanaman Pohon Bersama, belum mendaftar di Susur Pantai Bersih                         |
+| Relawan     | `relawan2@rekanbumi.example`    | Data lengkap; diterima di Aksi Bersih Sungai, menunggu di Penanaman Pohon Bersama, ditolak di Susur Pantai Bersih |
+| Relawan     | `relawan3@rekanbumi.example`    | Data belum lengkap (tanpa nomor telepon dan domisili)                                                             |
+| Verifikator | `verifikator@rekanbumi.example` | Meninjau program dan laporan akhir                                                                                |
 
 ## Modul & Pembagian
 

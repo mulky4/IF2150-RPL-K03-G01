@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Banner } from "../components/Banner";
 import { Button } from "../components/Button";
@@ -43,6 +43,18 @@ export function ProgramDaftarView({ programId }: { programId: string }) {
   );
   const [setuju, setSetuju] = useState(false);
   const [galatKeterampilan, setGalatKeterampilan] = useState("");
+
+  // Pesan hasil kirim ada di atas formulir; di layar kecil tombol Kirim ada
+  // jauh di bawah, jadi gulir ke pesan supaya langsung terlihat.
+  const areaPesanRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (pesanGalat || pesanSukses) {
+      areaPesanRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [pesanGalat, pesanSukses]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,8 +114,12 @@ export function ProgramDaftarView({ programId }: { programId: string }) {
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {pesanSukses && <Banner nada="sukses">{pesanSukses}</Banner>}
-              {pesanGalat && <Banner nada="error">{pesanGalat}</Banner>}
+              {(pesanSukses !== "" || pesanGalat !== "") && (
+                <div ref={areaPesanRef} className="scroll-mt-24 space-y-6">
+                  {pesanSukses && <Banner nada="sukses">{pesanSukses}</Banner>}
+                  {pesanGalat && <Banner nada="error">{pesanGalat}</Banner>}
+                </div>
+              )}
 
               <TextArea
                 label="Keterampilan yang kamu miliki"
