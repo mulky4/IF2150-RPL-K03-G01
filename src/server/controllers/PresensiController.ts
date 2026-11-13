@@ -178,9 +178,27 @@ export class PresensiController {
    * Menambah jam aksi setiap relawan diterima yang hadir di program ini.
    * Dipanggil setelah laporan akhir disetujui dan program berstatus SELESAI.
    * Aman dipanggil ulang: relawan yang programnya sudah tercatat dilewati.
+   *
+   * Kalau `tx` diberikan, semua baca dan tulis ikut transaksi pemanggil, jadi
+   * status SELESAI yang belum di-commit sudah terbaca dan semuanya batal
+   * bersama kalau ada yang gagal. Tanpa `tx`, fungsi ini membuka transaksinya
+   * sendiri.
    */
-  static async perbaruiPortofolioRelawan(idProgram: string): Promise<void> {
-    const baris = await db.program.findUnique({
+  static async perbaruiPortofolioRelawan(
+    idProgram: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    if (tx) return PresensiController.catatJamAksiProgram(idProgram, tx);
+    return db.$transaction((klien) =>
+      PresensiController.catatJamAksiProgram(idProgram, klien),
+    );
+  }
+
+  private static async catatJamAksiProgram(
+    idProgram: string,
+    klien: Prisma.TransactionClient,
+  ): Promise<void> {
+    const baris = await klien.program.findUnique({
       where: { id: idProgram },
       include: {
         pendaftaran: {
@@ -210,22 +228,16 @@ export class PresensiController {
         jamAksi: relawan.getTotalJamAksi() - sebelum,
       });
     }
-    if (tambahan.length === 0) return;
-
-    // Satu transaksi untuk semua relawan, supaya tidak ada yang tercatat
-    // setengah jalan kalau salah satunya gagal.
-    await db.$transaction(async (tx) => {
-      for (const { idRelawan, jamAksi } of tambahan) {
-        const riwayat = await tx.riwayatKontribusi.upsert({
-          where: { relawanId: idRelawan },
-          create: { relawanId: idRelawan, totalJamAksi: jamAksi },
-          update: { totalJamAksi: { increment: jamAksi } },
-        });
-        await tx.riwayatProgram.create({
-          data: { riwayatId: riwayat.id, programId: idProgram },
-        });
-      }
-    });
+    for (const { idRelawan, jamAksi } of tambahan) {
+      const riwayat = await klien.riwayatKontribusi.upsert({
+        where: { relawanId: idRelawan },
+        create: { relawanId: idRelawan, totalJamAksi: jamAksi },
+        update: { totalJamAksi: { increment: jamAksi } },
+      });
+      await klien.riwayatProgram.create({
+        data: { riwayatId: riwayat.id, programId: idProgram },
+      });
+    }
   }
 
   /** Teks status waktu program, misalnya "Belum dimulai" atau "Sudah selesai". */

@@ -269,6 +269,30 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
       PresensiController.perbaruiPortofolioRelawan("tidak-ada"),
     ).rejects.toThrow(PESAN_PROGRAM_TIDAK_ADA);
   });
+
+  it("memakai transaksi pemanggil kalau tx diberikan", async () => {
+    hadir(HADIR, PROGRAM);
+    const bukaTransaksi = vi.spyOn(dbPalsu, "$transaction");
+
+    await PresensiController.perbaruiPortofolioRelawan(
+      PROGRAM,
+      dbPalsu as unknown as Prisma.TransactionClient,
+    );
+
+    expect(bukaTransaksi).not.toHaveBeenCalled();
+    await expect(PresensiController.ambilTotalJamAksi(HADIR)).resolves.toBe(7);
+    bukaTransaksi.mockRestore();
+  });
+
+  it("membuka transaksi sendiri kalau tx tidak diberikan", async () => {
+    hadir(HADIR, PROGRAM);
+    const bukaTransaksi = vi.spyOn(dbPalsu, "$transaction");
+
+    await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
+
+    expect(bukaTransaksi).toHaveBeenCalledTimes(1);
+    bukaTransaksi.mockRestore();
+  });
 });
 
 describe("PresensiController.ambilRiwayatProgram", () => {
