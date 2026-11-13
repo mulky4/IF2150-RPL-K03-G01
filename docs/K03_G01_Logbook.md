@@ -181,5 +181,24 @@
 | 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review dan merge PR #63 (perbaikan kredensial .env.example) dan PR #65 (unit test transisi status Pendaftaran) milik Modul 3 | 1 (perkiraan) | Done | - |
 | 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review PR #67 (seed akun dan skenario uji seleksi) dan PR #68 (validasi kelengkapan data dan kuota pada daftarRelawan), termasuk cek lokal test, lint, dan build, serta merge | 2 (perkiraan) | Done | Repo tanpa CI, sehingga test, lint, dan build harus dijalankan manual di lokal; lokasi logika di ProgramController belum tercatat di B.1 DPPL |
 | 13-11-2026 | Three Gie Gendhis Sekar Ayoe Jatmiko | Review PR #71 (unit test model Program: cekKuotaTersedia, cekDalamWaktuPelaksanaan, hitungDurasiJam) termasuk cek lokal test, lint, dan tsc, serta merge | 1 (perkiraan) | Done | Jumlah test di deskripsi PR (212) berbeda dengan hasil lokal (191) |
+| 09-11-2026 | Avicenna Ananda Musthafa | Membuat issue Modul 5 (#11 sampai #17) dan Fondasi C: token warna, font, komponen design system, layout global dan navigasi per peran, katalog komponen (PR #18) | 6 (perkiraan) | Done | - |
+| 09-11-2026 | Ribka Kaylena Sanjaya | Review dan approve PR #9 (scaffold fondasi dan auth) | 1 (perkiraan) | Done | - |
+| 09-11-2026 | Ribka Kaylena Sanjaya | Menyusun draf skema Prisma (PR #25) | 3 (perkiraan) | Done | - |
+| 10-11-2026 | Ribka Kaylena Sanjaya | Menambah seed data awal, menyelaraskan seed, dan migrasi tabel domain | 3 (perkiraan) | Done | - |
+| 10-11-2026 | Kairenzo Vemil | Review PR #10 (kerangka kelas Modul 1) serta review dan approve PR #27 dan #28 (login dan blokir IP) | 1,5 (perkiraan) | Done | - |
+| 11-11-2026 | Avicenna Ananda Musthafa | Review dan approve PR #29 (notifikasi) | 1 (perkiraan) | Done | - |
+| 11-11-2026 | Ribka Kaylena Sanjaya | Melengkapi fondasi domain: docker-compose PostgreSQL, skema, migrasi, kerangka model C01 sampai C11 beserta method domain (PR #34) | 5 (perkiraan) | Done | - |
+| 12-11-2026 | Avicenna Ananda Musthafa | Model Kehadiran, validasi check-in di PresensiController, dan halaman Kegiatan Saya dengan check-in (PR #35, #44) | 4 (perkiraan) | Done | - |
+| 12-11-2026 | Avicenna Ananda Musthafa | Portofolio relawan dan pencatatan jam aksi setelah program selesai (PR #49) | 3 (perkiraan) | Done | - |
+| 12-11-2026 | Avicenna Ananda Musthafa | Review dan approve PR #33 (sinkron status verifikasi) dan #34 (fondasi domain) | 1,5 (perkiraan) | Done | - |
+| 13-11-2026 | Avicenna Ananda Musthafa | Mengembalikan router auth, seleksi, dan presensi yang hilang, menambah skenario alternatif check-in, dan menyambungkan portofolio ke transaksi persetujuan laporan (PR #44, #49, #52) | 3 (perkiraan) | Done | Router hilang dari appRouter setelah merge PR lain |
+| 13-11-2026 | Avicenna Ananda Musthafa | Uji beban check-in 50 request bersamaan (PR #55) | 2 (perkiraan) | Done | - |
+| 13-11-2026 | Avicenna Ananda Musthafa | Review PR #50, #51, #53, #57, dan #69 (uji di lokal dan browser) | 3 (perkiraan) | Done | - |
+| 13-11-2026 | Avicenna Ananda Musthafa | Melanjutkan pekerjaan Modul 3: merge dan perbaikan PR #51, kredensial .env.example (PR #63), unit test Pendaftaran (PR #65), seed skenario uji (PR #67), validasi kuota dan kelengkapan data pendaftaran (PR #68) | 4 (perkiraan) | Done | Laptop anggota Modul 3 rusak |
+| 13-11-2026 | Avicenna Ananda Musthafa | Melengkapi laporan M9 (B.1, B.2, B.2.1 profiling check-in, B.3, B.4), Logbook, dan Deklarasi Penggunaan AI | 3 (perkiraan) | Done | - |
+| 13-11-2026 | Ribka Kaylena Sanjaya | Review dan approve PR #36 (halaman Login, Registrasi, Notifikasi) | 1 (perkiraan) | Done | - |
+| 13-11-2026 | Ribka Kaylena Sanjaya | Implementasi I-11 Kelola Pendaftar dan seleksi relawan serta perbaikan sesuai review (PR #51) | 5 (perkiraan) | Done | Laptop rusak, PR dilanjutkan Avicenna |
+| 13-11-2026 | Kairenzo Vemil | Implementasi I-04 Eksplorasi Program, I-05 Detail Program, dan pencarian program, lalu perbaikan sesuai review (PR #57) | 5 (perkiraan) | Done | - |
+| 13-11-2026 | Kairenzo Vemil | Unit test model Program: cekKuotaTersedia, cekDalamWaktuPelaksanaan, hitungDurasiJam (PR #71) | 1,5 (perkiraan) | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
