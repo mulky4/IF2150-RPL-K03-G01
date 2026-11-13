@@ -1,22 +1,14 @@
-import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-// Sementara: halaman awal scaffold. Nanti diarahkan ke /program (I-04, Modul 2).
-export default function Beranda() {
-  return (
-    <main className="mx-auto max-w-xl p-8">
-      <h1 className="text-3xl font-bold">RekanBumi</h1>
-      <p className="mt-2">Scaffold Milestone 9 sudah jalan.</p>
-      <ul className="mt-4 list-disc pl-6">
-        <li>
-          <Link href="/registrasi">Registrasi (I-01)</Link>
-        </li>
-        <li>
-          <Link href="/login">Login (I-02)</Link>
-        </li>
-        <li>
-          <Link href="/notifikasi">Notifikasi (I-03)</Link>
-        </li>
-      </ul>
-    </main>
-  );
+import { auth } from "~/server/auth";
+import { MENU, type PeranNavigasi } from "~/views/components/navigasi";
+
+// Beranda tidak punya tampilan sendiri: pengunjung diarahkan ke Eksplorasi
+// Program (I-04), pengguna yang sudah login ke menu pertama perannya.
+export default async function Beranda() {
+  const sesi = await auth.api.getSession({ headers: await headers() });
+  const peran = (sesi?.user.peran ?? "PENGUNJUNG") as PeranNavigasi;
+  const tujuan = MENU[peran]?.[0]?.href ?? "/program";
+  redirect(tujuan);
 }
