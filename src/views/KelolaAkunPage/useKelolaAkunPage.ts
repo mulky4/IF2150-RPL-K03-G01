@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { urlKembaliAman } from "~/lib/urlKembali";
 import { api } from "~/trpc/react";
 
 /** Galat dari tRPC yang dibaca views/ (lihat errorFormatter di server/api/trpc.ts). */
@@ -21,14 +22,6 @@ export function pesanGalat(galat: GalatApi): string[] {
   return [galat.message];
 }
 
-/** Hanya path internal yang boleh jadi tujuan kembali (mencegah open redirect). */
-export function urlKembaliAman(url: string | null | undefined): string | null {
-  if (!url?.startsWith("/") || url.startsWith("//") || url.includes("\\")) {
-    return null;
-  }
-  return url;
-}
-
 export const DURASI_BLOKIR_MS = 5 * 60_000;
 
 /**
@@ -38,14 +31,12 @@ export const DURASI_BLOKIR_MS = 5 * 60_000;
  */
 export function useKelolaAkunPage() {
   const router = useRouter();
-  const [urlKembali, setUrlKembali] = useState<string | null>(null);
   const [pesanError, setPesanError] = useState<string[]>([]);
   const [diblokir, setDiblokir] = useState(false);
 
   const mutasiDaftar = api.auth.daftar.useMutation();
   const mutasiMasuk = api.auth.masuk.useMutation();
   return {
-    urlKembali,
     pesanError,
     diblokir,
     sedangMengirim: mutasiDaftar.isPending || mutasiMasuk.isPending,
@@ -65,7 +56,6 @@ export function useKelolaAkunPage() {
 
     /** Algo-C12-08. Dipanggil EksplorasiProgramPage saat pengguna belum login. */
     arahkanKeLogin: (url: string) => {
-      setUrlKembali(url);
       router.push(`/login?urlKembali=${encodeURIComponent(url)}`);
     },
 

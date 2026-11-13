@@ -35,6 +35,7 @@ type Isian = {
   kataSandi: string;
   noTelepon: string;
   domisili: string;
+  domisiliLain: string;
   tautanSitusResmi: string;
   setuju: boolean;
 };
@@ -46,6 +47,7 @@ const ISIAN_AWAL: Isian = {
   kataSandi: "",
   noTelepon: "",
   domisili: "",
+  domisiliLain: "",
   tautanSitusResmi: "",
   setuju: false,
 };
@@ -73,7 +75,12 @@ export function Registrasi() {
     formulir.set("noTelepon", isian.noTelepon);
     if (relawan) {
       formulir.set("nama", isian.nama);
-      formulir.set("domisili", isian.domisili);
+      formulir.set(
+        "domisili",
+        isian.domisili === "Lainnya" && isian.domisiliLain.trim()
+          ? isian.domisiliLain
+          : isian.domisili,
+      );
       formulir.set("jenisDokumen", "Kartu identitas");
       if (berkas) formulir.set("berkas", berkas);
     } else {
@@ -110,8 +117,9 @@ export function Registrasi() {
           <div className="flex flex-col gap-5">
             <Banner nada="sukses">Akun berhasil dibuat.</Banner>
             <p className="text-body text-text-secondary">
-              Kami sudah mengirim tautan verifikasi ke {isian.email}. Masuk
-              untuk mulai memakai RekanBumi.
+              Tautan verifikasi email untuk {isian.email} sudah dibuat
+              (sementara dicetak di terminal server, belum dikirim lewat
+              surel). Kamu sudah bisa masuk untuk mulai memakai RekanBumi.
             </p>
             <ButtonLink href="/login" lebarPenuh>
               Lanjut ke halaman masuk
@@ -225,6 +233,15 @@ export function Registrasi() {
                   onChange={(e) => ubah("domisili")(e.target.value)}
                   disabled={sedangMengirim}
                 />
+                {isian.domisili === "Lainnya" && (
+                  <Input
+                    label="Kota/kabupaten domisili"
+                    placeholder="Tulis kota atau kabupaten tempat tinggalmu"
+                    value={isian.domisiliLain}
+                    onChange={(e) => ubah("domisiliLain")(e.target.value)}
+                    disabled={sedangMengirim}
+                  />
+                )}
                 <FileDropzone
                   label="Dokumen verifikasi"
                   bantuan="Kartu identitas · PDF, JPG, atau PNG · maksimal 2 MB"

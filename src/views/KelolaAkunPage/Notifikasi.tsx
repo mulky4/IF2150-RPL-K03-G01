@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { waktuLengkap, waktuRelatif } from "~/lib/waktu";
 import { Banner } from "~/views/components/Banner";
@@ -24,12 +24,18 @@ export function Notifikasi() {
     galatMembuka,
   } = useNotifikasiPage();
   const [terpilih, setTerpilih] = useState<Terpilih | null>(null);
+  const [memuatDetail, setMemuatDetail] = useState(false);
+  // Hanya pilihan terakhir yang boleh menampilkan detail (klik cepat beruntun).
+  const pilihanTerakhir = useRef<string | null>(null);
 
   const belumDibaca = daftar?.filter((n) => !n.statusDibaca).length ?? 0;
 
   async function buka(id: string) {
+    pilihanTerakhir.current = id;
+    setMemuatDetail(true);
     try {
       const hasil = await pilihNotifikasi(id);
+      if (pilihanTerakhir.current !== id) return;
       setTerpilih({
         id: hasil.idNotifikasi,
         pesan: hasil.detail,
@@ -37,6 +43,8 @@ export function Notifikasi() {
       });
     } catch {
       // pesan galat ditampilkan lewat galatMembuka
+    } finally {
+      if (pilihanTerakhir.current === id) setMemuatDetail(false);
     }
   }
 
@@ -94,7 +102,11 @@ export function Notifikasi() {
             aria-label="Detail notifikasi"
             className="bg-card shadow-card rounded-2xl p-6 md:sticky md:top-24 md:self-start"
           >
-            {terpilih ? (
+            {memuatDetail ? (
+              <p className="text-body text-text-secondary" role="status">
+                Memuat detail…
+              </p>
+            ) : terpilih ? (
               <div className="flex flex-col gap-3">
                 <h2 className="text-h3 text-text">Detail notifikasi</h2>
                 <p className="text-caption text-text-secondary flex items-center gap-2">

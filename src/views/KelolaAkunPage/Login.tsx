@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
 
+import { urlKembaliAman } from "~/lib/urlKembali";
 import { Banner } from "~/views/components/Banner";
 import { Button } from "~/views/components/Button";
 import { Input } from "~/views/components/Input";
 import { Logo } from "~/views/components/Logo";
 import { PasswordInput } from "~/views/components/PasswordInput";
 
-import { urlKembaliAman, useKelolaAkunPage } from "./useKelolaAkunPage";
+import { useKelolaAkunPage } from "./useKelolaAkunPage";
 
 function FormLogin() {
   const parameter = useSearchParams();
