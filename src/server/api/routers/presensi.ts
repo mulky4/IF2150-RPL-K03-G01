@@ -4,6 +4,7 @@ import { z } from "zod";
 import { GalatValidasi } from "~/lib/galat";
 import { createTRPCRouter, relawanProcedure } from "~/server/api/trpc";
 import { PresensiController } from "~/server/controllers/PresensiController";
+import type { Program } from "~/server/models/Program";
 
 /** Prosedur relawan yang sekalian membawa id relawan dari akun yang login. */
 const prosedurRelawan = relawanProcedure.use(async ({ ctx, next }) => {
@@ -20,6 +21,19 @@ const prosedurRelawan = relawanProcedure.use(async ({ ctx, next }) => {
 });
 
 const inputProgram = z.object({ idProgram: z.string().min(1) });
+
+/** Bentuk satu item riwayat yang dikirim ke halaman Portofolio. */
+function keItemRiwayat(program: Program) {
+  return {
+    idProgram: program.getIdProgram(),
+    namaProgram: program.getNamaProgram(),
+    kategori: program.getKategori(),
+    waktuMulai: program.getWaktuMulai(),
+    waktuSelesai: program.getWaktuSelesai(),
+    namaLembaga: program.ambilPengelola().getNamaLembaga(),
+    jamAksi: program.hitungDurasiJam(),
+  };
+}
 
 export const presensiRouter = createTRPCRouter({
   daftarKegiatan: prosedurRelawan.query(({ ctx }) =>
@@ -44,6 +58,19 @@ export const presensiRouter = createTRPCRouter({
     .query(({ input }) =>
       PresensiController.ambilKeteranganWaktu(input.idProgram),
     ),
+
+  ambilProfilRelawan: prosedurRelawan.query(({ ctx }) =>
+    PresensiController.ambilProfilRelawan(ctx.idRelawan),
+  ),
+
+  ambilTotalJamAksi: prosedurRelawan.query(({ ctx }) =>
+    PresensiController.ambilTotalJamAksi(ctx.idRelawan),
+  ),
+
+  ambilRiwayatProgram: prosedurRelawan.query(async ({ ctx }) => {
+    const daftar = await PresensiController.ambilRiwayatProgram(ctx.idRelawan);
+    return daftar.map(keItemRiwayat);
+  }),
 
   prosesCheckIn: prosedurRelawan
     .input(inputProgram)

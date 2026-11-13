@@ -7,6 +7,20 @@ import type { InisiatorProgram } from "~/server/models/InisiatorProgram";
 import type { Pendaftaran } from "~/server/models/Pendaftaran";
 import type { Relawan } from "~/server/models/Relawan";
 
+/** Kolom tbl_program yang dibutuhkan untuk membentuk objek Program. */
+export type BarisProgram = {
+  id: string;
+  namaProgram: string;
+  deskripsi: string;
+  kategori: TipeKategoriProgram;
+  tempatPelaksanaan: string;
+  waktuMulai: Date;
+  waktuSelesai: Date;
+  kuota: number;
+  syaratKetentuan: string;
+  status: TipeStatusProgram;
+};
+
 type DataProgram = {
   idProgram: string;
   namaProgram: string;
@@ -54,6 +68,25 @@ export class Program {
     this.relawanDiterima = data.relawanDiterima ?? [];
   }
 
+  static dariBaris(
+    baris: BarisProgram,
+    relasi: Pick<DataProgram, "pengelola" | "relawanDiterima"> = {},
+  ): Program {
+    return new Program({
+      idProgram: baris.id,
+      namaProgram: baris.namaProgram,
+      deskripsi: baris.deskripsi,
+      kategori: baris.kategori,
+      tempatPelaksanaan: baris.tempatPelaksanaan,
+      waktuMulai: baris.waktuMulai,
+      waktuSelesai: baris.waktuSelesai,
+      kuota: baris.kuota,
+      syaratKetentuan: baris.syaratKetentuan,
+      status: baris.status,
+      ...relasi,
+    });
+  }
+
   cekKuotaTersedia(jumlahTambahan: number): boolean {
     if (jumlahTambahan < 0) throw new Error("Jumlah relawan tidak valid");
     return this.hitungJumlahDiterima() + jumlahTambahan <= this.kuota;
@@ -62,6 +95,14 @@ export class Program {
   private hitungJumlahDiterima(): number {
     return this.pendaftar.filter((pendaftaran) => pendaftaran.isDiterima())
       .length;
+  }
+
+  aktifkan(): TipeStatusProgram {
+    if (this.status !== StatusProgram.MENUNGGU_VERIFIKASI) {
+      throw new Error("Program tidak sedang menunggu verifikasi");
+    }
+    this.status = StatusProgram.AKTIF;
+    return this.status;
   }
 
   ajukanKonfirmasi(): TipeStatusProgram {
@@ -99,7 +140,9 @@ export class Program {
   }
 
   hitungDurasiJam(): number {
-    return (this.waktuSelesai.getTime() - this.waktuMulai.getTime()) / 3_600_000;
+    return (
+      (this.waktuSelesai.getTime() - this.waktuMulai.getTime()) / 3_600_000
+    );
   }
 
   getTautan(): string {
@@ -123,10 +166,36 @@ export class Program {
     _kataKunci: string,
     _kategori: TipeKategoriProgram | null,
   ): Program[] {
-    throw new Error("Pencarian program harus dilakukan melalui repositori data");
+    throw new Error(
+      "Pencarian program harus dilakukan melalui repositori data",
+    );
   }
 
   getIdProgram(): string {
     return this.idProgram;
+  }
+
+  getNamaProgram(): string {
+    return this.namaProgram;
+  }
+
+  getKategori(): TipeKategoriProgram {
+    return this.kategori;
+  }
+
+  getTempatPelaksanaan(): string {
+    return this.tempatPelaksanaan;
+  }
+
+  getWaktuMulai(): Date {
+    return this.waktuMulai;
+  }
+
+  getWaktuSelesai(): Date {
+    return this.waktuSelesai;
+  }
+
+  getStatus(): TipeStatusProgram {
+    return this.status;
   }
 }

@@ -74,6 +74,7 @@ const { dbPalsu, tabel } = vi.hoisted(() => {
           ...baris,
           user: { email: "relawan@rekanbumi.test" },
           kehadiran: tabel.kehadiran.filter((k) => k.relawanId === where.id),
+          riwayatKontribusi: null,
         };
       },
     },
@@ -110,6 +111,7 @@ import { GalatValidasi } from "~/lib/galat";
 import {
   PESAN_BELUM_DITERIMA,
   PESAN_DI_LUAR_WAKTU,
+  PESAN_PROGRAM_TIDAK_AKTIF,
   PESAN_SUDAH_HADIR,
   PresensiController,
 } from "~/server/controllers/PresensiController";
@@ -280,6 +282,104 @@ describe("PresensiController.prosesCheckIn", () => {
       PESAN_SUDAH_HADIR,
     );
     expect(tabel.kehadiran).toHaveLength(1);
+  });
+
+  it("ditolak kalau pendaftaran ditolak", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    aturStatusPendaftaran("DITOLAK");
+    await harapGalat(
+      PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
+      PESAN_BELUM_DITERIMA,
+    );
+    expect(tabel.kehadiran).toHaveLength(0);
+  });
+
+  it("ditolak kalau relawan tidak mendaftar di program itu", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    tabel.pendaftaran = [];
+    await harapGalat(
+      PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
+      PESAN_BELUM_DITERIMA,
+    );
+    expect(tabel.kehadiran).toHaveLength(0);
+  });
+
+  it("ditolak kalau program tidak ada", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    await harapGalat(
+      PresensiController.prosesCheckIn("tidak-ada", RELAWAN),
+      PESAN_BELUM_DITERIMA,
+    );
+  });
+
+  it("ditolak kalau program belum aktif atau sudah selesai", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    for (const status of [
+      "MENUNGGU_VERIFIKASI",
+      "MENUNGGU_KONFIRMASI",
+      "PERLU_REVISI",
+      "SELESAI",
+    ]) {
+      tabel.program[0]!.status = status;
+      await harapGalat(
+        PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
+        PESAN_PROGRAM_TIDAK_AKTIF,
+      );
+    }
+    expect(tabel.kehadiran).toHaveLength(0);
+  });
+
+  it("ditolak sebelum kegiatan dimulai", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(MULAI.getTime() - 60_000));
+    await harapGalat(
+      PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
+      PESAN_DI_LUAR_WAKTU,
+    );
+    expect(tabel.kehadiran).toHaveLength(0);
+  });
+
+  it("berhasil tepat di waktu mulai dan tepat di waktu selesai", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(MULAI);
+    await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
+    expect(tabel.kehadiran).toHaveLength(1);
+
+    tabel.kehadiran = [];
+    vi.setSystemTime(SELESAI);
+    await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
+    expect(tabel.kehadiran).toHaveLength(1);
+  });
+
+  it("status pendaftaran dicek lebih dulu daripada waktu", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(SELESAI.getTime() + 60_000));
+    aturStatusPendaftaran("MENUNGGU");
+    await harapGalat(
+      PresensiController.prosesCheckIn(PROGRAM, RELAWAN),
+      PESAN_BELUM_DITERIMA,
+    );
+  });
+
+  it("hadir di program lain tidak menghalangi check-in di program ini", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    tabel.kehadiran = [
+      {
+        id: "hadir-lain",
+        waktuKehadiran: new Date("2026-11-01T01:00:00.000Z"),
+        relawanId: RELAWAN,
+        programId: "program-lain",
+      },
+    ];
+    await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
+    expect(tabel.kehadiran.filter((k) => k.programId === PROGRAM)).toHaveLength(
+      1,
+    );
   });
 
   it("check-in yang bertabrakan di database tetap dianggap sudah hadir", async () => {

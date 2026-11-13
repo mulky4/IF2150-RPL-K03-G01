@@ -16,6 +16,7 @@ export type NamaIkon =
   | "eye"
   | "file"
   | "image"
+  | "leaf"
   | "next"
   | "pin"
   | "plus"

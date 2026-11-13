@@ -22,7 +22,7 @@ export function LaporanDetailView({ id }: { id: string }) {
   const verifikasiMutation = api.laporan.verifikasiLaporan.useMutation({
     onSuccess: ({ statusProgram }) => {
       setPesanSukses(`Peninjauan berhasil. Status program: ${statusProgram}.`);
-      setTimeout(() => router.push("/laporan/verifikasi"), 1500);
+      setTimeout(() => router.push("/verifikator/laporan"), 1500);
     },
     onError: (error) => setErrorMessage(error.message),
   });
@@ -47,7 +47,7 @@ export function LaporanDetailView({ id }: { id: string }) {
           ID Laporan tidak valid. Silakan pilih laporan dari daftar verifikasi.
         </p>
         <Link
-          href="/laporan/verifikasi"
+          href="/verifikator/laporan"
           className="text-emerald-700 hover:underline text-sm font-semibold"
         >
           ← Kembali ke daftar laporan
@@ -67,7 +67,7 @@ export function LaporanDetailView({ id }: { id: string }) {
           Gagal memuat laporan: {laporanQuery.error.message}
         </p>
         <Link
-          href="/laporan/verifikasi"
+          href="/verifikator/laporan"
           className="text-emerald-700 hover:underline"
         >
           Kembali ke daftar laporan
@@ -86,7 +86,7 @@ export function LaporanDetailView({ id }: { id: string }) {
       <article className="mx-auto max-w-3xl space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div>
           <Link
-            href="/laporan/verifikasi"
+            href="/verifikator/laporan"
             className="text-sm font-semibold text-emerald-700 hover:underline"
           >
             ← Kembali ke daftar laporan

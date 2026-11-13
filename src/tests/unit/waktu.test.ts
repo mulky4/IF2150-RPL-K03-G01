@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  angkaJam,
+  bulanTahun,
   jam,
   rentangWaktu,
   tanggalJam,
@@ -28,6 +30,17 @@ describe("format waktu WIB", () => {
     expect(rentangWaktu(mulai, besok)).toBe(
       "Sab, 14 Nov 2026 · 07.00 – Min, 15 Nov 2026 · 12.00 WIB",
     );
+  });
+
+  it("bulan dan tahun ikut zona WIB", () => {
+    // 31 Mar 2026 pukul 20.00 UTC sudah 1 Apr di WIB
+    expect(bulanTahun(new Date("2026-03-31T20:00:00.000Z"))).toBe("Apr 2026");
+  });
+
+  it("jumlah jam paling banyak satu desimal dengan koma", () => {
+    expect(angkaJam(4)).toBe("4");
+    expect(angkaJam(2.5)).toBe("2,5");
+    expect(angkaJam(1 / 3)).toBe("0,3");
   });
 });
 

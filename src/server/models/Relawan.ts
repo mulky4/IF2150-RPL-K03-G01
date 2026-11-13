@@ -1,12 +1,45 @@
+import type { Prisma } from "@prisma/client";
+
 import { db } from "~/server/db";
 import {
   StatusVerifikasi,
   type StatusVerifikasi as TipeStatusVerifikasi,
 } from "~/server/models/enums";
+import { InisiatorProgram } from "~/server/models/InisiatorProgram";
 import { Kehadiran } from "~/server/models/Kehadiran";
-import type { Program } from "~/server/models/Program";
+import { Program } from "~/server/models/Program";
 import { Pengguna } from "~/server/models/Pengguna";
-import type { RiwayatKontribusi } from "~/server/models/RiwayatKontribusi";
+import { RiwayatKontribusi } from "~/server/models/RiwayatKontribusi";
+
+/**
+ * Relasi yang ikut diambil setiap kali membentuk objek Relawan: catatan
+ * kehadiran untuk cek hadir, dan riwayat kontribusi beserta programnya
+ * (terbaru di atas) untuk portofolio.
+ */
+export const SERTAKAN_RELAWAN = {
+  user: { select: { email: true } },
+  kehadiran: true,
+  riwayatKontribusi: {
+    include: {
+      programSelesai: {
+        orderBy: { program: { waktuSelesai: "desc" } },
+        include: {
+          program: {
+            include: {
+              inisiatorProgram: {
+                include: { user: { select: { email: true } } },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+} satisfies Prisma.RelawanInclude;
+
+export type BarisRelawan = Prisma.RelawanGetPayload<{
+  include: typeof SERTAKAN_RELAWAN;
+}>;
 
 type DataRelawan = {
   idPengguna: string;
@@ -16,7 +49,6 @@ type DataRelawan = {
   noTelepon: string | null;
   domisili: string | null;
   statusVerifikasi: TipeStatusVerifikasi;
-  totalJamAksi?: number;
   kehadiran?: Kehadiran[];
   riwayatKontribusi?: RiwayatKontribusi;
 };
@@ -27,9 +59,8 @@ export class Relawan extends Pengguna {
   private readonly noTelepon: string | null;
   private readonly domisili: string | null;
   private readonly statusVerifikasi: TipeStatusVerifikasi;
-  private totalJamAksi: number;
   private readonly kehadiran: Kehadiran[];
-  private readonly riwayatKontribusi?: RiwayatKontribusi;
+  private riwayatKontribusi?: RiwayatKontribusi;
 
   constructor(data: DataRelawan) {
     super(data.idPengguna, data.email);
@@ -38,7 +69,6 @@ export class Relawan extends Pengguna {
     this.noTelepon = data.noTelepon;
     this.domisili = data.domisili;
     this.statusVerifikasi = data.statusVerifikasi;
-    this.totalJamAksi = data.totalJamAksi ?? 0;
     this.kehadiran = data.kehadiran ?? [];
     this.riwayatKontribusi = data.riwayatKontribusi;
   }
@@ -56,18 +86,18 @@ export class Relawan extends Pengguna {
     );
   }
 
+  /**
+   * Relawan yang baru mendaftar belum punya riwayat di database. Untuk mereka
+   * dipakai riwayat kosong, nanti disimpan saat jam aksi pertamanya dicatat.
+   */
   lihatPortofolio(): RiwayatKontribusi {
-    if (!this.riwayatKontribusi) {
-      throw new Error("Riwayat kontribusi relawan tidak ditemukan");
-    }
+    this.riwayatKontribusi ??= RiwayatKontribusi.kosong();
     return this.riwayatKontribusi;
   }
 
   catatKontribusi(program: Program): boolean {
     if (!this.hadirPada(program)) return false;
-    const riwayat = this.lihatPortofolio();
-    riwayat.tambahRiwayatProgram(program);
-    this.totalJamAksi = riwayat.getTotalJamAksi();
+    this.lihatPortofolio().tambahRiwayatProgram(program);
     return true;
   }
 
@@ -80,15 +110,19 @@ export class Relawan extends Pengguna {
   }
 
   /**
-   * Ambil relawan beserta semua catatan kehadirannya dari database.
-   * Hasilnya null kalau id relawan tidak ada.
+   * Ambil relawan beserta catatan kehadiran dan riwayat kontribusinya dari
+   * database. Hasilnya null kalau id relawan tidak ada.
    */
   static async cari(idRelawan: string): Promise<Relawan | null> {
     const baris = await db.relawan.findUnique({
       where: { id: idRelawan },
-      include: { user: { select: { email: true } }, kehadiran: true },
+      include: SERTAKAN_RELAWAN,
     });
-    if (baris === null) return null;
+    return baris === null ? null : Relawan.dariBaris(baris);
+  }
+
+  static dariBaris(baris: BarisRelawan): Relawan {
+    const riwayat = baris.riwayatKontribusi;
     return new Relawan({
       idPengguna: baris.userId,
       email: baris.user.email,
@@ -97,8 +131,26 @@ export class Relawan extends Pengguna {
       noTelepon: baris.noTelepon,
       domisili: baris.domisili,
       statusVerifikasi: baris.statusVerifikasi,
-      totalJamAksi: baris.totalJamAksi,
       kehadiran: baris.kehadiran.map((data) => Kehadiran.dariBaris(data)),
+      riwayatKontribusi:
+        riwayat === null
+          ? undefined
+          : new RiwayatKontribusi({
+              idRiwayat: riwayat.id,
+              totalJamAksi: riwayat.totalJamAksi,
+              programSelesai: riwayat.programSelesai.map(({ program }) =>
+                Program.dariBaris(program, {
+                  pengelola: new InisiatorProgram({
+                    idPengguna: program.inisiatorProgram.userId,
+                    email: program.inisiatorProgram.user.email,
+                    idInisiator: program.inisiatorProgram.id,
+                    namaLembaga: program.inisiatorProgram.namaLembaga,
+                    tautanSitusResmi: program.inisiatorProgram.tautanSitusResmi,
+                    statusVerifikasi: program.inisiatorProgram.statusVerifikasi,
+                  }),
+                }),
+              ),
+            }),
     });
   }
 
@@ -106,7 +158,16 @@ export class Relawan extends Pengguna {
     return this.idRelawan;
   }
 
+  getNama(): string {
+    return this.nama;
+  }
+
+  getDomisili(): string | null {
+    return this.domisili;
+  }
+
+  /** Total jam aksi selalu dibaca dari riwayat kontribusi. */
   getTotalJamAksi(): number {
-    return this.totalJamAksi;
+    return this.lihatPortofolio().getTotalJamAksi();
   }
 }
