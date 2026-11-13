@@ -139,7 +139,7 @@ export default function LaporanMasukView() {
                   </td>
                   <td className="py-4 px-5">
                     <button
-                      onClick={() => router.push(`/laporan/verifikasi/${row.id}`)}
+                      onClick={() => router.push(`/verifikator/laporan/${row.id}`)}
                       className="px-4 py-1.5 border border-[#2D6A4F] text-[#2D6A4F] font-bold rounded-lg hover:bg-[#D8F3DC] transition-colors"
                     >
                       Tinjau

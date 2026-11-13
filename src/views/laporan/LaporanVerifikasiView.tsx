@@ -65,7 +65,7 @@ export function LaporanVerifikasiView() {
                 </p>
               </div>
               <Link
-                href={`/laporan/verifikasi/${laporan.id}`}
+                href={`/verifikator/laporan/${laporan.id}`}
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-emerald-700"
               >
                 Tinjau Laporan
