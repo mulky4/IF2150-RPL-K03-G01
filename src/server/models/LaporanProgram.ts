@@ -1,54 +1,40 @@
-import {
-  StatusPeninjauan,
-  type StatusPeninjauan as TipeStatusPeninjauan,
-} from "~/server/models/enums";
-import type { Verifikator } from "~/server/models/Verifikator";
+import type { StatusPeninjauan } from "~/server/models/enums";
 
 export class LaporanProgram {
-  private readonly idLaporan: string;
-  private readonly ringkasanCapaian: string;
-  private readonly waktuPengajuan: Date;
-  private dokumentasiAkhir: string[];
-  private catatanRevisi: string | null;
-  private statusPeninjauan: TipeStatusPeninjauan;
-  private verifikator?: Verifikator;
+  private readonly dokumentasiAkhir: string[];
+  private catatanRevisi: string | null = null;
+  private statusPeninjauan: StatusPeninjauan = "MENUNGGU";
+  private verifikatorId: string | null = null;
 
-  constructor(data: {
-    idLaporan: string;
-    dokumentasiAkhir?: string[];
-    ringkasanCapaian: string;
-    catatanRevisi?: string | null;
-    statusPeninjauan: TipeStatusPeninjauan;
-    waktuPengajuan: Date;
-    verifikator?: Verifikator;
-  }) {
-    this.idLaporan = data.idLaporan;
-    this.dokumentasiAkhir = data.dokumentasiAkhir ?? [];
-    this.ringkasanCapaian = data.ringkasanCapaian;
-    this.catatanRevisi = data.catatanRevisi ?? null;
-    this.statusPeninjauan = data.statusPeninjauan;
-    this.waktuPengajuan = data.waktuPengajuan;
-    this.verifikator = data.verifikator;
+  constructor(
+    private readonly ringkasanCapaian: string,
+    dokumentasiAkhir: string[] = [],
+  ) {
+    this.dokumentasiAkhir = [...dokumentasiAkhir];
   }
 
   uploadDokumentasi(urlFile: string): void {
-    if (!urlFile.trim()) throw new Error("Tautan berkas tidak valid");
+    if (!urlFile.trim()) {
+      throw new Error("Tautan berkas tidak valid.");
+    }
     this.dokumentasiAkhir.push(urlFile);
   }
 
-  setujui(verifikator: Verifikator): void {
+  setujui(verifikatorId: string): void {
     this.pastikanBelumDitinjau();
-    this.statusPeninjauan = StatusPeninjauan.DISETUJUI;
+    this.statusPeninjauan = "DISETUJUI";
     this.catatanRevisi = null;
-    this.verifikator = verifikator;
+    this.verifikatorId = verifikatorId;
   }
 
-  tolak(verifikator: Verifikator, catatanRevisi: string): void {
+  tolak(verifikatorId: string, catatanRevisi: string): void {
     this.pastikanBelumDitinjau();
-    if (!catatanRevisi.trim()) throw new Error("Catatan revisi wajib diisi");
-    this.statusPeninjauan = StatusPeninjauan.DITOLAK;
-    this.catatanRevisi = catatanRevisi;
-    this.verifikator = verifikator;
+    if (!catatanRevisi.trim()) {
+      throw new Error("Catatan revisi wajib diisi.");
+    }
+    this.statusPeninjauan = "DITOLAK";
+    this.catatanRevisi = catatanRevisi.trim();
+    this.verifikatorId = verifikatorId;
   }
 
   showSummary(): string {
@@ -59,9 +45,21 @@ export class LaporanProgram {
     return [...this.dokumentasiAkhir];
   }
 
+  getStatusPeninjauan(): StatusPeninjauan {
+    return this.statusPeninjauan;
+  }
+
+  getCatatanRevisi(): string | null {
+    return this.catatanRevisi;
+  }
+
+  getVerifikatorId(): string | null {
+    return this.verifikatorId;
+  }
+
   private pastikanBelumDitinjau(): void {
-    if (this.statusPeninjauan !== StatusPeninjauan.MENUNGGU) {
-      throw new Error("Laporan sudah ditinjau");
+    if (this.statusPeninjauan !== "MENUNGGU") {
+      throw new Error("Laporan sudah ditinjau.");
     }
   }
 }

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { authClient } from "~/lib/auth-client";
+import { api } from "~/trpc/react";
 
 import { BottomNav } from "./BottomNav";
 import { Button } from "./Button";
@@ -18,8 +19,6 @@ const PERAN_VALID: PeranNavigasi[] = ["RELAWAN", "INISIATOR", "VERIFIKATOR"];
 /**
  * Layout utama: navbar di desktop, top bar + bottom nav di mobile.
  * Menu yang muncul menyesuaikan peran user yang sedang login.
- *
- * TODO: jumlah notifikasi masih 0, nanti ambil dari router notifikasi.
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -36,7 +35,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pengguna = sesi
     ? { nama: sesi.user.name, email: sesi.user.email }
     : undefined;
-  const jumlahNotifikasiBelumDibaca = 0;
+  // Angka lonceng (I03-NAV-Navbar): hanya diminta kalau sudah login, dan dimuat ulang tiap menit.
+  const { data: jumlahBelumDibaca } = api.auth.jumlahBelumDibaca.useQuery(
+    undefined,
+    { enabled: Boolean(sesi), refetchInterval: 60_000 },
+  );
+  const jumlahNotifikasiBelumDibaca = sesi ? (jumlahBelumDibaca ?? 0) : 0;
 
   async function keluar() {
     setKonfirmasiKeluar(false);

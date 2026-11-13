@@ -251,7 +251,7 @@ function PanelCheckIn({
         <StatusKegiatan keterangan={halaman.keteranganWaktu} />
       )}
       {sekarang && (
-        <p className="text-text-secondary text-xs">
+        <p className="text-caption text-text-secondary">
           Sekarang: {tanggalJam(sekarang)} WIB
         </p>
       )}

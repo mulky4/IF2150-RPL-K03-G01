@@ -11,12 +11,12 @@ export class Verifikator extends Pengguna {
 
   konfirmasiLaporan(laporan: LaporanProgram): void {
     if (!laporan) throw new Error("Laporan tidak ditemukan");
-    laporan.setujui(this);
+    laporan.setujui(this.idPengguna);
   }
 
   tolakLaporan(laporan: LaporanProgram, catatanRevisi: string): void {
     if (!laporan) throw new Error("Laporan tidak ditemukan");
     if (!catatanRevisi.trim()) throw new Error("Catatan revisi wajib diisi");
-    laporan.tolak(this, catatanRevisi);
+    laporan.tolak(this.idPengguna, catatanRevisi);
   }
 }
