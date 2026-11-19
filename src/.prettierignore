@@ -3,4 +3,5 @@ node_modules
 pnpm-lock.yaml
 prisma/migrations
 uploads
+coverage
 next-env.d.ts
