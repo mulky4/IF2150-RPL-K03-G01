@@ -137,11 +137,11 @@ describe("AuthController (C13) – validasiKelengkapanData, UC01 alt. 1", () => 
       berkas,
     );
 
-  it("Relawan lengkap → tidak ada galat (Algo-C13-02)", () => {
+  it("C13-UT01 Relawan lengkap → tidak ada galat (Algo-C13-02)", () => {
     expect(validasi(dataRelawan, berkasPdf())).toEqual([]);
   });
 
-  it("email salah format dan kata sandi kosong", () => {
+  it("C13-UT02 email salah format dan kata sandi kosong", () => {
     expect(
       validasi(
         { ...dataRelawan, email: "bukan-email", kataSandi: "" },
@@ -150,26 +150,32 @@ describe("AuthController (C13) – validasiKelengkapanData, UC01 alt. 1", () => 
     ).toEqual(["Email tidak valid", "Kata sandi wajib diisi"]);
   });
 
-  it("kata sandi kurang dari 8 karakter", () => {
+  it("C13-UT03 kata sandi kurang dari 8 karakter", () => {
     expect(
       validasi({ ...dataRelawan, kataSandi: "pendek1" }, berkasPdf()),
     ).toEqual(["Kata sandi minimal 8 karakter"]);
   });
 
-  it("Relawan tanpa data diri dan tanpa dokumen", () => {
+  it("C13-UT39 batas: kata sandi tepat 8 karakter diterima", () => {
+    expect(
+      validasi({ ...dataRelawan, kataSandi: "pendek12" }, berkasPdf()),
+    ).toEqual([]);
+  });
+
+  it("C13-UT04 Relawan tanpa data diri dan tanpa dokumen", () => {
     expect(
       validasi({ ...dataRelawan, nama: "  ", noTelepon: undefined }, null),
     ).toEqual(["Data diri tidak lengkap", "Dokumen verifikasi wajib diunggah"]);
   });
 
-  it("Inisiator tanpa nama lembaga; berkas tidak wajib", () => {
+  it("C13-UT05 Inisiator tanpa nama lembaga; berkas tidak wajib", () => {
     expect(validasi({ ...dataInisiator, namaLembaga: "" }, null)).toEqual([
       "Nama lembaga wajib diisi",
     ]);
     expect(validasi(dataInisiator, null)).toEqual([]);
   });
 
-  it("tautan situs resmi Inisiator: kosong boleh, harus http(s) kalau diisi", () => {
+  it("C13-UT06 tautan situs resmi Inisiator: kosong boleh, harus http(s) kalau diisi", () => {
     expect(validasi({ ...dataInisiator, tautanSitusResmi: "" }, null)).toEqual(
       [],
     );
@@ -184,7 +190,7 @@ describe("AuthController (C13) – validasiKelengkapanData, UC01 alt. 1", () => 
     }
   });
 
-  it("peran selain Relawan/Inisiator ditolak (VERIFIKATOR hanya dari seed)", () => {
+  it("C13-UT07 peran selain Relawan/Inisiator ditolak (VERIFIKATOR hanya dari seed)", () => {
     expect(
       validasi({ ...dataRelawan, peran: "VERIFIKATOR" as never }, berkasPdf()),
     ).toEqual(["Peran tidak valid"]);
@@ -195,7 +201,7 @@ describe("AuthController (C13) – cekStatusVerifikasi", () => {
   const cek = (data: Partial<DataDiri>) =>
     AuthController["cekStatusVerifikasi"]({ ...dataRelawan, ...data });
 
-  it("email belum terverifikasi → MENUNGGU, sudah → TERVERIFIKASI (Algo-C13-03)", () => {
+  it("C13-UT08 email belum terverifikasi → MENUNGGU, sudah → TERVERIFIKASI (Algo-C13-03)", () => {
     expect(cek({})).toBe("MENUNGGU");
     expect(cek({ emailTerverifikasi: false })).toBe("MENUNGGU");
     expect(cek({ emailTerverifikasi: true })).toBe("TERVERIFIKASI");
@@ -203,7 +209,7 @@ describe("AuthController (C13) – cekStatusVerifikasi", () => {
 });
 
 describe("AuthController (C13) – buatAkunBaru, UC01", () => {
-  it("Relawan: akun, profil, dan dokumen dibuat (Algo-C13-01)", async () => {
+  it("C13-UT09 Relawan: akun, profil, dan dokumen dibuat (Algo-C13-01)", async () => {
     const hasil = await AuthController.buatAkunBaru(dataRelawan, berkasPdf());
 
     expect(daftarkan).toHaveBeenCalledWith("ayu@rekanbumi.test", "Rahasia123", {
@@ -235,7 +241,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(1);
   });
 
-  it("jenis dokumen kosong memakai nama bawaan", async () => {
+  it("C13-UT10 jenis dokumen kosong memakai nama bawaan", async () => {
     await AuthController.buatAkunBaru(
       { ...dataRelawan, jenisDokumen: undefined },
       berkasPdf(),
@@ -243,7 +249,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(tabel.dokumen[0]!.jenisDokumen).toBe("Dokumen verifikasi diri");
   });
 
-  it("Inisiator tanpa berkas: profil lembaga dibuat, tidak ada dokumen", async () => {
+  it("C13-UT11 Inisiator tanpa berkas: profil lembaga dibuat, tidak ada dokumen", async () => {
     const hasil = await AuthController.buatAkunBaru(dataInisiator, null);
 
     expect(daftarkan).toHaveBeenCalledWith(
@@ -264,7 +270,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(tabel.relawan).toHaveLength(0);
   });
 
-  it("tautan kosong disimpan sebagai null", async () => {
+  it("C13-UT12 tautan kosong disimpan sebagai null", async () => {
     await AuthController.buatAkunBaru(
       { ...dataInisiator, tautanSitusResmi: "  " },
       null,
@@ -272,7 +278,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(tabel.inisiator[0]!.tautanSitusResmi).toBeNull();
   });
 
-  it("data tidak lengkap → semua galat sekaligus, tidak ada akun dan berkas (UC01 alt. 1)", async () => {
+  it("C13-UT13 data tidak lengkap → semua galat sekaligus, tidak ada akun dan berkas (UC01 alt. 1)", async () => {
     const galat = await galatDari(
       AuthController.buatAkunBaru(
         { ...dataRelawan, email: "salah", nama: "", kataSandi: "" },
@@ -288,7 +294,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("Relawan tanpa dokumen → 'Dokumen verifikasi wajib diunggah'", async () => {
+  it("C13-UT14 Relawan tanpa dokumen → 'Dokumen verifikasi wajib diunggah'", async () => {
     const galat = await galatDari(
       AuthController.buatAkunBaru(dataRelawan, null),
     );
@@ -296,7 +302,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(daftarkan).not.toHaveBeenCalled();
   });
 
-  it("berkas tidak valid → 'Berkas tidak valid', tanpa akun", async () => {
+  it("C13-UT15 berkas tidak valid → 'Berkas tidak valid', tanpa akun", async () => {
     const teks = new File(["halo"], "catatan.txt", { type: "text/plain" });
     const galat = await galatDari(
       AuthController.buatAkunBaru(dataRelawan, teks),
@@ -306,7 +312,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("email sudah terdaftar (huruf besar/kecil tidak berpengaruh) → ditolak, berkas tidak tersimpan", async () => {
+  it("C13-UT16 email sudah terdaftar (huruf besar/kecil tidak berpengaruh) → ditolak, berkas tidak tersimpan", async () => {
     tabel.user.push({ id: "id-lama", email: "ayu@rekanbumi.test" });
     const galat = await galatDari(
       AuthController.buatAkunBaru(dataRelawan, berkasPdf()),
@@ -316,7 +322,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("dua registrasi bersamaan: penolakan Better Auth jadi 'Email sudah terdaftar' dan berkas dihapus", async () => {
+  it("C13-UT17 dua registrasi bersamaan: penolakan Better Auth jadi 'Email sudah terdaftar' dan berkas dihapus", async () => {
     daftarkan.mockRejectedValueOnce(
       new APIError("UNPROCESSABLE_ENTITY", { message: "User already exists" }),
     );
@@ -327,7 +333,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("galat lain dari Better Auth diteruskan dan berkas dihapus", async () => {
+  it("C13-UT18 galat lain dari Better Auth diteruskan dan berkas dihapus", async () => {
     daftarkan.mockRejectedValueOnce(new Error("Better Auth error"));
     await expect(
       AuthController.buatAkunBaru(dataRelawan, berkasPdf()),
@@ -335,7 +341,7 @@ describe("AuthController (C13) – buatAkunBaru, UC01", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("penyimpanan profil gagal → akun yang sudah terbentuk dan berkas dibatalkan", async () => {
+  it("C13-UT19 penyimpanan profil gagal → akun yang sudah terbentuk dan berkas dibatalkan", async () => {
     tabel.gagalSimpan = true;
     await expect(
       AuthController.buatAkunBaru(dataRelawan, berkasPdf()),
