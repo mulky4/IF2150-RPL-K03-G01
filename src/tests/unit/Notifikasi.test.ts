@@ -40,7 +40,9 @@ const { dbPalsu, tabel } = vi.hoisted(() => {
           where: { id: string };
           data: { statusDibaca: boolean };
         }) => {
-          const baris = tabel.notifikasi.find((n) => n.id === where.id)!;
+          const baris = tabel.notifikasi.find((n) => n.id === where.id);
+          // Seperti Prisma: update baris yang tidak ada melempar galat (P2025).
+          if (!baris) throw new Error("Record to update not found");
           baris.statusDibaca = data.statusDibaca;
           return baris;
         },
@@ -120,6 +122,39 @@ describe("Notifikasi (C10)", () => {
     );
   });
 
+  it("C10-UT08 baca(): notifikasi belum dibaca menjadi sudah dibaca di objek dan tabel", async () => {
+    const notifikasi = await kirimPada("09:00", AYU, "Halo");
+    await notifikasi.baca();
+    expect(dbPalsu.notifikasi.update).toHaveBeenCalledWith({
+      where: { id: notifikasi.keData().idNotifikasi },
+      data: { statusDibaca: true },
+    });
+    expect(tabel.notifikasi[0]!.statusDibaca).toBe(true);
+  });
+
+  it("C10-UT09 baca(): notifikasi yang belum tersimpan di DB → galat diteruskan", async () => {
+    await expect(Notifikasi.baru(AYU, "Belum dikirim").baca()).rejects.toThrow(
+      "Record to update not found",
+    );
+  });
+
+  it("C10-UT10 showDetail(): batas pesan satu karakter dan pesan panjang dikembalikan utuh", () => {
+    const panjang = "Selamat! ".repeat(100).trim();
+    expect(Notifikasi.baru(AYU, "!").showDetail()).toBe("!");
+    expect(Notifikasi.baru(AYU, panjang).showDetail()).toBe(panjang);
+  });
+
+  it("C10-UT11 showDetail(): baris lama berpesan kosong mengembalikan string kosong tanpa galat", () => {
+    const notifikasi = Notifikasi.dariBaris({
+      id: "n-kosong",
+      userId: AYU,
+      pesan: "",
+      waktuKirim: new Date(),
+      statusDibaca: false,
+    });
+    expect(notifikasi.showDetail()).toBe("");
+  });
+
   it("C10-UT06 milik() true hanya untuk penerimanya", () => {
     const notifikasi = Notifikasi.baru(AYU, "Untuk Ayu");
     expect(notifikasi.milik(AYU)).toBe(true);
@@ -185,6 +220,15 @@ describe("AuthController (C13) – notifikasi akun, UC06", () => {
       AuthController.bacaNotifikasi(punyaBima.keData().idNotifikasi, AYU),
     ).rejects.toBeInstanceOf(GalatTidakDitemukan);
     expect(tabel.notifikasi[0]!.statusDibaca).toBe(false);
+  });
+
+  it("C13-UT41 bacaNotifikasi: batas notifikasi yang sudah dibaca dibuka lagi, tidak ditulis ulang", async () => {
+    const terkirim = await kirimPada("09:00", AYU, "Sudah dibaca");
+    const { idNotifikasi } = terkirim.keData();
+    await AuthController.bacaNotifikasi(idNotifikasi, AYU);
+    const lagi = await AuthController.bacaNotifikasi(idNotifikasi, AYU);
+    expect(lagi.keData().statusDibaca).toBe(true);
+    expect(dbPalsu.notifikasi.update).toHaveBeenCalledTimes(1);
   });
 
   it("C13-UT35 bacaNotifikasi: id tidak ada → GalatTidakDitemukan", async () => {

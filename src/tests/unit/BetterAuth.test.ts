@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Pustaka Better Auth, header request Next.js, dan DB diganti tiruan supaya
 // operasi C22 bisa diuji tanpa server dan database (uji dengan DB asli ada di tests/integrasi).
-const { api, akun } = vi.hoisted(() => ({
+const { api, akun, kepala } = vi.hoisted(() => ({
+  kepala: { nilai: new Headers({ "x-forwarded-for": "10.1.1.1" }) },
   api: {
     signUpEmail: vi.fn(),
     signInEmail: vi.fn(),
@@ -18,7 +19,7 @@ const { api, akun } = vi.hoisted(() => ({
 
 vi.mock("~/server/auth", () => ({ auth: { api } }));
 vi.mock("next/headers", () => ({
-  headers: async () => new Headers({ "x-forwarded-for": "10.1.1.1" }),
+  headers: async () => kepala.nilai,
 }));
 vi.mock("~/server/db", () => ({
   db: { user: { findUnique: async () => akun.baris } },
@@ -29,6 +30,7 @@ import { BetterAuth } from "~/server/adapters/BetterAuth";
 beforeEach(() => {
   vi.clearAllMocks();
   akun.baris = null;
+  kepala.nilai = new Headers({ "x-forwarded-for": "10.1.1.1" });
 });
 
 describe("BetterAuth (C22) – hashing bcrypt, KNF02", () => {
@@ -130,8 +132,37 @@ describe("BetterAuth (C22) – kredensial dan sesi", () => {
     await expect(BetterAuth.ambilSesi()).resolves.toBe("token-aktif");
   });
 
-  it("C22-UT11 ambilSesi: tidak ada sesi → null", async () => {
+  it("C22-UT11 ambilSesi: batas tidak ada sesi → null", async () => {
     api.getSession.mockResolvedValue(null);
     await expect(BetterAuth.ambilSesi()).resolves.toBeNull();
+  });
+
+  it("C22-UT12 daftarkanKredensial: Better Auth menolak (email sudah ada) → galat diteruskan", async () => {
+    api.signUpEmail.mockRejectedValue(new Error("User already exists"));
+    await expect(
+      BetterAuth.daftarkanKredensial("ayu@rekanbumi.test", "Rahasia123"),
+    ).rejects.toThrow("User already exists");
+  });
+
+  it("C22-UT13 buatSesiMasuk: Better Auth menolak kredensial → galat diteruskan, tanpa token", async () => {
+    api.signInEmail.mockRejectedValue(new Error("Invalid email or password"));
+    await expect(
+      BetterAuth.buatSesiMasuk("ayu@rekanbumi.test", "Salah12345"),
+    ).rejects.toThrow("Invalid email or password");
+  });
+
+  it("C22-UT14 buatSesiMasuk: batas request tanpa header IP tetap membuat sesi", async () => {
+    kepala.nilai = new Headers();
+    api.signInEmail.mockResolvedValue({ token: "token-tanpa-ip" });
+    await expect(
+      BetterAuth.buatSesiMasuk("ayu@rekanbumi.test", "Rahasia123"),
+    ).resolves.toBe("token-tanpa-ip");
+    const argumen = api.signInEmail.mock.calls[0]![0] as { headers: Headers };
+    expect(argumen.headers.get("x-forwarded-for")).toBeNull();
+  });
+
+  it("C22-UT15 ambilSesi: Better Auth gagal membaca sesi → galat diteruskan", async () => {
+    api.getSession.mockRejectedValue(new Error("Sesi rusak"));
+    await expect(BetterAuth.ambilSesi()).rejects.toThrow("Sesi rusak");
   });
 });

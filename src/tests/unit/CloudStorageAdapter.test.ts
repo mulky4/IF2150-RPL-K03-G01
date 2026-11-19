@@ -140,6 +140,22 @@ describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
     }
   });
 
+  it("C21-UT12 unggahBerkas: batas berkas tepat 2 MB tetap tersimpan utuh", async () => {
+    const url = await CloudStorageAdapter.unggahBerkas(
+      buatFile(PDF, "pas.pdf", "application/pdf", 2 * 1024 * 1024),
+    );
+    const diambil = await CloudStorageAdapter.ambilBerkas(url);
+    expect(diambil.size).toBe(2 * 1024 * 1024);
+  });
+
+  it("C21-UT13 ambilBerkas: batas url berupa nama berkas saja (tanpa uploads/) tetap ditemukan", async () => {
+    const url = await CloudStorageAdapter.unggahBerkas(
+      buatFile(PNG, "foto.png", "image/png"),
+    );
+    const diambil = await CloudStorageAdapter.ambilBerkas(path.basename(url));
+    expect(diambil.type).toBe("image/png");
+  });
+
   it("C21-UT11 hapusBerkas menghapus berkas dan aman dipanggil dua kali", async () => {
     const url = await CloudStorageAdapter.unggahBerkas(
       buatFile(JPG, "foto.jpg", "image/jpeg"),

@@ -70,4 +70,10 @@ describe("Pengguna (C04)", () => {
   it("C04-UT02 cari(): id tidak terdaftar → null", async () => {
     await expect(Pengguna.cari("id-tidak-ada")).resolves.toBeNull();
   });
+
+  it("C04-UT03 lihatNotifikasi(): pengguna tanpa notifikasi → daftar kosong", async () => {
+    tabel.user.push({ id: "id-baru", email: "baru@rekanbumi.test" });
+    const pengguna = await Pengguna.cari("id-baru");
+    await expect(pengguna!.lihatNotifikasi()).resolves.toEqual([]);
+  });
 });

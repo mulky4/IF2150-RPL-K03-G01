@@ -107,9 +107,16 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     await expect(AuthController.cekSesi()).resolves.toBe(true);
   });
 
-  it("C13-UT37 cekSesi: belum login → false", async () => {
+  it("C13-UT37 cekSesi: batas belum login (sesi null) → false", async () => {
     vi.spyOn(BetterAuth, "ambilSesi").mockResolvedValue(null);
     await expect(AuthController.cekSesi()).resolves.toBe(false);
+  });
+
+  it("C13-UT40 cekSesi: Better Auth gagal membaca sesi → galat diteruskan", async () => {
+    vi.spyOn(BetterAuth, "ambilSesi").mockRejectedValue(
+      new Error("Sesi rusak"),
+    );
+    await expect(AuthController.cekSesi()).rejects.toThrow("Sesi rusak");
   });
 
   it("C13-UT38 batas: 4x gagal belum diblokir, percobaan ke-5 masih diperiksa", async () => {
