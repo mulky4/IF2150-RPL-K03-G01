@@ -213,14 +213,14 @@ Tabel 3.3. Implementasi Antarmuka
 | 4 | I-04 | Eksplorasi Program | *[path/ke/file]* | - |
 | 5 | I-05 | Detail Program | *[path/ke/file]* | - |
 | 6 | I-06 | Formulir Pendaftaran Program | *[path/ke/file]* | - |
-| 7 | I-07 | Program Saya | *[path/ke/file]* | - |
+| 7 | I-07 | Program Saya | `src/app/inisiator/program/page.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/useProgramSaya.ts` | - |
 | 8 | I-08 | Formulir Daftar Program | *[path/ke/file]* | - |
-| 9 | I-09 | Unggah Laporan Akhir | *[path/ke/file]* | - |
-| 10 | I-10 | Tinjau Laporan Akhir | *[path/ke/file]* | - |
+| 9 | I-09 | Unggah Laporan Akhir | `src/app/laporan/page.tsx`<br>`src/views/laporan/LaporanFormView.tsx` | - |
+| 10 | I-10 | Tinjau Laporan Akhir | `src/app/verifikator/laporan/page.tsx`<br>`src/app/verifikator/laporan/[id]/page.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx` | - |
 | 11 | I-11 | Kelola Pendaftar & Seleksi | *[path/ke/file]* | - |
 | 12 | I-12 | Area Kegiatan & Check-in | *[path/ke/file]* | - |
 | 13 | I-13 | Portofolio Relawan | *[path/ke/file]* | - |
-| 14 | - | Dashboard Verifikator *(tambahan di luar DPPL)* | *[path/ke/file]* | - |
+| 14 | - | Dashboard Verifikator *(tambahan di luar DPPL)* | `src/app/verifikator/page.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts` | - |
 
 ## 3.4 File Lain
 
