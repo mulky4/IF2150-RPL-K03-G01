@@ -181,16 +181,16 @@ Tabel 3.2. Implementasi Modul
 | 3 | C03 | Relawan | *[path/ke/file]* | - |
 | 4 | C04 | Pengguna | `src/server/models/Pengguna.ts`<br>`src/prisma/schema.prisma` (model `User`, tabel `user`) | - |
 | 5 | C05 | InisiatorProgram | *[path/ke/file]* | - |
-| 6 | C06 | Verifikator | *[path/ke/file]* | - |
+| 6 | C06 | Verifikator | `src/server/models/Verifikator.ts` | - |
 | 7 | C07 | DokumenVerifikasi | *[path/ke/file]* | - |
 | 8 | C08 | Kehadiran | *[path/ke/file]* | - |
-| 9 | C09 | LaporanProgram | *[path/ke/file]* | - |
+| 9 | C09 | LaporanProgram | `src/server/models/LaporanProgram.ts`<br>`src/prisma/schema.prisma` (model `LaporanProgram`, tabel `tbl_laporan_program`) | - |
 | 10 | C10 | Notifikasi | `src/server/models/Notifikasi.ts`<br>`src/prisma/schema.prisma` (model `Notifikasi`, tabel `tbl_notifikasi`) | - |
 | 11 | C11 | RiwayatKontribusi | *[path/ke/file]* | - |
 | 12 | C12 | KelolaAkunPage | `src/views/KelolaAkunPage/Registrasi.tsx`<br>`src/views/KelolaAkunPage/Login.tsx`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/KelolaAkunPage/useKelolaAkunPage.ts`<br>`src/views/KelolaAkunPage/daftarDomisili.ts`<br>`src/lib/urlKembali.ts` | - |
 | 13 | C13 | AuthController | `src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts` (router tRPC `auth`) | - |
-| 14 | C14 | KelolaProgramPage | *[path/ke/file]* | - |
-| 15 | C15 | ProgramController | *[path/ke/file]* | - |
+| 14 | C14 | KelolaProgramPage | `src/views/KelolaProgramPage/ProgramFormView.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/ProgramDaftarView.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts`<br>`src/views/KelolaProgramPage/useProgramSaya.ts`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts`<br>`src/views/laporan/LaporanFormView.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx`<br>`src/views/laporan/LaporanMasukView.tsx`<br>`src/lib/programSaya.ts` | - |
+| 15 | C15 | ProgramController | `src/server/controllers/ProgramController.ts`<br>`src/server/api/routers/program.ts` (router tRPC `program`)<br>`src/server/api/routers/laporan.ts` (router tRPC `laporan`) | - |
 | 16 | C16 | EksplorasiProgramPage | *[path/ke/file]* | - |
 | 17 | C17 | KelolaPendaftarPage | *[path/ke/file]* | - |
 | 18 | C18 | SeleksiController | *[path/ke/file]* | - |
@@ -278,16 +278,16 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 | C03 | Relawan | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C04 | Pengguna | Sedang | Hanya mencari akun dan mengambil notifikasi milik akun dari basis data. Tidak ada aturan sendiri, tetapi dipakai alur notifikasi UC06. | C04-UT01 s.d. C04-UT03, INT-TC07 |
 | C05 | InisiatorProgram | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C06 | Verifikator | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C06 | Verifikator | Sedang | Kelas model yang mendelegasikan keputusan peninjauan ke LaporanProgram (C09): `konfirmasiLaporan()` memanggil `setujui()` dan `tolakLaporan()` memanggil `tolak()`, dengan penjaga laporan tidak ada dan catatan revisi kosong. Pada implementasi, alur peninjauan laporan dijalankan oleh ProgramController (C15) lewat router `laporan`, sehingga kelas ini tidak dipanggil dari kode aplikasi. Belum ada unit test (coverage 0%) dan belum memenuhi minimum 2 test case per operasi. | - |
 | C07 | DokumenVerifikasi | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C08 | Kehadiran | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C09 | LaporanProgram | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C09 | LaporanProgram | Mendalam | Memuat aturan status peninjauan (laporan hanya bisa ditinjau sekali, dari MENUNGGU menjadi DISETUJUI atau DITOLAK), validasi tautan dokumentasi tidak boleh kosong, dan catatan revisi wajib saat menolak. Belum memenuhi minimum 3 test case per operasi public (4 tes untuk 5 operasi). | `LaporanProgram.test.ts` (4 tes, coverage 100% baris dan 100% cabang) |
 | C10 | Notifikasi | Mendalam | Memuat validasi pesan (tidak boleh kosong), aturan status dibaca (`baca()` hanya menulis sekali), dan pemeriksaan kepemilikan `milik()` yang menjaga notifikasi pengguna lain. | C10-UT01 s.d. C10-UT11, INT-TC07, INT-TC08 |
 | C11 | RiwayatKontribusi | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C12 | KelolaAkunPage | Sedang | Kelas *boundary*: sebagian besar operasinya menampilkan formulir dan meneruskan isian ke C13. Satu-satunya logika adalah penyaringan `urlKembali` agar tidak bisa dipakai untuk *open redirect*. Alur layarnya diuji pada test case use case. | C12-UT01 s.d. C12-UT04, INT-TC05, INT-TC06, UC01-TC01 s.d. UC01-TC02, UC02-TC01 s.d. UC02-TC04, UC06-TC01 |
 | C13 | AuthController | Mendalam | Memuat validasi kelengkapan registrasi, pembatalan akun bila penyimpanan gagal, pemblokiran IP setelah 5 kali gagal selama 5 menit (KNF06), sinkronisasi status verifikasi, dan pemeriksaan kepemilikan notifikasi. | C13-UT01 s.d. C13-UT41, INT-TC01 s.d. INT-TC09, KNF06-TC01, KNF06-TC02 |
-| C14 | KelolaProgramPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C15 | ProgramController | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C14 | KelolaProgramPage | Sedang | Kelas *boundary*: sebagian besar menampilkan formulir dan daftar lalu meneruskannya ke C15. Logika yang bisa diuji unit ada di `src/lib/programSaya.ts`: pemetaan status ke label dan badge, aksi tombol per status (unggah laporan, unggah ulang), statistik, penyaringan, dan persen kuota. Alur layar I-07, I-09, dan I-10 diuji lewat test case use case. | `programSaya.test.ts` (9 tes, coverage 97,26% baris dan 100% cabang) |
+| C15 | ProgramController | Mendalam | Memuat transaksi basis data, aturan status program dan laporan, pembaruan portofolio saat laporan DISETUJUI, notifikasi ke verifikator dan inisiator, serta pemeriksaan kepemilikan program. Untuk bagian laporan dan verifikasi: `ProgramController.ajukanLaporan.test.ts` (3 tes), `.peninjauan.test.ts` (4), `.verifikasi.test.ts` (4), `.menungguVerifikasi.test.ts` (3), `.programSaya.test.ts` (2). Coverage seluruh kelas: 78,28% baris, 86,53% cabang, 77,27% fungsi. | `ProgramController.*.test.ts` (16 tes untuk bagian laporan dan verifikasi) |
 | C16 | EksplorasiProgramPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C17 | KelolaPendaftarPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C18 | SeleksiController | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
