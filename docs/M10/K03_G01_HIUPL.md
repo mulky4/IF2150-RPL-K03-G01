@@ -974,7 +974,7 @@ Tabel 4.6. Bukti Hasil Pengujian
 | C10, C13, C21, C22 (coverage) | <img src="./assets/coverage-modul1.png" alt="Laporan coverage kelas Modul 1" width="600"><br>Notifikasi 100% baris / 100% cabang, AuthController 100% / 97,67%, CloudStorageAdapter 100% / 92%, BetterAuth 100% / 100% |
 | C11, C20 (coverage) | <img src="./assets/coverage-modul5.png" alt="Laporan coverage kelas Modul 5" width="600"><br>RiwayatKontribusi 100% baris / 100% cabang, PresensiController 98,29% / 95,52% |
 | INT-TC01 – INT-TC09 | <img src="./assets/INT-TC01-TC09.png" alt="Keluaran integration test Modul 1" width="600"> |
-| INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test Modul 4" width="600"> |
+| INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test laporan dan verifikasi program" width="600"> |
 | UC01-TC01 | <img src="./assets/UC01-TC01-a.png" alt="UC01-TC01 formulir terisi" width="400"> <img src="./assets/UC01-TC01-b.png" alt="UC01-TC01 akun berhasil dibuat" width="400"> |
 | UC01-TC02 | <img src="./assets/UC01-TC02.png" alt="UC01-TC02 data diri tidak lengkap" width="400"> |
 | UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program berhasil dibuat" width="400"> <img src="./assets/UC01-TC03-c.png" alt="UC01-TC03 program tampil di Program Saya" width="400"> |
