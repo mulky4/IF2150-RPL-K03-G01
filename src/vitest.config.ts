@@ -18,6 +18,8 @@ export default defineConfig({
         "server/models/Notifikasi.ts": { lines: 70, branches: 70 },
         "server/adapters/BetterAuth.ts": { lines: 70, branches: 70 },
         "server/adapters/CloudStorageAdapter.ts": { lines: 70, branches: 70 },
+        "server/models/RiwayatKontribusi.ts": { lines: 70, branches: 70 },
+        "server/controllers/PresensiController.ts": { lines: 70, branches: 70 },
       },
     },
   },
