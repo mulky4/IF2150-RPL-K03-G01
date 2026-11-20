@@ -978,7 +978,7 @@ Tabel 4.6. Bukti Hasil Pengujian
 | INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test laporan dan verifikasi program" width="600"> |
 | UC01-TC01 | <img src="./assets/UC01-TC01-a.png" alt="UC01-TC01 formulir terisi" width="400"> <img src="./assets/UC01-TC01-b.png" alt="UC01-TC01 akun berhasil dibuat" width="400"> |
 | UC01-TC02 | <img src="./assets/UC01-TC02.png" alt="UC01-TC02 data diri tidak lengkap" width="400"> |
-| UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program berhasil dibuat" width="400"> <img src="./assets/UC01-TC03-c.png" alt="UC01-TC03 program tampil di Program Saya" width="400"> |
+| UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program baru tampil di Program Saya" width="400"> |
 | UC01-TC04 | <img src="./assets/UC01-TC04.png" alt="UC01-TC04 lembaga belum terverifikasi" width="400"> |
 | UC02-TC01 | <img src="./assets/UC02-TC01-a.png" alt="UC02-TC01 detail program sebelum login" width="400"> <img src="./assets/UC02-TC01-b.png" alt="UC02-TC01 tidak diarahkan ke login" width="400"> |
 | UC02-TC02 | <img src="./assets/UC02-TC02-a.png" alt="UC02-TC02 login dengan urlKembali" width="400"> <img src="./assets/UC02-TC02-b.png" alt="UC02-TC02 kembali ke halaman program" width="400"> |
