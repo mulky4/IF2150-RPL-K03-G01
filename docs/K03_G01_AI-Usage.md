@@ -31,6 +31,7 @@
 * [Milestone 7](#milestone-7)
 * [Milestone 8](#milestone-8)
 * [Milestone 9](#milestone-9)
+* [Milestone 10](#milestone-10)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 ---
@@ -98,6 +99,12 @@ Silakan catat penggunaan AI yang berdampak signifikan pada pengerjaan tugas (mis
 | Claude Code | Membantu mencari penyebab error dan menyelesaikan konflik Git | Kenapa error ini muncul dan bagaimana menyelesaikan konflik saat merge dengan develop | AI menjelaskan penyebab dan memberi langkah perbaikan. Kami menjalankan sendiri perintahnya, memeriksa hasilnya, dan memastikan perubahan anggota lain tidak hilang. |
 | Claude Code | Membantu me-review PR anggota lain | Review PR ini terhadap SPEC dan DPPL: cek test, format, dan konflik dengan develop | AI menyusun daftar temuan. Kami memilih temuan yang dikirim, menulis komentar review sendiri, dan keputusan approve atau request changes tetap diambil oleh reviewer. |
 | Claude Code | Membantu mengecek isi laporan M9 terhadap PR, DPPL, dan kode | Cek apakah isi bagian laporan ini sudah sesuai dengan deskripsi PR, DPPL, dan kode di develop, dan sebutkan yang kurang atau keliru | AI menunjukkan bagian yang kurang, keliru, atau tidak sesuai kode. Kami memutuskan perbaikannya, memeriksa ulang terhadap kode dan PR, dan memastikan tidak ada klaim yang tidak bisa dibuktikan. |
+
+### Milestone 10
+| Tool AI | Tujuan Penggunaan | Contoh Prompt Utama | Modifikasi & Validasi Manusia |
+| :--- | :--- | :--- | :--- |
+| Claude Code | Menyusun langkah pengujian manual KNF08 (kompatibilitas peramban) pada Mozilla Firefox dan Apple Safari: menjalankan aplikasi di Mac, membuka jendela privat dan *console*, serta mengambil tangkapan layar 5 halaman uji | Buatkan langkah lengkap, tombol apa saja yang harus ditekan, untuk menguji 5 halaman KNF08 di Firefox dan Safari dan menyimpan tangkapan layarnya. Aku mau lakukan manual | AI menyusun urutan langkah, pintasan papan ketik, dan penamaan berkas bukti. Kami menjalankan sendiri seluruh langkah di Mac, memasang PostgreSQL 16 lewat Homebrew karena tidak ada Docker, mengambil semua tangkapan layar secara manual, dan membukanya satu per satu untuk memastikan alamat halaman, akun, dan isi *console* terlihat. Tangkapan layar yang tidak layak (terlalu kecil, kolom kosong, bilah alamat tidak terlihat, halaman salah, filter *console* Safari bukan "All") diambil ulang. |
+| Claude Code | Membuat skrip bantu untuk mengisi hasil KNF08 Firefox dan Safari ke Tabel 4.5 dan 4.6 HIUPL serta memindahkan tangkapan layar ke `docs/M10/assets/` | Buatkan skrip yang mengisi sel Firefox dan Safari untuk KNF08-TC01 sampai TC05 saja dan menamai ulang 10 tangkapan layar | AI menulis skrip yang hanya mengubah sel Firefox dan Safari pada lima baris KNF08 dan menyalin berkas dengan mode uji (*dry-run*) terlebih dahulu. Kami memeriksa hasil *dry-run*, menjalankan skrip, memeriksa `git diff`, dan mencatat apa adanya bahwa Firefox menampilkan satu peringatan kuning ("The execution of microtasks on this page was reordered to avoid unsafe execution.") pada TC02 sampai TC05, tanpa pesan galat merah. Status Pass tetap ditentukan dari kriteria KNF08 yang kami periksa sendiri. |
 
 ---
 ### Pernyataan Integritas dan Persetujuan
