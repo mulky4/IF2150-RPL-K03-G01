@@ -28,7 +28,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     vi.useRealTimers();
   });
 
-  it("kredensial benar → true dan sesi dibuat", async () => {
+  it("C13-UT24 kredensial benar → true dan sesi dibuat", async () => {
     const ip = ipBaru();
     await expect(
       AuthController.validasiKredensial(EMAIL, SANDI, ip),
@@ -36,7 +36,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     expect(BetterAuth.buatSesiMasuk).toHaveBeenCalledWith(EMAIL, SANDI);
   });
 
-  it("kredensial salah → false dan sesi tidak dibuat (UC02 alt. 1)", async () => {
+  it("C13-UT25 kredensial salah → false dan sesi tidak dibuat (UC02 alt. 1)", async () => {
     const ip = ipBaru();
     await expect(
       AuthController.validasiKredensial(EMAIL, "salah", ip),
@@ -44,7 +44,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     expect(BetterAuth.buatSesiMasuk).not.toHaveBeenCalled();
   });
 
-  it("5x gagal → percobaan ke-6 diblokir, walau kata sandi benar (UC02 alt. 2)", async () => {
+  it("C13-UT26 5x gagal → percobaan ke-6 diblokir, walau kata sandi benar (UC02 alt. 2)", async () => {
     const ip = ipBaru();
     for (let i = 0; i < 5; i++) {
       await expect(
@@ -57,7 +57,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     expect(BetterAuth.buatSesiMasuk).not.toHaveBeenCalled();
   });
 
-  it("blokir hanya berlaku untuk IP itu", async () => {
+  it("C13-UT27 blokir hanya berlaku untuk IP itu", async () => {
     const ipDiblokir = ipBaru();
     for (let i = 0; i < 5; i++) {
       await AuthController.validasiKredensial(EMAIL, "salah", ipDiblokir);
@@ -67,7 +67,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     ).resolves.toBe(true);
   });
 
-  it("blokir selesai setelah 5 menit dan hitungan gagal mulai dari nol", async () => {
+  it("C13-UT28 blokir selesai setelah 5 menit dan hitungan gagal mulai dari nol", async () => {
     vi.useFakeTimers();
     const ip = ipBaru();
     for (let i = 0; i < 5; i++) {
@@ -88,7 +88,7 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     ).resolves.toBe(true);
   });
 
-  it("login berhasil mereset hitungan gagal", async () => {
+  it("C13-UT29 login berhasil mereset hitungan gagal", async () => {
     const ip = ipBaru();
     for (let i = 0; i < 4; i++) {
       await AuthController.validasiKredensial(EMAIL, "salah", ip);
@@ -100,5 +100,37 @@ describe("AuthController (C13) – login dan blokir IP, UC02 & KNF06", () => {
     await expect(
       AuthController.validasiKredensial(EMAIL, SANDI, ip),
     ).resolves.toBe(true);
+  });
+
+  it("C13-UT36 cekSesi: ada sesi aktif → true (Algo-C13-04)", async () => {
+    vi.spyOn(BetterAuth, "ambilSesi").mockResolvedValue("token-sesi");
+    await expect(AuthController.cekSesi()).resolves.toBe(true);
+  });
+
+  it("C13-UT37 cekSesi: batas belum login (sesi null) → false", async () => {
+    vi.spyOn(BetterAuth, "ambilSesi").mockResolvedValue(null);
+    await expect(AuthController.cekSesi()).resolves.toBe(false);
+  });
+
+  it("C13-UT40 cekSesi: Better Auth gagal membaca sesi → galat diteruskan", async () => {
+    vi.spyOn(BetterAuth, "ambilSesi").mockRejectedValue(
+      new Error("Sesi rusak"),
+    );
+    await expect(AuthController.cekSesi()).rejects.toThrow("Sesi rusak");
+  });
+
+  it("C13-UT38 batas: 4x gagal belum diblokir, percobaan ke-5 masih diperiksa", async () => {
+    const ip = ipBaru();
+    for (let i = 0; i < 4; i++) {
+      await AuthController.validasiKredensial(EMAIL, "salah", ip);
+    }
+    await expect(
+      AuthController.validasiKredensial(EMAIL, "salah", ip),
+    ).resolves.toBe(false);
+    expect(BetterAuth.verifikasiKredensial).toHaveBeenCalledTimes(5);
+    // Baru setelah gagal ke-5 IP diblokir.
+    await expect(
+      AuthController.validasiKredensial(EMAIL, SANDI, ip),
+    ).rejects.toBeInstanceOf(GalatIPDiblokir);
   });
 });

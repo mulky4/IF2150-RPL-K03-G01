@@ -39,26 +39,26 @@ beforeEach(() => {
 });
 
 describe("AuthController.sinkronStatusVerifikasi (issue #8)", () => {
-  it("relawan MENUNGGU menjadi TERVERIFIKASI setelah email terverifikasi", async () => {
+  it("C13-UT20 relawan MENUNGGU menjadi TERVERIFIKASI setelah email terverifikasi", async () => {
     await expect(
       AuthController.sinkronStatusVerifikasi("u-menunggu"),
     ).resolves.toBe(true);
     expect(relawan[0]?.statusVerifikasi).toBe("TERVERIFIKASI");
   });
 
-  it("tidak mengubah relawan lain", async () => {
+  it("C13-UT21 tidak mengubah relawan lain", async () => {
     await AuthController.sinkronStatusVerifikasi("u-menunggu");
     expect(relawan[2]?.statusVerifikasi).toBe("MENUNGGU");
   });
 
-  it("status DITOLAK tidak ditimpa", async () => {
+  it("C13-UT22 status DITOLAK tidak ditimpa", async () => {
     await expect(
       AuthController.sinkronStatusVerifikasi("u-ditolak"),
     ).resolves.toBe(false);
     expect(relawan[1]?.statusVerifikasi).toBe("DITOLAK");
   });
 
-  it("aman dipanggil dua kali dan untuk pengguna tanpa profil relawan (Inisiator)", async () => {
+  it("C13-UT23 aman dipanggil dua kali dan untuk pengguna tanpa profil relawan (Inisiator)", async () => {
     await AuthController.sinkronStatusVerifikasi("u-menunggu");
     await expect(
       AuthController.sinkronStatusVerifikasi("u-menunggu"),

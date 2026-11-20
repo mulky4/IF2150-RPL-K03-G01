@@ -35,7 +35,7 @@ afterEach(async () => {
 });
 
 describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
-  it("menerima PDF, PNG, dan JPG yang sah (Algo-C21-01)", async () => {
+  it("C21-UT01 menerima PDF, PNG, dan JPG yang sah (Algo-C21-01)", async () => {
     for (const [awal, nama, tipe] of [
       [PDF, "ktp.pdf", "application/pdf"],
       [PNG, "ktp.png", "image/png"],
@@ -47,7 +47,7 @@ describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
     }
   });
 
-  it("menolak berkas null atau kosong", async () => {
+  it("C21-UT02 menolak berkas null atau kosong", async () => {
     await expect(CloudStorageAdapter.validasiBerkas(null)).resolves.toBe(false);
     await expect(
       CloudStorageAdapter.validasiBerkas(
@@ -56,7 +56,7 @@ describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
     ).resolves.toBe(false);
   });
 
-  it("menolak berkas lebih dari 2 MB, tepat 2 MB masih boleh", async () => {
+  it("C21-UT03 menolak berkas lebih dari 2 MB, tepat 2 MB masih boleh", async () => {
     const dua_mb = 2 * 1024 * 1024;
     await expect(
       CloudStorageAdapter.validasiBerkas(
@@ -70,7 +70,7 @@ describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
     ).resolves.toBe(false);
   });
 
-  it("menolak tipe selain PDF/JPG/PNG", async () => {
+  it("C21-UT04 menolak tipe selain PDF/JPG/PNG", async () => {
     await expect(
       CloudStorageAdapter.validasiBerkas(
         buatFile([0x68, 0x61, 0x69], "catatan.txt", "text/plain"),
@@ -78,7 +78,7 @@ describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
     ).resolves.toBe(false);
   });
 
-  it("menolak berkas yang namanya diganti (isi bukan PDF tapi mengaku PDF)", async () => {
+  it("C21-UT05 menolak berkas yang namanya diganti (isi bukan PDF tapi mengaku PDF)", async () => {
     await expect(
       CloudStorageAdapter.validasiBerkas(
         buatFile([0x4d, 0x5a, 0x90, 0x00], "virus.pdf", "application/pdf"),
@@ -86,15 +86,17 @@ describe("CloudStorageAdapter (C21) – validasiBerkas, KNF03", () => {
     ).resolves.toBe(false);
   });
 
-  it("menolak tipe yang diklaim tidak cocok dengan isinya", async () => {
+  it("C21-UT06 menolak tipe yang diklaim tidak cocok dengan isinya", async () => {
     await expect(
-      CloudStorageAdapter.validasiBerkas(buatFile(PNG, "a.png", "application/pdf")),
+      CloudStorageAdapter.validasiBerkas(
+        buatFile(PNG, "a.png", "application/pdf"),
+      ),
     ).resolves.toBe(false);
   });
 });
 
 describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
-  it("unggahBerkas menyimpan berkas dan ambilBerkas mengembalikan isi yang sama (Algo-C21-02, C21-03)", async () => {
+  it("C21-UT07 unggahBerkas menyimpan berkas dan ambilBerkas mengembalikan isi yang sama (Algo-C21-02, C21-03)", async () => {
     const asli = buatFile(PDF, "ktp-saya.pdf", "application/pdf", 100);
     const url = await CloudStorageAdapter.unggahBerkas(asli);
 
@@ -108,7 +110,7 @@ describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
     );
   });
 
-  it("nama berkas dibuat sendiri, bukan dari nama kiriman pengguna", async () => {
+  it("C21-UT08 nama berkas dibuat sendiri, bukan dari nama kiriman pengguna", async () => {
     const url = await CloudStorageAdapter.unggahBerkas(
       buatFile(PNG, "../../etc/passwd.png", "image/png"),
     );
@@ -116,7 +118,7 @@ describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
     expect(await readdir(folder)).toEqual([path.basename(url)]);
   });
 
-  it("unggahBerkas menolak berkas tidak valid dan tidak menyimpan apa pun", async () => {
+  it("C21-UT09 unggahBerkas menolak berkas tidak valid dan tidak menyimpan apa pun", async () => {
     await expect(
       CloudStorageAdapter.unggahBerkas(
         buatFile([1, 2, 3], "x.txt", "text/plain"),
@@ -125,7 +127,7 @@ describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
     expect(await readdir(folder)).toHaveLength(0);
   });
 
-  it("ambilBerkas: url tidak dikenal atau berusaha keluar folder → 'Berkas tidak ditemukan'", async () => {
+  it("C21-UT10 ambilBerkas: url tidak dikenal atau berusaha keluar folder → 'Berkas tidak ditemukan'", async () => {
     for (const url of [
       "uploads/tidak-ada.pdf",
       "uploads/00000000-0000-0000-0000-000000000000.pdf",
@@ -138,7 +140,23 @@ describe("CloudStorageAdapter (C21) – unggah dan ambil", () => {
     }
   });
 
-  it("hapusBerkas menghapus berkas dan aman dipanggil dua kali", async () => {
+  it("C21-UT12 unggahBerkas: batas berkas tepat 2 MB tetap tersimpan utuh", async () => {
+    const url = await CloudStorageAdapter.unggahBerkas(
+      buatFile(PDF, "pas.pdf", "application/pdf", 2 * 1024 * 1024),
+    );
+    const diambil = await CloudStorageAdapter.ambilBerkas(url);
+    expect(diambil.size).toBe(2 * 1024 * 1024);
+  });
+
+  it("C21-UT13 ambilBerkas: batas url berupa nama berkas saja (tanpa uploads/) tetap ditemukan", async () => {
+    const url = await CloudStorageAdapter.unggahBerkas(
+      buatFile(PNG, "foto.png", "image/png"),
+    );
+    const diambil = await CloudStorageAdapter.ambilBerkas(path.basename(url));
+    expect(diambil.type).toBe("image/png");
+  });
+
+  it("C21-UT11 hapusBerkas menghapus berkas dan aman dipanggil dua kali", async () => {
     const url = await CloudStorageAdapter.unggahBerkas(
       buatFile(JPG, "foto.jpg", "image/jpeg"),
     );

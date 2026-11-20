@@ -126,6 +126,7 @@ import { GalatValidasi } from "~/lib/galat";
 import {
   PESAN_PROGRAM_BELUM_SELESAI,
   PESAN_PROGRAM_TIDAK_ADA,
+  PESAN_RELAWAN_TIDAK_ADA,
   PresensiController,
 } from "~/server/controllers/PresensiController";
 
@@ -206,7 +207,7 @@ beforeEach(() => {
 });
 
 describe("PresensiController.perbaruiPortofolioRelawan", () => {
-  it("relawan yang hadir dapat jam aksi sesuai durasi program", async () => {
+  it("C20-UT25 relawan yang hadir dapat jam aksi sesuai durasi program", async () => {
     hadir(HADIR, PROGRAM);
     await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
 
@@ -216,7 +217,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     ]);
   });
 
-  it("relawan yang tidak hadir tidak dapat jam aksi", async () => {
+  it("C20-UT26 relawan yang tidak hadir tidak dapat jam aksi", async () => {
     hadir(HADIR, PROGRAM);
     await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
 
@@ -226,7 +227,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     ).resolves.toEqual([]);
   });
 
-  it("relawan diterima yang belum punya riwayat dibuatkan riwayat baru", async () => {
+  it("C20-UT27 relawan diterima yang belum punya riwayat dibuatkan riwayat baru", async () => {
     hadir(BARU, PROGRAM);
     expect(tabel.riwayat.some((r) => r.relawanId === BARU)).toBe(false);
 
@@ -237,7 +238,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     await expect(PresensiController.ambilTotalJamAksi(BARU)).resolves.toBe(4);
   });
 
-  it("dipanggil dua kali tidak menambah jam dua kali", async () => {
+  it("C20-UT28 dipanggil dua kali tidak menambah jam dua kali", async () => {
     hadir(HADIR, PROGRAM);
     await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
     await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
@@ -246,7 +247,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     expect(tabel.riwayatProgram).toHaveLength(1);
   });
 
-  it("pendaftar yang tidak diterima dilewati walaupun tercatat hadir", async () => {
+  it("C20-UT29 pendaftar yang tidak diterima dilewati walaupun tercatat hadir", async () => {
     tabel.pendaftaran[0]!.status = "DITOLAK";
     hadir(HADIR, PROGRAM);
     await PresensiController.perbaruiPortofolioRelawan(PROGRAM);
@@ -254,7 +255,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     await expect(PresensiController.ambilTotalJamAksi(HADIR)).resolves.toBe(3);
   });
 
-  it("menolak program yang belum selesai", async () => {
+  it("C20-UT30 menolak program yang belum selesai", async () => {
     tabel.program[0]!.status = "MENUNGGU_KONFIRMASI";
     hadir(HADIR, PROGRAM);
 
@@ -264,13 +265,13 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     expect(tabel.riwayatProgram).toEqual([]);
   });
 
-  it("menolak program yang tidak ada", async () => {
+  it("C20-UT31 menolak program yang tidak ada", async () => {
     await expect(
       PresensiController.perbaruiPortofolioRelawan("tidak-ada"),
     ).rejects.toThrow(PESAN_PROGRAM_TIDAK_ADA);
   });
 
-  it("memakai transaksi pemanggil kalau tx diberikan", async () => {
+  it("C20-UT32 memakai transaksi pemanggil kalau tx diberikan", async () => {
     hadir(HADIR, PROGRAM);
     const bukaTransaksi = vi.spyOn(dbPalsu, "$transaction");
 
@@ -284,7 +285,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
     bukaTransaksi.mockRestore();
   });
 
-  it("membuka transaksi sendiri kalau tx tidak diberikan", async () => {
+  it("C20-UT33 membuka transaksi sendiri kalau tx tidak diberikan", async () => {
     hadir(HADIR, PROGRAM);
     const bukaTransaksi = vi.spyOn(dbPalsu, "$transaction");
 
@@ -296,7 +297,7 @@ describe("PresensiController.perbaruiPortofolioRelawan", () => {
 });
 
 describe("PresensiController.ambilRiwayatProgram", () => {
-  it("berisi program yang dihadiri, paling baru di atas", async () => {
+  it("C20-UT34 berisi program yang dihadiri, paling baru di atas", async () => {
     tabel.program.push(
       program(
         "program-hutan",
@@ -329,10 +330,58 @@ describe("PresensiController.ambilRiwayatProgram", () => {
     );
   });
 
-  it("relawan tanpa riwayat mendapat daftar kosong dan nol jam", async () => {
+  it("C20-UT35 relawan tanpa riwayat mendapat daftar kosong dan nol jam", async () => {
     await expect(PresensiController.ambilRiwayatProgram(BARU)).resolves.toEqual(
       [],
     );
     await expect(PresensiController.ambilTotalJamAksi(BARU)).resolves.toBe(0);
+  });
+
+  it("C20-UT42 relawan yang tidak ada ditolak", async () => {
+    await expect(
+      PresensiController.ambilRiwayatProgram("tidak-ada"),
+    ).rejects.toThrow(PESAN_RELAWAN_TIDAK_ADA);
+  });
+});
+
+describe("PresensiController.ambilTotalJamAksi", () => {
+  it("C20-UT43 membaca total jam dari riwayat yang sudah ada", async () => {
+    await expect(PresensiController.ambilTotalJamAksi(HADIR)).resolves.toBe(3);
+  });
+
+  it("C20-UT44 relawan yang tidak ada ditolak", async () => {
+    const janji = PresensiController.ambilTotalJamAksi("tidak-ada");
+    await expect(janji).rejects.toBeInstanceOf(GalatValidasi);
+    await expect(janji).rejects.toThrow(PESAN_RELAWAN_TIDAK_ADA);
+  });
+});
+
+describe("PresensiController.ambilProfilRelawan", () => {
+  it("C20-UT45 mengembalikan nama, domisili, status verifikasi, dan waktu bergabung", async () => {
+    await expect(PresensiController.ambilProfilRelawan(HADIR)).resolves.toEqual(
+      {
+        nama: HADIR,
+        domisili: "Bandung",
+        terverifikasi: true,
+        relawanSejak: new Date("2026-03-01"),
+      },
+    );
+  });
+
+  it("C20-UT46 relawan yang belum terverifikasi dan tanpa domisili", async () => {
+    tabel.relawan[0] = {
+      ...tabel.relawan[0],
+      domisili: null,
+      statusVerifikasi: "MENUNGGU",
+    };
+    const profil = await PresensiController.ambilProfilRelawan(HADIR);
+    expect(profil.terverifikasi).toBe(false);
+    expect(profil.domisili).toBeNull();
+  });
+
+  it("C20-UT47 relawan yang tidak ada ditolak", async () => {
+    await expect(
+      PresensiController.ambilProfilRelawan("tidak-ada"),
+    ).rejects.toThrow(PESAN_RELAWAN_TIDAK_ADA);
   });
 });

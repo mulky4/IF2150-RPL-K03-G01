@@ -54,7 +54,7 @@ function buatRelawan(hadirDi: Program[], riwayat?: RiwayatKontribusi) {
 }
 
 describe("RiwayatKontribusi.tambahRiwayatProgram", () => {
-  it("menambah jam aksi sebesar durasi program", () => {
+  it("C11-UT01 menambah jam aksi sebesar durasi program", () => {
     const riwayat = new RiwayatKontribusi({ idRiwayat: "r1", totalJamAksi: 0 });
     riwayat.tambahRiwayatProgram(PANTAI);
     expect(riwayat.getTotalJamAksi()).toBe(PANTAI.hitungDurasiJam());
@@ -67,7 +67,7 @@ describe("RiwayatKontribusi.tambahRiwayatProgram", () => {
     ).toEqual(["pantai", "hutan"]);
   });
 
-  it("melanjutkan dari total jam yang sudah ada", () => {
+  it("C11-UT02 melanjutkan dari total jam yang sudah ada", () => {
     const riwayat = new RiwayatKontribusi({
       idRiwayat: "r1",
       totalJamAksi: 10,
@@ -76,7 +76,7 @@ describe("RiwayatKontribusi.tambahRiwayatProgram", () => {
     expect(riwayat.getTotalJamAksi()).toBe(14);
   });
 
-  it("menolak program yang sudah tercatat dan jam tidak bertambah", () => {
+  it("C11-UT03 menolak program yang sudah tercatat dan jam tidak bertambah", () => {
     const riwayat = new RiwayatKontribusi({ idRiwayat: "r1", totalJamAksi: 0 });
     riwayat.tambahRiwayatProgram(PANTAI);
     expect(() => riwayat.tambahRiwayatProgram(PANTAI)).toThrow(
@@ -85,7 +85,7 @@ describe("RiwayatKontribusi.tambahRiwayatProgram", () => {
     expect(riwayat.getTotalJamAksi()).toBe(4);
   });
 
-  it("menolak program dengan durasi negatif", () => {
+  it("C11-UT04 menolak program dengan durasi negatif", () => {
     const riwayat = RiwayatKontribusi.kosong();
     const terbalik = buatProgram(
       "terbalik",
@@ -97,25 +97,97 @@ describe("RiwayatKontribusi.tambahRiwayatProgram", () => {
     );
     expect(riwayat.getTotalJamAksi()).toBe(0);
   });
+
+  it("C11-UT05 program berdurasi nol jam tetap tercatat tanpa menambah jam", () => {
+    const riwayat = new RiwayatKontribusi({ idRiwayat: "r1", totalJamAksi: 4 });
+    const sekejap = buatProgram(
+      "sekejap",
+      "2026-11-09T01:00:00.000Z",
+      "2026-11-09T01:00:00.000Z",
+    );
+    riwayat.tambahRiwayatProgram(sekejap);
+    expect(riwayat.getTotalJamAksi()).toBe(4);
+    expect(riwayat.mencatat(sekejap)).toBe(true);
+  });
+});
+
+describe("RiwayatKontribusi.getTotalJamAksi dan getDaftarProgramSelesai", () => {
+  it("C11-UT06 riwayat kosong bernilai nol jam dan tanpa program", () => {
+    const riwayat = RiwayatKontribusi.kosong();
+    expect(riwayat.getTotalJamAksi()).toBe(0);
+    expect(riwayat.getDaftarProgramSelesai()).toEqual([]);
+    expect(riwayat.getIdRiwayat()).toBeNull();
+  });
+
+  it("C11-UT07 mengubah daftar yang dikembalikan tidak mengubah riwayat", () => {
+    const riwayat = new RiwayatKontribusi({ idRiwayat: "r1", totalJamAksi: 0 });
+    riwayat.tambahRiwayatProgram(PANTAI);
+    const daftar = riwayat.getDaftarProgramSelesai();
+    daftar.push(HUTAN);
+    daftar.length = 0;
+    expect(
+      riwayat.getDaftarProgramSelesai().map((p) => p.getIdProgram()),
+    ).toEqual(["pantai"]);
+    expect(riwayat.getTotalJamAksi()).toBe(4);
+  });
+
+  it("C11-UT08 mencatat() hanya true untuk program yang sudah ada di riwayat", () => {
+    const riwayat = RiwayatKontribusi.kosong();
+    expect(riwayat.mencatat(PANTAI)).toBe(false);
+    riwayat.tambahRiwayatProgram(PANTAI);
+    expect(riwayat.mencatat(PANTAI)).toBe(true);
+    expect(riwayat.mencatat(HUTAN)).toBe(false);
+  });
 });
 
 describe("Relawan.catatKontribusi", () => {
-  it("relawan yang hadir dapat jam aksi", () => {
+  it("C03-UT01 relawan yang hadir dapat jam aksi", () => {
     const relawan = buatRelawan([PANTAI]);
     expect(relawan.catatKontribusi(PANTAI)).toBe(true);
     expect(relawan.getTotalJamAksi()).toBe(4);
   });
 
-  it("relawan yang tidak hadir tidak dapat jam aksi", () => {
+  it("C03-UT02 relawan yang tidak hadir tidak dapat jam aksi", () => {
     const relawan = buatRelawan([HUTAN]);
     expect(relawan.catatKontribusi(PANTAI)).toBe(false);
     expect(relawan.getTotalJamAksi()).toBe(0);
     expect(relawan.lihatPortofolio().getDaftarProgramSelesai()).toEqual([]);
   });
 
-  it("relawan baru tanpa riwayat mulai dari nol", () => {
+  it("C03-UT03 relawan baru tanpa riwayat mulai dari nol", () => {
     const relawan = buatRelawan([]);
     expect(relawan.lihatPortofolio().getIdRiwayat()).toBeNull();
     expect(relawan.getTotalJamAksi()).toBe(0);
+  });
+});
+
+describe("Relawan.hadirPada dan lihatPortofolio", () => {
+  it("C03-UT04 hadirPada() true untuk program yang pernah di-check-in", () => {
+    const relawan = buatRelawan([HUTAN, PANTAI]);
+    expect(relawan.hadirPada(PANTAI)).toBe(true);
+    expect(relawan.hadirPada(HUTAN)).toBe(true);
+  });
+
+  it("C03-UT05 hadirPada() false kalau hanya hadir di program lain atau belum pernah hadir", () => {
+    expect(buatRelawan([HUTAN]).hadirPada(PANTAI)).toBe(false);
+    expect(buatRelawan([]).hadirPada(PANTAI)).toBe(false);
+  });
+
+  it("C03-UT06 lihatPortofolio() mengembalikan riwayat yang dimiliki relawan", () => {
+    const riwayat = new RiwayatKontribusi({
+      idRiwayat: "r1",
+      totalJamAksi: 12,
+    });
+    const relawan = buatRelawan([], riwayat);
+    expect(relawan.lihatPortofolio()).toBe(riwayat);
+    expect(relawan.getTotalJamAksi()).toBe(12);
+  });
+
+  it("C03-UT07 riwayat kosong relawan baru dipakai ulang sehingga jam yang dicatat tidak hilang", () => {
+    const relawan = buatRelawan([PANTAI]);
+    const pertama = relawan.lihatPortofolio();
+    relawan.catatKontribusi(PANTAI);
+    expect(relawan.lihatPortofolio()).toBe(pertama);
+    expect(relawan.lihatPortofolio().getTotalJamAksi()).toBe(4);
   });
 });
