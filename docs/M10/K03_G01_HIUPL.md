@@ -58,10 +58,6 @@ Dipersiapkan oleh:
 
 | Revisi | Deskripsi |
 | :--- | :--- |
-| *A* | *Deskripsikan perubahan yang dilakukan dari dokumen sebelumnya pada dokumen ini. Jika tidak terdapat perubahan, harap kosongkan tabel.* |
-| *B* |  |
-| *C* |  |
-| ... |  |
 
 ---
 
@@ -124,16 +120,39 @@ Tuliskan sistematika pembahasan dokumen ini secara ringkas dan runut bab demi ba
 
 # BAB 2: Deskripsi Umum Perangkat Lunak
 
-Bagian ini diisi dengan *System Overview*, dalam bentuk gambar dan narasi yang memberikan gambaran tentang aplikasi dan konteksnya. **Batasan dan keterkaitan** antara sistem yang dibangun dengan sistem lain di luarnya harus jelas. Deskripsi umum sistem perlu dilengkapi dengan pemodelan kasus yang dihadapi, seperti *use case diagram*. Berikan narasi yang jelas untuk setiap gambar yang ditampilkan.
+RekanBumi adalah *platform* web yang mempertemukan masyarakat umum dengan lembaga lingkungan terverifikasi untuk memfasilitasi aksi nyata lewat program "Jaga Alam" dan "Jaga Iklim", dalam rangka mendukung SDG 13 dan SDG 15. Relawan mencari kegiatan terstruktur yang sesuai minat, lembaga mengelola program serta perekrutan relawannya, dan Verifikator memastikan hanya lembaga dan program yang layak yang tampil ke publik. Subbab ini merangkum Subbab 2.2 sampai 2.4 SKPL dan Bab 2 DPPL, disesuaikan dengan keadaan aplikasi pada tag `v9.0`.
 
-Bagian ini dapat menyalin atau meringkas dari dokumen SKPL atau DPPL.
+**Aktor.** Ada tiga aktor. *Relawan* (masyarakat umum) mencari program, mendaftar, melakukan *check-in*, dan melihat portofolio jam aksinya. *Inisiator Program* (lembaga atau komunitas lingkungan) mendaftarkan program, menyeleksi pendaftar, dan melaporkan hasil kegiatan. *Verifikator* (admin *platform*) menyetujui program dan meninjau laporan akhir. Pengunjung yang belum masuk tetap dapat membuka halaman Eksplorasi Program (I-04) dan Detail Program (I-05).
+
+**Use case.** Gambar 2.1 memuat sembilan use case. Relawan terhubung ke UC01 (Daftar program, pada bagian registrasi akun dan dokumennya), UC02 (*Login* akun), UC03 (Mencari program), UC04 (Mengunjungi situs program), UC06 (Konfirmasi status pendaftaran, yaitu menerima notifikasi hasil seleksi), UC08 (Konfirmasi kehadiran program), dan UC09 (Memperbarui status akun relawan). Inisiator Program terhubung ke UC01 (mendaftarkan program), UC05 (Menyeleksi calon relawan pendaftar), UC06, dan UC07 (Memperbarui status program). Verifikator terhubung ke UC07 dan UC09. Skenario normal dan alternatif tiap use case ada pada Subbab 4.4 SKPL dan diuji pada Subbab 4.4 dokumen ini.
 
 <p align="center">
-<img alt="System Overview / Use Case Diagram" src="./assets/contoh-uc-diagram.webp" width="90%">
+<img alt="Use Case Diagram RekanBumi" src="./assets/uc-diagram.png" width="90%">
 </p>
 <p align="center">
-<i>Gambar 2.1. Use Case Diagram [Nama P/L]</i>
+<i>Gambar 2.1. Use Case Diagram RekanBumi (SKPL Gambar 5)</i>
 </p>
+
+**Arsitektur dan konteks sistem.** Aplikasi memakai arsitektur *client-server* berpola MVC. Lapisan *View* (kelas *boundary* C12, C14, C16, C17, C19) berjalan di peramban dan dibangun dengan Next.js 15 serta Tailwind CSS. *View* hanya memanggil API tRPC. Lapisan *Controller* (C13, C15, C18, C20) berjalan di server Node.js, memegang aturan bisnis, lalu memakai kelas *Model* (C01 sampai C11) yang menyimpan datanya ke PostgreSQL lewat Prisma ORM. Better Auth (C22) menangani kata sandi dan sesi, sedangkan CloudStorageAdapter (C21) menyimpan berkas unggahan. Gambar 2.2 menunjukkan pembagian lapisan tersebut beserta sistem di luar aplikasi. Gambar ini adalah *Physical View* pada dokumen APL, dan pada implementasi DBMS yang dipakai adalah PostgreSQL 16 lokal dan *Cloud Storage* diganti folder `src/uploads/` (Subbab 3.1).
+
+<p align="center">
+<img alt="Physical View RekanBumi" src="./assets/physical-view.png" width="80%">
+</p>
+<p align="center">
+<i>Gambar 2.2. Physical View RekanBumi: lapisan aplikasi dan sistem di luarnya (APL Subbab 3.2)</i>
+</p>
+
+**Batasan dan keterkaitan dengan sistem lain.** Tabel 2.1 menjelaskan apa yang berada di dalam dan di luar lingkup aplikasi, termasuk keterkaitannya dengan sistem eksternal.
+
+Tabel 2.1. Batasan dan Keterkaitan Sistem
+
+| Komponen di luar aplikasi | Keterkaitan dengan RekanBumi | Batasan |
+| :--- | :--- | :--- |
+| Situs web resmi lembaga | RekanBumi menyimpan tautan situs resmi milik Inisiator dan menampilkan tombol "Kunjungi Situs Resmi" pada Detail Program (I-05). Tautan dibuka di tab baru (UC04). Tautan yang kosong atau bukan `http`/`https` tidak dibuka, dan tombolnya dinonaktifkan. | Ketersediaan dan isi situs eksternal berada di luar lingkup RekanBumi (SKPL 2.4). Aplikasi hanya mengarahkan pengguna. |
+| Penyimpanan berkas (*Cloud Storage*) | CloudStorageAdapter (C21) menerima, memvalidasi (PDF, JPG, atau PNG, maksimal 2 MB), dan menyimpan berkas dokumen verifikasi Relawan. Kelas lain hanya memanggil C21. | Layanan *cloud* belum dipilih, jadi berkas disimpan di folder lokal `src/uploads/`. Pindah ke layanan *cloud* cukup mengganti isi `unggahBerkas()` dan `ambilBerkas()`. |
+| Basis data PostgreSQL | Seluruh data (akun, program, pendaftaran, kehadiran, laporan, notifikasi) disimpan lewat Prisma ORM. | Pengembangan dan pengujian memakai PostgreSQL 16 lokal. Neon PostgreSQL pada DPPL dapat dipakai dengan mengganti `DATABASE_URL`. |
+| Layanan email | Better Auth membuat tautan verifikasi email saat registrasi. | Belum ada SMTP, sehingga tautan verifikasi hanya dicetak ke log server. Notifikasi pendaftaran dan laporan memakai sistem notifikasi internal (I-03), bukan email. |
+| Peramban pengguna | Seluruh fitur diakses lewat peramban modern di desktop dan ponsel (Chrome, Edge, Firefox, Safari). | Aplikasi membutuhkan koneksi internet dan tidak tersedia sebagai aplikasi *native* (SKPL 2.4). |
 
 <br>
 
@@ -153,13 +172,13 @@ Tabel 3.1. Lingkungan Implementasi
 
 | Aspek | Keterangan |
 | :--- | :--- |
-| *Hardware* | Laptop pribadi tiap anggota tim untuk pengembangan dan pengujian lokal. *[Lengkapi spesifikasi prosesor dan RAM laptop anggota.]* |
-| *Operating System* | Aplikasi lintas platform karena berjalan di atas Node.js. Pengguna mengakses lewat peramban modern di desktop dan ponsel (SKPL 2.5). Pengujian pada dokumen ini dijalankan di Linux (kontainer) dengan Node.js 22.23.5. |
+| *Hardware* | Laptop pribadi tiap anggota tim untuk pengembangan dan pengujian lokal. Pengujian ulang unit test dan *coverage* Modul 1 serta KNF08 pada Mozilla Firefox dan Apple Safari dijalankan di MacBook Air (Apple M4, RAM 24 GB). Unit test, integration test INT-TC01 s.d. INT-TC09, dan use case Modul 1 juga dijalankan di kontainer Linux. |
+| *Operating System* | Aplikasi lintas platform karena berjalan di atas Node.js. Pengguna mengakses lewat peramban modern di desktop dan ponsel (SKPL 2.5). Pengujian pada dokumen ini dijalankan di Linux (kontainer, Node.js 22.23.5) dan macOS 15.5 (Node.js 24.13.0). Jumlah akhir unit test pada Subbab 4.2 diukur dengan Node.js 20.20.2. |
 | *Bahasa Pemrograman* | TypeScript 5.9.3, SQL (PostgreSQL, berkas migrasi Prisma), CSS (Tailwind) |
 | *Framework/Library* | Next.js 15.5.29 (App Router), React 19.1.0, tRPC 11.25.0, TanStack React Query 5.107.1, superjson, Prisma ORM 6.19.3, Better Auth 1.3.34, bcryptjs 3.0.3, Zod 3.25.76, Tailwind CSS 4.3.5 |
-| *DBMS* | PostgreSQL 16 lewat Docker Compose (`src/docker-compose.yml`) untuk pengembangan lokal. Neon PostgreSQL pada DPPL tetap bisa dipakai dengan mengganti `DATABASE_URL`. |
+| *DBMS* | PostgreSQL 16 lewat Docker Compose (`src/docker-compose.yml`) untuk pengembangan lokal. Di macOS tanpa Docker dipakai PostgreSQL 16 lewat Homebrew dengan kredensial yang sama. Neon PostgreSQL pada DPPL tetap bisa dipakai dengan mengganti `DATABASE_URL`. |
 | *Development Tools* | Visual Studio Code, Git dan GitHub (alur Gitflow-lite dengan *pull request* dan *review*), pnpm 10.28.0, Node.js 20–22 (`src/.nvmrc` = 20), Docker, Prisma CLI dan Prisma Studio, ESLint 9.39.5, Prettier 3.9.10, draw.io |
-| *Testing Tools* | Vitest 3.2.7 (unit test dan integration test otomatis), @vitest/coverage-v8 3.2.7 (laporan *coverage* % baris dan % cabang), tsx 4.23.15 (skrip uji KNF dan uji beban di `src/tests/knf/` dan `src/tests/beban/`), `psql` (inspeksi basis data untuk KNF *security*), peramban Google Chrome/Chromium (pengujian use case manual), Chrome DevTools dan Lighthouse (KNF waktu respons dan aksesibilitas) |
+| *Testing Tools* | Vitest 3.2.7 (unit test dan integration test otomatis), @vitest/coverage-v8 3.2.7 (laporan *coverage* % baris dan % cabang), tsx 4.23.15 (skrip uji KNF dan uji beban di `src/tests/knf/` dan `src/tests/beban/`), `psql` (inspeksi basis data untuk KNF *security*), peramban Google Chrome/Chromium (pengujian use case manual), Chrome DevTools dan Lighthouse (KNF waktu respons dan aksesibilitas), Mozilla Firefox 160.0.1 dan Apple Safari 18.5 beserta *console developer tools*-nya (KNF08 kompatibilitas peramban) |
 
 Perubahan terhadap Subbab 2.1 DPPL:
 
@@ -176,13 +195,13 @@ Tabel 3.2. Implementasi Modul
 
 | No | ID Kelas | Nama Modul/Kelas | Nama File Fisik | Nama File Executable |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | C01 | Program | *[path/ke/file]* | - |
+| 1 | C01 | Program | `src/server/models/Program.ts`<br>`src/prisma/schema.prisma` (model `Program`, tabel `tbl_program`) | - |
 | 2 | C02 | Pendaftaran | *[path/ke/file]* | - |
 | 3 | C03 | Relawan | `src/server/models/Relawan.ts`<br>`src/prisma/schema.prisma` (model `Relawan`, tabel `tbl_relawan`) | - |
 | 4 | C04 | Pengguna | `src/server/models/Pengguna.ts`<br>`src/prisma/schema.prisma` (model `User`, tabel `user`) | - |
-| 5 | C05 | InisiatorProgram | *[path/ke/file]* | - |
+| 5 | C05 | InisiatorProgram | `src/server/models/InisiatorProgram.ts`<br>`src/prisma/schema.prisma` (model `InisiatorProgram`, tabel `tbl_inisiator_program`) | - |
 | 6 | C06 | Verifikator | `src/server/models/Verifikator.ts` | - |
-| 7 | C07 | DokumenVerifikasi | *[path/ke/file]* | - |
+| 7 | C07 | DokumenVerifikasi | `src/server/models/DokumenVerifikasi.ts`<br>`src/prisma/schema.prisma` (model `DokumenVerifikasi`, tabel `tbl_dokumen_verifikasi`) | - |
 | 8 | C08 | Kehadiran | `src/server/models/Kehadiran.ts`<br>`src/prisma/schema.prisma` (model `Kehadiran`, tabel `tbl_kehadiran`) | - |
 | 9 | C09 | LaporanProgram | `src/server/models/LaporanProgram.ts`<br>`src/prisma/schema.prisma` (model `LaporanProgram`, tabel `tbl_laporan_program`) | - |
 | 10 | C10 | Notifikasi | `src/server/models/Notifikasi.ts`<br>`src/prisma/schema.prisma` (model `Notifikasi`, tabel `tbl_notifikasi`) | - |
@@ -191,7 +210,7 @@ Tabel 3.2. Implementasi Modul
 | 13 | C13 | AuthController | `src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts` (router tRPC `auth`) | - |
 | 14 | C14 | KelolaProgramPage | `src/views/KelolaProgramPage/ProgramFormView.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/ProgramDaftarView.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts`<br>`src/views/KelolaProgramPage/useProgramSaya.ts`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts`<br>`src/views/laporan/LaporanFormView.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx`<br>`src/views/laporan/LaporanMasukView.tsx`<br>`src/lib/programSaya.ts` | - |
 | 15 | C15 | ProgramController | `src/server/controllers/ProgramController.ts`<br>`src/server/api/routers/program.ts` (router tRPC `program`)<br>`src/server/api/routers/laporan.ts` (router tRPC `laporan`) | - |
-| 16 | C16 | EksplorasiProgramPage | *[path/ke/file]* | - |
+| 16 | C16 | EksplorasiProgramPage | `src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts`<br>`src/views/components/ProgramCard.tsx`<br>`src/lib/pencarianProgram.ts` | - |
 | 17 | C17 | KelolaPendaftarPage | *[path/ke/file]* | - |
 | 18 | C18 | SeleksiController | *[path/ke/file]* | - |
 | 19 | C19 | AreaKegiatanPage | `src/views/AreaKegiatanPage/AreaKegiatan.tsx`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` | - |
@@ -210,11 +229,11 @@ Tabel 3.3. Implementasi Antarmuka
 | 1 | I-01 | Registrasi Akun | `src/app/registrasi/page.tsx`<br>`src/views/KelolaAkunPage/Registrasi.tsx` | - |
 | 2 | I-02 | Login | `src/app/login/page.tsx`<br>`src/views/KelolaAkunPage/Login.tsx` | - |
 | 3 | I-03 | Notifikasi | `src/app/notifikasi/page.tsx`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/components/NotifikasiItem.tsx`<br>ikon lonceng dan angka belum dibaca di `src/views/components/Navbar.tsx` | - |
-| 4 | I-04 | Eksplorasi Program | *[path/ke/file]* | - |
-| 5 | I-05 | Detail Program | *[path/ke/file]* | - |
+| 4 | I-04 | Eksplorasi Program | `src/app/program/page.tsx`<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` (`terimaInputPencarian()`, `muatLebihBanyak()`)<br>`src/views/components/ProgramCard.tsx`<br>`src/lib/pencarianProgram.ts` | - |
+| 5 | I-05 | Detail Program | `src/app/program/[id]/page.tsx`<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` (`klikTautanSitusResmi()`, `arahkanKeSitusResmi()`) | - |
 | 6 | I-06 | Formulir Pendaftaran Program | *[path/ke/file]* | - |
 | 7 | I-07 | Program Saya | `src/app/inisiator/program/page.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/useProgramSaya.ts` | - |
-| 8 | I-08 | Formulir Daftar Program | *[path/ke/file]* | - |
+| 8 | I-08 | Formulir Daftar Program | `src/app/inisiator/program/baru/page.tsx`<br>`src/views/KelolaProgramPage/ProgramFormView.tsx` | - |
 | 9 | I-09 | Unggah Laporan Akhir | `src/app/laporan/page.tsx`<br>`src/views/laporan/LaporanFormView.tsx` | - |
 | 10 | I-10 | Tinjau Laporan Akhir | `src/app/verifikator/laporan/page.tsx`<br>`src/app/verifikator/laporan/[id]/page.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx` | - |
 | 11 | I-11 | Kelola Pendaftar & Seleksi | *[path/ke/file]* | - |
@@ -273,28 +292,31 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 
 | ID Kelas | Nama Kelas | Tingkat | Alasan | Test Case Terkait |
 | :--- | :--- | :--- | :--- | :--- |
-| C01 | Program | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C01 | Program | Mendalam | Memuat aturan status program (`aktifkan()`, `ajukanKonfirmasi()`, `selesaikan()`, `mintaRevisi()` hanya boleh dari status yang tepat), perhitungan kuota dari pendaftar berstatus DITERIMA, pemeriksaan waktu pelaksanaan untuk *check-in*, dan durasi program yang menjadi dasar jam aksi (KF15). Seluruh 12 operasi public pada DPPL diuji dengan kasus normal, batas, dan negatif. | C01-UT01 s.d. C01-UT38, INT-TC15, INT-TC32, INT-TC33 |
 | C02 | Pendaftaran | Mendalam | Memuat aturan transisi status seleksi: `terima()` dan `tolak()` hanya boleh dari status MENUNGGU, serta pemeriksaan status (Algo-C02-01 s.d. Algo-C02-04) | C02-UT01 s.d. C02-UT06, INT-TC24 |
 | C03 | Relawan | Sedang | Sebagian besar operasinya mendelegasikan: `hadirPada()` meneruskan pengecekan ke Kehadiran (C08), `catatKontribusi()` hanya memeriksa kehadiran lalu meneruskan pencatatan jam ke RiwayatKontribusi (C11), dan `lihatPortofolio()` menyiapkan riwayat kosong untuk relawan baru. Aturan jam aksi dan check-in ganda ada di C11 dan C20. | C03-UT01 s.d. C03-UT07, C20-UT11, C20-UT19 |
 | C04 | Pengguna | Sedang | Hanya mencari akun dan mengambil notifikasi milik akun dari basis data. Tidak ada aturan sendiri, tetapi dipakai alur notifikasi UC06. | C04-UT01 s.d. C04-UT03, INT-TC07 |
-| C05 | InisiatorProgram | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C06 | Verifikator | Sedang | Kelas model yang mendelegasikan keputusan peninjauan ke LaporanProgram (C09): `konfirmasiLaporan()` memanggil `setujui()` dan `tolakLaporan()` memanggil `tolak()`, dengan penjaga laporan tidak ada dan catatan revisi kosong. Pada implementasi, alur peninjauan laporan dijalankan oleh ProgramController (C15) lewat router `laporan`, sehingga kelas ini tidak dipanggil dari kode aplikasi. Belum ada unit test (coverage 0%) dan belum memenuhi minimum 2 test case per operasi. | - |
-| C07 | DokumenVerifikasi | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C05 | InisiatorProgram | Mendalam | Memuat aturan status verifikasi lembaga (`cekStatusVerifikasi()` hanya bernilai benar untuk TERVERIFIKASI, dipakai untuk lencana "Terverifikasi" pada Eksplorasi) dan penanganan tautan situs resmi yang bisa kosong (`getTautan()`), yang menentukan tombol situs resmi pada UC04. Kedua operasinya kecil, tetapi menjadi dasar keputusan yang terlihat pengguna. | C05-UT01 s.d. C05-UT07, INT-TC15, INT-TC17, UC04-TC01 s.d. UC04-TC03 |
+| C06 | Verifikator | Tidak perlu | Hanya meneruskan konfirmasiLaporan() dan tolakLaporan() ke LaporanProgram (C09). Pada implementasi, kelas ini tidak dipanggil dari kode aplikasi karena peninjauan laporan berjalan lewat ProgramController (C15). Teruji tidak langsung lewat C09, C15, dan test case use case. | UC07-TC01, UC07-TC02 |
+| C07 | DokumenVerifikasi | Tidak perlu | *Entity* penampung data dokumen (id, jenis, URL berkas, status verifikasi) tanpa operasi sama sekali (Tabel 5.7.1 DPPL). Pembuatan dan penyimpanannya dilakukan AuthController (dokumen Relawan) dan ProgramController (dokumen legalitas lembaga), sehingga teruji tidak langsung lewat test case kelas tersebut. | INT-TC01, INT-TC30, UC01-TC01, UC01-TC03 |
 | C08 | Kehadiran | Tidak perlu | *Entity* yang hanya menyimpan waktu check-in dan id program. Satu-satunya operasi, `untukProgram()`, hanya membandingkan id program. Kelas ini teruji tidak langsung lewat `Relawan.hadirPada()` pada test case C03 dan C20 serta test case use case konfirmasi kehadiran. | - |
 | C09 | LaporanProgram | Mendalam | Memuat aturan status peninjauan (laporan hanya bisa ditinjau sekali, dari MENUNGGU menjadi DISETUJUI atau DITOLAK), validasi tautan dokumentasi tidak boleh kosong, dan catatan revisi wajib saat menolak. Belum memenuhi minimum 3 test case per operasi public (4 tes untuk 5 operasi). | `LaporanProgram.test.ts` (4 tes, coverage 100% baris dan 100% cabang) |
 | C10 | Notifikasi | Mendalam | Memuat validasi pesan (tidak boleh kosong), aturan status dibaca (`baca()` hanya menulis sekali), dan pemeriksaan kepemilikan `milik()` yang menjaga notifikasi pengguna lain. | C10-UT01 s.d. C10-UT11, INT-TC07, INT-TC08 |
-| C11 | RiwayatKontribusi | Mendalam | Memuat perhitungan total jam aksi dari durasi program, aturan satu program hanya boleh tercatat sekali pada riwayat, dan validasi jam aksi tidak boleh negatif. Kelas ini satu-satunya sumber total jam aksi pada portofolio. | C11-UT01 s.d. C11-UT08, C20-UT25 s.d. C20-UT35 |
+| C11 | RiwayatKontribusi | Mendalam | Memuat perhitungan total jam aksi dari durasi program, aturan satu program hanya boleh tercatat sekali pada riwayat, dan validasi jam aksi tidak boleh negatif. Kelas ini satu-satunya sumber total jam aksi pada portofolio. | C11-UT01 s.d. C11-UT08, C20-UT25 s.d. C20-UT35, INT-TC45 s.d. INT-TC49 |
 | C12 | KelolaAkunPage | Sedang | Kelas *boundary*: sebagian besar operasinya menampilkan formulir dan meneruskan isian ke C13. Satu-satunya logika adalah penyaringan `urlKembali` agar tidak bisa dipakai untuk *open redirect*. Alur layarnya diuji pada test case use case. | C12-UT01 s.d. C12-UT04, INT-TC05, INT-TC06, UC01-TC01 s.d. UC01-TC02, UC02-TC01 s.d. UC02-TC04, UC06-TC01 |
 | C13 | AuthController | Mendalam | Memuat validasi kelengkapan registrasi, pembatalan akun bila penyimpanan gagal, pemblokiran IP setelah 5 kali gagal selama 5 menit (KNF06), sinkronisasi status verifikasi, dan pemeriksaan kepemilikan notifikasi. | C13-UT01 s.d. C13-UT41, INT-TC01 s.d. INT-TC09, KNF06-TC01, KNF06-TC02 |
 | C14 | KelolaProgramPage | Sedang | Kelas *boundary*: sebagian besar menampilkan formulir dan daftar lalu meneruskannya ke C15. Logika yang bisa diuji unit ada di `src/lib/programSaya.ts`: pemetaan status ke label dan badge, aksi tombol per status (unggah laporan, unggah ulang), statistik, penyaringan, dan persen kuota. Alur layar I-07, I-09, dan I-10 diuji lewat test case use case. | `programSaya.test.ts` (9 tes, coverage 97,26% baris dan 100% cabang) |
 | C15 | ProgramController | Mendalam | Memuat transaksi basis data, aturan status program dan laporan, pembaruan portofolio saat laporan DISETUJUI, notifikasi ke verifikator dan inisiator, serta pemeriksaan kepemilikan program. Untuk bagian laporan dan verifikasi: `ProgramController.ajukanLaporan.test.ts` (3 tes), `.peninjauan.test.ts` (4), `.verifikasi.test.ts` (4), `.menungguVerifikasi.test.ts` (3), `.programSaya.test.ts` (2). Coverage seluruh kelas: 78,28% baris, 86,53% cabang, 77,27% fungsi. | `ProgramController.*.test.ts` (16 tes untuk bagian laporan dan verifikasi) |
-| C16 | EksplorasiProgramPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C16 | EksplorasiProgramPage | Tidak perlu | Kelas *boundary* yang hanya menampilkan daftar program, kotak pencarian, filter kategori, dan detail program dari data C15. Logikanya terbatas pada keadaan layar di `useEksplorasiProgramPage.ts`: jeda 300 ms setelah berhenti mengetik, penyetelan ulang jumlah muatan saat pencarian berubah, dan pembukaan situs resmi di tab baru. Tidak ada aturan bisnis dan aturan validasi tautan ada di C15. Perilaku layar ini diuji lewat test case use case. Belum ada unit test untuk *hook* tersebut karena belum ada pustaka uji komponen React pada proyek. | UC03-TC01 s.d. UC03-TC03, UC04-TC01 s.d. UC04-TC03, INT-TC19, KNF01-TC01, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
 | C17 | KelolaPendaftarPage | Tidak perlu | Kelas view yang hanya menampilkan daftar pendaftar dan meneruskan keputusan ke SeleksiController, tanpa logika bisnis | - (teruji tidak langsung lewat UC05-TC01, UC05-TC02, INT-TC28) |
 | C18 | SeleksiController | Mendalam | Memuat validasi kelayakan relawan (KF10), pemeriksaan kuota (KF05), dan aturan konfirmasi hasil seleksi sebelum notifikasi dikirim (KF08, KF09) (Algo-C18-01 s.d. Algo-C18-06) | C18-UT01 s.d. C18-UT12, INT-TC20 s.d. INT-TC27, INT-TC29 |
 | C19 | AreaKegiatanPage | Tidak perlu | Kelas *boundary* yang hanya menampilkan daftar kegiatan, tombol check-in, dan portofolio dari data C20. Aktif tidaknya tombol check-in mengikuti hasil `validasiStatusRelawan()` dan `validasiWaktuPelaksanaan()` milik C20, sehingga tidak ada aturan sendiri. Alur layar I-12 dan I-13 diuji lewat test case use case. | - |
-| C20 | PresensiController | Mendalam | Memuat validasi check-in (pendaftaran harus diterima, program harus aktif, dan waktu harus di dalam rentang pelaksanaan), penolakan check-in ganda termasuk saat terjadi bersamaan di basis data, serta pembaruan jam aksi portofolio dalam satu transaksi saat program selesai. | C20-UT01 s.d. C20-UT47, KNF04-TC01 |
+| C20 | PresensiController | Mendalam | Memuat validasi check-in (pendaftaran harus diterima, program harus aktif, dan waktu harus di dalam rentang pelaksanaan), penolakan check-in ganda termasuk saat terjadi bersamaan di basis data, serta pembaruan jam aksi portofolio dalam satu transaksi saat program selesai. | C20-UT01 s.d. C20-UT47, INT-TC37, INT-TC40 s.d. INT-TC49, KNF04-TC01 |
 | C21 | CloudStorageAdapter | Mendalam | Integrasi ke penyimpanan berkas. Memvalidasi ukuran (maksimal 2 MB) dan tipe berkas dari byte awalnya, membuat nama berkas sendiri, dan menolak path yang keluar dari folder unggahan. | C21-UT01 s.d. C21-UT13, INT-TC01, INT-TC02 |
 | C22 | BetterAuth | Mendalam | Kelas keamanan: *hashing* bcrypt (KNF02), verifikasi kredensial, dan pembuatan sesi. | C22-UT01 s.d. C22-UT15, INT-TC04, INT-TC05, KNF02-TC01 |
+
+Catatan untuk C15 (ProgramController), bagian eksplorasi program. Operasi `cariProgram()`, `ambilDetailProgram()`, dan `validasiTautanSitus()` (private) diuji dengan kasus normal, batas, dan negatif pada `src/tests/unit/ProgramController.eksplorasi.test.ts` (20 tes, C15-UT31 s.d. C15-UT50) serta INT-TC10 s.d. INT-TC19 pada Subbab 4.3. Nomor C15-UT17 s.d. C15-UT30 sengaja tidak dipakai agar tidak bertabrakan dengan unit test pendaftaran relawan.
+
 
 ## 4.2 Pengujian Unit Kelas
 
@@ -314,7 +336,7 @@ Unit test tidak membutuhkan server maupun basis data. Basis data, pustaka Better
 
 Lokasi file test: `src/tests/unit/` (satu file per kelas atau per kelompok operasi, misalnya `AuthController.login.test.ts`).
 
-Lingkungan uji: Node.js 22.23.5, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 247 unit test lulus (24 berkas), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
+Lingkungan uji: Node.js 20.20.2, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 302 unit test lulus (26 berkas), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
 
 <!-- Nomor subbab dan tabel mengikuti urutan bagian dalam dokumen. -->
 
@@ -346,7 +368,106 @@ Tabel 4.2.1b. Hasil Pengujian Unit Kelas C02
 | C02-UT05 | `terima()`, `tolak()` | Negatif | Pendaftaran berstatus DITOLAK, lalu `terima()` dan `tolak()` | Keduanya galat "Pendaftaran sudah diputuskan"; `isDiterima()` tetap `false` | Kedua pemanggilan melempar galat; status tetap ditolak | Pass |
 | C02-UT06 | `tolak()` lalu `terima()` | Negatif | Pendaftaran MENUNGGU, `tolak()`, lalu `terima()` | `terima()` galat "Pendaftaran sudah diputuskan"; `isDiterima()` tetap `false` | Galat dilempar; status tetap ditolak | Pass |
 
-### 4.2.2 Kelas Relawan
+### 4.2.2 Kelas Program
+
+**ID Kelas:** C01<br>
+**Nama Kelas:** Program<br>
+**Tingkat:** Mendalam
+
+Data uji: program "Tanam Pohon" berdurasi 4 jam (5 Des 2026, 08.00 sampai 12.00 UTC) dengan kuota 10. Pendaftar dibentuk langsung sebagai objek Pendaftaran dan pengelola berupa objek tiruan, tanpa basis data. File test: `src/tests/unit/Program.operasi.test.ts` (41 tes; C01-UT37 dijalankan empat kali, sekali untuk tiap status).
+
+Tabel 4.2.2. Hasil Pengujian Unit Kelas C01
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C01-UT01 | `ajukanKonfirmasi()` (Algo-C01-01) | Normal | Program berstatus AKTIF, panggil `ajukanKonfirmasi()` | Mengembalikan `MENUNGGU_KONFIRMASI` dan status program ikut berubah | `MENUNGGU_KONFIRMASI`, `getStatus()` sama | Pass |
+| C01-UT02 | `ajukanKonfirmasi()` | Negatif | Program masih MENUNGGU_VERIFIKASI, panggil `ajukanKonfirmasi()` | Galat "Program tidak dapat diajukan konfirmasi", status tetap | Galat tersebut dilempar, status tetap MENUNGGU_VERIFIKASI | Pass |
+| C01-UT03 | `ajukanKonfirmasi()` | Batas | Program AKTIF diajukan dua kali berturut-turut | Pengajuan pertama berhasil, pengajuan kedua ditolak dan status tetap MENUNGGU_KONFIRMASI | Sesuai yang diharapkan | Pass |
+| C01-UT04 | `selesaikan()` (Algo-C01-02) | Normal | Program MENUNGGU_KONFIRMASI, panggil `selesaikan()` | Mengembalikan `SELESAI` dan status berubah | `SELESAI` | Pass |
+| C01-UT05 | `selesaikan()` | Negatif | Program AKTIF yang belum diajukan konfirmasi | Galat "Program belum diajukan konfirmasi", status tetap AKTIF | Sesuai yang diharapkan | Pass |
+| C01-UT06 | `selesaikan()` | Batas | Program diselesaikan, lalu `selesaikan()` dipanggil lagi | Pemanggilan kedua ditolak, status tetap SELESAI | Sesuai yang diharapkan | Pass |
+| C01-UT07 | `mintaRevisi()` (Algo-C01-03) | Normal | Program MENUNGGU_KONFIRMASI, panggil `mintaRevisi()` | Mengembalikan `PERLU_REVISI` dan status berubah | `PERLU_REVISI` | Pass |
+| C01-UT08 | `mintaRevisi()` | Negatif | Program AKTIF yang laporannya belum diajukan | Galat "Program belum diajukan konfirmasi", status tetap AKTIF | Sesuai yang diharapkan | Pass |
+| C01-UT09 | `mintaRevisi()` | Batas | Program sudah PERLU_REVISI, `mintaRevisi()` dipanggil lagi | Ditolak, status tetap PERLU_REVISI | Sesuai yang diharapkan | Pass |
+| C01-UT10 | `cekKuotaTersedia(jumlahTambahan)` (Algo-C01-04) | Normal | Kuota 3, satu pendaftar DITERIMA, `cekKuotaTersedia(1)` | `true` | `true` | Pass |
+| C01-UT11 | `cekKuotaTersedia()` | Batas | Kuota 3, satu pendaftar DITERIMA: `cekKuotaTersedia(2)` (tepat penuh) dan `cekKuotaTersedia(3)` (lebih satu) | `true` untuk tambahan 2, `false` untuk tambahan 3 | `true` dan `false` | Pass |
+| C01-UT12 | `cekKuotaTersedia()` | Negatif | `cekKuotaTersedia(-1)` | Galat "Jumlah relawan tidak valid" | Galat tersebut dilempar | Pass |
+| C01-UT13 | `cekKuotaTersedia()` dan `hitungJumlahDiterima()` (Algo-C01-07) | Normal | Kuota 2, pendaftar berstatus MENUNGGU, DITOLAK, dan DITERIMA masing-masing satu | Hanya yang DITERIMA dihitung: tambahan 1 `true`, tambahan 2 `false` | `true` dan `false` | Pass |
+| C01-UT14 | `cekKuotaTersedia()` | Batas | Kuota 5 tanpa pendaftar: tambahan 5, 6, dan 0 | `true`, `false`, `true` | `true`, `false`, `true` | Pass |
+| C01-UT15 | `cekDalamWaktuPelaksanaan(waktu)` (Algo-C01-05) | Normal | Program 08.00 sampai 12.00 UTC, waktu 10.00 UTC | `true` | `true` | Pass |
+| C01-UT16 | `cekDalamWaktuPelaksanaan()` | Batas | Waktu tepat 08.00 (mulai) dan tepat 12.00 (selesai) | `true` untuk keduanya (batas inklusif) | `true` dan `true` | Pass |
+| C01-UT17 | `cekDalamWaktuPelaksanaan()` | Negatif | Waktu 07.59.59,999 dan 12.00.00,001 | `false` untuk keduanya | `false` dan `false` | Pass |
+| C01-UT18 | `hitungDurasiJam()` (Algo-C01-06) | Normal | Program 08.00 sampai 12.00 | 4 jam | 4 | Pass |
+| C01-UT19 | `hitungDurasiJam()` | Batas | Program berdurasi 30 menit dan program lintas hari (5 sampai 7 Des, 08.00) | 0,5 jam dan 48 jam | 0,5 dan 48 | Pass |
+| C01-UT20 | `hitungDurasiJam()` | Batas | Waktu selesai sama dengan waktu mulai | 0 jam | 0 | Pass |
+| C01-UT21 | `keteranganWaktu(sekarang)` (Algo-C01-08) | Normal | Waktu 10.00, di tengah rentang | "Sedang berlangsung" | "Sedang berlangsung" | Pass |
+| C01-UT22 | `keteranganWaktu()` | Batas | Waktu tepat saat mulai dan tepat saat selesai | "Sedang berlangsung" untuk keduanya | Sesuai yang diharapkan | Pass |
+| C01-UT23 | `keteranganWaktu()` | Negatif | Waktu 1 milidetik sebelum mulai dan 1 milidetik sesudah selesai | "Belum dimulai" dan "Sudah selesai" | Sesuai yang diharapkan | Pass |
+| C01-UT24 | `ambilPengelola()` (Algo-C01-09) | Normal | Program dengan pengelola, panggil `ambilPengelola()` | Objek pengelola yang sama | Objek yang sama | Pass |
+| C01-UT25 | `ambilPengelola()` | Negatif | Program tanpa pengelola | Galat "Pengelola program tidak ditemukan" | Galat tersebut dilempar | Pass |
+| C01-UT26 | `getTautan()` (Algo-C01-13) | Normal | Pengelola dengan tautan `https://hijau.example` | `https://hijau.example` | Sama | Pass |
+| C01-UT27 | `getTautan()` | Batas | Pengelola yang tautannya kosong | String kosong | `""` | Pass |
+| C01-UT28 | `getTautan()` | Negatif | Program tanpa pengelola | Galat "Pengelola program tidak ditemukan" | Galat tersebut dilempar | Pass |
+| C01-UT29 | `daftarPendaftar()` (Algo-C01-10) | Normal | Program dengan dua pendaftaran | Kedua pendaftaran dikembalikan berurutan | Sama | Pass |
+| C01-UT30 | `daftarPendaftar()`, `daftarRelawanDiterima()` (Algo-C01-10, Algo-C01-11) | Batas | Program tanpa pendaftar dan tanpa relawan diterima | Daftar kosong `[]` untuk keduanya | `[]` dan `[]` | Pass |
+| C01-UT31 | `daftarPendaftar()`, `daftarRelawanDiterima()` | Negatif | Daftar yang dikembalikan diubah dari luar (`pop()`), lalu operasi dipanggil lagi | Isi program tidak berubah karena yang dikembalikan salinan | Masing-masing tetap 1 elemen | Pass |
+| C01-UT32 | `daftarRelawanDiterima()` (Algo-C01-11) | Normal | Program dengan dua relawan diterima | Kedua relawan dikembalikan sesuai urutan | Sama | Pass |
+| C01-UT33 | `cari(kataKunci, kategori)` (Algo-C01-12) | Normal | `Program.cari("mangrove", null)` | Galat "Pencarian program harus dilakukan melalui repositori data" (pencarian dikerjakan C15, lihat catatan di bawah tabel) | Galat tersebut dilempar | Pass |
+| C01-UT34 | `cari()` | Normal | `Program.cari("mangrove", "JAGA_ALAM")` | Galat yang sama | Sama | Pass |
+| C01-UT35 | `cari()` | Batas | `Program.cari("", "JAGA_IKLIM")` (kata kunci kosong) | Galat yang sama | Sama | Pass |
+| C01-UT36 | `aktifkan()` (tambahan) | Normal | Program MENUNGGU_VERIFIKASI, panggil `aktifkan()` | Mengembalikan `AKTIF` dan status berubah | `AKTIF` | Pass |
+| C01-UT37 | `aktifkan()` | Negatif | Program berstatus AKTIF, MENUNGGU_KONFIRMASI, PERLU_REVISI, dan SELESAI (4 pemanggilan) | Galat "Program tidak sedang menunggu verifikasi" untuk setiap status | Galat tersebut dilempar pada keempat status | Pass |
+| C01-UT38 | `dariBaris()`, `getIdProgram()`, `getNamaProgram()`, `getKategori()`, `getTempatPelaksanaan()`, `getWaktuMulai()`, `getWaktuSelesai()`, `getStatus()` (tambahan) | Normal | Bentuk Program dari baris tabel "Bersih Pantai" beserta pengelola, lalu baca semua atributnya | Setiap atribut sama dengan isi baris dan pengelola dapat diambil | Seluruh atribut sesuai | Pass |
+
+Catatan penyimpangan dari DPPL: `Program.cari()` (Algo-C01-12) pada implementasi tidak mencari apa pun dan melempar galat. Pencarian program dikerjakan `ProgramController.cariProgram()` (C15) langsung ke basis data lewat Prisma, sehingga alur "I04-BTN-Cari → ProgramController.cariProgram() → Program.cari()" pada DPPL menjadi "I04-BTN-Cari → ProgramController.cariProgram() → basis data". Kolom hasil C01-UT33 sampai C01-UT35 menguji perilaku yang benar-benar ada pada implementasi, dan pencarian sebenarnya diuji pada C15-UT31 sampai C15-UT37 serta INT-TC10 sampai INT-TC14.
+
+Tabel 4.2.2b. Ringkasan Cakupan Kelas C01
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `cekKuotaTersedia()`, `ajukanKonfirmasi()`, `selesaikan()`, `mintaRevisi()`, `cekDalamWaktuPelaksanaan()`, `keteranganWaktu()`, `hitungDurasiJam()`, `getTautan()`, `ambilPengelola()`, `daftarPendaftar()`, `daftarRelawanDiterima()`, `cari()` |
+| Operasi yang diuji | Seluruh 12 operasi public di atas (masing-masing dengan kasus normal, batas, dan negatif), operasi private `hitungJumlahDiterima()` lewat `cekKuotaTersedia()`, serta operasi tambahan `aktifkan()` dan `dariBaris()` beserta *getter* |
+| ID Algoritma yang tercakup | Algo-C01-01 s.d. Algo-C01-13 |
+| Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/Program.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+### 4.2.3 Kelas InisiatorProgram
+
+**ID Kelas:** C05<br>
+**Nama Kelas:** InisiatorProgram<br>
+**Tingkat:** Mendalam
+
+Objek dibentuk langsung dari data (lembaga "Komunitas Hijau", email `hijau@rekanbumi.test`) tanpa basis data. Modul `~/server/db` ditiru (`vi.mock`) karena superkelas Pengguna (C04) mengimpornya. File test: `src/tests/unit/InisiatorProgram.test.ts`.
+
+Tabel 4.2.3. Hasil Pengujian Unit Kelas C05
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C05-UT01 | `cekStatusVerifikasi()` (Algo-C05-01) | Normal | Lembaga berstatus TERVERIFIKASI | `true` | `true` | Pass |
+| C05-UT02 | `cekStatusVerifikasi()` | Negatif | Lembaga berstatus MENUNGGU | `false` | `false` | Pass |
+| C05-UT03 | `cekStatusVerifikasi()` | Negatif | Lembaga berstatus DITOLAK | `false` | `false` | Pass |
+| C05-UT04 | `getTautan()` (Algo-C05-02) | Normal | Lembaga dengan tautan `https://hijau.example` | `https://hijau.example` | Sama | Pass |
+| C05-UT05 | `getTautan()` | Batas | Lembaga tanpa situs resmi (`tautanSitusResmi` bernilai `null`) | String kosong | `""` | Pass |
+| C05-UT06 | `getTautan()` | Batas | Tautan yang hanya berisi spasi | Dikembalikan apa adanya (`"   "`), karena pemeriksaan keabsahan tautan dilakukan `validasiTautanSitus()` pada C15 | `"   "` | Pass |
+| C05-UT07 | `getNamaLembaga()` (tambahan) | Normal | Lembaga "Komunitas Hijau" | "Komunitas Hijau" | Sama | Pass |
+
+Tabel 4.2.3b. Ringkasan Cakupan Kelas C05
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `cekStatusVerifikasi()`, `getTautan()` |
+| Operasi yang diuji | `cekStatusVerifikasi()` dan `getTautan()` (2 dari 2 operasi public, masing-masing dengan 3 kasus), serta operasi tambahan `getNamaLembaga()` |
+| ID Algoritma yang tercakup | Algo-C05-01, Algo-C05-02 |
+| Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/InisiatorProgram.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+### 4.2.4 Kelas EksplorasiProgramPage
+
+**ID Kelas:** C16<br>
+**Nama Kelas:** EksplorasiProgramPage<br>
+**Tingkat:** Tidak perlu
+
+Kelas *boundary* ini tidak memiliki unit test (alasan pada Tabel 4.1.1). Seluruh operasinya (Algo-C16-01 sampai Algo-C16-14) berupa tampilan dan *handler*, dan diuji lewat use case UC03 dan UC04 pada Subbab 4.4, lewat INT-TC19 untuk pemanggilan API dari halaman, serta lewat KNF05-TC02, KNF07-TC02, dan KNF08-TC02 untuk tampilan, aksesibilitas, dan kompatibilitas peramban. Operasi `tampilkanFormPendaftaran()`, `pilihDaftarProgram()`, `kirimPermohonanPendaftaran()`, `tampilkanNotifikasiBerhasil()`, dan `tampilkanPesanError()` (Algo-C16-10 sampai Algo-C16-14) pada implementasi berada di halaman Formulir Pendaftaran Program (I-06) milik `KelolaProgramPage` dan diuji pada use case UC01 dan UC02.
+
+### 4.2.5 Kelas Relawan
 
 **ID Kelas:** C03  
 **Nama Kelas:** Relawan  
@@ -354,7 +475,7 @@ Tabel 4.2.1b. Hasil Pengujian Unit Kelas C02
 
 Subbab ini menguji operasi C03 yang dipakai alur presensi dan portofolio. Data uji: program Pantai berdurasi 4 jam (7 Nov 2026, 08.00–12.00 WIB) dan program Hutan berdurasi 2,5 jam (8 Nov 2026, 08.00–10.30 WIB). Catatan kehadiran relawan dibentuk langsung sebagai objek Kehadiran (C08), tanpa basis data. File test: `src/tests/unit/RiwayatKontribusi.test.ts`.
 
-Tabel 4.2.2. Hasil Pengujian Unit Kelas C03
+Tabel 4.2.5. Hasil Pengujian Unit Kelas C03
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -366,13 +487,13 @@ Tabel 4.2.2. Hasil Pengujian Unit Kelas C03
 | C03-UT06 | `lihatPortofolio(): RiwayatKontribusi` | Normal | Relawan yang sudah punya riwayat `r1` dengan total 12 jam | Mengembalikan objek riwayat yang sama, total 12 jam | Objek yang sama, total 12 | Pass |
 | C03-UT07 | `lihatPortofolio(): RiwayatKontribusi` | Batas | Relawan baru: `lihatPortofolio()`, lalu `catatKontribusi(Pantai)`, lalu `lihatPortofolio()` lagi | Riwayat kosong yang dibuat pertama kali dipakai ulang, sehingga jam yang dicatat tidak hilang (total 4) | Objek yang sama, total 4 | Pass |
 
-### 4.2.3 Kelas Pengguna
+### 4.2.6 Kelas Pengguna
 
 **ID Kelas:** C04  
 **Nama Kelas:** Pengguna  
 **Tingkat:** Sedang
 
-Tabel 4.2.3. Hasil Pengujian Unit Kelas C04
+Tabel 4.2.6. Hasil Pengujian Unit Kelas C04
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -380,13 +501,13 @@ Tabel 4.2.3. Hasil Pengujian Unit Kelas C04
 | C04-UT02 | `cari(idPengguna)` | Negatif | `Pengguna.cari("id-tidak-ada")` | Mengembalikan `null` | Mengembalikan `null` | Pass |
 | C04-UT03 | `lihatNotifikasi()` | Negatif | Akun baru `id-baru` tanpa notifikasi | Daftar kosong, tanpa galat | `[]` | Pass |
 
-### 4.2.4 Kelas Notifikasi
+### 4.2.7 Kelas Notifikasi
 
 **ID Kelas:** C10  
 **Nama Kelas:** Notifikasi  
 **Tingkat:** Mendalam
 
-Tabel 4.2.4. Hasil Pengujian Unit Kelas C10
+Tabel 4.2.7. Hasil Pengujian Unit Kelas C10
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -402,7 +523,7 @@ Tabel 4.2.4. Hasil Pengujian Unit Kelas C10
 | C10-UT10 | `showDetail(): String` | Batas | Pesan satu karakter (`"!"`) dan pesan panjang ("Selamat!" diulang 100 kali) | Kedua pesan dikembalikan utuh | Sesuai yang diharapkan | Pass |
 | C10-UT11 | `showDetail(): String` | Negatif | Notifikasi dari baris lama yang pesannya kosong | String kosong, tanpa galat | `""` | Pass |
 
-Tabel 4.2.4b. Ringkasan Cakupan Kelas C10
+Tabel 4.2.7b. Ringkasan Cakupan Kelas C10
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -411,7 +532,7 @@ Tabel 4.2.4b. Ringkasan Cakupan Kelas C10
 | ID Algoritma yang tercakup | Algo-C10-01, Algo-C10-02, Algo-C10-03 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/Notifikasi.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.5 Kelas RiwayatKontribusi
+### 4.2.8 Kelas RiwayatKontribusi
 
 **ID Kelas:** C11  
 **Nama Kelas:** RiwayatKontribusi  
@@ -419,7 +540,7 @@ Tabel 4.2.4b. Ringkasan Cakupan Kelas C10
 
 Data uji sama dengan subbab C03: program Pantai 4 jam dan program Hutan 2,5 jam. `perbaruiJamAksi()` bersifat *private* pada implementasi, sehingga diuji lewat `tambahRiwayatProgram()`. File test: `src/tests/unit/RiwayatKontribusi.test.ts`.
 
-Tabel 4.2.5. Hasil Pengujian Unit Kelas C11
+Tabel 4.2.8. Hasil Pengujian Unit Kelas C11
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -432,7 +553,7 @@ Tabel 4.2.5. Hasil Pengujian Unit Kelas C11
 | C11-UT07 | `getDaftarProgramSelesai()` | Negatif | Ambil daftar program selesai, lalu ubah daftar yang dikembalikan (tambah dan kosongkan isinya) | Isi riwayat tidak ikut berubah: daftar tetap `["pantai"]`, total tetap 4 jam | `["pantai"]`, total 4 | Pass |
 | C11-UT08 | `mencatat(program): Boolean` (tambahan) | Normal dan negatif | Periksa program Pantai sebelum dan sesudah ditambahkan, serta program Hutan yang tidak ditambahkan | `false` sebelum ditambahkan, `true` sesudahnya, dan `false` untuk program Hutan | `false`, `true`, `false` | Pass |
 
-Tabel 4.2.5b. Ringkasan Cakupan Kelas C11
+Tabel 4.2.8b. Ringkasan Cakupan Kelas C11
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -441,7 +562,7 @@ Tabel 4.2.5b. Ringkasan Cakupan Kelas C11
 | ID Algoritma yang tercakup | Algo-C11-01 s.d. Algo-C11-04 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/RiwayatKontribusi.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.6 Kelas KelolaAkunPage
+### 4.2.9 Kelas KelolaAkunPage
 
 **ID Kelas:** C12  
 **Nama Kelas:** KelolaAkunPage  
@@ -449,7 +570,7 @@ Tabel 4.2.5b. Ringkasan Cakupan Kelas C11
 
 Logika C12 yang bisa diuji secara unit adalah penyaringan `urlKembali` (Algo-C12-09 `arahkanKembali()`) di `src/lib/urlKembali.ts`. Operasi tampilan lainnya diuji lewat UC01, UC02, dan UC06 (Subbab 4.4).
 
-Tabel 4.2.6. Hasil Pengujian Unit Kelas C12
+Tabel 4.2.9. Hasil Pengujian Unit Kelas C12
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -458,7 +579,7 @@ Tabel 4.2.6. Hasil Pengujian Unit Kelas C12
 | C12-UT03 | `urlKembaliAman(url)` | Negatif | `//evil.example`, `/\evil.example`, `/\/evil.example` | Semua `null` (bukan path internal) | Semua `null` | Pass |
 | C12-UT04 | `urlKembaliAman(url)` | Batas | Path yang disisipi tab, *newline*, atau CR (`/\t/evil.example`, `/\n/evil.example`, `/a\r\nb`) | Semua `null` | Semua `null` | Pass |
 
-### 4.2.7 Kelas AuthController
+### 4.2.10 Kelas AuthController
 
 **ID Kelas:** C13  
 **Nama Kelas:** AuthController  
@@ -466,7 +587,7 @@ Tabel 4.2.6. Hasil Pengujian Unit Kelas C12
 
 Data uji Relawan: email `"  Ayu@RekanBumi.Test "`, kata sandi `Rahasia123`, nama `" Ayu Lestari "`, telepon `081234567890`, domisili `Bandung`, jenis dokumen `KTP`, berkas PDF 64 byte. Data uji Inisiator: `komunitas@rekanbumi.test`, lembaga `Komunitas Hijau`, tautan `https://hijau.example.org`. Operasi *private* diuji langsung karena memuat aturan validasi dan blokir.
 
-Tabel 4.2.7. Hasil Pengujian Unit Kelas C13
+Tabel 4.2.10. Hasil Pengujian Unit Kelas C13
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -512,7 +633,7 @@ Tabel 4.2.7. Hasil Pengujian Unit Kelas C13
 | C13-UT40 | `cekSesi()` | Negatif | `BetterAuth.ambilSesi()` melempar galat "Sesi rusak" | Galat diteruskan | Galat "Sesi rusak" dilempar | Pass |
 | C13-UT41 | `bacaNotifikasi()` | Batas | Ayu membuka notifikasinya yang sudah dibaca untuk kedua kali | Tetap `statusDibaca = true`, basis data hanya di-*update* sekali | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.7b. Ringkasan Cakupan Kelas C13
+Tabel 4.2.10b. Ringkasan Cakupan Kelas C13
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -521,7 +642,7 @@ Tabel 4.2.7b. Ringkasan Cakupan Kelas C13
 | ID Algoritma yang tercakup | Algo-C13-01 s.d. Algo-C13-12 |
 | Coverage (wajib ≥ 70%) | 100% baris / 97,67% cabang (`src/server/controllers/AuthController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.8 Kelas PresensiController
+### 4.2.11 Kelas PresensiController
 
 **ID Kelas:** C20  
 **Nama Kelas:** PresensiController  
@@ -531,7 +652,7 @@ Basis data diganti tiruan di memori (`vi.mock("~/server/db")`), dan waktu sekara
 
 Data uji alur check-in: program "Tanam Mangrove" berstatus AKTIF pada 5 Des 2026, 15.00–19.00 WIB, dan relawan `relawan-1` yang pendaftarannya DITERIMA. "Saat kegiatan" berarti pukul 16.30 WIB. Data uji alur portofolio: program Pantai berstatus SELESAI dengan durasi 4 jam, serta tiga relawan diterima: HADIR (sudah punya riwayat 3 jam), ABSEN (riwayat 0 jam), dan BARU (belum punya riwayat).
 
-Tabel 4.2.8. Hasil Pengujian Unit Kelas C20
+Tabel 4.2.11. Hasil Pengujian Unit Kelas C20
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -583,7 +704,7 @@ Tabel 4.2.8. Hasil Pengujian Unit Kelas C20
 | C20-UT46 | `ambilProfilRelawan()` (tambahan) | Batas | Relawan yang statusnya belum terverifikasi dan domisilinya kosong | `terverifikasi` = `false`, domisili `null` | Sesuai yang diharapkan | Pass |
 | C20-UT47 | `ambilProfilRelawan()` (tambahan) | Negatif | Relawan tidak ada | Galat "Relawan tidak ditemukan" | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.8b. Ringkasan Cakupan Kelas C20
+Tabel 4.2.11b. Ringkasan Cakupan Kelas C20
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -592,7 +713,7 @@ Tabel 4.2.8b. Ringkasan Cakupan Kelas C20
 | ID Algoritma yang tercakup | Algo-C20-01 s.d. Algo-C20-07 |
 | Coverage (wajib ≥ 70%) | 98,29% baris / 95,52% cabang (`src/server/controllers/PresensiController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.9 Kelas CloudStorageAdapter
+### 4.2.12 Kelas CloudStorageAdapter
 
 **ID Kelas:** C21  
 **Nama Kelas:** CloudStorageAdapter  
@@ -600,7 +721,7 @@ Tabel 4.2.8b. Ringkasan Cakupan Kelas C20
 
 Setiap test memakai folder unggahan sementara (`UPLOAD_DIR` di folder *temp*) yang dihapus setelah test selesai.
 
-Tabel 4.2.9. Hasil Pengujian Unit Kelas C21
+Tabel 4.2.12. Hasil Pengujian Unit Kelas C21
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -618,7 +739,7 @@ Tabel 4.2.9. Hasil Pengujian Unit Kelas C21
 | C21-UT12 | `unggahBerkas()` | Batas | PDF tepat 2 MB diunggah lalu diambil lagi | Berkas tersimpan utuh (2.097.152 byte) | Sesuai yang diharapkan | Pass |
 | C21-UT13 | `ambilBerkas()` | Batas | URL berupa nama berkas saja, tanpa awalan `uploads/` | Berkas tetap ditemukan dengan tipe `image/png` | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.9b. Ringkasan Cakupan Kelas C21
+Tabel 4.2.12b. Ringkasan Cakupan Kelas C21
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -627,7 +748,7 @@ Tabel 4.2.9b. Ringkasan Cakupan Kelas C21
 | ID Algoritma yang tercakup | Algo-C21-01, Algo-C21-02, Algo-C21-03 |
 | Coverage (wajib ≥ 70%) | 100% baris / 92% cabang (`src/server/adapters/CloudStorageAdapter.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.10 Kelas BetterAuth
+### 4.2.13 Kelas BetterAuth
 
 **ID Kelas:** C22  
 **Nama Kelas:** BetterAuth  
@@ -635,7 +756,7 @@ Tabel 4.2.9b. Ringkasan Cakupan Kelas C21
 
 `hashKataSandi()` dan `cocokkanHash()` diuji dengan bcrypt asli. Untuk operasi lainnya, API pustaka Better Auth, `next/headers`, dan basis data diganti tiruan. Uji dengan Better Auth dan basis data asli ada di INT-TC04, INT-TC05, dan KNF02-TC01.
 
-Tabel 4.2.10. Hasil Pengujian Unit Kelas C22
+Tabel 4.2.13. Hasil Pengujian Unit Kelas C22
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -655,7 +776,7 @@ Tabel 4.2.10. Hasil Pengujian Unit Kelas C22
 | C22-UT14 | `buatSesiMasuk()` | Batas | Request tanpa *header* IP | Sesi tetap dibuat (token `token-tanpa-ip`), *header* kosong diteruskan apa adanya | Sesuai yang diharapkan | Pass |
 | C22-UT15 | `ambilSesi()` | Negatif | `getSession` melempar galat "Sesi rusak" | Galat diteruskan | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.10b. Ringkasan Cakupan Kelas C22
+Tabel 4.2.13b. Ringkasan Cakupan Kelas C22
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -664,7 +785,7 @@ Tabel 4.2.10b. Ringkasan Cakupan Kelas C22
 | ID Algoritma yang tercakup | Algo-C22-01 s.d. Algo-C22-06 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/adapters/BetterAuth.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.11 Kelas Verifikator
+### 4.2.14 Kelas Verifikator
 
 
 **ID Kelas:** C06  
@@ -672,12 +793,12 @@ Tabel 4.2.10b. Ringkasan Cakupan Kelas C22
 **Tingkat:** Tidak perlu (lihat Tabel 4.1.1)
 
 
-Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfirmasiLaporan()` dan `tolakLaporan()` ke `LaporanProgram` dengan `this.idPengguna`. Pada implementasi akhir, kelas ini tidak dipanggil dari kode aplikasi. Peninjauan laporan berjalan lewat `ProgramController.konfirmasiLaporan()` dan `tolakLaporan()` (C15), yang memakai `LaporanProgram` (C09) langsung dengan `idVerifikator` dari sesi (B.1 no. 6 dan 9). Karena itu kelas ini tidak punya unit test khusus, dan coverage terukurnya 0% (`Verifikator.ts`, @vitest/coverage-v8, bukti pada 4.6). Logika yang ia teruskan teruji lewat C09 (4.2.12) dan C15 (4.2.14), serta lewat UC07-TC01 dan UC07-TC02.
+Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfirmasiLaporan()` dan `tolakLaporan()` ke `LaporanProgram` dengan `this.idPengguna`. Pada implementasi akhir, kelas ini tidak dipanggil dari kode aplikasi. Peninjauan laporan berjalan lewat `ProgramController.konfirmasiLaporan()` dan `tolakLaporan()` (C15), yang memakai `LaporanProgram` (C09) langsung dengan `idVerifikator` dari sesi (B.1 no. 6 dan 9). Karena itu kelas ini tidak punya unit test khusus, dan coverage terukurnya 0% (`Verifikator.ts`, @vitest/coverage-v8, bukti pada 4.6). Logika yang ia teruskan teruji lewat C09 (4.2.15) dan C15 (4.2.17), serta lewat UC07-TC01 dan UC07-TC02.
 
 
 
 
-### 4.2.12 Kelas LaporanProgram
+### 4.2.15 Kelas LaporanProgram
 
 
 **ID Kelas:** C09  
@@ -685,18 +806,18 @@ Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfi
 **Tingkat:** Mendalam
 
 
-Tabel 4.2.12. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgram.test.ts`)
+Tabel 4.2.15. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgram.test.ts`)
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| C09-UT01 | `uploadDokumentasi()`, `showSummary()`, `showDokumentasi()` | Normal | Simpan satu tautan dokumentasi dan ringkasan capaian, lalu baca kembali | Tautan tersimpan dan dapat dibaca kembali, ringkasan capaian dikembalikan | Sesuai yang diharapkan | Pass |
+| C09-UT01 | `uploadDokumentasi()`, `showSummary()`, `showDokumentasi()` | Normal | Buat laporan dengan ringkasan dan satu tautan awal, tambah satu tautan lewat `uploadDokumentasi()`, lalu baca kembali | `showSummary()` mengembalikan ringkasan yang sama, `showDokumentasi()` mengembalikan kedua tautan berurutan | Sesuai yang diharapkan | Pass |
 | C09-UT02 | `uploadDokumentasi()` | Negatif | Tautan dokumentasi kosong | Galat "Tautan berkas tidak valid" (Algo-C09-01) | Galat tersebut dilempar | Pass |
 | C09-UT03 | `setujui()` | Normal dan negatif | Setujui laporan, lalu setujui laporan yang sama sekali lagi | Persetujuan pertama berhasil, persetujuan kedua ditolak dengan "Laporan sudah ditinjau" (Algo-C09-02) | Sesuai yang diharapkan | Pass |
 | C09-UT04 | `tolak()` | Normal dan negatif | Tolak laporan tanpa catatan revisi, lalu dengan catatan revisi | Tanpa catatan ditolak dengan "Catatan revisi wajib diisi", dengan catatan berstatus DITOLAK (Algo-C09-03) | Sesuai yang diharapkan | Pass |
 
 
-Tabel 4.2.12b. Ringkasan Cakupan Kelas C09
+Tabel 4.2.15b. Ringkasan Cakupan Kelas C09
 
 
 | Informasi | Keterangan |
@@ -709,7 +830,7 @@ Tabel 4.2.12b. Ringkasan Cakupan Kelas C09
 
 
 
-### 4.2.13 Kelas KelolaProgramPage
+### 4.2.16 Kelas KelolaProgramPage
 
 
 **ID Kelas:** C14  
@@ -720,7 +841,7 @@ Tabel 4.2.12b. Ringkasan Cakupan Kelas C09
 Kelas ini adalah kelas *boundary* yang pada implementasi dipecah menjadi satu komponen per layar (B.1 no. 11). Logika yang dapat diuji dipisahkan ke fungsi murni di `src/lib/programSaya.ts` (misalnya `labelStatus()` untuk Algo-C14-12 `tampilkanStatusProgram`, `aksiProgram()`, `hitungStatistik()`, `saringProgram()`, `persenKuota()`). Komponen tampilannya teruji lewat pengujian use case (UC01-TC03, UC01-TC04, UC07-TC01, UC07-TC02).
 
 
-Tabel 4.2.13. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/programSaya.test.ts`, 9 tes)
+Tabel 4.2.16. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/programSaya.test.ts`, 9 tes)
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
@@ -736,7 +857,7 @@ Tabel 4.2.13. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/pro
 | C14-UT09 | `persenKuota()` | Batas dan negatif | Diterima di bawah kuota, melebihi kuota, dan kuota 0 | 60, 100 (dibatasi), dan 0 | Sesuai yang diharapkan | Pass |
 
 
-Tabel 4.2.13b. Ringkasan Cakupan Kelas C14
+Tabel 4.2.16b. Ringkasan Cakupan Kelas C14
 
 
 | Informasi | Keterangan |
@@ -747,7 +868,7 @@ Tabel 4.2.13b. Ringkasan Cakupan Kelas C14
 
 
 
-### 4.2.14 Kelas ProgramController
+### 4.2.17 Kelas ProgramController
 
 
 **ID Kelas:** C15  
@@ -755,15 +876,15 @@ Tabel 4.2.13b. Ringkasan Cakupan Kelas C14
 **Tingkat:** Mendalam
 
 
-Tabel 4.2.14. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan program saya
+Tabel 4.2.17. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan program saya
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| C15-UT01 | `konfirmasiLaporan()` (Algo-C15-09) | Normal | Setujui laporan (berkas `ProgramController.peninjauan.test.ts`) | Portofolio relawan diperbarui dalam `tx` yang sama | Sesuai yang diharapkan | Pass |
-| C15-UT02 | `tolakLaporan()` (Algo-C15-10) | Normal | Tolak laporan (berkas yang sama) | Status ditolak dan portofolio tidak diperbarui | Sesuai yang diharapkan | Pass |
+| C15-UT01 | `konfirmasiLaporan()` (Algo-C15-09) | Normal | Setujui laporan (berkas `ProgramController.peninjauan.test.ts`) | Mengembalikan `SELESAI`. Portofolio diperbarui sekali dengan `programId` dan `tx` yang sama, setelah status program diubah | Sesuai yang diharapkan | Pass |
+| C15-UT02 | `tolakLaporan()` (Algo-C15-10) | Normal | Tolak laporan dengan catatan "Dokumentasi kurang lengkap" (berkas yang sama) | Mengembalikan `PERLU_REVISI` dan portofolio tidak diperbarui | Sesuai yang diharapkan | Pass |
 | C15-UT03 | `konfirmasiLaporan()` | Negatif | Pembaruan portofolio melempar galat | Galat dibungkus menjadi `CONFLICT` | Sesuai yang diharapkan | Pass |
-| C15-UT04 | `konfirmasiLaporan()` | Negatif | Galat tak terduga dilempar saat peninjauan | Galat dilempar ulang tanpa diubah | Sesuai yang diharapkan | Pass |
+| C15-UT04 | `konfirmasiLaporan()` | Negatif | Pembaruan portofolio melempar galat tak terduga (bukan `GalatValidasi`) | Galat dilempar ulang apa adanya, tidak dibungkus | Sesuai yang diharapkan | Pass |
 | C15-UT05 | `ajukanLaporanAkhir()` (Algo-C15-06) | Normal | Ajukan laporan dengan beberapa verifikator (`ProgramController.ajukanLaporan.test.ts`) | Satu notifikasi per verifikator | Sesuai yang diharapkan | Pass |
 | C15-UT06 | `ajukanLaporanAkhir()` | Batas | Ajukan laporan tanpa verifikator terdaftar | Tidak ada notifikasi dikirim | Sesuai yang diharapkan | Pass |
 | C15-UT07 | `ajukanLaporanAkhir()` | Negatif | Program milik akun lain | Ditolak tanpa memulai transaksi | Sesuai yang diharapkan | Pass |
@@ -771,24 +892,45 @@ Tabel 4.2.14. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan p
 | C15-UT09 | `setujuiProgram()` | Negatif | Program tidak ditemukan | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
 | C15-UT10 | `setujuiProgram()` | Negatif | Program sudah AKTIF | Galat `CONFLICT` | Sesuai yang diharapkan | Pass |
 | C15-UT11 | `setujuiProgram()` | Negatif | Program keburu diproses verifikator lain | Galat `CONFLICT` | Sesuai yang diharapkan | Pass |
-| C15-UT12 | `ambilProgramMenungguVerifikasi()` | Normal | Daftar program dengan status campuran (`ProgramController.menungguVerifikasi.test.ts`) | Hanya status MENUNGGU_VERIFIKASI yang dikembalikan | Sesuai yang diharapkan | Pass |
-| C15-UT13 | `ambilProgramMenungguVerifikasi()` | Batas | Tidak ada program yang menunggu | Daftar kosong | Sesuai yang diharapkan | Pass |
-| C15-UT14 | `ambilProgramMenungguVerifikasi()` | Normal | Program dengan lembaga dan dokumen legalitas | Nama lembaga dan dokumen legalitas terbaru ikut dikembalikan | Sesuai yang diharapkan | Pass |
+| C15-UT12 | `ambilProgramMenungguVerifikasi()` | Normal | Panggil operasi lalu periksa argumen query ke basis data (`ProgramController.menungguVerifikasi.test.ts`) | Query memfilter `status = MENUNGGU_VERIFIKASI` dan mengurutkan `waktuMulai` menaik | Sesuai yang diharapkan | Pass |
+| C15-UT13 | `ambilProgramMenungguVerifikasi()` | Batas | Tidak ada program yang menunggu | Mengembalikan daftar kosong tanpa query dokumen legalitas | Sesuai yang diharapkan | Pass |
+| C15-UT14 | `ambilProgramMenungguVerifikasi()` | Normal | Dua program dari dua lembaga, dokumen legalitas hanya milik lembaga pertama (dua versi) | Nama lembaga ikut dikembalikan, dokumen terbaru dipakai untuk lembaga pertama, lembaga kedua `null`, data `inisiatorProgram` mentah tidak ikut | Sesuai yang diharapkan | Pass |
 | C15-UT15 | `ambilProgramSaya()` | Negatif | Akun yang bukan inisiator (`ProgramController.programSaya.test.ts`) | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
-| C15-UT16 | `ambilProgramSaya()` | Normal | Inisiator dengan program miliknya dan program akun lain | Hanya program miliknya, dengan hitungan diterima dan menunggu | Sesuai yang diharapkan | Pass |
+| C15-UT16 | `ambilProgramSaya()` | Normal | Inisiator dengan dua program miliknya dan satu program akun lain | Hanya dua program miliknya, dengan hitungan diterima dan menunggu, nama lembaga, dan statistik (aktif 1, pendaftar menunggu 1, perlu revisi 1) | Sesuai yang diharapkan | Pass |
+| C15-UT31 | `cariProgram()` (Algo-C15-03) | Normal | Cari kata kunci "mangrove" tanpa kategori, lalu periksa argumen query ke basis data (`ProgramController.eksplorasi.test.ts`) | Query selalu memfilter `status = AKTIF` | `where.status` bernilai `AKTIF` | Pass |
+| C15-UT32 | `cariProgram()` | Normal | Cari "  Mangrove " (berspasi, huruf besar awal) | Kata kunci dipangkas, dicocokkan ke `namaProgram` dan `deskripsi` dengan `contains` tanpa membedakan huruf | `OR` berisi dua syarat `contains: "Mangrove"` dengan `mode: insensitive` | Pass |
+| C15-UT33 | `cariProgram()` | Batas | Kata kunci kosong dengan kategori JAGA_IKLIM, lalu kata kunci spasi saja tanpa kategori (`undefined`) | Pertama: `AKTIF` dan kategori JAGA_IKLIM. Kedua: hanya `AKTIF` (semua program aktif) | Sesuai yang diharapkan | Pass |
+| C15-UT34 | `cariProgram()` | Batas | Tiga baris tersedia, `batas` = 2 (lalu dua baris dengan `batas` = 2) | Mengambil `batas + 1` baris. Hasil dua program dan `adaLagi = true`. Dengan dua baris, `adaLagi = false` | `take` 3, daftar `["a", "b"]`, `adaLagi` true lalu false | Pass |
+| C15-UT35 | `cariProgram()` | Normal | Satu baris program dengan 3 pendaftar DITERIMA | Dipetakan ke ringkasan (id, nama, kategori, tempat, waktu, kuota, nama lembaga, status verifikasi lembaga). `jumlahDiterima` dari `_count` tanpa query per program | Sama persis dengan ringkasan yang diharapkan, `jumlahDiterima` = 3 | Pass |
+| C15-UT36 | `cariProgram()` | Negatif | Kata kunci yang tidak cocok, basis data mengembalikan nol baris | `{ daftar: [], adaLagi: false }` | Sama | Pass |
+| C15-UT37 | `cariProgram()` | Normal | Kata kunci "sungai" dan kategori JAGA_ALAM sekaligus | Satu query berisi `AKTIF`, kategori, dan `OR` nama atau deskripsi, diurutkan `waktuMulai` menaik | Sesuai yang diharapkan | Pass |
+| C15-UT38 | `ambilDetailProgram()` (Algo-C15-04) | Negatif | Id program yang tidak ada | Galat `GalatProgram` berkode `NOT_FOUND` | `NOT_FOUND` | Pass |
+| C15-UT39 | `ambilDetailProgram()` | Negatif | Program berstatus MENUNGGU_VERIFIKASI | `NOT_FOUND` karena belum boleh tampil ke publik | `NOT_FOUND` | Pass |
+| C15-UT40 | `ambilDetailProgram()` | Normal | Program AKTIF kuota 10 dengan 3 diterima, lembaga terverifikasi, tautan `https://hijau.example` | Tautan dikembalikan, `kuotaTersedia = true`, `jumlahDiterima = 3`, `lembagaTerverifikasi = true`, `capaian = null` | Sesuai yang diharapkan | Pass |
+| C15-UT41 | `ambilDetailProgram()` | Batas | Program kuota 10 dengan 10 diterima | `kuotaTersedia = false` | `false` | Pass |
+| C15-UT42 | `ambilDetailProgram()` | Batas | Jam sistem diatur dengan *fake timers* pada lima keadaan: (1) sebelum mulai, (2) saat berlangsung, (3) saat berlangsung dengan kuota penuh, (4) setelah selesai, (5) status PERLU_REVISI sebelum mulai | (1) `tahapWaktu` BELUM_DIMULAI dan `bisaDaftar` true. (2) BERLANGSUNG dan true. (3) `bisaDaftar` false. (4) SELESAI dan false. (5) `bisaDaftar` false | Sesuai yang diharapkan | Pass |
+| C15-UT43 | `ambilDetailProgram()` | Negatif | Tautan lembaga `null`, spasi saja, `hijau.example`, `javascript:alert(1)`, dan `ftp://hijau.example` | `tautanSitusResmi = null` pada kelimanya | `null` pada kelimanya | Pass |
+| C15-UT44 | `ambilDetailProgram()` | Normal | Program SELESAI dengan laporan DISETUJUI ("Menanam 500 bibit", satu dokumentasi) | `capaian` berisi ringkasan dan dokumentasi, query laporan memakai `statusPeninjauan = DISETUJUI` | Sesuai yang diharapkan | Pass |
+| C15-UT45 | `ambilDetailProgram()` | Batas | Program AKTIF, lalu program SELESAI tanpa laporan DISETUJUI | AKTIF tidak mencari laporan. SELESAI tanpa laporan: `capaian = null` | Sesuai yang diharapkan | Pass |
+| C15-UT46 | `ambilDetailProgram()` | Batas | Program berstatus MENUNGGU_KONFIRMASI | Detail tetap tampil (status bukan MENUNGGU_VERIFIKASI) tetapi `bisaDaftar = false` | Sesuai yang diharapkan | Pass |
+| C15-UT47 | `validasiTautanSitus()` (Algo-C15-05) | Normal | `https://hijau.example` dan `http://hijau.example/tentang` | `true` untuk keduanya | `true` dan `true` | Pass |
+| C15-UT48 | `validasiTautanSitus()` | Negatif | Teks kosong, spasi saja, dan `hijau.example` (tanpa skema) | `false` untuk ketiganya | `false` pada ketiganya | Pass |
+| C15-UT49 | `validasiTautanSitus()` | Negatif | `javascript:alert(1)`, `ftp://hijau.example`, dan `data:text/html,<b>x</b>` | `false` untuk ketiganya (skema selain http dan https ditolak) | `false` pada ketiganya | Pass |
+| C15-UT50 | `validasiTautanSitus()` | Batas | `HTTPS://hijau.example` dan `  https://hijau.example  ` (spasi di pinggir) | `true` untuk keduanya, karena skema dibaca tanpa membedakan huruf dan spasi pinggir diabaikan pembaca URL | `true` dan `true` | Pass |
 
 
-Tabel 4.2.14b. Ringkasan Cakupan Kelas C15
+Tabel 4.2.17b. Ringkasan Cakupan Kelas C15
 
 
 | Informasi | Keterangan |
 | :--- | :--- |
 | Daftar operasi public pada DPPL | `simpanProgramBaru()`, `validasiDataProgram()`, `cariProgram()`, `ambilDetailProgram()`, `validasiTautanSitus()`, `ajukanLaporanAkhir()`, `validasiLaporan()`, `tinjauLaporan()`, `konfirmasiLaporan()`, `tolakLaporan()`, `buatNotifikasi()` |
 | Operasi yang diuji unit (bagian laporan dan verifikasi) | 16 tes pada 5 berkas di atas. `simpanProgramBaru()`, `validasiDataProgram()`, `tinjauLaporan()`, dan `validasiLaporan()` belum punya unit test khusus (`simpanProgramBaru()` teruji lewat INT-TC30 dan INT-TC31). Bagian eksplorasi (`ProgramController.eksplorasi.test.ts`) dan pendaftaran relawan (`ProgramController.daftarRelawan.test.ts`) dilaporkan oleh penulis masing-masing. |
-| ID Algoritma yang tercakup | Algo-C15-06, Algo-C15-09, Algo-C15-10, Algo-C15-11 (notifikasi dalam transaksi) |
+| Operasi yang diuji unit (bagian eksplorasi program) | `cariProgram()`, `ambilDetailProgram()`, dan `validasiTautanSitus()` (3 operasi, masing-masing dengan kasus normal, batas, dan negatif), 20 tes (C15-UT31 s.d. C15-UT50) pada `ProgramController.eksplorasi.test.ts`. `validasiTautanSitus()` bersifat private dan dipanggil langsung lewat akses indeks. Fungsi bantu private `tentukanTahapWaktu()` dan `ambilCapaianPublik()` teruji lewat `ambilDetailProgram()`. Cakupan bagian eksplorasi sendiri 100% baris (129 dari 129 pernyataan) dan 100% cabang (29 dari 29). Pencarian sebenarnya tidak lewat `Program.cari()` (lihat catatan pada kelas C01). `simpanProgramBaru()` dan `validasiDataProgram()` teruji lewat INT-TC30, INT-TC31, UC01-TC03, dan UC01-TC04. |
+| ID Algoritma yang tercakup | Algo-C15-03, Algo-C15-04, Algo-C15-05, Algo-C15-06, Algo-C15-09, Algo-C15-10, Algo-C15-11 (notifikasi dalam transaksi) |
 | Coverage (wajib ≥ 70%) | 78,28% baris / 86,53% cabang untuk seluruh `ProgramController.ts` (semua berkas tes `ProgramController.*`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.15 Kelas SeleksiController
+### 4.2.18 Kelas SeleksiController
 
 **ID Kelas:** C18<br>
 **Nama Kelas:** SeleksiController<br>
@@ -796,7 +938,7 @@ Tabel 4.2.14b. Ringkasan Cakupan Kelas C15
 
 Subbab ini menguji operasi public C18 yang direalisasikan pada alur seleksi: `lihatDaftarRelawan()`, `simpanHasilSeleksi()`, dan `konfirmasiHasilSeleksi()`. Operasi private `validasiKuota()` dan `triggerNotifikasi()` teruji tidak langsung lewat operasi public yang memanggilnya. Operasi `ajukanPendaftaran()` pada DPPL direalisasikan sebagai `ProgramController.daftarRelawan()` (C15) sehingga pengujiannya dicatat pada subbab C15. Aturan yang diuji: hanya pemilik program yang dapat melihat dan mengubah hasil seleksi (KF07), jumlah penerimaan tidak boleh melampaui kuota (KF05), hasil seleksi diumumkan satu kali setelah seluruh pendaftar diputuskan, dan notifikasi dikirim ke tiap pendaftar (KF08, KF09). Data uji: program "Penanaman Pohon" berstatus AKTIF dengan kuota 2 milik pengguna `inisiator-1`, dengan pendaftar berstatus MENUNGGU, DITERIMA, atau DITOLAK. Basis data Prisma digantikan objek tiruan (*mock*) sehingga pengujian berjalan tanpa basis data. File test: `src/tests/unit/SeleksiController.test.ts`.
 
-Tabel 4.2.15a. Informasi Pengujian Kelas C18
+Tabel 4.2.18a. Informasi Pengujian Kelas C18
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -805,7 +947,7 @@ Tabel 4.2.15a. Informasi Pengujian Kelas C18
 | ID Algoritma yang tercakup | Algo-C18-02 s.d. Algo-C18-06 (Algo-C18-01 dicakup oleh C15-UT17 s.d. C15-UT24) |
 | Coverage (wajib ≥ 70%) | 83,5% baris / 76,92% cabang (`src/server/controllers/SeleksiController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-Tabel 4.2.15b. Hasil Pengujian Unit Kelas C18
+Tabel 4.2.18b. Hasil Pengujian Unit Kelas C18
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -822,7 +964,7 @@ Tabel 4.2.15b. Hasil Pengujian Unit Kelas C18
 | C18-UT11 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Keputusan DITOLAK untuk `pendaftar-asing` yang bukan pendaftar program ini | Ditolak dengan kode galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Pass |
 | C18-UT12 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Satu permintaan memuat `pendaftaran-1` dua kali (DITERIMA dan DITOLAK) | Ditolak dengan galat bertipe `GalatSeleksi` | Galat `GalatSeleksi` dilempar | Pass |
 
-### 4.2.16 Kelas [Nama Kelas lain]
+### 4.2.19 Kelas [Nama Kelas lain]
 
 *[Ulangi pola 4.2.1 untuk setiap kelas bertingkat Mendalam atau Sedang milik modul lain, urut menurut ID kelas.]*
 
@@ -834,7 +976,7 @@ Pengujian integrasi memeriksa interaksi antarkomponen yang melewati batas, yaitu
 
 DPPL RekanBumi tidak memiliki tabel antarmuka antarkomponen yang bernomor, dan kode `I-XX` dipakai untuk layar (BAB 6 DPPL). Karena itu antarmuka pada Tabel 4.3.1 diambil dari relasi pada *view* arsitektur DPPL, yaitu Gambar 2.3 *Logical View* ("memanggil", "cek sesi", "mengarahkan ke login", dan dependensi *Controller* ke *Model*) serta Gambar 2.4 *Physical View* ("memanggil API" lewat tRPC/HTTPS dan "akses data" lewat Prisma). Kolom ID Antarmuka diisi pasangan kelas asal dan tujuan sesuai Tabel 4.1 DPPL (misalnya `C13 → C22`).
 
-Setiap test case memeriksa tiga hal: aliran data antarkomponen (INT-TC01, INT-TC07, INT-TC09), kecocokan format dan parameter antarmuka (INT-TC04, INT-TC05), serta aturan pertukaran data dan penanganan galat (INT-TC02, INT-TC03, INT-TC06, INT-TC08).
+Setiap test case memeriksa tiga hal: aliran data antarkomponen (INT-TC01, INT-TC07, INT-TC09, INT-TC10, INT-TC11, INT-TC12, INT-TC15, INT-TC18, INT-TC30, INT-TC32, INT-TC34, INT-TC37, INT-TC38), kecocokan format dan parameter antarmuka (INT-TC04, INT-TC05, INT-TC14, INT-TC19), serta aturan pertukaran data dan penanganan galat (INT-TC02, INT-TC03, INT-TC06, INT-TC08, INT-TC13, INT-TC16, INT-TC17, INT-TC31, INT-TC33, INT-TC35, INT-TC36, INT-TC39).
 
 Cara menjalankan integration test (dari folder `src/`):
 
@@ -846,6 +988,8 @@ pnpm test:integrasi
 ```
 
 Lokasi file test: `src/tests/integrasi/`. Test memakai PostgreSQL, Better Auth, bcrypt, dan folder unggahan sungguhan. Setiap test membuat akun dengan email acak `...@rekanbumi.test` lalu menghapusnya kembali setelah selesai, sehingga data *seed* tidak berubah.
+
+Test Modul 5 (INT-TC40 s.d. INT-TC49) ada di `src/tests/integrasi/modul5.presensi.test.ts`. Test ini memakai PostgreSQL sungguhan tanpa *mock*, membuat relawan, program, dan pendaftaran dengan ID unik, lalu menghapus semuanya setelah selesai. Perintah untuk menjalankannya dari folder `src` adalah `pnpm exec vitest run --config vitest.integrasi.config.ts tests/integrasi/modul5.presensi.test.ts`, dan seluruh 10 test lulus.
 
 Tabel 4.3.1. Daftar Antarmuka Antarkomponen
 
@@ -862,7 +1006,17 @@ Tabel 4.3.1. Daftar Antarmuka Antarkomponen
 | C15 → C01 → DB | ProgramController | Program (operasi `aktifkan()`, tabel `tbl_program`) | *Controller* - *Model* - Basis data | INT-TC32, INT-TC33 |
 | C15 → C09 → DB | ProgramController | LaporanProgram (`tbl_laporan_program`) | *Controller* - *Model* - Basis data | INT-TC34, INT-TC35, INT-TC36, INT-TC37, INT-TC38, INT-TC39 |
 | C15 → C10 | ProgramController | Notifikasi (`tbl_notifikasi`) | *Controller* - *Model* - Basis data | INT-TC32, INT-TC34, INT-TC37, INT-TC38 |
+| C16 → C15 | EksplorasiProgramPage (I-04 dan I-05, lewat router tRPC `program.cari` dan `program.detail`) | ProgramController | *View* - *Controller* (HTTP/tRPC) | INT-TC19 |
+| C15 → DB (eksplorasi) | ProgramController (`cariProgram()`, `ambilDetailProgram()`) | PostgreSQL (`tbl_program`, `tbl_inisiator_program`, `tbl_pendaftaran`) | Aplikasi - Basis data | INT-TC10, INT-TC11, INT-TC12, INT-TC13, INT-TC14, INT-TC15, INT-TC16 |
+| C15 → C01 → C05 → DB | ProgramController | Program dan InisiatorProgram (data lembaga, status verifikasi, tautan situs resmi) | *Controller* - *Model* - Basis data | INT-TC15, INT-TC17 |
+| C15 → C09 → DB (capaian publik) | ProgramController (`ambilDetailProgram()`) | LaporanProgram (`tbl_laporan_program`, hanya yang DISETUJUI) | *Controller* - *Model* - Basis data | INT-TC18 |
 | C15 → C20 | ProgramController | PresensiController (pembaruan portofolio relawan saat laporan disetujui) | *Controller* - *Controller* - Basis data | INT-TC37 |
+| C19 → C20 | AreaKegiatanPage (I-12 check-in dan I-13 portofolio) | PresensiController melalui router tRPC presensi | *View* - API/*Controller* | UC08-TC01, UC09-TC01 (diuji lewat use case) |
+| C20 → C01 → DB | PresensiController | Program (status dan waktu pelaksanaan), PostgreSQL (tbl_program) | *Controller* - *Model* - basis data | INT-TC42, INT-TC43 |
+| C20 → C02 → DB | PresensiController | Pendaftaran (status penerimaan), PostgreSQL (tbl_pendaftaran) | *Controller* - *Model* - basis data | INT-TC41 |
+| C20 → C03 → C08 → DB | PresensiController | Relawan dan Kehadiran, PostgreSQL (tbl_relawan, tbl_kehadiran) | *Controller* - *Model* - basis data | INT-TC40, INT-TC44 |
+| C20 → C03 → C11 → DB | PresensiController | Relawan dan RiwayatKontribusi, PostgreSQL (tbl_relawan, tbl_riwayat_kontribusi, tbl_riwayat_program) | *Controller* - *Model* - basis data | INT-TC45, INT-TC46, INT-TC47, INT-TC48, INT-TC49 |
+| C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | ProgramController | LaporanProgram, PresensiController, Relawan, dan RiwayatKontribusi | *Controller* - *Model* - basis data | INT-TC45, INT-TC46, INT-TC47 |
 | *[CXX → CYY]* | *[Komponen asal]* | *[Komponen tujuan]* | *[Jenis batas]* | *[ID test case]* |
 
 Tabel 4.3.2. Hasil Pengujian Integrasi
@@ -878,6 +1032,16 @@ Tabel 4.3.2. Hasil Pengujian Integrasi
 | INT-TC07 | C13 → C04 → C10 | Normal: kirim, ambil, dan baca notifikasi | Kirim dua notifikasi ke akun baru, panggil `ambilNotifikasi()`, lalu `bacaNotifikasi()` pada notifikasi teratas | Urutan terbaru di atas. Kolom `statusDibaca` notifikasi yang dibaca menjadi `true` di `tbl_notifikasi`. | Urutan `["Pendaftaran kedua: Ditolak", "Pendaftaran pertama: Diterima"]`, `statusDibaca = true` | Pass |
 | INT-TC08 | C13 → C04 → C10 | Gagal: membaca notifikasi milik orang lain | Akun A memanggil `bacaNotifikasi()` untuk notifikasi milik akun B | `GalatTidakDitemukan`, dan `statusDibaca` notifikasi B tetap `false` di basis data | Sesuai yang diharapkan | Pass |
 | INT-TC09 | C22 → C13 | Normal: verifikasi email menyinkronkan status Relawan | Registrasi Relawan, buat token verifikasi dengan `BETTER_AUTH_SECRET`, lalu buka `GET /api/auth/verify-email?token=...` | HTTP 302. `user.emailVerified = true` dan `tbl_relawan.statusVerifikasi = TERVERIFIKASI`. | HTTP 302, kedua kolom berubah sesuai yang diharapkan | Pass |
+| INT-TC10 | C15 → DB (eksplorasi) | Normal: pencarian hanya menampilkan program AKTIF | Buat program berstatus AKTIF, MENUNGGU_VERIFIKASI, MENUNGGU_KONFIRMASI, dan SELESAI dengan kata kunci acak yang sama pada nama, lalu panggil `ProgramController.cariProgram()` dengan kata kunci itu | Hanya program AKTIF yang dikembalikan, `adaLagi = false` | Daftar berisi satu id (program AKTIF), `adaLagi = false` | Pass |
+| INT-TC11 | C15 → DB (eksplorasi) | Normal: kata kunci dicocokkan ke nama dan deskripsi tanpa membedakan huruf | Buat tiga program AKTIF: kata kunci ada di nama, ada di deskripsi, dan tidak ada. Cari dengan kata kunci berhuruf besar | Program yang cocok di nama atau deskripsi dikembalikan, yang tidak cocok tidak | Dua id yang cocok dikembalikan, program ketiga tidak | Pass |
+| INT-TC12 | C15 → DB (eksplorasi) | Normal: filter kategori dan gabungan kata kunci dengan kategori | Buat satu program JAGA_IKLIM dan satu JAGA_ALAM dengan kata kunci sama. Cari tanpa kategori, lalu dengan JAGA_IKLIM, lalu dengan JAGA_ALAM | Tanpa kategori: keduanya. Dengan kategori: hanya program pada kategori itu | Keduanya, hanya program iklim, hanya program alam | Pass |
+| INT-TC13 | C15 → DB (eksplorasi) | Batas: kata kunci tanpa hasil (UC03 alt. 1) | Panggil `cariProgram()` dengan kata kunci acak yang tidak dipakai program mana pun | `{ daftar: [], adaLagi: false }` | Sama | Pass |
+| INT-TC14 | C15 → DB (eksplorasi) | Batas: jumlah hasil dibatasi, penanda `adaLagi`, dan urutan waktu mulai | Buat tiga program AKTIF dengan waktu mulai berbeda (dibuat tidak berurutan), lalu panggil `cariProgram()` dengan `batas` = 2 dan dengan batas besar | Batas 2: dua program terawal dan `adaLagi = true`. Batas besar: ketiganya dan `adaLagi = false`. Urutan menurut `waktuMulai` menaik | Sesuai yang diharapkan | Pass |
+| INT-TC15 | C15 → DB (eksplorasi), C15 → C01 → C05 → DB | Normal: detail program menggabungkan program, lembaga, dan jumlah relawan diterima | Buat program AKTIF kuota 10 milik lembaga terverifikasi bertautan `https://hijau.example/tentang`, dengan 4 pendaftar (2 DITERIMA, 2 status lain), lalu panggil `ambilDetailProgram()` | Detail memuat nama lembaga, `lembagaTerverifikasi = true`, `jumlahDiterima = 2`, tautan situs resmi, `bisaDaftar = true` | Seluruh isian sesuai, `jumlahDiterima = 2` | Pass |
+| INT-TC16 | C15 → DB (eksplorasi) | Gagal: program tidak ada atau belum disetujui | Panggil `ambilDetailProgram()` untuk id acak, lalu untuk program berstatus MENUNGGU_VERIFIKASI | Keduanya melempar `GalatProgram` berkode `NOT_FOUND` | `NOT_FOUND` pada keduanya | Pass |
+| INT-TC17 | C15 → C01 → C05 → DB | Gagal: tautan situs resmi kosong atau berbahaya (UC04 alt. 1) | Buat program dari lembaga tanpa tautan (`null`) dan dari lembaga bertautan `javascript:alert(1)`, lalu panggil `ambilDetailProgram()` untuk keduanya | `tautanSitusResmi = null` pada keduanya | `null` pada keduanya | Pass |
+| INT-TC18 | C15 → C09 → DB (capaian publik) | Normal dan batas: capaian program SELESAI | Buat program SELESAI dengan laporan DISETUJUI (ringkasan dan dua dokumentasi) dan program SELESAI tanpa laporan, lalu panggil `ambilDetailProgram()` untuk keduanya | Program pertama: `tahapWaktu = SELESAI`, `bisaDaftar = false`, `capaian` berisi ringkasan dan dua dokumentasi. Program kedua: `capaian = null` | Sesuai yang diharapkan | Pass |
+| INT-TC19 | C16 → C15 | Normal dan gagal: pemanggilan API lewat HTTP | Ke server yang berjalan: `GET /api/trpc/program.cari` dan `program.detail` tanpa login, `program.detail` dengan id tidak ada, dan `POST /api/trpc/program.createProgram` tanpa login | Pencarian dan detail HTTP 200 (tanpa login), id tidak ada HTTP 404, `createProgram` tanpa login HTTP 401 | HTTP 200, 200, 404, dan 401 | Pass |
 | INT-TC30 | C15 → DB | Normal: simpan program baru oleh Inisiator terverifikasi | Buat akun Inisiator berstatus TERVERIFIKASI, panggil `ProgramController.simpanProgramBaru()` dengan data program lengkap dan tautan dokumen legalitas, lalu baca ulang dari basis data | Program tersimpan berstatus `MENUNGGU_VERIFIKASI` dengan nama sesuai, dan ada satu baris `tbl_dokumen_verifikasi` berisi tautan legalitas | Sesuai yang diharapkan | Pass |
 | INT-TC31 | C15 → DB | Gagal: lembaga belum terverifikasi | Buat akun Inisiator berstatus MENUNGGU, lalu panggil `simpanProgramBaru()` | Galat `FORBIDDEN`. Tidak ada program dan tidak ada dokumen verifikasi yang tersimpan | Galat sesuai, jumlah program dan dokumen 0 | Pass |
 | INT-TC32 | C15 → C01 → DB, C15 → C10 | Normal: verifikator menyetujui program | Buat program berstatus `MENUNGGU_VERIFIKASI`, lalu panggil `setujuiProgram()` | Mengembalikan `AKTIF`, status di basis data `AKTIF`, dan Inisiator menerima notifikasi | Sesuai yang diharapkan | Pass |
@@ -888,7 +1052,21 @@ Tabel 4.3.2. Hasil Pengujian Integrasi
 | INT-TC37 | C15 → C09 → DB, C15 → C10, C15 → C20 | Normal: Verifikator menyetujui laporan akhir | Ajukan laporan, lalu panggil `konfirmasiLaporan()` oleh Verifikator | Mengembalikan `SELESAI`. Laporan `DISETUJUI` dengan `verifikatorId` tercatat, status program `SELESAI`, dan Inisiator menerima satu notifikasi "Laporan akhir disetujui." | Sesuai yang diharapkan | Pass |
 | INT-TC38 | C15 → C09 → DB, C15 → C10 | Alternatif: Verifikator menolak laporan akhir | Ajukan laporan, lalu panggil `tolakLaporan()` dengan catatan "Lengkapi foto kegiatan" | Mengembalikan `PERLU_REVISI`. Laporan `DITOLAK` dengan catatan revisi dan `verifikatorId` tercatat, status program `PERLU_REVISI`, dan notifikasi Inisiator memuat catatan | Sesuai yang diharapkan | Pass |
 | INT-TC39 | C15 → C09 → DB | Gagal: meninjau laporan yang sudah ditinjau | Ajukan laporan, tolak, lalu panggil `konfirmasiLaporan()` pada laporan yang sama | Galat `CONFLICT`, laporan tetap `DITOLAK`, status program tetap `PERLU_REVISI` | Galat sesuai, status laporan dan program tidak berubah | Pass |
+| Coverage C06, C09, C14, C15 | <img src="./assets/coverage-laporan-verifikasi.png" alt="Coverage kelas C06, C09, C14, dan C15" width="600"> |
+| INT-TC40 | C20 → C03 → C08 → DB | Normal: check-in relawan diterima pada program aktif yang sedang berlangsung | Buat relawan, program aktif dengan jadwal yang mencakup waktu sekarang, dan pendaftaran DITERIMA. Panggil prosesCheckIn(), lalu baca ulang tbl_kehadiran. | Objek Kehadiran dan tbl_kehadiran berisi timestamp yang sama, sesuai waktu saat prosesCheckIn() dipanggil. | Satu baris tbl_kehadiran tersimpan; waktu pada objek hasil sama dengan waktu pada basis data. | Pass |
+| INT-TC41 | C20 → C02 → DB | Gagal: pendaftaran MENUNGGU atau DITOLAK | Buat relawan dengan pendaftaran berstatus MENUNGGU lalu DITOLAK pada program aktif. Panggil prosesCheckIn() untuk masing-masing status dan periksa tbl_kehadiran. | Kedua permintaan ditolak dengan pesan relawan belum diterima; tidak ada baris kehadiran. | Kedua status ditolak dengan galat yang diharapkan; jumlah baris kehadiran 0. | Pass |
+| INT-TC42 | C20 → C01 → DB | Gagal: check-in di luar waktu pelaksanaan | Buat program aktif dengan waktu mulai besok dan pendaftaran DITERIMA. Panggil prosesCheckIn() dan periksa tbl_kehadiran. | Galat check-in di luar waktu pelaksanaan; tidak ada baris kehadiran. | Galat sesuai; jumlah baris kehadiran 0. | Pass |
+| INT-TC43 | C20 → C01 → DB | Gagal: program tidak berstatus AKTIF | Buat program berstatus MENUNGGU_KONFIRMASI dengan jadwal yang sedang berlangsung dan pendaftaran DITERIMA. Panggil prosesCheckIn(). | Galat bahwa check-in hanya dapat dilakukan pada program aktif; tidak ada baris kehadiran. | Galat sesuai; jumlah baris kehadiran 0. | Pass |
+| INT-TC44 | C20 → C03 → C08 → DB | Gagal: dua check-in untuk relawan dan program yang sama secara bersamaan | Buat program aktif yang sedang berlangsung dan pendaftaran DITERIMA. Panggil prosesCheckIn() dua kali secara bersamaan, lalu hitung baris tbl_kehadiran. | Satu permintaan berhasil dan satu ditolak sebagai check-in ganda; hanya satu baris kehadiran tersimpan. | Satu permintaan berhasil; permintaan bersamaan yang melanggar unique constraint dipetakan menjadi galat kehadiran sudah tercatat; satu baris tersimpan. | Pass |
+| INT-TC45 | C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | Normal: persetujuan laporan menambahkan jam untuk relawan yang hadir | Buat program 4 jam berstatus MENUNGGU_KONFIRMASI, pendaftaran DITERIMA, catatan kehadiran, laporan MENUNGGU, dan Verifikator. Setujui laporan melalui ProgramController. | Status program menjadi SELESAI, portofolio bertambah 4 jam, dan program tercatat satu kali di riwayat. | Status SELESAI; total jam 4; satu program masuk riwayat. | Pass |
+| INT-TC46 | C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | Normal: relawan diterima tanpa check-in tidak mendapat kontribusi | Buat program berstatus MENUNGGU_KONFIRMASI, pendaftaran DITERIMA tanpa catatan kehadiran, dan laporan MENUNGGU. Setujui laporan. | Persetujuan laporan selesai tanpa error; total jam relawan tetap 0 dan riwayat program kosong. | Total jam 0 dan riwayat kosong. | Pass |
+| INT-TC47 | C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | Batas: pendaftar DITOLAK tidak mendapat kontribusi meskipun memiliki catatan kehadiran | Buat program berstatus MENUNGGU_KONFIRMASI, pendaftaran DITOLAK, catatan kehadiran, dan laporan MENUNGGU. Setujui laporan. | Persetujuan laporan selesai tanpa error; pendaftar yang ditolak tetap mendapat 0 jam aksi dan riwayat program kosong. | Total jam 0 dan riwayat kosong. | Pass |
+| INT-TC48 | C20 → C03 → C11 → DB | Batas: pembaruan portofolio untuk program yang sama dipanggil dua kali | Buat program SELESAI berdurasi 4 jam, pendaftaran DITERIMA, dan catatan kehadiran. Panggil perbaruiPortofolioRelawan() dua kali. | Total tetap 4 jam dan program hanya tercatat satu kali. | Total 4 jam dengan satu entri riwayat setelah dua pemanggilan. | Pass |
+| INT-TC49 | C20 → C03 → C11 → DB | Normal: membaca total jam dan urutan riwayat portofolio | Buat dua program SELESAI berdurasi 2 dan 4 jam dengan pendaftaran DITERIMA serta catatan kehadiran. Perbarui portofolio untuk keduanya, lalu baca total dan riwayat. | Total 6 jam; program yang waktu selesai paling baru tampil lebih dulu. | Total 6 jam; urutan riwayat menampilkan program terbaru lalu program yang lebih lama. | Pass |
 | *INT-TC10 dst.* | *[CXX → CYY]* | *[Skenario]* | *[Prosedur/masukan]* | *[Hasil yang diharapkan]* | *[Hasil aktual]* | *Pass/Fail* |
+
+
+Catatan INT-TC10 sampai INT-TC19 (Modul 2, eksplorasi program): file `src/tests/integrasi/modul2.eksplorasi.test.ts` (10 tes, semuanya lulus pada PostgreSQL 16 sungguhan). Tiap tes memakai kata kunci acak berawalan `m2` agar tidak bercampur dengan data *seed* dan menghapus semua data buatannya di `afterAll`. INT-TC19 butuh `pnpm dev` berjalan di `localhost:3000`. Basis data yang dipakai saat pengujian ini berada di mesin penguji (PostgreSQL lokal tanpa Docker), isi skemanya sama dengan hasil `pnpm db:migrate`.
 
 <br>
 
@@ -933,11 +1111,31 @@ Tabel 4.4.2. Hasil Pengujian Use Case UC02
 
 ### 4.4.3 Use Case Mencari program
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC03<br>
+**Nama Use Case:** Mencari program
+
+Data: akun *seed* tidak diperlukan karena pencarian terbuka untuk pengunjung (tanpa login). Basis data berisi tiga program AKTIF hasil `pnpm db:seed`: "Aksi Bersih Sungai" (Jaga Alam), "Susur Pantai Bersih" (Jaga Iklim), dan "Penanaman Pohon Bersama" (Jaga Alam).
+
+Tabel 4.4.3. Hasil Pengujian Use Case UC03
+
+| ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| UC03-TC01 | KF03, KF04 | Normal (langkah 1) | 1. Tanpa login, buka halaman Eksplorasi Program (`/program`). | - | Sistem menampilkan daftar program, kolom pencarian, dan pilihan kategori Jaga Alam dan Jaga Iklim. | Judul "Eksplorasi Program" tampil dengan kolom "Cari program", tombol kategori "Semua", "Jaga Alam", dan "Jaga Iklim", keterangan "Menampilkan 3 program", dan tiga kartu program: Aksi Bersih Sungai, Susur Pantai Bersih, dan Penanaman Pohon Bersama (kuota penuh 1/1). | Pass |
+| UC03-TC02 | KF03, KF04 | Normal (langkah 2) | 1. Pada halaman `/program`, ketik kata kunci pada kolom "Cari program".<br>2. Klik kategori "Jaga Iklim". | Kata kunci: `pantai`<br>Kategori: Jaga Iklim | Sistem memproses masukan, memfilter, dan menampilkan daftar program yang cocok dengan pencarian. | Keterangan berubah menjadi "Menampilkan 1 program" dan hanya kartu "Susur Pantai Bersih" (Jaga Iklim) yang tampil. | Pass |
+| UC03-TC03 | KF03, KF04 | Alternatif 1: Program Tidak Ditemukan | 1. Pada halaman `/program`, ketik kata kunci acak.<br>2. Klik kategori "Jaga Alam". | Kata kunci: `zzqxk`<br>Kategori: Jaga Alam | Sistem tidak menemukan program yang sesuai dan menampilkan pesan bahwa program tidak ditemukan. | Kotak "Program tidak ditemukan" tampil dengan keterangan "Coba kata kunci lain atau ubah filter kategori." dan tombol "Lihat Semua Program". Tidak ada kartu program. | Pass |
 
 ### 4.4.4 Use Case Mengunjungi situs program
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC04<br>
+**Nama Use Case:** Mengunjungi situs program
+
+Tabel 4.4.4. Hasil Pengujian Use Case UC04
+
+| ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| UC04-TC01 | KF02 | Normal (langkah 1) | 1. Tanpa login, buka `/program` dan cari "susur".<br>2. Klik tombol "Lihat Detail" pada kartu "Susur Pantai Bersih". | Kata kunci: `susur` | Sistem menampilkan halaman detail program yang memuat informasi lengkap beserta tautan situs web resmi lembaga. | Halaman `/program/seed-program-dibuka` tampil berisi kategori "Jaga Iklim", penanda "Belum dimulai", nama lembaga, lokasi, jadwal, kuota 0/5, deskripsi, syarat dan ketentuan, serta tombol "Daftar Program" dan "Kunjungi Situs Resmi" (aktif). | Pass |
+| UC04-TC02 | KF02 | Normal (langkah 2) | 1. Pada detail "Susur Pantai Bersih", klik tombol "Kunjungi Situs Resmi". | - | Sistem mengarahkan relawan ke halaman situs web resmi lembaga pada tab baru. | Tab baru terbuka (jumlah tab 1 menjadi 2) dan meminta `GET https://example.org/`, sama dengan tautan lembaga di `tbl_inisiator_program.tautanSitusResmi`. Keterbatasan: lingkungan penguji tidak punya akses internet bebas, jadi halaman `example.org` sendiri tidak berhasil dimuat (`net::ERR_TUNNEL_CONNECTION_FAILED`). Yang dibuktikan adalah aplikasi membuka tab baru ke tautan yang benar. Bukti pada 4.6 berupa log pemantauan jaringan Chromium, bukan tangkapan layar halaman tujuan. | Pass |
+| UC04-TC03 | KF02 | Alternatif 1: Tautan Situs Web Tidak Disediakan | 1. Buka `/program/uc-m10-program-tanpa-situs` (program AKTIF milik lembaga tanpa tautan situs resmi, data uji tambahan).<br>2. Tinjau halaman detail. | Lembaga "Komunitas Tanpa Situs" dengan `tautanSitusResmi` kosong (`null`) | Sistem menonaktifkan elemen tautan dan menampilkan keterangan bahwa situs web resmi tidak tersedia. | Tombol berubah menjadi "Situs Resmi Tidak Tersedia" dan berstatus nonaktif (`disabled`). Data uji tambahan dihapus setelah pengujian. | Pass |
 
 ### 4.4.5 Use Case Menyeleksi calon relawan pendaftar
 
@@ -964,14 +1162,35 @@ Tabel 4.4.7. Hasil Pengujian Use Case UC07
 | ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | UC07-TC01 | KF13, KF15 | Normal | 1. Masuk sebagai Verifikator (`verifikator@rekanbumi.example`), buka `/verifikator`, lalu klik tombol setujui pada program "UC-M10 Tanam Mangrove" dan klik "Ya, setujui" di dialog.<br>2. Masuk sebagai Inisiator (`inisiator@rekanbumi.example`), buka `/laporan`, pilih program tersebut, isi tautan dokumentasi dan ringkasan capaian, lalu klik "Kirim untuk Ditinjau".<br>3. Buka Program Saya (`/inisiator/program`).<br>4. Masuk kembali sebagai Verifikator, buka `/verifikator/laporan`, lalu tinjau dan setujui laporan program tersebut. | Program: UC-M10 Tanam Mangrove<br>Tautan dokumentasi akhir: `https://contoh.id/foto-mangrove-1.jpg`<br>Ringkasan capaian: Seribu bibit mangrove ditanam di pesisir. | Program menjadi aktif setelah disetujui. Setelah laporan dikirim, status program menjadi "Menunggu Konfirmasi" dan Verifikator menerima notifikasi. Setelah laporan ditinjau dan disetujui, status laporan menjadi disetujui. | Dialog "Setujui program ini?" menyebut program akan menjadi aktif dan inisiator diberi notifikasi. Setelah "Ya, setujui", banner "Program "UC-M10 Tanam Mangrove" disetujui dan kini aktif." tampil dan program hilang dari daftar menunggu verifikasi. Di `/laporan`, program tampil berstatus Aktif. Setelah laporan dikirim, Program Saya menampilkan status "Menunggu Konfirmasi" dengan aksi "Laporan Dikirim". Di `/verifikator/laporan`, ikon lonceng verifikator menunjukkan angka 1 dan laporan program tersebut tampil berlabel DISETUJUI. | Pass |
+| UC07-TC02 | KF13, KF15 | Alternatif 1: Laporan Ditolak | 1. Masuk sebagai Verifikator (`verifikator@rekanbumi.example`) dan buka `/verifikator/laporan`.<br>2. Klik "Tinjau Laporan" pada laporan program "UC-M10 Bersih Pantai" yang berstatus MENUNGGU.<br>3. Isi kolom "Catatan revisi", lalu klik "Tolak dan minta revisi".<br>4. Masuk sebagai Inisiator (`inisiator@rekanbumi.example`) dan buka Program Saya (`/inisiator/program`). | Program: UC-M10 Bersih Pantai<br>Ringkasan capaian pada laporan: sampah pantai 50 kg<br>Dokumentasi akhir: `https://contoh.id/foto-pantai-1.jpg`<br>Catatan revisi: Lengkapi foto kegiatan. | Sistem menolak laporan beserta catatan revisi, memperbarui status program menjadi perlu revisi, dan memberi notifikasi kepada Inisiator. | Di `/verifikator/laporan`, laporan "UC-M10 Bersih Pantai" berubah berlabel DITOLAK. Di Program Saya, status program menjadi "Perlu Revisi" dengan aksi "Unggah Ulang", statistik "Laporan perlu revisi" bertambah menjadi 2, dan ikon lonceng Inisiator menampilkan angka 5. | Pass |
 
 ### 4.4.8 Use Case Konfirmasi kehadiran program
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC08<br>
+**Nama Use Case:** Konfirmasi kehadiran program
+
+Menu check-in ada di halaman Kegiatan Saya (`/kegiatan`), yang menampilkan program yang didaftari relawan beserta panel check-in. Program "Aksi Bersih Sungai" pada data *seed* selalu berlangsung saat seed dijalankan (mulai 1 jam sebelumnya, selesai 3 jam sesudahnya), sedangkan "Penanaman Pohon Bersama" dijadwalkan 5 Desember 2026.
+
+Tabel 4.4.8. Hasil Pengujian Use Case UC08
+
+| ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| UC08-TC01 | KF11, KF12 | Normal | 1. Masuk sebagai relawan yang diterima di program "Aksi Bersih Sungai", lalu buka `/kegiatan?program=seed-program-berlangsung`.<br>2. Klik "Check-in Sekarang". | Email: `relawan2@rekanbumi.example`<br>Kata sandi: `DemoRekanBumi2026!`<br>Program: Aksi Bersih Sungai | Sistem memeriksa status relawan dan waktu pelaksanaan, menampilkan tombol check-in aktif, lalu mencatat waktu kehadiran dan menampilkan notifikasi bahwa kehadiran berhasil dikonfirmasi. | Panel menampilkan "Kegiatan sedang berlangsung" dan tombol "Check-in Sekarang" aktif. Setelah diklik, banner "Check-in berhasil pukul 17.30 WIB. Terima kasih sudah hadir!" tampil dan tombol berubah menjadi "Sudah check-in · 17.30 WIB" dalam keadaan nonaktif. Di basis data, kehadiran Bima Contoh pada program tersebut tercatat. | Pass |
+| UC08-TC02 | KF11 | Alternatif 1: Check-in di Luar Waktu Pelaksanaan | 1. Masuk sebagai relawan yang diterima di program "Penanaman Pohon Bersama", lalu buka `/kegiatan?program=seed-program-penanaman-pohon`.<br>2. Tinjau panel check-in dan coba klik tombol check-in. | Email: `relawan1@rekanbumi.example`<br>Kata sandi: `DemoRekanBumi2026!`<br>Program: Penanaman Pohon Bersama (5 Desember 2026) | Sistem mendeteksi waktu saat ini di luar jadwal, menonaktifkan tombol check-in, dan menampilkan keterangan bahwa check-in belum dapat diakses beserta rentang waktu yang diizinkan. | Panel menampilkan "Kegiatan belum dimulai" dan banner kuning "Check-in hanya dapat dilakukan pada Sab, 5 Des 2026 · 15.00–19.00 WIB." Tombol "Check-in Sekarang" nonaktif, dan klik pada tombol tidak mengubah apa pun. | Pass |
 
 ### 4.4.9 Use Case Memperbarui status akun relawan
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC09<br>
+**Nama Use Case:** Memperbarui status akun relawan
+
+UC09-TC01 dan UC09-TC02 dijalankan dalam satu alur pada program "Aksi Bersih Sungai" (durasi 4 jam) setelah UC08-TC01. Bima Contoh sudah check-in pada UC08-TC01, sedangkan pendaftaran Ayu Contoh diterima tanpa check-in. Sebelum pengujian, portofolio Bima berisi 0 jam aksi dan 0 program selesai, sedangkan Ayu berisi 4 jam aksi dan 1 program selesai ("Penanaman Mangrove Selesai").
+
+Tabel 4.4.9. Hasil Pengujian Use Case UC09
+
+| ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| UC09-TC01 | KF14, KF15 | Normal | 1. Masuk sebagai Bima Contoh dan buka `/portofolio` untuk melihat kondisi awal.<br>2. Masuk sebagai Inisiator, buka Kelola Pendaftar "Aksi Bersih Sungai" (`/inisiator/program/seed-program-berlangsung/pendaftar`), ubah keputusan Ayu Contoh menjadi "Terima", lalu klik "Simpan Hasil Seleksi".<br>3. Buka `/laporan`, pilih "Aksi Bersih Sungai", isi laporan, lalu klik "Kirim untuk Ditinjau".<br>4. Masuk sebagai Verifikator, buka `/verifikator/laporan`, klik "Tinjau Laporan" pada program tersebut, lalu klik "Setujui laporan".<br>5. Masuk kembali sebagai Bima Contoh dan buka `/portofolio`. | Inisiator: `inisiator@rekanbumi.example`<br>Verifikator: `verifikator@rekanbumi.example`<br>Relawan: `relawan2@rekanbumi.example`<br>Kata sandi: `DemoRekanBumi2026!`<br>Tautan dokumentasi: `https://contoh.id/foto-sungai-1.jpg`<br>Ringkasan capaian: Sungai Contoh dibersihkan bersama relawan. | Setelah laporan disetujui, program berstatus "Selesai" dan sistem menambahkan jam aksi bagi relawan yang check-in. Portofolio Bima menampilkan "Aksi Bersih Sungai" di riwayat beserta akumulasi jam aksi terbaru. | Portofolio awal Bima berisi 0 jam aksi dan 0 program selesai. Kelola Pendaftar menampilkan "Keputusan seleksi berhasil disimpan." dengan kuota diterima 2/10. Setelah laporan dikirim, Program Saya menampilkan status "Menunggu Konfirmasi". Setelah "Setujui laporan", verifikator kembali ke daftar laporan dan laporan "Aksi Bersih Sungai" berlabel DISETUJUI, sedangkan status program di basis data menjadi `SELESAI`. Portofolio Bima kini berisi 4 jam aksi dan 1 program selesai, dengan kartu "Aksi Bersih Sungai" berlabel "Hadir" dan "+4 jam". | Pass |
+| UC09-TC02 | KF14, KF15 | Alternatif 1: Relawan Tidak Melakukan Check-in Saat Kegiatan | 1. Sebelum UC09-TC01, masuk sebagai Ayu Contoh dan buka `/portofolio` untuk melihat kondisi awal.<br>2. Setelah laporan disetujui pada UC09-TC01, masuk kembali sebagai Ayu Contoh dan buka `/portofolio`. | Email: `relawan1@rekanbumi.example`<br>Kata sandi: `DemoRekanBumi2026!` | Sistem tidak menambahkan jam aksi untuk "Aksi Bersih Sungai" karena kehadiran Ayu tidak tercatat. Portofolio tetap 4 jam aksi dan 1 program selesai. | Sebelum dan sesudah persetujuan laporan, portofolio Ayu sama-sama berisi 4 jam aksi dan 1 program selesai. Riwayat Selesai hanya memuat "Penanaman Mangrove Selesai" (+4 jam), tanpa "Aksi Bersih Sungai". Di basis data, tidak ada catatan kehadiran Ayu pada program tersebut dan `totalJamAksi` tetap 4. | Pass |
 
 <br>
 
@@ -997,7 +1216,7 @@ Tabel 4.5. Hasil Pengujian KNF
 | KNF05-TC01 | KNF05 | Compatibility | Halaman I-01 Registrasi (tamu) tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Chrome DevTools *device mode* pada aplikasi mode produksi. Viewport 1024×768 dan lebar 360 dengan tinggi sama dengan tinggi halaman (`document.documentElement.scrollHeight`), lalu *Capture full size screenshot* (1 kali per lebar). KNF05 diuji pada satu halaman perwakilan untuk setiap peran pengguna, dipilih halaman dengan tata letak paling kompleks. | 1024 px: panel ilustrasi dan formulir tampil berdampingan, seluruh isian, area unggah, tombol "Daftar", dan *footer* utuh. 360 px: panel ilustrasi disembunyikan, formulir menjadi satu kolom, label tab "Inisiator Program" turun ke dua baris tanpa terpotong, tanpa gulir horizontal. | Pass |
 | KNF05-TC02 | KNF05 | Compatibility | Halaman I-04 Eksplorasi Program tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Sama dengan KNF05-TC01. Diambil sebagai tamu (1024 px) dan sebagai verifikator (360 px). Isi halaman sama untuk semua peran. | 1024 px: kolom pencarian, filter kategori, dan tiga kartu program tampil dalam satu baris. 360 px: kartu program tersusun satu kolom, seluruh informasi kartu dan tombol "Lihat Detail" utuh, tanpa gulir horizontal. | Pass |
 | KNF05-TC03 | KNF05 | Compatibility | Halaman I-12 Kegiatan Saya (relawan) tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Sama dengan KNF05-TC01, login sebagai relawan (`relawan1@rekanbumi.example`). | 1024 px: daftar empat kegiatan di kiri dan panel Check-in di kanan tampil utuh. 360 px: tampilan berubah menjadi satu kolom berisi kegiatan terdekat dan panel Check-in, seluruh teks, tombol, dan tautan "Lihat Portofolio Saya" utuh, tanpa gulir horizontal. | Pass |
-| KNF05-TC04 | KNF05 | Compatibility | Halaman I-11 Kelola Pendaftar (inisiator) tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Sama dengan KNF05-TC01, login sebagai inisiator. Pada 360 px diambil satu tangkapan tambahan setelah tabel pendaftar digeser ke kanan. | 1024 px: kartu kuota, filter, tabel pendaftar dengan enam kolom (sampai kolom Keputusan), dan tombol "Simpan Hasil Seleksi" utuh. 360 px: halaman tidak melebar ke samping, tetapi tabel pendaftar lebih lebar dari layar dan ditampilkan dengan gulir horizontal di dalam kartunya. Kolom Keterampilan, Ketersediaan, dan Keputusan baru terlihat setelah tabel digeser, dan setelah digeser dropdown Keputusan dapat dijangkau dan dipakai. | Pass (dengan catatan: tabel memakai gulir horizontal pada 360 px) |
+| KNF05-TC04 | KNF05 | Compatibility | Halaman I-11 Kelola Pendaftar (inisiator) tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Sama dengan KNF05-TC01, login sebagai inisiator. Pada 360 px diambil satu tangkapan tambahan setelah tabel pendaftar digeser ke kanan. | 1024 px: kartu kuota, filter, tabel pendaftar dengan enam kolom (sampai kolom Keputusan), dan tombol "Simpan Hasil Seleksi" utuh. 360 px: halaman tidak melebar ke samping, tetapi tabel pendaftar lebih lebar dari layar dan ditampilkan dengan gulir horizontal di dalam kartunya. Kolom Keterampilan, Ketersediaan, dan Keputusan baru terlihat setelah tabel digeser, dan setelah digeser dropdown Keputusan dapat dijangkau dan dipakai. | Pass |
 | KNF05-TC05 | KNF05 | Compatibility | Halaman I-10 Tinjau Laporan Akhir (verifikator) tampil utuh tanpa elemen terpotong pada lebar 1024 px dan 360 px. | Sama dengan KNF05-TC01, login sebagai verifikator, membuka laporan berstatus MENUNGGU. | 1024 px dan 360 px: judul, status, ringkasan capaian, tautan dokumentasi, kolom catatan revisi, serta tombol "Tolak dan minta revisi" dan "Setujui laporan" utuh. Pada 360 px tautan dokumentasi yang panjang dipindah ke baris berikutnya tanpa melebar ke samping. | Pass |
 | KNF06-TC01 | KNF06 | Security | Setelah 5 kali gagal berturut-turut dari satu IP, permintaan masuk berikutnya dari IP itu ditolak. IP lain tidak terpengaruh. | Skrip HTTP `ujiKnf06BlokirIP.ts` ke `auth.masuk` dengan *header* `x-forwarded-for` tetap: 5 kali kata sandi salah, percobaan ke-6 dengan kata sandi benar, lalu login benar dari IP lain (1 rangkaian, 7 permintaan). | Percobaan 1–5: HTTP 401 "Email atau kata sandi salah". Percobaan ke-6 (kata sandi benar): HTTP 429 "IP diblokir sementara selama 5 menit". IP lain: HTTP 200. | Pass |
 | KNF06-TC02 | KNF06 | Security | Blokir berlangsung 5 menit, lalu IP yang sama bisa masuk lagi | Skrip yang sama dengan opsi `--tunggu`: login benar segera setelah blokir, tunggu 5 menit 5 detik, lalu login benar lagi (1 kali) | 21.56.53: HTTP 429 (masih diblokir). 22.01.58: HTTP 200, berhasil masuk. | Pass |
@@ -1006,11 +1225,11 @@ Tabel 4.5. Hasil Pengujian KNF
 | KNF07-TC03 | KNF07 | Interaction capability | Skor *Accessibility* halaman I-12 Kegiatan Saya (relawan) minimal 90. | Sama dengan KNF07-TC01, login sebagai relawan. | Skor 100. Tidak ada audit yang gagal. | Pass |
 | KNF07-TC04 | KNF07 | Interaction capability | Skor *Accessibility* halaman I-11 Kelola Pendaftar (inisiator) minimal 90. | Sama dengan KNF07-TC01, login sebagai inisiator. | Skor 100. Tidak ada audit yang gagal. | Pass |
 | KNF07-TC05 | KNF07 | Interaction capability | Skor *Accessibility* halaman I-10 Tinjau Laporan Akhir (verifikator) minimal 90. | Sama dengan KNF07-TC01, login sebagai verifikator, membuka laporan berstatus MENUNGGU. | Skor 96. Satu audit gagal: *Background and foreground colors do not have a sufficient contrast ratio* (ada teks dengan kontras warna yang kurang). | Pass |
-| KNF08-TC01 | KNF08 | Flexibility | Halaman I-01 Registrasi dapat memuat seluruh fungsi interaktifnya tanpa pesan galat (teks merah) di *console* pada Google Chrome, Mozilla Firefox, dan Apple Safari. | *Console developer tools* bawaan tiap peramban pada aplikasi mode produksi. Chrome dibuka di jendela Incognito dan Firefox di jendela privat agar log ekstensi tidak ikut terekam. Per halaman: *console* dibersihkan, halaman dimuat ulang, lalu fitur interaktifnya dicoba (1 kali per peramban). Pada halaman ini: berpindah tab Relawan/Inisiator, mengisi beberapa isian, membuka *dropdown* Domisili, dan menekan tombol tampilkan kata sandi. KNF08 diuji pada lima halaman yang sama dengan KNF05. | Chrome: tidak ada galat ("No issues"), diambil saat login sebagai verifikator. Firefox: *[belum diisi]*. Safari: *[belum diisi]*. | *[menunggu Firefox dan Safari]* |
-| KNF08-TC02 | KNF08 | Flexibility | Halaman I-04 Eksplorasi Program tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01. Fitur yang dicoba: pencarian kata kunci "pohon" dan filter kategori Jaga Alam, Jaga Iklim, dan Semua. | Chrome: tidak ada galat, pencarian "pohon" dengan filter Jaga Alam menampilkan 1 program. Firefox: *[belum diisi]*. Safari: *[belum diisi]*. | *[menunggu Firefox dan Safari]* |
-| KNF08-TC03 | KNF08 | Flexibility | Halaman I-12 Kegiatan Saya (relawan) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai relawan. Fitur yang dicoba: memilih kegiatan lain pada daftar sehingga panel Check-in berganti. Tombol Check-in tidak ditekan. | Chrome: tidak ada galat. Firefox: *[belum diisi]*. Safari: *[belum diisi]*. | *[menunggu Firefox dan Safari]* |
-| KNF08-TC04 | KNF08 | Flexibility | Halaman I-11 Kelola Pendaftar (inisiator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai inisiator. Fitur yang dicoba: filter status Menunggu, Diterima, Ditolak, dan Semua, serta membuka *dropdown* Keputusan. Tombol Simpan Hasil Seleksi tidak ditekan. | Chrome: tidak ada galat, filter Diterima menampilkan 1 pendaftar. Firefox: *[belum diisi]*. Safari: *[belum diisi]*. | *[menunggu Firefox dan Safari]* |
-| KNF08-TC05 | KNF08 | Flexibility | Halaman I-10 Tinjau Laporan Akhir (verifikator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai verifikator, membuka laporan berstatus MENUNGGU. Fitur yang dicoba: mengisi kolom catatan revisi. Tombol Tolak dan Setujui tidak ditekan. | Chrome: tidak ada galat. Firefox: *[belum diisi]*. Safari: *[belum diisi]*. | *[menunggu Firefox dan Safari]* |
+| KNF08-TC01 | KNF08 | Flexibility | Halaman I-01 Registrasi dapat memuat seluruh fungsi interaktifnya tanpa pesan galat (teks merah) di *console* pada Google Chrome, Mozilla Firefox, dan Apple Safari. | *Console developer tools* bawaan tiap peramban pada aplikasi mode produksi. Chrome dibuka di jendela Incognito dan Firefox di jendela privat agar log ekstensi tidak ikut terekam. Per halaman: *console* dibersihkan, halaman dimuat ulang, lalu fitur interaktifnya dicoba (1 kali per peramban). Pada halaman ini: berpindah tab Relawan/Inisiator, mengisi beberapa isian, membuka *dropdown* Domisili, dan menekan tombol tampilkan kata sandi. KNF08 diuji pada lima halaman yang sama dengan KNF05. | Chrome: tidak ada galat ("No issues"), diambil saat login sebagai verifikator. Firefox: tidak ada galat. Safari: tidak ada galat. | Pass |
+| KNF08-TC02 | KNF08 | Flexibility | Halaman I-04 Eksplorasi Program tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01. Fitur yang dicoba: pencarian kata kunci "pohon" dan filter kategori Jaga Alam, Jaga Iklim, dan Semua. | Chrome: tidak ada galat, pencarian "pohon" dengan filter Jaga Alam menampilkan 1 program. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
+| KNF08-TC03 | KNF08 | Flexibility | Halaman I-12 Kegiatan Saya (relawan) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai relawan. Fitur yang dicoba: memilih kegiatan lain pada daftar sehingga panel Check-in berganti. Tombol Check-in tidak ditekan. | Chrome: tidak ada galat. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
+| KNF08-TC04 | KNF08 | Flexibility | Halaman I-11 Kelola Pendaftar (inisiator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai inisiator. Fitur yang dicoba: filter status Menunggu, Diterima, Ditolak, dan Semua, serta membuka *dropdown* Keputusan. Tombol Simpan Hasil Seleksi tidak ditekan. | Chrome: tidak ada galat, filter Diterima menampilkan 1 pendaftar. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
+| KNF08-TC05 | KNF08 | Flexibility | Halaman I-10 Tinjau Laporan Akhir (verifikator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai verifikator, membuka laporan berstatus MENUNGGU. Fitur yang dicoba: mengisi kolom catatan revisi. Tombol Tolak dan Setujui tidak ditekan. | Chrome: tidak ada galat. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
 | *KNFXX-TC01* | *KNFXX* | *[Parameter]* | *[...]* | *[...]* | *[...]* | *Pass/Fail* |
 
 <br>
@@ -1024,6 +1243,9 @@ Tabel 4.6. Bukti Hasil Pengujian
 | ID Pengujian | Bukti Hasil Pengujian |
 | :--- | :--- |
 | C02-UT01 – C02-UT06 | <img src="./assets/C02-UT.png" alt="Keluaran unit test C02" width="600"> |
+| C01-UT01 – C01-UT38 | <img src="./assets/C01-UT.png" alt="Keluaran unit test C01" width="600"> |
+| C05-UT01 – C05-UT07 | <img src="./assets/C05-UT.png" alt="Keluaran unit test C05" width="600"> |
+| C15-UT31 – C15-UT50 | <img src="./assets/C15-UT31-UT50.png" alt="Keluaran unit test C15 operasi eksplorasi program" width="600"> |
 | C03-UT01 – C03-UT07 | <img src="./assets/C03-UT.png" alt="Keluaran unit test C03" width="600"> |
 | C04-UT01 – C04-UT03 | <img src="./assets/C04-UT.png" alt="Keluaran unit test C04" width="600"> |
 | C10-UT01 – C10-UT11 | <img src="./assets/C10-UT.png" alt="Keluaran unit test C10" width="600"> |
@@ -1036,19 +1258,33 @@ Tabel 4.6. Bukti Hasil Pengujian
 | C22-UT01 – C22-UT15 | <img src="./assets/C22-UT.png" alt="Keluaran unit test C22" width="600"> |
 | C02, C18 (coverage) | Pendaftaran 100% baris / 100% cabang; SeleksiController 83,5% baris / 76,92% cabang (`pnpm test:coverage`, @vitest/coverage-v8) |
 | C10, C13, C21, C22 (coverage) | <img src="./assets/coverage-modul1.png" alt="Laporan coverage kelas Modul 1" width="600"><br>Notifikasi 100% baris / 100% cabang, AuthController 100% / 97,67%, CloudStorageAdapter 100% / 92%, BetterAuth 100% / 100% |
+| C01, C05, C15 (coverage) | <img src="./assets/coverage-modul2.png" alt="Laporan coverage kelas Modul 2" width="600"><br>Program 100% baris / 100% cabang, InisiatorProgram 100% / 100%, ProgramController (seluruh berkas) 78,28% / 86,53% |
 | C11, C20 (coverage) | <img src="./assets/coverage-modul5.png" alt="Laporan coverage kelas Modul 5" width="600"><br>RiwayatKontribusi 100% baris / 100% cabang, PresensiController 98,29% / 95,52% |
 | INT-TC01 – INT-TC09 | <img src="./assets/INT-TC01-TC09.png" alt="Keluaran integration test Modul 1" width="600"> |
-| INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test Modul 4" width="600"> |
+| INT-TC10 – INT-TC19 | <img src="./assets/INT-TC10-TC19.png" alt="Keluaran integration test eksplorasi program" width="600"> |
+| INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test laporan dan verifikasi program" width="600"> |
+| INT-TC40 – INT-TC49 | <img src="./assets/INT-TC40-TC49.png" alt="Keluaran integration test presensi dan portofolio" width="900"> |
 | UC01-TC01 | <img src="./assets/UC01-TC01-a.png" alt="UC01-TC01 formulir terisi" width="400"> <img src="./assets/UC01-TC01-b.png" alt="UC01-TC01 akun berhasil dibuat" width="400"> |
 | UC01-TC02 | <img src="./assets/UC01-TC02.png" alt="UC01-TC02 data diri tidak lengkap" width="400"> |
-| UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program berhasil dibuat" width="400"> <img src="./assets/UC01-TC03-c.png" alt="UC01-TC03 program tampil di Program Saya" width="400"> |
+| UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program baru tampil di Program Saya" width="400"> |
 | UC01-TC04 | <img src="./assets/UC01-TC04.png" alt="UC01-TC04 lembaga belum terverifikasi" width="400"> |
 | UC02-TC01 | <img src="./assets/UC02-TC01-a.png" alt="UC02-TC01 detail program sebelum login" width="400"> <img src="./assets/UC02-TC01-b.png" alt="UC02-TC01 tidak diarahkan ke login" width="400"> |
 | UC02-TC02 | <img src="./assets/UC02-TC02-a.png" alt="UC02-TC02 login dengan urlKembali" width="400"> <img src="./assets/UC02-TC02-b.png" alt="UC02-TC02 kembali ke halaman program" width="400"> |
 | UC02-TC03 | <img src="./assets/UC02-TC03.png" alt="UC02-TC03 kredensial salah" width="400"> |
 | UC02-TC04 | <img src="./assets/UC02-TC04.png" alt="UC02-TC04 IP diblokir" width="400"> |
+| UC03-TC01 | <img src="./assets/UC03-TC01.png" alt="UC03-TC01 halaman Eksplorasi Program" width="400"> |
+| UC03-TC02 | <img src="./assets/UC03-TC02.png" alt="UC03-TC02 pencarian pantai dengan kategori Jaga Iklim" width="400"> |
+| UC03-TC03 | <img src="./assets/UC03-TC03.png" alt="UC03-TC03 program tidak ditemukan" width="400"> |
+| UC04-TC01 | <img src="./assets/UC04-TC01.png" alt="UC04-TC01 detail program dengan tombol situs resmi" width="400"> |
+| UC04-TC02 | <img src="./assets/UC04-TC02.png" alt="UC04-TC02 log tab baru ke tautan lembaga" width="600"><br>Berupa keluaran terformat dari pemantauan Chromium (jumlah tab dan permintaan jaringan), bukan tangkapan layar halaman tujuan (lihat keterbatasan pada Tabel 4.4.4) |
+| UC04-TC03 | <img src="./assets/UC04-TC03.png" alt="UC04-TC03 tombol situs resmi nonaktif" width="400"> |
 | UC06-TC01 | <img src="./assets/UC06-TC01-a.png" alt="UC06-TC01 konfirmasi hasil seleksi" width="400"> <img src="./assets/UC06-TC01-b.png" alt="UC06-TC01 notifikasi terkirim" width="400"><br><img src="./assets/UC06-TC01-c.png" alt="UC06-TC01 angka di ikon lonceng" width="400"> <img src="./assets/UC06-TC01-d.png" alt="UC06-TC01 daftar notifikasi" width="400"><br><img src="./assets/UC06-TC01-e.png" alt="UC06-TC01 detail notifikasi" width="400"> |
 | UC07-TC01 | <img src="./assets/UC07-TC01-a1.png" alt="UC07-TC01 persetujuan program" width="400"> <img src="./assets/UC07-TC01-a2.png" alt="UC07-TC01 program disetujui" width="400"><br><img src="./assets/UC07-TC01-b.png" alt="UC07-TC01 unggah laporan akhir" width="400"> <img src="./assets/UC07-TC01-c.png" alt="UC07-TC01 status laporan dikirim" width="400"><br><img src="./assets/UC07-TC01-d.png" alt="UC07-TC01 daftar laporan di verifikator" width="400"> <img src="./assets/UC07-TC01-e.png" alt="UC07-TC01 hasil peninjauan laporan" width="400"> |
+| UC07-TC02 | <img src="./assets/UC07-TC02-a.png" alt="UC07-TC02 catatan revisi dan tombol tolak" width="400"> <img src="./assets/UC07-TC02-b.png" alt="UC07-TC02 laporan berstatus ditolak" width="400"> <img src="./assets/UC07-TC02-c.png" alt="UC07-TC02 program perlu revisi di Program Saya" width="400"> |
+| UC08-TC01 | <img src="./assets/UC08-TC01-a.png" alt="UC08-TC01 tombol check-in aktif" width="400"> <img src="./assets/UC08-TC01-b.png" alt="UC08-TC01 check-in berhasil" width="400"> |
+| UC08-TC02 | <img src="./assets/UC08-TC02.png" alt="UC08-TC02 check-in di luar waktu pelaksanaan" width="400"> |
+| UC09-TC01 | <img src="./assets/UC09-TC01-a.png" alt="UC09-TC01 portofolio Bima sebelum laporan disetujui" width="400"> <img src="./assets/UC09-TC01-b.png" alt="UC09-TC01 Ayu diterima di Kelola Pendaftar" width="400"><br><img src="./assets/UC09-TC01-c.png" alt="UC09-TC01 formulir laporan akhir" width="400"> <img src="./assets/UC09-TC01-d.png" alt="UC09-TC01 tinjau laporan" width="400"><br><img src="./assets/UC09-TC01-e.png" alt="UC09-TC01 laporan disetujui" width="400"> <img src="./assets/UC09-TC01-f.png" alt="UC09-TC01 portofolio Bima setelah laporan disetujui" width="400"> |
+| UC09-TC02 | <img src="./assets/UC09-TC02-a.png" alt="UC09-TC02 portofolio Ayu sebelum laporan disetujui" width="400"> <img src="./assets/UC09-TC02-b.png" alt="UC09-TC02 portofolio Ayu setelah laporan disetujui" width="400"> |
 | KNF01-TC01 | <img src="./assets/KNF01-TC01.png" alt="KNF01-TC01 uji beban 50 pencarian bersamaan, 5 putaran" width="600"> |
 | KNF02-TC01 | <img src="./assets/KNF02-TC01.png" alt="KNF02-TC01 inspeksi hash di basis data" width="600"> |
 | KNF03-TC01 | <img src="./assets/KNF03-TC01.png" alt="KNF03-TC01 waktu simpan berkas 2 MB" width="600"> |
@@ -1064,11 +1300,11 @@ Tabel 4.6. Bukti Hasil Pengujian
 | KNF07-TC03 | <img src="./assets/KNF07-TC03.png" alt="KNF07-TC03 Lighthouse Kegiatan Saya skor 100" width="600"> |
 | KNF07-TC04 | <img src="./assets/KNF07-TC04.png" alt="KNF07-TC04 Lighthouse Kelola Pendaftar skor 100" width="600"> |
 | KNF07-TC05 | <img src="./assets/KNF07-TC05.png" alt="KNF07-TC05 Lighthouse Tinjau Laporan skor 96" width="600"> |
-| KNF08-TC01 | <img src="./assets/KNF08-TC01-chrome.png" alt="KNF08-TC01 console Chrome Registrasi" width="300"> *[Firefox]* *[Safari]* |
-| KNF08-TC02 | <img src="./assets/KNF08-TC02-chrome.png" alt="KNF08-TC02 console Chrome Eksplorasi" width="300"> *[Firefox]* *[Safari]* |
-| KNF08-TC03 | <img src="./assets/KNF08-TC03-chrome.png" alt="KNF08-TC03 console Chrome Kegiatan Saya" width="300"> *[Firefox]* *[Safari]* |
-| KNF08-TC04 | <img src="./assets/KNF08-TC04-chrome.png" alt="KNF08-TC04 console Chrome Kelola Pendaftar" width="300"> *[Firefox]* *[Safari]* |
-| KNF08-TC05 | <img src="./assets/KNF08-TC05-chrome.png" alt="KNF08-TC05 console Chrome Tinjau Laporan" width="300"> *[Firefox]* *[Safari]* |
+| KNF08-TC01 | <img src="./assets/KNF08-TC01-chrome.png" alt="KNF08-TC01 console Chrome Registrasi" width="300"> <img src="./assets/KNF08-TC01-firefox.png" alt="KNF08-TC01 Firefox" width="300"> <img src="./assets/KNF08-TC01-safari.png" alt="KNF08-TC01 Safari" width="300"> |
+| KNF08-TC02 | <img src="./assets/KNF08-TC02-chrome.png" alt="KNF08-TC02 console Chrome Eksplorasi" width="300"> <img src="./assets/KNF08-TC02-firefox.png" alt="KNF08-TC02 Firefox" width="300"> <img src="./assets/KNF08-TC02-safari.png" alt="KNF08-TC02 Safari" width="300"> |
+| KNF08-TC03 | <img src="./assets/KNF08-TC03-chrome.png" alt="KNF08-TC03 console Chrome Kegiatan Saya" width="300"> <img src="./assets/KNF08-TC03-firefox.png" alt="KNF08-TC03 Firefox" width="300"> <img src="./assets/KNF08-TC03-safari.png" alt="KNF08-TC03 Safari" width="300"> |
+| KNF08-TC04 | <img src="./assets/KNF08-TC04-chrome.png" alt="KNF08-TC04 console Chrome Kelola Pendaftar" width="300"> <img src="./assets/KNF08-TC04-firefox.png" alt="KNF08-TC04 Firefox" width="300"> <img src="./assets/KNF08-TC04-safari.png" alt="KNF08-TC04 Safari" width="300"> |
+| KNF08-TC05 | <img src="./assets/KNF08-TC05-chrome.png" alt="KNF08-TC05 console Chrome Tinjau Laporan" width="300"> <img src="./assets/KNF08-TC05-firefox.png" alt="KNF08-TC05 Firefox" width="300"> <img src="./assets/KNF08-TC05-safari.png" alt="KNF08-TC05 Safari" width="300"> |
 | *[ID pengujian lain]* | *[Sisipkan bukti]* |
 
 <br>
@@ -1083,29 +1319,40 @@ Tabel 5.1. Matriks Kerunutan KF terhadap Implementasi dan Pengujian
 
 | KF ID | KNF Terkait | Use Case ID | Kelas Terkait | Implementasi File Terkait | Test Case (UC) | Test Case (Unit/Integrasi/KNF) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| KF01 | KNF03 | UC01 | C12 - KelolaAkunPage<br>C13 - AuthController<br>C21 - CloudStorageAdapter<br>*[kelas I-08]* | `src/views/KelolaAkunPage/Registrasi.tsx`<br>`src/views/components/FileDropzone.tsx`<br>`src/server/controllers/AuthController.ts`<br>`src/server/adapters/CloudStorageAdapter.ts`<br>*[file I-08]* | UC01-TC01<br>*[UC01-TC03 dst.]* | C13-UT09, C13-UT10, C13-UT14, C13-UT15, C21-UT01 s.d. C21-UT13, INT-TC01, INT-TC02<br>*[test case I-08, KNF03-TC..]* |
-| KF02 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF03 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF04 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
+| KF01 | KNF03 | UC01 | C12 - KelolaAkunPage<br>C13 - AuthController<br>C21 - CloudStorageAdapter<br>C14 - KelolaProgramPage<br>C15 - ProgramController | `src/views/KelolaAkunPage/Registrasi.tsx`<br>`src/views/components/FileDropzone.tsx`<br>`src/server/controllers/AuthController.ts`<br>`src/server/adapters/CloudStorageAdapter.ts`<br>`src/views/KelolaProgramPage/ProgramFormView.tsx`<br>`src/server/controllers/ProgramController.ts` (`simpanProgramBaru()`) | UC01-TC01, UC01-TC03, UC01-TC04 | C13-UT09, C13-UT10, C13-UT14, C13-UT15, C21-UT01 s.d. C21-UT13, INT-TC01, INT-TC02, INT-TC30, INT-TC31 |
+| KF02 | - | UC04 | C05 - InisiatorProgram<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/InisiatorProgram.ts`<br>`src/server/controllers/ProgramController.ts` (`ambilDetailProgram()`, `validasiTautanSitus()`)<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` | UC04-TC01, UC04-TC02, UC04-TC03 | C05-UT04 s.d. C05-UT06, C15-UT38 s.d. C15-UT50, INT-TC15, INT-TC17, INT-TC19, KNF07-TC02 |
+| KF03 | KNF01, KNF05, KNF07, KNF08 | UC03 | C01 - Program<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/Program.ts`<br>`src/server/controllers/ProgramController.ts` (`cariProgram()`)<br>`src/server/api/routers/program.ts` (`cari`)<br>`src/lib/pencarianProgram.ts`<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` | UC03-TC01, UC03-TC02, UC03-TC03 | C15-UT31 s.d. C15-UT37, INT-TC10, INT-TC11, INT-TC13, INT-TC14, INT-TC19, KNF01-TC01, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
+| KF04 | KNF01, KNF05, KNF07, KNF08 | UC03 | C01 - Program<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/Program.ts`<br>`src/server/controllers/ProgramController.ts` (`cariProgram()`)<br>`src/server/api/routers/program.ts` (`cari`)<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx` | UC03-TC02, UC03-TC03 | C15-UT33, C15-UT37, INT-TC12, INT-TC19, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
 | KF05 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
 | KF06 | KNF02, KNF06 | UC02 | C12 - KelolaAkunPage<br>C13 - AuthController<br>C22 - BetterAuth | `src/views/KelolaAkunPage/Login.tsx`<br>`src/views/KelolaAkunPage/useKelolaAkunPage.ts`<br>`src/lib/urlKembali.ts`<br>`src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts`<br>`src/server/api/trpc.ts` (`protectedProcedure`)<br>`src/server/adapters/BetterAuth.ts`<br>`src/server/auth.ts`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts` | UC02-TC01, UC02-TC02, UC02-TC03, UC02-TC04 | C12-UT01 s.d. C12-UT04, C13-UT24 s.d. C13-UT29, C13-UT36 s.d. C13-UT38, C13-UT40, C22-UT01 s.d. C22-UT15, INT-TC04, INT-TC05, INT-TC06, KNF02-TC01, KNF06-TC01, KNF06-TC02 |
 | KF07 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
 | KF08 | - | UC06 | C04 - Pengguna<br>C10 - Notifikasi<br>C12 - KelolaAkunPage<br>C13 - AuthController<br>*[C18 - SeleksiController]* | `src/server/models/Pengguna.ts`<br>`src/server/models/Notifikasi.ts`<br>`src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/components/Navbar.tsx`<br>*[file C18]* | UC06-TC01 | C04-UT01 s.d. C04-UT03, C10-UT01 s.d. C10-UT11, C13-UT30 s.d. C13-UT35, C13-UT41, INT-TC07, INT-TC08<br>*[test case C18]* |
 | KF09 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
 | KF10 | - | UC01 | C13 - AuthController<br>*[C03 - Relawan, C18 - SeleksiController]* | `src/server/controllers/AuthController.ts`<br>`src/server/auth.ts` (`afterEmailVerification`)<br>*[file C03, C18]* | UC01-TC01, UC01-TC02 | C13-UT01 s.d. C13-UT08, C13-UT13, C13-UT20 s.d. C13-UT23, C13-UT39, INT-TC01, INT-TC03, INT-TC09<br>*[test case C03, C18]* |
-| KF11 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF12 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
+| KF11 | KNF04 | UC08 | C03 - Relawan<br>C08 - Kehadiran<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/views/AreaKegiatanPage/AreaKegiatan.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts<br>src/server/api/routers/presensi.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Relawan.ts<br>src/server/models/Kehadiran.ts | UC08-TC01, UC08-TC02 | C20-UT08, C20-UT11, C20-UT17, C20-UT20, INT-TC40, INT-TC44, KNF04-TC01 |
+| KF12 | - | UC08 | C03 - Relawan<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/views/AreaKegiatanPage/AreaKegiatan.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts<br>src/server/api/routers/presensi.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Pendaftaran.ts<br>src/server/models/Program.ts<br>src/server/models/Relawan.ts | UC08-TC01, UC08-TC02 | C20-UT01 s.d. C20-UT05, C20-UT08 s.d. C20-UT18, INT-TC40 s.d. INT-TC43 |
 | KF13 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
 | KF14 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF15 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
+| KF15 | - | UC07, UC09 | C03 - Relawan<br>C11 - RiwayatKontribusi<br>C15 - ProgramController<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/server/controllers/ProgramController.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Relawan.ts<br>src/server/models/RiwayatKontribusi.ts<br>src/server/api/routers/presensi.ts<br>src/views/AreaKegiatanPage/Portofolio.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts | UC07-TC01, UC09-TC01, UC09-TC02 | C11-UT01 s.d. C11-UT08, C15-UT01, C20-UT25 s.d. C20-UT35, INT-TC37, INT-TC45 s.d. INT-TC49 |
 | KF16 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
 
 Status KF Modul 1 pada tag `v9.0`: KF08 terpenuhi (seluruh test case `Pass`). KF06 **belum terpenuhi** karena UC02-TC01 `Fail` (pengunjung tidak diarahkan ke login saat mengirim pendaftaran program). Penyebab dan usulan perbaikannya ada pada Tabel 4.4.2. KF01 dan KF10 menunggu test case modul lain pada baris yang sama.
+
+Status KF Modul 2 pada tag `v9.0`: KF02, KF03, dan KF04 terpenuhi pada sisi uji yang sudah dijalankan: seluruh test case use case (UC03-TC01 sampai UC03-TC03, UC04-TC01 sampai UC04-TC03), unit test C15-UT31 sampai C15-UT50, dan integration test INT-TC10 sampai INT-TC19 berkesimpulan `Pass`. Dua catatan: (1) UC04-TC02 membuktikan tab baru terbuka ke tautan lembaga yang benar, tetapi halaman tujuan tidak sempat dimuat karena lingkungan penguji tidak punya akses internet bebas. (2) KF03 dan KF04 mengacu pula ke KNF05, KNF07, dan KNF08, dan KNF08-TC02 masih menunggu hasil Firefox dan Safari (Subbab 4.5). Selama kolom itu belum terisi, KF03 dan KF04 baru terpenuhi untuk bagian fungsionalnya.
+
+KF01 pada sisi Inisiator (UC01-TC03 dan UC01-TC04) `Pass`, tetapi perlu dicatat bahwa pada `v9.0` formulir "Daftarkan Program Baru" (I-08) menerima dokumen legalitas sebagai tautan (`urlDokumenLegalitas`), belum sebagai berkas hasil *upload* atau *drag-and-drop* seperti bunyi KF01 pada SKPL. Fitur *upload* dokumen pada registrasi (UC01-TC01) memang sudah memakai area unggah. Kelengkapan KF01 untuk sisi program ditentukan oleh UC01-TC03 dan UC01-TC04, yang tidak menguji unggah berkas pada formulir program.
 
 Tabel 5.2. Matriks Kerunutan KNF terhadap Pengujian
 
 | ID KNF | Parameter | KF/UC Terkait | Test Case |
 | :--- | :--- | :--- | :--- |
-| *KNF01* | *Reliability* | *KF05 / UC03* | *KNF01-TC01* |
-| *KNFXX* | *[Parameter]* | *[KFXX / UCXX atau -]* | *[KNFXX-TCYY]* |
-| *...* | *...* | *...* | *...* |
+| KNF01 | *Performance efficiency* | KF03 / UC03 | KNF01-TC01 |
+| KNF02 | *Security* | KF06 / UC01, UC02 | KNF02-TC01 |
+| KNF03 | *Performance efficiency* | KF01 / UC01 | KNF03-TC01 |
+| KNF04 | *Reliability* | KF11 / UC08 | KNF04-TC01 |
+| KNF05 | *Compatibility* | KF03, KF11 / UC03, UC08 | KNF05-TC01 s.d. KNF05-TC05 |
+| KNF06 | *Security* | KF06 / UC02 | KNF06-TC01, KNF06-TC02 |
+| KNF07 | *Interaction capability* | KF03, KF06, KF11 / UC02, UC03, UC08 | KNF07-TC01 s.d. KNF07-TC05 |
+| KNF08 | *Flexibility* | KF03, KF06, KF11 / UC02, UC03, UC08 | KNF08-TC01 s.d. KNF08-TC05 |
+
+KF/UC terkait mengikuti kode kebutuhan (R) pada Tabel 3.2 SKPL, yaitu KF dan UC yang berasal dari kebutuhan yang sama dengan KNF tersebut. Seluruh 21 test case KNF berstatus `Pass`.

@@ -31,6 +31,7 @@
 * [Milestone 7](#milestone-7)
 * [Milestone 8](#milestone-8)
 * [Milestone 9](#milestone-9)
+* [Milestone 10](#milestone-10)
 * Notes: Copy bagian Daftar Isi seperti Milestone 1 untuk Milestone berikutnya, contoh ``* [Milestone 2](#milestone-2)``. Ketika Daftar isi diklik maka akan langsung diarahkan ke bagian bawah sesuai dengan Milestone tujuan.
 
 
@@ -200,5 +201,25 @@
 | 13-11-2026 | Ribka Kaylena Sanjaya | Implementasi I-11 Kelola Pendaftar dan seleksi relawan serta perbaikan sesuai review (PR #51) | 5 (perkiraan) | Done | Laptop rusak, PR dilanjutkan Avicenna |
 | 13-11-2026 | Kairenzo Vemil | Implementasi I-04 Eksplorasi Program, I-05 Detail Program, dan pencarian program, lalu perbaikan sesuai review (PR #57) | 5 (perkiraan) | Done | - |
 | 13-11-2026 | Kairenzo Vemil | Unit test model Program: cekKuotaTersedia, cekDalamWaktuPelaksanaan, hitungDurasiJam (PR #71) | 1,5 (perkiraan) | Done | - |
+
+### Milestone 10
+**Periode:** 14 November 2026 - 20 November 2026
+| Tanggal | Nama Anggota | Deskripsi Pekerjaan | Durasi (Jam) | Status | Kendala / Blocker |
+|---|---|---|---|---|---|
+| 20-11-2026 | Mulky Siraj Firizqi | Menyiapkan aplikasi di Mac untuk uji KNF08: memasang PostgreSQL 16 (Homebrew) karena tidak ada Docker, menyalin `.env`, migrasi, seed, build, dan menjalankan aplikasi | 1,5 (perkiraan) | Done | `docker` tidak tersedia dan `cp .env.example` dijalankan dari root repo (harus di `src/`); diganti PostgreSQL Homebrew |
+| 20-11-2026 | Mulky Siraj Firizqi | Uji manual KNF08 pada Mozilla Firefox (jendela privat, *console*) untuk 5 halaman (TC01 sampai TC05) dan mengambil tangkapan layar | 1,5 (perkiraan) | Done | Firefox menampilkan satu peringatan kuning pada TC02 sampai TC05 (bukan galat merah); ⌘P membuka dialog cetak, seharusnya ⌘⇧P untuk jendela privat |
+| 20-11-2026 | Mulky Siraj Firizqi | Uji manual KNF08 pada Apple Safari (jendela privat, *console*) untuk 5 halaman dan mengambil tangkapan layar | 1,5 (perkiraan) | Done | Beberapa tangkapan layar diambil ulang (zoom terlalu kecil, bilah alamat tidak terlihat, filter *console* bukan "All") |
+| 20-11-2026 | Mulky Siraj Firizqi | Mengisi hasil KNF08 Firefox dan Safari pada Tabel 4.5 dan 4.6 HIUPL, memindahkan 10 tangkapan layar ke `docs/M10/assets/`, lalu commit dan push | 0,5 (perkiraan) | Done | Push sempat tampak macet; berhasil dan diverifikasi lewat `git ls-remote` |
+| 20-11-2026 | Mulky Siraj Firizqi | Menindaklanjuti permintaan Gie pada HIUPL (Node.js 20.20.2, 247 unit test, daftar INT-TC pada Subbab 4.3), memeriksa dan me-merge PR #74 | 0,5 (perkiraan) | Done | - |
+| 20-11-2026 | Mulky Siraj Firizqi | Melengkapi Tabel 3.1 Lingkungan Implementasi (spesifikasi laptop, OS, DBMS, *testing tools*) berdasarkan spesifikasi Mac yang dipakai | 0,5 (perkiraan) | Done | - |
+| 20-11-2026 | Mulky Siraj Firizqi | Mengisi Form Asistensi Milestone 10 (asistensi akbar Tugas 10) beserta dokumentasinya | 0,5 (perkiraan) | Done | - |
+| 20-11-2026 | Mulky Siraj Firizqi | Mengisi Logbook dan Deklarasi Penggunaan AI Milestone 10 | 0,5 (perkiraan) | Done | - |
+| 20-11-2026 | Avicenna Ananda Musthafa | Mengisi HIUPL 3.2, 3.3, dan 4.1.1 untuk kelas Modul 5 (C03, C08, C11, C19, C20) | 1,5 (perkiraan) | Done | - |
+| 20-11-2026 | Avicenna Ananda Musthafa | Melengkapi unit test Modul 5 beserta ID pengujian dan ambang *coverage*, lalu mengisi subbab 4.2 C03, C11, dan C20 dengan bukti keluaran test dan *coverage* | 3 (perkiraan) | Done | - |
+| 20-11-2026 | Avicenna Ananda Musthafa | Koordinasi pengujian KNF dan menguji KNF01 (skrip uji beban pencarian baru), KNF04, KNF05, KNF07, dan KNF08 di Chrome pada lima halaman sampel | 3 (perkiraan) | Done | KNF08 di Firefox dan Safari menunggu perangkat anggota lain |
+| 20-11-2026 | Avicenna Ananda Musthafa | Pengujian use case UC08 dan UC09 (HIUPL 4.4.8 dan 4.4.9) beserta tangkapan layar bukti | 2 (perkiraan) | Done | Basis data lokal masih berisi data uji lama sehingga perlu di-reset. Ditemukan dua catatan tampilan di luar skenario SKPL: tab Sedang Diikuti di portofolio dan navbar ganda di `/laporan` |
+| 20-11-2026 | Avicenna Ananda Musthafa | Integration test INT-TC40 s.d. INT-TC49 untuk presensi dan portofolio (HIUPL 4.3), ID INT-TC pada 4.1.1, serta BAB 5 baris KF11, KF12, KF15 dan Tabel 5.2 KNF | 3 (perkiraan) | Done | - |
+| 20-11-2026 | Avicenna Ananda Musthafa | Menyinkronkan dokumen dengan `main` tim, menyelesaikan konflik pada HIUPL, dan mengisi kesimpulan KNF08 | 1 (perkiraan) | Done | Konflik di Tabel 4.3.2 dan 4.6 karena anggota lain menambah baris di posisi yang sama |
+| 20-11-2026 | Avicenna Ananda Musthafa | Mengisi Logbook Milestone 10 | 0,5 (perkiraan) | Done | - |
 
 ``Gunakan format penulisan Logbook yang sama untuk setiap Milestone dan pastikan pembuatan Daftar Isi juga sudah sesuai sebelum Logbook dikumpulkan. ``
