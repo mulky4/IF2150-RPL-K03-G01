@@ -153,13 +153,13 @@ Tabel 3.1. Lingkungan Implementasi
 
 | Aspek | Keterangan |
 | :--- | :--- |
-| *Hardware* | Laptop pribadi tiap anggota tim untuk pengembangan dan pengujian lokal. *[Lengkapi spesifikasi prosesor dan RAM laptop anggota.]* |
-| *Operating System* | Aplikasi lintas platform karena berjalan di atas Node.js. Pengguna mengakses lewat peramban modern di desktop dan ponsel (SKPL 2.5). Pengujian pada dokumen ini dijalankan di Linux (kontainer) dengan Node.js 22.23.5. |
+| *Hardware* | Laptop pribadi tiap anggota tim untuk pengembangan dan pengujian lokal. Pengujian ulang unit test dan *coverage* Modul 1 serta KNF08 pada Mozilla Firefox dan Apple Safari dijalankan di MacBook Air (Apple M4, RAM 24 GB). Unit test, integration test INT-TC01 s.d. INT-TC09, dan use case Modul 1 juga dijalankan di kontainer Linux. |
+| *Operating System* | Aplikasi lintas platform karena berjalan di atas Node.js. Pengguna mengakses lewat peramban modern di desktop dan ponsel (SKPL 2.5). Pengujian pada dokumen ini dijalankan di Linux (kontainer, Node.js 22.23.5) dan macOS 15.5 (Node.js 24.13.0). Jumlah akhir unit test pada Subbab 4.2 diukur dengan Node.js 20.20.2. |
 | *Bahasa Pemrograman* | TypeScript 5.9.3, SQL (PostgreSQL, berkas migrasi Prisma), CSS (Tailwind) |
 | *Framework/Library* | Next.js 15.5.29 (App Router), React 19.1.0, tRPC 11.25.0, TanStack React Query 5.107.1, superjson, Prisma ORM 6.19.3, Better Auth 1.3.34, bcryptjs 3.0.3, Zod 3.25.76, Tailwind CSS 4.3.5 |
-| *DBMS* | PostgreSQL 16 lewat Docker Compose (`src/docker-compose.yml`) untuk pengembangan lokal. Neon PostgreSQL pada DPPL tetap bisa dipakai dengan mengganti `DATABASE_URL`. |
+| *DBMS* | PostgreSQL 16 lewat Docker Compose (`src/docker-compose.yml`) untuk pengembangan lokal. Di macOS tanpa Docker dipakai PostgreSQL 16 lewat Homebrew dengan kredensial yang sama. Neon PostgreSQL pada DPPL tetap bisa dipakai dengan mengganti `DATABASE_URL`. |
 | *Development Tools* | Visual Studio Code, Git dan GitHub (alur Gitflow-lite dengan *pull request* dan *review*), pnpm 10.28.0, Node.js 20–22 (`src/.nvmrc` = 20), Docker, Prisma CLI dan Prisma Studio, ESLint 9.39.5, Prettier 3.9.10, draw.io |
-| *Testing Tools* | Vitest 3.2.7 (unit test dan integration test otomatis), @vitest/coverage-v8 3.2.7 (laporan *coverage* % baris dan % cabang), tsx 4.23.15 (skrip uji KNF dan uji beban di `src/tests/knf/` dan `src/tests/beban/`), `psql` (inspeksi basis data untuk KNF *security*), peramban Google Chrome/Chromium (pengujian use case manual), Chrome DevTools dan Lighthouse (KNF waktu respons dan aksesibilitas) |
+| *Testing Tools* | Vitest 3.2.7 (unit test dan integration test otomatis), @vitest/coverage-v8 3.2.7 (laporan *coverage* % baris dan % cabang), tsx 4.23.15 (skrip uji KNF dan uji beban di `src/tests/knf/` dan `src/tests/beban/`), `psql` (inspeksi basis data untuk KNF *security*), peramban Google Chrome/Chromium (pengujian use case manual), Chrome DevTools dan Lighthouse (KNF waktu respons dan aksesibilitas), Mozilla Firefox 160.0.1 dan Apple Safari 18.5 beserta *console developer tools*-nya (KNF08 kompatibilitas peramban) |
 
 Perubahan terhadap Subbab 2.1 DPPL:
 
