@@ -728,7 +728,9 @@ Tabel 4.4.1. Hasil Pengujian Use Case UC01
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | UC01-TC01 | KF01, KF10 | Normal | 1. Buka halaman Registrasi (`/registrasi`) dan pilih jenis akun "Relawan".<br>2. Isi formulir data diri.<br>3. Unggah dokumen lewat area unggah.<br>4. Centang persetujuan, lalu klik "Daftar". | Nama: Siti Rahma<br>Email: `siti.uc01.<waktu>@rekanbumi.test`<br>Kata sandi: `SitiRahma2026`<br>Telepon: 081234567890<br>Domisili: Jakarta<br>Berkas: `ktp-uji.pdf` | Sistem menerima dokumen, memeriksa kelengkapan dan status verifikasi data, menyimpan data, dan menampilkan notifikasi keberhasilan. | Banner "Akun berhasil dibuat." tampil bersama informasi tautan verifikasi email dan tombol "Lanjut ke halaman masuk". Di basis data, akun berperan `RELAWAN` dengan status verifikasi `MENUNGGU`, dan dokumen tersimpan di `uploads/<uuid>.pdf`. | Pass |
 | UC01-TC02 | KF10 | Alternatif 1: Data Diri Relawan Tidak Lengkap | 1. Buka `/registrasi` dan pilih "Relawan".<br>2. Isi hanya email dan kata sandi, lalu centang persetujuan.<br>3. Klik "Daftar". | Email: `tidaklengkap.<waktu>@rekanbumi.test`<br>Kata sandi: `SandiLengkap2026`<br>Nama, telepon, domisili kosong, tanpa berkas | Sistem mendeteksi data tidak lengkap, membatalkan pengiriman, dan menampilkan pesan peringatan untuk melengkapi data. | Banner merah berisi "Data diri tidak lengkap" dan "Dokumen verifikasi wajib diunggah", formulir tetap terbuka dengan isian yang sudah diketik. Tidak ada akun tersimpan untuk email tersebut. | Pass |
-| *UC01-TC03 dst.* | *KF01* | *[Skenario daftar program oleh Inisiator (I-08)]* | *[Langkah-langkah pengujian]* | *[Data masukan]* | *[Hasil yang diharapkan]* | *[Hasil aktual]* | *[Pass/Fail]* |
+| UC01-TC03 | KF01 | Normal | 1. Masuk sebagai Inisiator (`inisiator@rekanbumi.example`) dan buka `/inisiator/program/baru`.<br>2. Isi formulir "Daftarkan Program Baru" beserta tautan dokumen legalitas.<br>3. Klik "Simpan Program". | Judul Program: UC-M10 Tanam Mangrove<br>Kategori: Jaga Alam<br>Lokasi: Bandung<br>Waktu Mulai: 01/11/2026 00.00<br>Waktu Selesai: 02/11/2026 12.00<br>Kuota Relawan: 30<br>Deskripsi: Program uji UC Modul 4.<br>Syarat dan Ketentuan: Tidak ada syarat khusus.<br>Tautan Dokumen Legalitas: `https://contoh.id/legalitas.pdf` | Sistem menyimpan program dengan status menunggu verifikasi dan menampilkan notifikasi keberhasilan. | Tombol berubah menjadi "Menyimpan...", lalu muncul dialog browser "Program berhasil dibuat!" dan halaman berpindah ke Program Saya (`/inisiator/program`). Program baru tampil di daftar berstatus "Menunggu Verifikasi". | Pass |
+| UC01-TC04 | KF01 | Alternatif 1: Lembaga Belum Terverifikasi | 1. Masuk sebagai Inisiator yang lembaganya belum terverifikasi (`inisiator2@rekanbumi.example`) dan buka `/inisiator/program/baru`.<br>2. Isi formulir program beserta tautan dokumen legalitas.<br>3. Klik "Simpan Program". | Judul Program: UC-M10 Ditolak<br>Kategori: Jaga Iklim<br>Lokasi: p<br>Waktu Mulai: 08/12/2006 12.00<br>Waktu Selesai: 09/12/2006 12.00<br>Kuota Relawan: 30<br>Deskripsi: p<br>Syarat dan Ketentuan: p<br>Tautan Dokumen Legalitas: `https://example.com/legalitas` | Sistem menolak penyimpanan program dan menampilkan pesan bahwa lembaga belum terverifikasi. | Banner merah "Lembaga belum terverifikasi." tampil di atas formulir, formulir tetap terbuka dengan isian yang sudah diketik. | Pass |
+
 
 ### 4.4.2 Use Case Login akun
 
@@ -771,7 +773,14 @@ Tabel 4.4.6. Hasil Pengujian Use Case UC06
 
 ### 4.4.7 Use Case Memperbarui status program
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC07  
+**Nama Use Case:** Memperbarui status program
+
+Tabel 4.4.7. Hasil Pengujian Use Case UC07
+
+| ID Pengujian | ID KF | Skenario | Prosedur Pengujian | Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| UC07-TC01 | KF13, KF15 | Normal | 1. Masuk sebagai Verifikator (`verifikator@rekanbumi.example`), buka `/verifikator`, lalu klik tombol setujui pada program "UC-M10 Tanam Mangrove" dan klik "Ya, setujui" di dialog.<br>2. Masuk sebagai Inisiator (`inisiator@rekanbumi.example`), buka `/laporan`, pilih program tersebut, isi tautan dokumentasi dan ringkasan capaian, lalu klik "Kirim untuk Ditinjau".<br>3. Buka Program Saya (`/inisiator/program`).<br>4. Masuk kembali sebagai Verifikator, buka `/verifikator/laporan`, lalu tinjau dan setujui laporan program tersebut. | Program: UC-M10 Tanam Mangrove<br>Tautan dokumentasi akhir: `https://contoh.id/foto-mangrove-1.jpg`<br>Ringkasan capaian: Seribu bibit mangrove ditanam di pesisir. | Program menjadi aktif setelah disetujui. Setelah laporan dikirim, status program menjadi "Menunggu Konfirmasi" dan Verifikator menerima notifikasi. Setelah laporan ditinjau dan disetujui, status laporan menjadi disetujui. | Dialog "Setujui program ini?" menyebut program akan menjadi aktif dan inisiator diberi notifikasi. Setelah "Ya, setujui", banner "Program "UC-M10 Tanam Mangrove" disetujui dan kini aktif." tampil dan program hilang dari daftar menunggu verifikasi. Di `/laporan`, program tampil berstatus Aktif. Setelah laporan dikirim, Program Saya menampilkan status "Menunggu Konfirmasi" dengan aksi "Laporan Dikirim". Di `/verifikator/laporan`, ikon lonceng verifikator menunjukkan angka 1 dan laporan program tersebut tampil berlabel DISETUJUI. | Pass |
 
 ### 4.4.8 Use Case Konfirmasi kehadiran program
 
@@ -834,6 +843,9 @@ Tabel 4.6. Bukti Hasil Pengujian
 | KNF06-TC01, KNF06-TC02 | <img src="./assets/KNF06-TC01-TC02.png" alt="KNF06 blokir IP dan pemulihan setelah 5 menit" width="600"> |
 | INT-TC30 – INT-TC39 | <img src="./assets/INT-TC30-TC39.png" alt="Keluaran integration test Modul 4" width="600"> |
 | KNF03-TC01 | <img src="./assets/KNF03-TC01.png" alt="KNF03-TC01 waktu simpan berkas 2 MB" width="600"> |
+| UC01-TC03 | <img src="./assets/UC01-TC03-a.png" alt="UC01-TC03 formulir program terisi" width="400"> <img src="./assets/UC01-TC03-b.png" alt="UC01-TC03 program berhasil dibuat" width="400"> <img src="./assets/UC01-TC03-c.png" alt="UC01-TC03 program tampil di Program Saya" width="400"> |
+| UC01-TC04 | <img src="./assets/UC01-TC04.png" alt="UC01-TC04 lembaga belum terverifikasi" width="400"> |
+| UC07-TC01 | <img src="./assets/UC07-TC01-a2.png" alt="UC07-TC01 persetujuan program" width="400"> <img src="./assets/UC07-TC01-a2.png" alt="UC07-TC01 program disetujui" width="400"><br><img src="./assets/UC07-TC01-b.png" alt="UC07-TC01 unggah laporan akhir" width="400"> <img src="./assets/UC07-TC01-c.png" alt="UC07-TC01 status laporan dikirim" width="400"><br><img src="./assets/UC07-TC01-d.png" alt="UC07-TC01 daftar laporan di verifikator" width="400"> <img src="./assets/UC07-TC01-e.png" alt="UC07-TC01 hasil peninjauan laporan" width="400"> |
 | *[ID pengujian lain]* | *[Sisipkan bukti]* |
 
 <br>
