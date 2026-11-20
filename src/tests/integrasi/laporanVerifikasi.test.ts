@@ -8,7 +8,7 @@ import {
 } from "~/server/controllers/ProgramController";
 import { db } from "~/server/db";
 
-// Uji integrasi Modul 4 (HIUPL 4.3): ProgramController (C15), LaporanProgram (C09),
+// Uji integrasi laporan dan verifikasi (HIUPL 4.3): ProgramController (C15), LaporanProgram (C09),
 // Notifikasi (C10), dan PresensiController (C20) dengan PostgreSQL sungguhan. Tanpa mock.
 
 const kontroler = new ProgramController();
@@ -45,7 +45,7 @@ async function buatAkun(
 function dataProgram(namaProgram: string): DataProgramBaru {
   return {
     namaProgram,
-    deskripsi: "Program uji integrasi Modul 4.",
+    deskripsi: "Program uji integrasi laporan dan verifikasi.",
     kategori: "JAGA_ALAM",
     tempatPelaksanaan: "Bandung",
     waktuMulai: new Date("2026-11-01T08:00:00Z"),
@@ -98,7 +98,7 @@ afterAll(async () => {
   await db.$disconnect();
 });
 
-describe("Integrasi Modul 4 – pendaftaran dan verifikasi program (C15 → DB)", () => {
+describe("Integrasi laporan dan verifikasi – pendaftaran dan verifikasi program (C15 → DB)", () => {
   it("INT-TC30 simpanProgramBaru menyimpan program MENUNGGU_VERIFIKASI dan dokumen legalitas", async () => {
     const idInisiator = await buatAkun("INISIATOR");
     const nama = `Program ${awalan} baru`;
@@ -168,7 +168,7 @@ describe("Integrasi Modul 4 – pendaftaran dan verifikasi program (C15 → DB)"
   });
 });
 
-describe("Integrasi Modul 4 – pengajuan laporan (C15 → C09, C10, DB)", () => {
+describe("Integrasi laporan dan verifikasi – pengajuan laporan (C15 → C09, C10, DB)", () => {
   it("INT-TC34 ajukanLaporanAkhir menyimpan laporan MENUNGGU, program MENUNGGU_KONFIRMASI, dan notifikasi ke verifikator", async () => {
     const idInisiator = await buatAkun("INISIATOR");
     const idVerifikator = await buatAkun("VERIFIKATOR");
@@ -246,7 +246,7 @@ describe("Integrasi Modul 4 – pengajuan laporan (C15 → C09, C10, DB)", () =>
   });
 });
 
-describe("Integrasi Modul 4 – peninjauan laporan (C15 → C09, C10, C20, DB)", () => {
+describe("Integrasi laporan dan verifikasi – peninjauan laporan (C15 → C09, C10, C20, DB)", () => {
   it("INT-TC37 konfirmasiLaporan: laporan DISETUJUI, program SELESAI, notifikasi ke inisiator", async () => {
     const idInisiator = await buatAkun("INISIATOR");
     const idVerifikator = await buatAkun("VERIFIKATOR");
