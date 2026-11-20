@@ -178,15 +178,15 @@ Tabel 3.2. Implementasi Modul
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | C01 | Program | *[path/ke/file]* | - |
 | 2 | C02 | Pendaftaran | *[path/ke/file]* | - |
-| 3 | C03 | Relawan | *[path/ke/file]* | - |
+| 3 | C03 | Relawan | `src/server/models/Relawan.ts`<br>`src/prisma/schema.prisma` (model `Relawan`, tabel `tbl_relawan`) | - |
 | 4 | C04 | Pengguna | `src/server/models/Pengguna.ts`<br>`src/prisma/schema.prisma` (model `User`, tabel `user`) | - |
 | 5 | C05 | InisiatorProgram | *[path/ke/file]* | - |
 | 6 | C06 | Verifikator | `src/server/models/Verifikator.ts` | - |
 | 7 | C07 | DokumenVerifikasi | *[path/ke/file]* | - |
-| 8 | C08 | Kehadiran | *[path/ke/file]* | - |
+| 8 | C08 | Kehadiran | `src/server/models/Kehadiran.ts`<br>`src/prisma/schema.prisma` (model `Kehadiran`, tabel `tbl_kehadiran`) | - |
 | 9 | C09 | LaporanProgram | `src/server/models/LaporanProgram.ts`<br>`src/prisma/schema.prisma` (model `LaporanProgram`, tabel `tbl_laporan_program`) | - |
 | 10 | C10 | Notifikasi | `src/server/models/Notifikasi.ts`<br>`src/prisma/schema.prisma` (model `Notifikasi`, tabel `tbl_notifikasi`) | - |
-| 11 | C11 | RiwayatKontribusi | *[path/ke/file]* | - |
+| 11 | C11 | RiwayatKontribusi | `src/server/models/RiwayatKontribusi.ts`<br>`src/prisma/schema.prisma` (model `RiwayatKontribusi`, tabel `tbl_riwayat_kontribusi`; model `RiwayatProgram`, tabel `tbl_riwayat_program`) | - |
 | 12 | C12 | KelolaAkunPage | `src/views/KelolaAkunPage/Registrasi.tsx`<br>`src/views/KelolaAkunPage/Login.tsx`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/KelolaAkunPage/useKelolaAkunPage.ts`<br>`src/views/KelolaAkunPage/daftarDomisili.ts`<br>`src/lib/urlKembali.ts` | - |
 | 13 | C13 | AuthController | `src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts` (router tRPC `auth`) | - |
 | 14 | C14 | KelolaProgramPage | `src/views/KelolaProgramPage/ProgramFormView.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/ProgramDaftarView.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts`<br>`src/views/KelolaProgramPage/useProgramSaya.ts`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts`<br>`src/views/laporan/LaporanFormView.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx`<br>`src/views/laporan/LaporanMasukView.tsx`<br>`src/lib/programSaya.ts` | - |
@@ -194,8 +194,8 @@ Tabel 3.2. Implementasi Modul
 | 16 | C16 | EksplorasiProgramPage | *[path/ke/file]* | - |
 | 17 | C17 | KelolaPendaftarPage | *[path/ke/file]* | - |
 | 18 | C18 | SeleksiController | *[path/ke/file]* | - |
-| 19 | C19 | AreaKegiatanPage | *[path/ke/file]* | - |
-| 20 | C20 | PresensiController | *[path/ke/file]* | - |
+| 19 | C19 | AreaKegiatanPage | `src/views/AreaKegiatanPage/AreaKegiatan.tsx`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` | - |
+| 20 | C20 | PresensiController | `src/server/controllers/PresensiController.ts`<br>`src/server/api/routers/presensi.ts` (router tRPC `presensi`) | - |
 | 21 | C21 | CloudStorageAdapter | `src/server/adapters/CloudStorageAdapter.ts` | - |
 | 22 | C22 | BetterAuth | `src/server/adapters/BetterAuth.ts`<br>`src/server/auth.ts` (konfigurasi Better Auth)<br>`src/lib/auth-client.ts`<br>`src/app/api/auth/[...all]/route.ts` | - |
 
@@ -218,8 +218,8 @@ Tabel 3.3. Implementasi Antarmuka
 | 9 | I-09 | Unggah Laporan Akhir | `src/app/laporan/page.tsx`<br>`src/views/laporan/LaporanFormView.tsx` | - |
 | 10 | I-10 | Tinjau Laporan Akhir | `src/app/verifikator/laporan/page.tsx`<br>`src/app/verifikator/laporan/[id]/page.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx` | - |
 | 11 | I-11 | Kelola Pendaftar & Seleksi | *[path/ke/file]* | - |
-| 12 | I-12 | Area Kegiatan & Check-in | *[path/ke/file]* | - |
-| 13 | I-13 | Portofolio Relawan | *[path/ke/file]* | - |
+| 12 | I-12 | Area Kegiatan & Check-in | `src/app/kegiatan/page.tsx`<br>`src/views/AreaKegiatanPage/AreaKegiatan.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` (`useAreaKegiatanPage()`)<br>menu "Kegiatan Saya" untuk Relawan di `src/views/components/navigasi.ts` | - |
+| 13 | I-13 | Portofolio Relawan | `src/app/portofolio/page.tsx`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` (`usePortofolio()`)<br>menu "Portofolio" untuk Relawan di `src/views/components/navigasi.ts` | - |
 | 14 | - | Dashboard Verifikator *(tambahan di luar DPPL)* | `src/app/verifikator/page.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts` | - |
 
 ## 3.4 File Lain
@@ -275,15 +275,15 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 | :--- | :--- | :--- | :--- | :--- |
 | C01 | Program | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C02 | Pendaftaran | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C03 | Relawan | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C03 | Relawan | Sedang | Sebagian besar operasinya mendelegasikan: `hadirPada()` meneruskan pengecekan ke Kehadiran (C08), `catatKontribusi()` hanya memeriksa kehadiran lalu meneruskan pencatatan jam ke RiwayatKontribusi (C11), dan `lihatPortofolio()` menyiapkan riwayat kosong untuk relawan baru. Aturan jam aksi dan check-in ganda ada di C11 dan C20. | C03-UT01 s.d. C03-UT03, C20-UT11, C20-UT19 |
 | C04 | Pengguna | Sedang | Hanya mencari akun dan mengambil notifikasi milik akun dari basis data. Tidak ada aturan sendiri, tetapi dipakai alur notifikasi UC06. | C04-UT01 s.d. C04-UT03, INT-TC07 |
 | C05 | InisiatorProgram | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C06 | Verifikator | Sedang | Kelas model yang mendelegasikan keputusan peninjauan ke LaporanProgram (C09): `konfirmasiLaporan()` memanggil `setujui()` dan `tolakLaporan()` memanggil `tolak()`, dengan penjaga laporan tidak ada dan catatan revisi kosong. Pada implementasi, alur peninjauan laporan dijalankan oleh ProgramController (C15) lewat router `laporan`, sehingga kelas ini tidak dipanggil dari kode aplikasi. Belum ada unit test (coverage 0%) dan belum memenuhi minimum 2 test case per operasi. | - |
 | C07 | DokumenVerifikasi | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C08 | Kehadiran | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C08 | Kehadiran | Tidak perlu | *Entity* yang hanya menyimpan waktu check-in dan id program. Satu-satunya operasi, `untukProgram()`, hanya membandingkan id program. Kelas ini teruji tidak langsung lewat `Relawan.hadirPada()` pada test case C03 dan C20 serta test case use case konfirmasi kehadiran. | - |
 | C09 | LaporanProgram | Mendalam | Memuat aturan status peninjauan (laporan hanya bisa ditinjau sekali, dari MENUNGGU menjadi DISETUJUI atau DITOLAK), validasi tautan dokumentasi tidak boleh kosong, dan catatan revisi wajib saat menolak. Belum memenuhi minimum 3 test case per operasi public (4 tes untuk 5 operasi). | `LaporanProgram.test.ts` (4 tes, coverage 100% baris dan 100% cabang) |
 | C10 | Notifikasi | Mendalam | Memuat validasi pesan (tidak boleh kosong), aturan status dibaca (`baca()` hanya menulis sekali), dan pemeriksaan kepemilikan `milik()` yang menjaga notifikasi pengguna lain. | C10-UT01 s.d. C10-UT11, INT-TC07, INT-TC08 |
-| C11 | RiwayatKontribusi | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C11 | RiwayatKontribusi | Mendalam | Memuat perhitungan total jam aksi dari durasi program, aturan satu program hanya boleh tercatat sekali pada riwayat, dan validasi jam aksi tidak boleh negatif. Kelas ini satu-satunya sumber total jam aksi pada portofolio. | C11-UT01 s.d. C11-UT04, C20-UT25 s.d. C20-UT35 |
 | C12 | KelolaAkunPage | Sedang | Kelas *boundary*: sebagian besar operasinya menampilkan formulir dan meneruskan isian ke C13. Satu-satunya logika adalah penyaringan `urlKembali` agar tidak bisa dipakai untuk *open redirect*. Alur layarnya diuji pada test case use case. | C12-UT01 s.d. C12-UT04, INT-TC05, INT-TC06, UC01-TC01 s.d. UC01-TC02, UC02-TC01 s.d. UC02-TC04, UC06-TC01 |
 | C13 | AuthController | Mendalam | Memuat validasi kelengkapan registrasi, pembatalan akun bila penyimpanan gagal, pemblokiran IP setelah 5 kali gagal selama 5 menit (KNF06), sinkronisasi status verifikasi, dan pemeriksaan kepemilikan notifikasi. | C13-UT01 s.d. C13-UT41, INT-TC01 s.d. INT-TC09, KNF06-TC01, KNF06-TC02 |
 | C14 | KelolaProgramPage | Sedang | Kelas *boundary*: sebagian besar menampilkan formulir dan daftar lalu meneruskannya ke C15. Logika yang bisa diuji unit ada di `src/lib/programSaya.ts`: pemetaan status ke label dan badge, aksi tombol per status (unggah laporan, unggah ulang), statistik, penyaringan, dan persen kuota. Alur layar I-07, I-09, dan I-10 diuji lewat test case use case. | `programSaya.test.ts` (9 tes, coverage 97,26% baris dan 100% cabang) |
@@ -291,8 +291,8 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 | C16 | EksplorasiProgramPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C17 | KelolaPendaftarPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
 | C18 | SeleksiController | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C19 | AreaKegiatanPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C20 | PresensiController | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C19 | AreaKegiatanPage | Tidak perlu | Kelas *boundary* yang hanya menampilkan daftar kegiatan, tombol check-in, dan portofolio dari data C20. Aktif tidaknya tombol check-in mengikuti hasil `validasiStatusRelawan()` dan `validasiWaktuPelaksanaan()` milik C20, sehingga tidak ada aturan sendiri. Alur layar I-12 dan I-13 diuji lewat test case use case. | - |
+| C20 | PresensiController | Mendalam | Memuat validasi check-in (pendaftaran harus diterima, program harus aktif, dan waktu harus di dalam rentang pelaksanaan), penolakan check-in ganda termasuk saat terjadi bersamaan di basis data, serta pembaruan jam aksi portofolio dalam satu transaksi saat program selesai. | C20-UT01 s.d. C20-UT35, KNF04-TC01 |
 | C21 | CloudStorageAdapter | Mendalam | Integrasi ke penyimpanan berkas. Memvalidasi ukuran (maksimal 2 MB) dan tipe berkas dari byte awalnya, membuat nama berkas sendiri, dan menolak path yang keluar dari folder unggahan. | C21-UT01 s.d. C21-UT13, INT-TC01, INT-TC02 |
 | C22 | BetterAuth | Mendalam | Kelas keamanan: *hashing* bcrypt (KNF02), verifikasi kredensial, dan pembuatan sesi. | C22-UT01 s.d. C22-UT15, INT-TC04, INT-TC05, KNF02-TC01 |
 
