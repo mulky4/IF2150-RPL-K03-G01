@@ -7,24 +7,24 @@ HASIL IMPLEMENTASI DAN UJI PERANGKAT LUNAK (HIUPL)
 </h1>
 <br>
 
-## *Nama Perangkat Lunak*
-### *[Logo Perangkat Lunak]*
+## RekanBumi
+<img src="assets/logo_RekanBumi.png" alt="Logo RekanBumi" width="250">
 
-### Untuk: *[Nama Asisten]*
+### Untuk: Stefani Angeline Oroh
 
 Dipersiapkan oleh:
 | Informasi | Keterangan |
 | --- | --- |
-| Kelas | *\[Kelas\]* |
-| Kelompok | *\[Nomor Kelompok\]*  |
+| Kelas | K03 |
+| Kelompok | G01 (rplsukses) |
 
 | NIM | Nama |
 |---|---|
-| *[NIM 1]* | *[Nama Anggota 1]* |
-| *[NIM 2]* | *[Nama Anggota 2]* |
-| *[NIM 3]* | *[Nama Anggota 3]* |
-| *[NIM 4]* | *[Nama Anggota 4]* |
-| *[NIM 5]* | *[Nama Anggota 5]* |
+| 13525018 | Avicenna Ananda Musthafa |
+| 13525045 | Ribka Kaylena Sanjaya |
+| 13525063 | Kairenzo Vemil |
+| 13525069 | Mulky Siraj Firizqi |
+| 13525144 | Three Gie Gendhis Sekar Ayoe Jatmiko |
 
 ---
 
@@ -58,16 +58,17 @@ Dipersiapkan oleh:
 
 | Revisi | Deskripsi |
 | :--- | :--- |
+| A | Versi pertama dokumen HIUPL (Tugas 10), disusun dari kode tag `v9.0` beserta file test yang ditambahkan pada Tugas 10. |
 
 ---
 
 # BAB 1: Pendahuluan
 
 ## 1.1 Tujuan Penulisan Dokumen
-Tuliskan uraian ringkas mengenai isi dokumen, tujuan pembuatan dokumen HIUPL ini, dan siapa saja target pembacanya.
+Dokumen Hasil Implementasi dan Uji Perangkat Lunak (HIUPL) ini melaporkan hasil implementasi dan pengujian perangkat lunak RekanBumi berdasarkan rancangan pada DPPL. Dokumen memuat lingkungan implementasi, pemetaan kelas dan antarmuka ke file kode, hasil pengujian unit, integrasi, use case, dan kebutuhan non-fungsional, serta matriks kerunutan dari kebutuhan ke test case. Target pembaca dokumen ini adalah asisten dan dosen mata kuliah IF2150 Rekayasa Perangkat Lunak sebagai penilai, serta anggota tim pengembang sebagai acuan perbaikan dan pengembangan lanjutan.
 
 ## 1.2 Lingkup Masalah
-Tuliskan lingkup masalah, yaitu membangun perangkat lunak *[nama perangkat lunak]*. Jelaskan dengan singkat dan jelas deskripsi aplikasi serta keterkaitannya dengan perangkat lunak atau sistem lain (jika ada). Bagian ini maksimal berisi satu paragraf, dapat diambil dari SKPL/DPPL.
+Lingkup masalah dokumen ini adalah membangun perangkat lunak RekanBumi, yaitu *platform* web yang mempertemukan masyarakat umum (Relawan) dengan lembaga lingkungan terverifikasi (Inisiator) dalam program "Jaga Alam" dan "Jaga Iklim" untuk mendukung SDG 13. Relawan dapat mendaftar akun, mencari program, mendaftar ke program, melakukan *check-in* kehadiran, dan melihat portofolio jam aksi. Inisiator dapat mendaftarkan program, menyeleksi pendaftar, dan mengunggah laporan akhir, sedangkan Verifikator memeriksa program dan laporan. Aplikasi dibangun dengan Next.js, tRPC, Prisma, dan PostgreSQL, memakai Better Auth untuk autentikasi, dan menyimpan berkas unggahan melalui adapter penyimpanan berkas. Aplikasi terhubung ke situs web resmi lembaga melalui tautan pada halaman detail program.
 
 ## 1.3 Definisi, Istilah, dan Singkatan
 Semua definisi dan singkatan yang digunakan dalam dokumen ini beserta penjelasannya.
@@ -88,10 +89,14 @@ Tabel 1.3. Definisi Istilah dan Singkatan
 | *INT* | *Singkatan dari Integration Test, yaitu test case yang menguji interaksi antarkomponen.* |
 | *Boundary* | *Kasus uji pada nilai batas masukan, misalnya nilai minimum, maksimum, atau tepat di ambang aturan.* |
 | *Coverage* | *Persentase baris/cabang kode yang dieksekusi oleh pengujian.* |
-| *...* | *...* |
+| tRPC | *TypeScript Remote Procedure Call*, pustaka untuk membuat API bertipe antara *client* dan *server* tanpa skema terpisah. |
+| Prisma | ORM (*Object-Relational Mapping*) untuk TypeScript yang dipakai untuk skema, migrasi, dan akses basis data PostgreSQL. |
+| Better Auth | Pustaka autentikasi yang dipakai untuk registrasi, login, sesi, verifikasi email, dan *hashing* kata sandi. |
+| Vitest | *Testing framework* untuk unit test dan integration test pada proyek ini, termasuk laporan *coverage* v8. |
+| Next.js | *Framework* React untuk aplikasi web yang menangani halaman, *routing*, dan *server*. |
 
 ## 1.4 Aturan Penomoran
-Tuliskan aturan penomoran (ID) yang digunakan dalam dokumen ini. Gunakan pola ID yang **sama** dengan yang sudah dipakai pada dokumen-dokumen sebelumnya (SKPL, APL, DPPL), kecuali untuk ID pengujian yang baru diperkenalkan pada dokumen ini.
+Aturan penomoran berikut mengikuti pola ID pada SKPL dan DPPL. ID pengujian (UT, INT-TC, UCXX-TC, KNFXX-TC) baru diperkenalkan pada dokumen ini.
 
 Tabel 1.4. Aturan Penomoran
 
@@ -106,13 +111,20 @@ Tabel 1.4. Aturan Penomoran
 | *Test Case Integrasi* | *INT-TCYY* | *YY adalah nomor urut test case integrasi* |
 | *Test Case Use Case* | *UCXX-TCYY* | *XX adalah nomor use case, YY adalah nomor urut test case pada use case tersebut* |
 | *Test Case KNF* | *KNFXX-TCYY* | *XX adalah nomor KNF, YY adalah nomor urut test case pada KNF tersebut* |
-| *...* | *...* | *...* |
 
 ## 1.5 Referensi
-Cantumkan daftar buku, panduan, atau dokumentasi lain yang dirujuk dalam pembuatan dokumen dan pengembangan P/L, **minimal dokumen SKPL, APL, DPPL, dan Implementasi (Tugas 9)**. Tambahkan dokumentasi *framework*/*library*/*testing tool* atau referensi lain apabila digunakan.
+1. Kelompok K03 G01 (rplsukses). *Spesifikasi Kebutuhan Perangkat Lunak (SKPL) RekanBumi*. IF2150 Rekayasa Perangkat Lunak, ITB, 2026.
+2. Kelompok K03 G01 (rplsukses). *Analisis Perangkat Lunak (APL) RekanBumi*. IF2150 Rekayasa Perangkat Lunak, ITB, 2026.
+3. Kelompok K03 G01 (rplsukses). *Deskripsi Perancangan Perangkat Lunak (DPPL) RekanBumi*. IF2150 Rekayasa Perangkat Lunak, ITB, 2026.
+4. Kelompok K03 G01 (rplsukses). *Implementasi Perangkat Lunak (Tugas 9) RekanBumi*, tag `v9.0`. IF2150 Rekayasa Perangkat Lunak, ITB, 2026.
+5. Dokumentasi Next.js, https://nextjs.org/docs
+6. Dokumentasi tRPC, https://trpc.io/docs
+7. Dokumentasi Prisma, https://www.prisma.io/docs
+8. Dokumentasi Better Auth, https://www.better-auth.com/docs
+9. Dokumentasi Vitest, https://vitest.dev/guide/
 
 ## 1.6 Deskripsi Umum Dokumen (Ikhtisar)
-Tuliskan sistematika pembahasan dokumen ini secara ringkas dan runut bab demi bab, dengan maksimal 1 paragraf.
+BAB 1 berisi tujuan penulisan, lingkup masalah, definisi istilah, aturan penomoran, referensi, dan ikhtisar dokumen. BAB 2 menjelaskan gambaran umum RekanBumi, diagram use case, dan batasan sistem. BAB 3 memuat lingkungan implementasi serta pemetaan kelas, antarmuka, dan file lain ke file kode. BAB 4 menyajikan strategi pengujian dan hasil pengujian unit, integrasi, use case, dan kebutuhan non-fungsional beserta buktinya. BAB 5 berisi matriks kerunutan dari KF dan KNF ke implementasi dan test case.
 
 <br>
 
@@ -196,7 +208,7 @@ Tabel 3.2. Implementasi Modul
 | No | ID Kelas | Nama Modul/Kelas | Nama File Fisik | Nama File Executable |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | C01 | Program | `src/server/models/Program.ts`<br>`src/prisma/schema.prisma` (model `Program`, tabel `tbl_program`) | - |
-| 2 | C02 | Pendaftaran | *[path/ke/file]* | - |
+| 2 | C02 | Pendaftaran | `src/server/models/Pendaftaran.ts`<br>`src/prisma/schema.prisma` (model `Pendaftaran`) | - |
 | 3 | C03 | Relawan | `src/server/models/Relawan.ts`<br>`src/prisma/schema.prisma` (model `Relawan`, tabel `tbl_relawan`) | - |
 | 4 | C04 | Pengguna | `src/server/models/Pengguna.ts`<br>`src/prisma/schema.prisma` (model `User`, tabel `user`) | - |
 | 5 | C05 | InisiatorProgram | `src/server/models/InisiatorProgram.ts`<br>`src/prisma/schema.prisma` (model `InisiatorProgram`, tabel `tbl_inisiator_program`) | - |
@@ -211,8 +223,8 @@ Tabel 3.2. Implementasi Modul
 | 14 | C14 | KelolaProgramPage | `src/views/KelolaProgramPage/ProgramFormView.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/ProgramDaftarView.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts`<br>`src/views/KelolaProgramPage/useProgramSaya.ts`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts`<br>`src/views/laporan/LaporanFormView.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx`<br>`src/views/laporan/LaporanMasukView.tsx`<br>`src/lib/programSaya.ts` | - |
 | 15 | C15 | ProgramController | `src/server/controllers/ProgramController.ts`<br>`src/server/api/routers/program.ts` (router tRPC `program`)<br>`src/server/api/routers/laporan.ts` (router tRPC `laporan`) | - |
 | 16 | C16 | EksplorasiProgramPage | `src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts`<br>`src/views/components/ProgramCard.tsx`<br>`src/lib/pencarianProgram.ts` | - |
-| 17 | C17 | KelolaPendaftarPage | *[path/ke/file]* | - |
-| 18 | C18 | SeleksiController | *[path/ke/file]* | - |
+| 17 | C17 | KelolaPendaftarPage | `src/views/KelolaPendaftarPage/KelolaPendaftarView.tsx`<br>`src/views/KelolaPendaftarPage/useKelolaPendaftarPage.ts` | - |
+| 18 | C18 | SeleksiController | `src/server/controllers/SeleksiController.ts`<br>`src/server/api/routers/seleksi.ts` (router tRPC `seleksi`) | - |
 | 19 | C19 | AreaKegiatanPage | `src/views/AreaKegiatanPage/AreaKegiatan.tsx`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` | - |
 | 20 | C20 | PresensiController | `src/server/controllers/PresensiController.ts`<br>`src/server/api/routers/presensi.ts` (router tRPC `presensi`) | - |
 | 21 | C21 | CloudStorageAdapter | `src/server/adapters/CloudStorageAdapter.ts` | - |
@@ -231,12 +243,12 @@ Tabel 3.3. Implementasi Antarmuka
 | 3 | I-03 | Notifikasi | `src/app/notifikasi/page.tsx`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/components/NotifikasiItem.tsx`<br>ikon lonceng dan angka belum dibaca di `src/views/components/Navbar.tsx` | - |
 | 4 | I-04 | Eksplorasi Program | `src/app/program/page.tsx`<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` (`terimaInputPencarian()`, `muatLebihBanyak()`)<br>`src/views/components/ProgramCard.tsx`<br>`src/lib/pencarianProgram.ts` | - |
 | 5 | I-05 | Detail Program | `src/app/program/[id]/page.tsx`<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` (`klikTautanSitusResmi()`, `arahkanKeSitusResmi()`) | - |
-| 6 | I-06 | Formulir Pendaftaran Program | *[path/ke/file]* | - |
+| 6 | I-06 | Formulir Pendaftaran Program | `src/app/program/[id]/daftar/page.tsx` | - |
 | 7 | I-07 | Program Saya | `src/app/inisiator/program/page.tsx`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/useProgramSaya.ts` | - |
 | 8 | I-08 | Formulir Daftar Program | `src/app/inisiator/program/baru/page.tsx`<br>`src/views/KelolaProgramPage/ProgramFormView.tsx` | - |
 | 9 | I-09 | Unggah Laporan Akhir | `src/app/laporan/page.tsx`<br>`src/views/laporan/LaporanFormView.tsx` | - |
 | 10 | I-10 | Tinjau Laporan Akhir | `src/app/verifikator/laporan/page.tsx`<br>`src/app/verifikator/laporan/[id]/page.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx` | - |
-| 11 | I-11 | Kelola Pendaftar & Seleksi | *[path/ke/file]* | - |
+| 11 | I-11 | Kelola Pendaftar & Seleksi | `src/app/inisiator/program/[id]/pendaftar/page.tsx`<br>`src/views/KelolaPendaftarPage/KelolaPendaftarView.tsx` | - |
 | 12 | I-12 | Area Kegiatan & Check-in | `src/app/kegiatan/page.tsx`<br>`src/views/AreaKegiatanPage/AreaKegiatan.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` (`useAreaKegiatanPage()`)<br>menu "Kegiatan Saya" untuk Relawan di `src/views/components/navigasi.ts` | - |
 | 13 | I-13 | Portofolio Relawan | `src/app/portofolio/page.tsx`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` (`usePortofolio()`)<br>menu "Portofolio" untuk Relawan di `src/views/components/navigasi.ts` | - |
 | 14 | - | Dashboard Verifikator *(tambahan di luar DPPL)* | `src/app/verifikator/page.tsx`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts` | - |
@@ -964,11 +976,6 @@ Tabel 4.2.18b. Hasil Pengujian Unit Kelas C18
 | C18-UT11 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Keputusan DITOLAK untuk `pendaftar-asing` yang bukan pendaftar program ini | Ditolak dengan kode galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Pass |
 | C18-UT12 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Satu permintaan memuat `pendaftaran-1` dua kali (DITERIMA dan DITOLAK) | Ditolak dengan galat bertipe `GalatSeleksi` | Galat `GalatSeleksi` dilempar | Pass |
 
-### 4.2.19 Kelas [Nama Kelas lain]
-
-*[Ulangi pola 4.2.1 untuk setiap kelas bertingkat Mendalam atau Sedang milik modul lain, urut menurut ID kelas.]*
-
-<br>
 
 ## 4.3 Pengujian Integrasi
 
@@ -1017,7 +1024,6 @@ Tabel 4.3.1. Daftar Antarmuka Antarkomponen
 | C20 → C03 → C08 → DB | PresensiController | Relawan dan Kehadiran, PostgreSQL (tbl_relawan, tbl_kehadiran) | *Controller* - *Model* - basis data | INT-TC40, INT-TC44 |
 | C20 → C03 → C11 → DB | PresensiController | Relawan dan RiwayatKontribusi, PostgreSQL (tbl_relawan, tbl_riwayat_kontribusi, tbl_riwayat_program) | *Controller* - *Model* - basis data | INT-TC45, INT-TC46, INT-TC47, INT-TC48, INT-TC49 |
 | C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | ProgramController | LaporanProgram, PresensiController, Relawan, dan RiwayatKontribusi | *Controller* - *Model* - basis data | INT-TC45, INT-TC46, INT-TC47 |
-| *[CXX → CYY]* | *[Komponen asal]* | *[Komponen tujuan]* | *[Jenis batas]* | *[ID test case]* |
 
 Tabel 4.3.2. Hasil Pengujian Integrasi
 
@@ -1062,7 +1068,6 @@ Tabel 4.3.2. Hasil Pengujian Integrasi
 | INT-TC47 | C15 → C09 → DB, C15 → C20 → C03 → C11 → DB | Batas: pendaftar DITOLAK tidak mendapat kontribusi meskipun memiliki catatan kehadiran | Buat program berstatus MENUNGGU_KONFIRMASI, pendaftaran DITOLAK, catatan kehadiran, dan laporan MENUNGGU. Setujui laporan. | Persetujuan laporan selesai tanpa error; pendaftar yang ditolak tetap mendapat 0 jam aksi dan riwayat program kosong. | Total jam 0 dan riwayat kosong. | Pass |
 | INT-TC48 | C20 → C03 → C11 → DB | Batas: pembaruan portofolio untuk program yang sama dipanggil dua kali | Buat program SELESAI berdurasi 4 jam, pendaftaran DITERIMA, dan catatan kehadiran. Panggil perbaruiPortofolioRelawan() dua kali. | Total tetap 4 jam dan program hanya tercatat satu kali. | Total 4 jam dengan satu entri riwayat setelah dua pemanggilan. | Pass |
 | INT-TC49 | C20 → C03 → C11 → DB | Normal: membaca total jam dan urutan riwayat portofolio | Buat dua program SELESAI berdurasi 2 dan 4 jam dengan pendaftaran DITERIMA serta catatan kehadiran. Perbarui portofolio untuk keduanya, lalu baca total dan riwayat. | Total 6 jam; program yang waktu selesai paling baru tampil lebih dulu. | Total 6 jam; urutan riwayat menampilkan program terbaru lalu program yang lebih lama. | Pass |
-| *INT-TC10 dst.* | *[CXX → CYY]* | *[Skenario]* | *[Prosedur/masukan]* | *[Hasil yang diharapkan]* | *[Hasil aktual]* | *Pass/Fail* |
 
 
 Catatan INT-TC10 sampai INT-TC19 (Modul 2, eksplorasi program): file `src/tests/integrasi/modul2.eksplorasi.test.ts` (10 tes, semuanya lulus pada PostgreSQL 16 sungguhan). Tiap tes memakai kata kunci acak berawalan `m2` agar tidak bercampur dengan data *seed* dan menghapus semua data buatannya di `afterAll`. INT-TC19 butuh `pnpm dev` berjalan di `localhost:3000`. Basis data yang dipakai saat pengujian ini berada di mesin penguji (PostgreSQL lokal tanpa Docker), isi skemanya sama dengan hasil `pnpm db:migrate`.
@@ -1138,7 +1143,10 @@ Tabel 4.4.4. Hasil Pengujian Use Case UC04
 
 ### 4.4.5 Use Case Menyeleksi calon relawan pendaftar
 
-*[Diisi PIC: pola tabel sama dengan 4.4.1.]*
+**ID Use Case:** UC05  
+**Nama Use Case:** Menyeleksi calon relawan pendaftar
+
+Skenario normal UC05 (Inisiator membuka Kelola Pendaftar, menentukan status Diterima atau Ditolak, lalu menyimpan hasil seleksi) dijalankan sebagai langkah 1 dan 2 pada UC06-TC01 (Tabel 4.4.6), karena konfirmasi status pendaftaran pada UC06 hanya bisa terjadi setelah hasil seleksi disimpan. Aturan seleksi (hanya pendaftar berstatus MENUNGGU yang bisa diputuskan, kuota, dan kelayakan relawan) diuji pada unit test C02-UT01 s.d. C02-UT06 (Subbab 4.2.1) dan C18-UT01 s.d. C18-UT12 (Subbab 4.2.18). Tidak ada test case use case terpisah untuk UC05 pada dokumen ini.
 
 ### 4.4.6 Use Case Konfirmasi status pendaftaran
 
@@ -1229,7 +1237,6 @@ Tabel 4.5. Hasil Pengujian KNF
 | KNF08-TC03 | KNF08 | Flexibility | Halaman I-12 Kegiatan Saya (relawan) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai relawan. Fitur yang dicoba: memilih kegiatan lain pada daftar sehingga panel Check-in berganti. Tombol Check-in tidak ditekan. | Chrome: tidak ada galat. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
 | KNF08-TC04 | KNF08 | Flexibility | Halaman I-11 Kelola Pendaftar (inisiator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai inisiator. Fitur yang dicoba: filter status Menunggu, Diterima, Ditolak, dan Semua, serta membuka *dropdown* Keputusan. Tombol Simpan Hasil Seleksi tidak ditekan. | Chrome: tidak ada galat, filter Diterima menampilkan 1 pendaftar. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
 | KNF08-TC05 | KNF08 | Flexibility | Halaman I-10 Tinjau Laporan Akhir (verifikator) tanpa pesan galat di *console* pada ketiga peramban. | Sama dengan KNF08-TC01, login sebagai verifikator, membuka laporan berstatus MENUNGGU. Fitur yang dicoba: mengisi kolom catatan revisi. Tombol Tolak dan Setujui tidak ditekan. | Chrome: tidak ada galat. Firefox: tidak ada galat (teks merah), hanya satu peringatan kuning "The execution of microtasks on this page was reordered to avoid unsafe execution.". Safari: tidak ada galat. | Pass |
-| *KNFXX-TC01* | *KNFXX* | *[Parameter]* | *[...]* | *[...]* | *[...]* | *Pass/Fail* |
 
 <br>
 
@@ -1305,7 +1312,6 @@ Tabel 4.6. Bukti Hasil Pengujian
 | KNF08-TC03 | <img src="./assets/KNF08-TC03-chrome.png" alt="KNF08-TC03 console Chrome Kegiatan Saya" width="300"> <img src="./assets/KNF08-TC03-firefox.png" alt="KNF08-TC03 Firefox" width="300"> <img src="./assets/KNF08-TC03-safari.png" alt="KNF08-TC03 Safari" width="300"> |
 | KNF08-TC04 | <img src="./assets/KNF08-TC04-chrome.png" alt="KNF08-TC04 console Chrome Kelola Pendaftar" width="300"> <img src="./assets/KNF08-TC04-firefox.png" alt="KNF08-TC04 Firefox" width="300"> <img src="./assets/KNF08-TC04-safari.png" alt="KNF08-TC04 Safari" width="300"> |
 | KNF08-TC05 | <img src="./assets/KNF08-TC05-chrome.png" alt="KNF08-TC05 console Chrome Tinjau Laporan" width="300"> <img src="./assets/KNF08-TC05-firefox.png" alt="KNF08-TC05 Firefox" width="300"> <img src="./assets/KNF08-TC05-safari.png" alt="KNF08-TC05 Safari" width="300"> |
-| *[ID pengujian lain]* | *[Sisipkan bukti]* |
 
 <br>
 
@@ -1323,18 +1329,18 @@ Tabel 5.1. Matriks Kerunutan KF terhadap Implementasi dan Pengujian
 | KF02 | - | UC04 | C05 - InisiatorProgram<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/InisiatorProgram.ts`<br>`src/server/controllers/ProgramController.ts` (`ambilDetailProgram()`, `validasiTautanSitus()`)<br>`src/views/EksplorasiProgramPage/DetailProgram.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` | UC04-TC01, UC04-TC02, UC04-TC03 | C05-UT04 s.d. C05-UT06, C15-UT38 s.d. C15-UT50, INT-TC15, INT-TC17, INT-TC19, KNF07-TC02 |
 | KF03 | KNF01, KNF05, KNF07, KNF08 | UC03 | C01 - Program<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/Program.ts`<br>`src/server/controllers/ProgramController.ts` (`cariProgram()`)<br>`src/server/api/routers/program.ts` (`cari`)<br>`src/lib/pencarianProgram.ts`<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx`<br>`src/views/EksplorasiProgramPage/useEksplorasiProgramPage.ts` | UC03-TC01, UC03-TC02, UC03-TC03 | C15-UT31 s.d. C15-UT37, INT-TC10, INT-TC11, INT-TC13, INT-TC14, INT-TC19, KNF01-TC01, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
 | KF04 | KNF01, KNF05, KNF07, KNF08 | UC03 | C01 - Program<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/Program.ts`<br>`src/server/controllers/ProgramController.ts` (`cariProgram()`)<br>`src/server/api/routers/program.ts` (`cari`)<br>`src/views/EksplorasiProgramPage/Eksplorasi.tsx` | UC03-TC02, UC03-TC03 | C15-UT33, C15-UT37, INT-TC12, INT-TC19, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
-| KF05 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
+| KF05 | - | UC05 | C01 - Program<br>C18 - SeleksiController | `src/server/models/Program.ts` (`cekKuotaTersedia()`)<br>`src/server/controllers/SeleksiController.ts`<br>`src/server/controllers/ProgramController.ts` (`daftarRelawan()`) | UC06-TC01 | C18-UT01 s.d. C18-UT12, C01-UT10 s.d. C01-UT14 |
 | KF06 | KNF02, KNF06 | UC02 | C12 - KelolaAkunPage<br>C13 - AuthController<br>C22 - BetterAuth | `src/views/KelolaAkunPage/Login.tsx`<br>`src/views/KelolaAkunPage/useKelolaAkunPage.ts`<br>`src/lib/urlKembali.ts`<br>`src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts`<br>`src/server/api/trpc.ts` (`protectedProcedure`)<br>`src/server/adapters/BetterAuth.ts`<br>`src/server/auth.ts`<br>`src/views/KelolaProgramPage/useProgramDaftar.ts` | UC02-TC01, UC02-TC02, UC02-TC03, UC02-TC04 | C12-UT01 s.d. C12-UT04, C13-UT24 s.d. C13-UT29, C13-UT36 s.d. C13-UT38, C13-UT40, C22-UT01 s.d. C22-UT15, INT-TC04, INT-TC05, INT-TC06, KNF02-TC01, KNF06-TC01, KNF06-TC02 |
-| KF07 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF08 | - | UC06 | C04 - Pengguna<br>C10 - Notifikasi<br>C12 - KelolaAkunPage<br>C13 - AuthController<br>*[C18 - SeleksiController]* | `src/server/models/Pengguna.ts`<br>`src/server/models/Notifikasi.ts`<br>`src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/components/Navbar.tsx`<br>*[file C18]* | UC06-TC01 | C04-UT01 s.d. C04-UT03, C10-UT01 s.d. C10-UT11, C13-UT30 s.d. C13-UT35, C13-UT41, INT-TC07, INT-TC08<br>*[test case C18]* |
-| KF09 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
-| KF10 | - | UC01 | C13 - AuthController<br>*[C03 - Relawan, C18 - SeleksiController]* | `src/server/controllers/AuthController.ts`<br>`src/server/auth.ts` (`afterEmailVerification`)<br>*[file C03, C18]* | UC01-TC01, UC01-TC02 | C13-UT01 s.d. C13-UT08, C13-UT13, C13-UT20 s.d. C13-UT23, C13-UT39, INT-TC01, INT-TC03, INT-TC09<br>*[test case C03, C18]* |
+| KF07 | - | UC05 | C02 - Pendaftaran<br>C15 - ProgramController<br>C16 - EksplorasiProgramPage | `src/server/models/Pendaftaran.ts`<br>`src/server/controllers/ProgramController.ts` (`daftarRelawan()`)<br>`src/app/program/[id]/daftar/page.tsx` | UC06-TC01 | C02-UT01 s.d. C02-UT06 |
+| KF08 | - | UC06 | C04 - Pengguna<br>C10 - Notifikasi<br>C12 - KelolaAkunPage<br>C13 - AuthController<br>C18 - SeleksiController | `src/server/models/Pengguna.ts`<br>`src/server/models/Notifikasi.ts`<br>`src/server/controllers/AuthController.ts`<br>`src/server/api/routers/auth.ts`<br>`src/views/KelolaAkunPage/Notifikasi.tsx`<br>`src/views/components/Navbar.tsx`<br>`src/server/controllers/SeleksiController.ts` | UC06-TC01 | C04-UT01 s.d. C04-UT03, C10-UT01 s.d. C10-UT11, C13-UT30 s.d. C13-UT35, C13-UT41, INT-TC07, INT-TC08, C18-UT01 s.d. C18-UT12 |
+| KF09 | - | UC05, UC06 | C02 - Pendaftaran<br>C17 - KelolaPendaftarPage<br>C18 - SeleksiController | `src/server/models/Pendaftaran.ts`<br>`src/views/KelolaPendaftarPage/KelolaPendaftarView.tsx`<br>`src/views/KelolaPendaftarPage/useKelolaPendaftarPage.ts`<br>`src/server/controllers/SeleksiController.ts`<br>`src/server/api/routers/seleksi.ts` | UC06-TC01 | C02-UT01 s.d. C02-UT06, C18-UT01 s.d. C18-UT12 |
+| KF10 | - | UC01 | C13 - AuthController<br>C03 - Relawan<br>C18 - SeleksiController | `src/server/controllers/AuthController.ts`<br>`src/server/auth.ts` (`afterEmailVerification`)<br>`src/server/models/Relawan.ts`<br>`src/server/controllers/SeleksiController.ts` | UC01-TC01, UC01-TC02 | C13-UT01 s.d. C13-UT08, C13-UT13, C13-UT20 s.d. C13-UT23, C13-UT39, INT-TC01, INT-TC03, INT-TC09, C03-UT01 s.d. C03-UT07, C18-UT01 s.d. C18-UT12 |
 | KF11 | KNF04 | UC08 | C03 - Relawan<br>C08 - Kehadiran<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/views/AreaKegiatanPage/AreaKegiatan.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts<br>src/server/api/routers/presensi.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Relawan.ts<br>src/server/models/Kehadiran.ts | UC08-TC01, UC08-TC02 | C20-UT08, C20-UT11, C20-UT17, C20-UT20, INT-TC40, INT-TC44, KNF04-TC01 |
 | KF12 | - | UC08 | C03 - Relawan<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/views/AreaKegiatanPage/AreaKegiatan.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts<br>src/server/api/routers/presensi.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Pendaftaran.ts<br>src/server/models/Program.ts<br>src/server/models/Relawan.ts | UC08-TC01, UC08-TC02 | C20-UT01 s.d. C20-UT05, C20-UT08 s.d. C20-UT18, INT-TC40 s.d. INT-TC43 |
 | KF13 | KNF05, KNF07, KNF08 | UC07 | C01 - Program<br>C06 - Verifikator<br>C09 - LaporanProgram<br>C14 - KelolaProgramPage<br>C15 - ProgramController | `src/server/models/Program.ts`<br>`src/server/models/Verifikator.ts`<br>`src/server/models/LaporanProgram.ts`<br>`src/views/KelolaProgramPage/DashboardVerifikator.tsx`<br>`src/views/KelolaProgramPage/useDashboardVerifikator.ts`<br>`src/views/KelolaProgramPage/ProgramSayaView.tsx`<br>`src/views/KelolaProgramPage/useProgramSaya.ts`<br>`src/views/laporan/LaporanFormView.tsx`<br>`src/views/laporan/LaporanVerifikasiView.tsx`<br>`src/views/laporan/LaporanDetailView.tsx`<br>`src/lib/programSaya.ts`<br>`src/server/controllers/ProgramController.ts`<br>`src/server/api/routers/program.ts`<br>`src/server/api/routers/laporan.ts` | UC07-TC01, UC07-TC02 | C01-UT01 s.d. C01-UT09, C01-UT36, C01-UT37, C09-UT01 s.d. C09-UT04, C14-UT01 s.d. C14-UT09, C15-UT01 s.d. C15-UT16, INT-TC32 s.d. INT-TC39, KNF05-TC05, KNF07-TC05, KNF08-TC05 |
 | KF14 | - | UC09 | C03 - Relawan<br>C11 - RiwayatKontribusi<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | `src/server/models/Relawan.ts`<br>`src/server/models/RiwayatKontribusi.ts`<br>`src/server/controllers/PresensiController.ts`<br>`src/server/api/routers/presensi.ts`<br>`src/views/AreaKegiatanPage/Portofolio.tsx`<br>`src/views/AreaKegiatanPage/useAreaKegiatanPage.ts` | UC09-TC01, UC09-TC02 | C03-UT03, C03-UT06, C03-UT07, C11-UT01 s.d. C11-UT08, C20-UT25 s.d. C20-UT35, C20-UT42 s.d. C20-UT47, INT-TC45 s.d. INT-TC49 |
 | KF15 | - | UC07, UC09 | C03 - Relawan<br>C11 - RiwayatKontribusi<br>C15 - ProgramController<br>C19 - AreaKegiatanPage<br>C20 - PresensiController | src/server/controllers/ProgramController.ts<br>src/server/controllers/PresensiController.ts<br>src/server/models/Relawan.ts<br>src/server/models/RiwayatKontribusi.ts<br>src/server/api/routers/presensi.ts<br>src/views/AreaKegiatanPage/Portofolio.tsx<br>src/views/AreaKegiatanPage/useAreaKegiatanPage.ts | UC07-TC01, UC09-TC01, UC09-TC02 | C11-UT01 s.d. C11-UT08, C15-UT01, C20-UT25 s.d. C20-UT35, INT-TC37, INT-TC45 s.d. INT-TC49 |
-| KF16 | *[KNFXX atau -]* | *[UCXX]* | *[CXX - Nama kelas]* | *[path/ke/file]* | *[UCXX-TCYY]* | *[CXX-UTYY, INT-TCYY, KNFXX-TCYY atau -]* |
+| KF16 | - | UC07 | C09 - LaporanProgram<br>C15 - ProgramController | `src/server/models/LaporanProgram.ts`<br>`src/server/controllers/ProgramController.ts` (`ajukanLaporanAkhir()`) | UC07-TC01 | INT-TC34, INT-TC36 |
 
 Status KF Modul 1 pada tag `v9.0`: KF08 terpenuhi (seluruh test case `Pass`). KF06 **belum terpenuhi** karena UC02-TC01 `Fail` (pengunjung tidak diarahkan ke login saat mengirim pendaftaran program). Penyebab dan usulan perbaikannya ada pada Tabel 4.4.2. KF01 dan KF10 menunggu test case modul lain pada baris yang sama.
 
