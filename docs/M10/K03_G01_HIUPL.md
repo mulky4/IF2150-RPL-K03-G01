@@ -314,7 +314,7 @@ Unit test tidak membutuhkan server maupun basis data. Basis data, pustaka Better
 
 Lokasi file test: `src/tests/unit/` (satu file per kelas atau per kelompok operasi, misalnya `AuthController.login.test.ts`).
 
-Lingkungan uji: Node.js 22.23.5, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 227 unit test lulus (24 file), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
+Lingkungan uji: Node.js 20.20.2, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 247 unit test lulus (24 file), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
 
 <!-- Subbab 4.2.x diurutkan menurut ID kelas. Nomor subbab dan tabel dirapikan saat semua kelas sudah masuk. -->
 
@@ -772,7 +772,7 @@ Pengujian integrasi memeriksa interaksi antarkomponen yang melewati batas, yaitu
 
 DPPL RekanBumi tidak memiliki tabel antarmuka antarkomponen yang bernomor, dan kode `I-XX` dipakai untuk layar (BAB 6 DPPL). Karena itu antarmuka pada Tabel 4.3.1 diambil dari relasi pada *view* arsitektur DPPL, yaitu Gambar 2.3 *Logical View* ("memanggil", "cek sesi", "mengarahkan ke login", dan dependensi *Controller* ke *Model*) serta Gambar 2.4 *Physical View* ("memanggil API" lewat tRPC/HTTPS dan "akses data" lewat Prisma). Kolom ID Antarmuka diisi pasangan kelas asal dan tujuan sesuai Tabel 4.1 DPPL (misalnya `C13 → C22`).
 
-Setiap test case memeriksa tiga hal: aliran data antarkomponen (INT-TC01, INT-TC07, INT-TC09), kecocokan format dan parameter antarmuka (INT-TC04, INT-TC05), serta aturan pertukaran data dan penanganan galat (INT-TC02, INT-TC03, INT-TC06, INT-TC08).
+Setiap test case memeriksa tiga hal: aliran data antarkomponen (INT-TC01, INT-TC07, INT-TC09, INT-TC30, INT-TC32, INT-TC34, INT-TC37, INT-TC38), kecocokan format dan parameter antarmuka (INT-TC04, INT-TC05), serta aturan pertukaran data dan penanganan galat (INT-TC02, INT-TC03, INT-TC06, INT-TC08, INT-TC31, INT-TC33, INT-TC35, INT-TC36, INT-TC39).
 
 Cara menjalankan integration test (dari folder `src/`):
 
