@@ -168,13 +168,13 @@ afterEach(() => {
 });
 
 describe("PresensiController.validasiStatusRelawan", () => {
-  it("true kalau pendaftaran sudah diterima", async () => {
+  it("C20-UT01 true kalau pendaftaran sudah diterima", async () => {
     await expect(
       PresensiController.validasiStatusRelawan(PROGRAM, RELAWAN),
     ).resolves.toBe(true);
   });
 
-  it("false kalau pendaftaran masih menunggu atau ditolak", async () => {
+  it("C20-UT02 false kalau pendaftaran masih menunggu atau ditolak", async () => {
     aturStatusPendaftaran("MENUNGGU");
     await expect(
       PresensiController.validasiStatusRelawan(PROGRAM, RELAWAN),
@@ -185,8 +185,18 @@ describe("PresensiController.validasiStatusRelawan", () => {
     ).resolves.toBe(false);
   });
 
-  it("false kalau relawan tidak mendaftar di program itu", async () => {
+  it("C20-UT03 false kalau relawan tidak mendaftar di program itu", async () => {
     tabel.pendaftaran = [];
+    await expect(
+      PresensiController.validasiStatusRelawan(PROGRAM, RELAWAN),
+    ).resolves.toBe(false);
+  });
+
+  it("C20-UT36 diterima di program lain atau relawan lain yang diterima tidak ikut dihitung", async () => {
+    tabel.pendaftaran = [
+      { programId: "program-lain", relawanId: RELAWAN, status: "DITERIMA" },
+      { programId: PROGRAM, relawanId: "relawan-lain", status: "DITERIMA" },
+    ];
     await expect(
       PresensiController.validasiStatusRelawan(PROGRAM, RELAWAN),
     ).resolves.toBe(false);
@@ -194,7 +204,7 @@ describe("PresensiController.validasiStatusRelawan", () => {
 });
 
 describe("PresensiController.validasiWaktuPelaksanaan", () => {
-  it("true tepat di waktu mulai dan waktu selesai", async () => {
+  it("C20-UT04 true tepat di waktu mulai dan waktu selesai", async () => {
     await expect(
       PresensiController.validasiWaktuPelaksanaan(PROGRAM, MULAI),
     ).resolves.toBe(true);
@@ -203,7 +213,7 @@ describe("PresensiController.validasiWaktuPelaksanaan", () => {
     ).resolves.toBe(true);
   });
 
-  it("false sedetik sebelum mulai dan sedetik sesudah selesai", async () => {
+  it("C20-UT05 false sedetik sebelum mulai dan sedetik sesudah selesai", async () => {
     await expect(
       PresensiController.validasiWaktuPelaksanaan(
         PROGRAM,
@@ -218,15 +228,21 @@ describe("PresensiController.validasiWaktuPelaksanaan", () => {
     ).resolves.toBe(false);
   });
 
-  it("false kalau program tidak ada", async () => {
+  it("C20-UT06 false kalau program tidak ada", async () => {
     await expect(
       PresensiController.validasiWaktuPelaksanaan("tidak-ada", SAAT_KEGIATAN),
     ).resolves.toBe(false);
   });
+
+  it("C20-UT37 true di tengah waktu kegiatan", async () => {
+    await expect(
+      PresensiController.validasiWaktuPelaksanaan(PROGRAM, SAAT_KEGIATAN),
+    ).resolves.toBe(true);
+  });
 });
 
 describe("PresensiController.ambilKeteranganWaktu", () => {
-  it("menyesuaikan dengan waktu sekarang", async () => {
+  it("C20-UT07 menyesuaikan dengan waktu sekarang", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(MULAI.getTime() - 60_000));
     await expect(
@@ -237,10 +253,36 @@ describe("PresensiController.ambilKeteranganWaktu", () => {
       PresensiController.ambilKeteranganWaktu(PROGRAM),
     ).resolves.toBe("Sudah selesai");
   });
+
+  it("C20-UT38 sedang berlangsung saat kegiatan berjalan", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(SAAT_KEGIATAN);
+    await expect(
+      PresensiController.ambilKeteranganWaktu(PROGRAM),
+    ).resolves.toBe("Sedang berlangsung");
+  });
+
+  it("C20-UT39 tepat di waktu mulai dan tepat di waktu selesai masih sedang berlangsung", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(MULAI);
+    await expect(
+      PresensiController.ambilKeteranganWaktu(PROGRAM),
+    ).resolves.toBe("Sedang berlangsung");
+    vi.setSystemTime(SELESAI);
+    await expect(
+      PresensiController.ambilKeteranganWaktu(PROGRAM),
+    ).resolves.toBe("Sedang berlangsung");
+  });
+
+  it("C20-UT40 program tidak ada", async () => {
+    await expect(
+      PresensiController.ambilKeteranganWaktu("tidak-ada"),
+    ).resolves.toBe("Program tidak ditemukan");
+  });
 });
 
 describe("PresensiController.prosesCheckIn", () => {
-  it("mencatat kehadiran kalau diterima dan masih dalam waktu kegiatan", async () => {
+  it("C20-UT08 mencatat kehadiran kalau diterima dan masih dalam waktu kegiatan", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     const kehadiran = await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
@@ -252,7 +294,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(kehadiran.getIdKehadiran()).toBe("hadir-1");
   });
 
-  it("ditolak kalau relawan belum diterima", async () => {
+  it("C20-UT09 ditolak kalau relawan belum diterima", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     aturStatusPendaftaran("MENUNGGU");
@@ -263,7 +305,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("ditolak kalau di luar waktu pelaksanaan", async () => {
+  it("C20-UT10 ditolak kalau di luar waktu pelaksanaan", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(SELESAI.getTime() + 60_000));
     await harapGalat(
@@ -273,7 +315,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("ditolak kalau sudah pernah check-in di program yang sama", async () => {
+  it("C20-UT11 ditolak kalau sudah pernah check-in di program yang sama", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
@@ -284,7 +326,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(1);
   });
 
-  it("ditolak kalau pendaftaran ditolak", async () => {
+  it("C20-UT12 ditolak kalau pendaftaran ditolak", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     aturStatusPendaftaran("DITOLAK");
@@ -295,7 +337,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("ditolak kalau relawan tidak mendaftar di program itu", async () => {
+  it("C20-UT13 ditolak kalau relawan tidak mendaftar di program itu", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     tabel.pendaftaran = [];
@@ -306,7 +348,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("ditolak kalau program tidak ada", async () => {
+  it("C20-UT14 ditolak kalau program tidak ada", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     await harapGalat(
@@ -315,7 +357,7 @@ describe("PresensiController.prosesCheckIn", () => {
     );
   });
 
-  it("ditolak kalau program belum aktif atau sudah selesai", async () => {
+  it("C20-UT15 ditolak kalau program belum aktif atau sudah selesai", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     for (const status of [
@@ -333,7 +375,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("ditolak sebelum kegiatan dimulai", async () => {
+  it("C20-UT16 ditolak sebelum kegiatan dimulai", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(MULAI.getTime() - 60_000));
     await harapGalat(
@@ -343,7 +385,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(0);
   });
 
-  it("berhasil tepat di waktu mulai dan tepat di waktu selesai", async () => {
+  it("C20-UT17 berhasil tepat di waktu mulai dan tepat di waktu selesai", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(MULAI);
     await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
@@ -355,7 +397,7 @@ describe("PresensiController.prosesCheckIn", () => {
     expect(tabel.kehadiran).toHaveLength(1);
   });
 
-  it("status pendaftaran dicek lebih dulu daripada waktu", async () => {
+  it("C20-UT18 status pendaftaran dicek lebih dulu daripada waktu", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(SELESAI.getTime() + 60_000));
     aturStatusPendaftaran("MENUNGGU");
@@ -365,7 +407,7 @@ describe("PresensiController.prosesCheckIn", () => {
     );
   });
 
-  it("hadir di program lain tidak menghalangi check-in di program ini", async () => {
+  it("C20-UT19 hadir di program lain tidak menghalangi check-in di program ini", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     tabel.kehadiran = [
@@ -382,7 +424,7 @@ describe("PresensiController.prosesCheckIn", () => {
     );
   });
 
-  it("check-in yang bertabrakan di database tetap dianggap sudah hadir", async () => {
+  it("C20-UT20 check-in yang bertabrakan di database tetap dianggap sudah hadir", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     tabel.tabrakanUnik = true;
@@ -394,13 +436,13 @@ describe("PresensiController.prosesCheckIn", () => {
 });
 
 describe("PresensiController.cariIdRelawan", () => {
-  it("mengembalikan id relawan milik akun", async () => {
+  it("C20-UT21 mengembalikan id relawan milik akun", async () => {
     await expect(PresensiController.cariIdRelawan("user-1")).resolves.toBe(
       RELAWAN,
     );
   });
 
-  it("null kalau akun tidak punya data relawan", async () => {
+  it("C20-UT22 null kalau akun tidak punya data relawan", async () => {
     await expect(
       PresensiController.cariIdRelawan("user-inisiator"),
     ).resolves.toBeNull();
@@ -432,7 +474,7 @@ describe("PresensiController.ambilDaftarKegiatan", () => {
     );
   });
 
-  it("yang terdekat di atas, yang sudah lewat di bawah, dan hanya milik relawan itu", async () => {
+  it("C20-UT23 yang terdekat di atas, yang sudah lewat di bawah, dan hanya milik relawan itu", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-11-12T08:00:00.000Z"));
     const daftar = await PresensiController.ambilDaftarKegiatan(RELAWAN);
@@ -444,7 +486,7 @@ describe("PresensiController.ambilDaftarKegiatan", () => {
     expect(daftar[1]?.statusPendaftaran).toBe("MENUNGGU");
   });
 
-  it("menandai kegiatan yang sudah di-check-in", async () => {
+  it("C20-UT24 menandai kegiatan yang sudah di-check-in", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAAT_KEGIATAN);
     await PresensiController.prosesCheckIn(PROGRAM, RELAWAN);
@@ -455,5 +497,11 @@ describe("PresensiController.ambilDaftarKegiatan", () => {
     expect(
       daftar.find((k) => k.idProgram === "program-akhir")?.waktuKehadiran,
     ).toBeNull();
+  });
+
+  it("C20-UT41 relawan yang belum mendaftar di program mana pun mendapat daftar kosong", async () => {
+    await expect(
+      PresensiController.ambilDaftarKegiatan("relawan-tanpa-pendaftaran"),
+    ).resolves.toEqual([]);
   });
 });
