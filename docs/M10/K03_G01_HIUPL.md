@@ -293,7 +293,7 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 | ID Kelas | Nama Kelas | Tingkat | Alasan | Test Case Terkait |
 | :--- | :--- | :--- | :--- | :--- |
 | C01 | Program | Mendalam | Memuat aturan status program (`aktifkan()`, `ajukanKonfirmasi()`, `selesaikan()`, `mintaRevisi()` hanya boleh dari status yang tepat), perhitungan kuota dari pendaftar berstatus DITERIMA, pemeriksaan waktu pelaksanaan untuk *check-in*, dan durasi program yang menjadi dasar jam aksi (KF15). Seluruh 12 operasi public pada DPPL diuji dengan kasus normal, batas, dan negatif. | C01-UT01 s.d. C01-UT38, INT-TC15, INT-TC32, INT-TC33 |
-| C02 | Pendaftaran | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C02 | Pendaftaran | Mendalam | Memuat aturan transisi status seleksi: `terima()` dan `tolak()` hanya boleh dari status MENUNGGU, serta pemeriksaan status (Algo-C02-01 s.d. Algo-C02-04) | C02-UT01 s.d. C02-UT06, INT-TC24 |
 | C03 | Relawan | Sedang | Sebagian besar operasinya mendelegasikan: `hadirPada()` meneruskan pengecekan ke Kehadiran (C08), `catatKontribusi()` hanya memeriksa kehadiran lalu meneruskan pencatatan jam ke RiwayatKontribusi (C11), dan `lihatPortofolio()` menyiapkan riwayat kosong untuk relawan baru. Aturan jam aksi dan check-in ganda ada di C11 dan C20. | C03-UT01 s.d. C03-UT07, C20-UT11, C20-UT19 |
 | C04 | Pengguna | Sedang | Hanya mencari akun dan mengambil notifikasi milik akun dari basis data. Tidak ada aturan sendiri, tetapi dipakai alur notifikasi UC06. | C04-UT01 s.d. C04-UT03, INT-TC07 |
 | C05 | InisiatorProgram | Mendalam | Memuat aturan status verifikasi lembaga (`cekStatusVerifikasi()` hanya bernilai benar untuk TERVERIFIKASI, dipakai untuk lencana "Terverifikasi" pada Eksplorasi) dan penanganan tautan situs resmi yang bisa kosong (`getTautan()`), yang menentukan tombol situs resmi pada UC04. Kedua operasinya kecil, tetapi menjadi dasar keputusan yang terlihat pengguna. | C05-UT01 s.d. C05-UT07, INT-TC15, INT-TC17, UC04-TC01 s.d. UC04-TC03 |
@@ -308,8 +308,8 @@ Tabel 4.1.1. Identifikasi Tingkat Pengujian Kelas
 | C14 | KelolaProgramPage | Sedang | Kelas *boundary*: sebagian besar menampilkan formulir dan daftar lalu meneruskannya ke C15. Logika yang bisa diuji unit ada di `src/lib/programSaya.ts`: pemetaan status ke label dan badge, aksi tombol per status (unggah laporan, unggah ulang), statistik, penyaringan, dan persen kuota. Alur layar I-07, I-09, dan I-10 diuji lewat test case use case. | `programSaya.test.ts` (9 tes, coverage 97,26% baris dan 100% cabang) |
 | C15 | ProgramController | Mendalam | Memuat transaksi basis data, aturan status program dan laporan, pembaruan portofolio saat laporan DISETUJUI, notifikasi ke verifikator dan inisiator, serta pemeriksaan kepemilikan program. Untuk bagian laporan dan verifikasi: `ProgramController.ajukanLaporan.test.ts` (3 tes), `.peninjauan.test.ts` (4), `.verifikasi.test.ts` (4), `.menungguVerifikasi.test.ts` (3), `.programSaya.test.ts` (2). Coverage seluruh kelas: 78,28% baris, 86,53% cabang, 77,27% fungsi. | `ProgramController.*.test.ts` (16 tes untuk bagian laporan dan verifikasi) |
 | C16 | EksplorasiProgramPage | Tidak perlu | Kelas *boundary* yang hanya menampilkan daftar program, kotak pencarian, filter kategori, dan detail program dari data C15. Logikanya terbatas pada keadaan layar di `useEksplorasiProgramPage.ts`: jeda 300 ms setelah berhenti mengetik, penyetelan ulang jumlah muatan saat pencarian berubah, dan pembukaan situs resmi di tab baru. Tidak ada aturan bisnis dan aturan validasi tautan ada di C15. Perilaku layar ini diuji lewat test case use case. Belum ada unit test untuk *hook* tersebut karena belum ada pustaka uji komponen React pada proyek. | UC03-TC01 s.d. UC03-TC03, UC04-TC01 s.d. UC04-TC03, INT-TC19, KNF01-TC01, KNF05-TC02, KNF07-TC02, KNF08-TC02 |
-| C17 | KelolaPendaftarPage | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
-| C18 | SeleksiController | *[Mendalam/Sedang/Tidak perlu]* | *[Alasan penentuan tingkat pengujian]* | *[ID test case atau -]* |
+| C17 | KelolaPendaftarPage | Tidak perlu | Kelas view yang hanya menampilkan daftar pendaftar dan meneruskan keputusan ke SeleksiController, tanpa logika bisnis | - (teruji tidak langsung lewat UC05-TC01, UC05-TC02, INT-TC28) |
+| C18 | SeleksiController | Mendalam | Memuat validasi kelayakan relawan (KF10), pemeriksaan kuota (KF05), dan aturan konfirmasi hasil seleksi sebelum notifikasi dikirim (KF08, KF09) (Algo-C18-01 s.d. Algo-C18-06) | C18-UT01 s.d. C18-UT12, INT-TC20 s.d. INT-TC27, INT-TC29 |
 | C19 | AreaKegiatanPage | Tidak perlu | Kelas *boundary* yang hanya menampilkan daftar kegiatan, tombol check-in, dan portofolio dari data C20. Aktif tidaknya tombol check-in mengikuti hasil `validasiStatusRelawan()` dan `validasiWaktuPelaksanaan()` milik C20, sehingga tidak ada aturan sendiri. Alur layar I-12 dan I-13 diuji lewat test case use case. | - |
 | C20 | PresensiController | Mendalam | Memuat validasi check-in (pendaftaran harus diterima, program harus aktif, dan waktu harus di dalam rentang pelaksanaan), penolakan check-in ganda termasuk saat terjadi bersamaan di basis data, serta pembaruan jam aksi portofolio dalam satu transaksi saat program selesai. | C20-UT01 s.d. C20-UT47, INT-TC37, INT-TC40 s.d. INT-TC49, KNF04-TC01 |
 | C21 | CloudStorageAdapter | Mendalam | Integrasi ke penyimpanan berkas. Memvalidasi ukuran (maksimal 2 MB) dan tipe berkas dari byte awalnya, membuat nama berkas sendiri, dan menolak path yang keluar dari folder unggahan. | C21-UT01 s.d. C21-UT13, INT-TC01, INT-TC02 |
@@ -336,19 +336,47 @@ Unit test tidak membutuhkan server maupun basis data. Basis data, pustaka Better
 
 Lokasi file test: `src/tests/unit/` (satu file per kelas atau per kelompok operasi, misalnya `AuthController.login.test.ts`).
 
-Lingkungan uji: Node.js 20.20.2, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 302 unit test lulus (26 file), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
+Lingkungan uji: Node.js 20.20.2, Vitest 3.2.7, @vitest/coverage-v8 3.2.7, pada kode tag `v9.0` ditambah file test. Seluruh 302 unit test lulus (26 berkas), dan 87 di antaranya milik kelas C04, C10, C12, C13, C21, dan C22.
 
-<!-- Subbab 4.2.x diurutkan menurut ID kelas. Nomor subbab dan tabel dirapikan saat semua kelas sudah masuk. -->
+<!-- Nomor subbab dan tabel mengikuti urutan bagian dalam dokumen. -->
 
-### 4.2.x Kelas Program
+### 4.2.1 Kelas Pendaftaran
 
-**ID Kelas:** C01  
-**Nama Kelas:** Program  
+**ID Kelas:** C02<br>
+**Nama Kelas:** Pendaftaran<br>
+**Tingkat:** Mendalam
+
+Subbab ini menguji seluruh operasi public C02, yaitu `terima()`, `tolak()`, `isDiterima()`, dan `sudahDiputuskan()`. Aturan utama yang diuji adalah transisi status seleksi: pendaftaran baru berstatus MENUNGGU, dan keputusan DITERIMA atau DITOLAK hanya dapat diberikan satu kali. Data uji: objek Pendaftaran dengan keterampilan "Menanam pohon" dan ketersediaan waktu "Akhir pekan", dibentuk langsung dengan status MENUNGGU, DITERIMA, atau DITOLAK tanpa basis data. File test: `src/tests/unit/Pendaftaran.test.ts`.
+
+Tabel 4.2.1a. Informasi Pengujian Kelas C02
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `terima()`, `tolak()`, `isDiterima()`, `sudahDiputuskan()` |
+| Operasi yang diuji | `terima()`, `tolak()`, `isDiterima()`, `sudahDiputuskan()` (4 dari 4 operasi public) |
+| ID Algoritma yang tercakup | Algo-C02-01, Algo-C02-02, Algo-C02-03, Algo-C02-04 |
+| Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/Pendaftaran.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+Tabel 4.2.1b. Hasil Pengujian Unit Kelas C02
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C02-UT01 | `sudahDiputuskan()`, `isDiterima()` | Batas | Pendaftaran baru berstatus MENUNGGU | `sudahDiputuskan()` = `false`, `isDiterima()` = `false` | `false`, `false` | Pass |
+| C02-UT02 | `terima()` | Normal | Pendaftaran MENUNGGU, lalu `terima()` | `isDiterima()` = `true`, `sudahDiputuskan()` = `true` | `true`, `true` | Pass |
+| C02-UT03 | `tolak()` | Normal | Pendaftaran MENUNGGU, lalu `tolak()` | `isDiterima()` = `false`, `sudahDiputuskan()` = `true` | `false`, `true` | Pass |
+| C02-UT04 | `terima()`, `tolak()` | Negatif | Pendaftaran berstatus DITERIMA, lalu `terima()` dan `tolak()` | Keduanya galat "Pendaftaran sudah diputuskan"; `isDiterima()` tetap `true` | Kedua pemanggilan melempar galat; status tetap diterima | Pass |
+| C02-UT05 | `terima()`, `tolak()` | Negatif | Pendaftaran berstatus DITOLAK, lalu `terima()` dan `tolak()` | Keduanya galat "Pendaftaran sudah diputuskan"; `isDiterima()` tetap `false` | Kedua pemanggilan melempar galat; status tetap ditolak | Pass |
+| C02-UT06 | `tolak()` lalu `terima()` | Negatif | Pendaftaran MENUNGGU, `tolak()`, lalu `terima()` | `terima()` galat "Pendaftaran sudah diputuskan"; `isDiterima()` tetap `false` | Galat dilempar; status tetap ditolak | Pass |
+
+### 4.2.2 Kelas Program
+
+**ID Kelas:** C01<br>
+**Nama Kelas:** Program<br>
 **Tingkat:** Mendalam
 
 Data uji: program "Tanam Pohon" berdurasi 4 jam (5 Des 2026, 08.00 sampai 12.00 UTC) dengan kuota 10. Pendaftar dibentuk langsung sebagai objek Pendaftaran dan pengelola berupa objek tiruan, tanpa basis data. File test: `src/tests/unit/Program.operasi.test.ts` (41 tes; C01-UT37 dijalankan empat kali, sekali untuk tiap status).
 
-Tabel 4.2.x. Hasil Pengujian Unit Kelas C01
+Tabel 4.2.2. Hasil Pengujian Unit Kelas C01
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -393,7 +421,7 @@ Tabel 4.2.x. Hasil Pengujian Unit Kelas C01
 
 Catatan penyimpangan dari DPPL: `Program.cari()` (Algo-C01-12) pada implementasi tidak mencari apa pun dan melempar galat. Pencarian program dikerjakan `ProgramController.cariProgram()` (C15) langsung ke basis data lewat Prisma, sehingga alur "I04-BTN-Cari → ProgramController.cariProgram() → Program.cari()" pada DPPL menjadi "I04-BTN-Cari → ProgramController.cariProgram() → basis data". Kolom hasil C01-UT33 sampai C01-UT35 menguji perilaku yang benar-benar ada pada implementasi, dan pencarian sebenarnya diuji pada C15-UT31 sampai C15-UT37 serta INT-TC10 sampai INT-TC14.
 
-Tabel 4.2.xb. Ringkasan Cakupan Kelas C01
+Tabel 4.2.2b. Ringkasan Cakupan Kelas C01
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -402,15 +430,15 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C01
 | ID Algoritma yang tercakup | Algo-C01-01 s.d. Algo-C01-13 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/Program.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.x Kelas InisiatorProgram
+### 4.2.3 Kelas InisiatorProgram
 
-**ID Kelas:** C05  
-**Nama Kelas:** InisiatorProgram  
+**ID Kelas:** C05<br>
+**Nama Kelas:** InisiatorProgram<br>
 **Tingkat:** Mendalam
 
 Objek dibentuk langsung dari data (lembaga "Komunitas Hijau", email `hijau@rekanbumi.test`) tanpa basis data. Modul `~/server/db` ditiru (`vi.mock`) karena superkelas Pengguna (C04) mengimpornya. File test: `src/tests/unit/InisiatorProgram.test.ts`.
 
-Tabel 4.2.x. Hasil Pengujian Unit Kelas C05
+Tabel 4.2.3. Hasil Pengujian Unit Kelas C05
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -422,7 +450,7 @@ Tabel 4.2.x. Hasil Pengujian Unit Kelas C05
 | C05-UT06 | `getTautan()` | Batas | Tautan yang hanya berisi spasi | Dikembalikan apa adanya (`"   "`), karena pemeriksaan keabsahan tautan dilakukan `validasiTautanSitus()` pada C15 | `"   "` | Pass |
 | C05-UT07 | `getNamaLembaga()` (tambahan) | Normal | Lembaga "Komunitas Hijau" | "Komunitas Hijau" | Sama | Pass |
 
-Tabel 4.2.xb. Ringkasan Cakupan Kelas C05
+Tabel 4.2.3b. Ringkasan Cakupan Kelas C05
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -431,15 +459,15 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C05
 | ID Algoritma yang tercakup | Algo-C05-01, Algo-C05-02 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/InisiatorProgram.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.x Kelas EksplorasiProgramPage
+### 4.2.4 Kelas EksplorasiProgramPage
 
-**ID Kelas:** C16  
-**Nama Kelas:** EksplorasiProgramPage  
+**ID Kelas:** C16<br>
+**Nama Kelas:** EksplorasiProgramPage<br>
 **Tingkat:** Tidak perlu
 
 Kelas *boundary* ini tidak memiliki unit test (alasan pada Tabel 4.1.1). Seluruh operasinya (Algo-C16-01 sampai Algo-C16-14) berupa tampilan dan *handler*, dan diuji lewat use case UC03 dan UC04 pada Subbab 4.4, lewat INT-TC19 untuk pemanggilan API dari halaman, serta lewat KNF05-TC02, KNF07-TC02, dan KNF08-TC02 untuk tampilan, aksesibilitas, dan kompatibilitas peramban. Operasi `tampilkanFormPendaftaran()`, `pilihDaftarProgram()`, `kirimPermohonanPendaftaran()`, `tampilkanNotifikasiBerhasil()`, dan `tampilkanPesanError()` (Algo-C16-10 sampai Algo-C16-14) pada implementasi berada di halaman Formulir Pendaftaran Program (I-06) milik `KelolaProgramPage` dan diuji pada use case UC01 dan UC02.
 
-### 4.2.x Kelas Relawan
+### 4.2.5 Kelas Relawan
 
 **ID Kelas:** C03  
 **Nama Kelas:** Relawan  
@@ -447,7 +475,7 @@ Kelas *boundary* ini tidak memiliki unit test (alasan pada Tabel 4.1.1). Seluruh
 
 Subbab ini menguji operasi C03 yang dipakai alur presensi dan portofolio. Data uji: program Pantai berdurasi 4 jam (7 Nov 2026, 08.00–12.00 WIB) dan program Hutan berdurasi 2,5 jam (8 Nov 2026, 08.00–10.30 WIB). Catatan kehadiran relawan dibentuk langsung sebagai objek Kehadiran (C08), tanpa basis data. File test: `src/tests/unit/RiwayatKontribusi.test.ts`.
 
-Tabel 4.2.x. Hasil Pengujian Unit Kelas C03
+Tabel 4.2.5. Hasil Pengujian Unit Kelas C03
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -459,13 +487,13 @@ Tabel 4.2.x. Hasil Pengujian Unit Kelas C03
 | C03-UT06 | `lihatPortofolio(): RiwayatKontribusi` | Normal | Relawan yang sudah punya riwayat `r1` dengan total 12 jam | Mengembalikan objek riwayat yang sama, total 12 jam | Objek yang sama, total 12 | Pass |
 | C03-UT07 | `lihatPortofolio(): RiwayatKontribusi` | Batas | Relawan baru: `lihatPortofolio()`, lalu `catatKontribusi(Pantai)`, lalu `lihatPortofolio()` lagi | Riwayat kosong yang dibuat pertama kali dipakai ulang, sehingga jam yang dicatat tidak hilang (total 4) | Objek yang sama, total 4 | Pass |
 
-### 4.2.1 Kelas Pengguna
+### 4.2.6 Kelas Pengguna
 
 **ID Kelas:** C04  
 **Nama Kelas:** Pengguna  
 **Tingkat:** Sedang
 
-Tabel 4.2.1. Hasil Pengujian Unit Kelas C04
+Tabel 4.2.6. Hasil Pengujian Unit Kelas C04
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -473,13 +501,13 @@ Tabel 4.2.1. Hasil Pengujian Unit Kelas C04
 | C04-UT02 | `cari(idPengguna)` | Negatif | `Pengguna.cari("id-tidak-ada")` | Mengembalikan `null` | Mengembalikan `null` | Pass |
 | C04-UT03 | `lihatNotifikasi()` | Negatif | Akun baru `id-baru` tanpa notifikasi | Daftar kosong, tanpa galat | `[]` | Pass |
 
-### 4.2.2 Kelas Notifikasi
+### 4.2.7 Kelas Notifikasi
 
 **ID Kelas:** C10  
 **Nama Kelas:** Notifikasi  
 **Tingkat:** Mendalam
 
-Tabel 4.2.2. Hasil Pengujian Unit Kelas C10
+Tabel 4.2.7. Hasil Pengujian Unit Kelas C10
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -495,7 +523,7 @@ Tabel 4.2.2. Hasil Pengujian Unit Kelas C10
 | C10-UT10 | `showDetail(): String` | Batas | Pesan satu karakter (`"!"`) dan pesan panjang ("Selamat!" diulang 100 kali) | Kedua pesan dikembalikan utuh | Sesuai yang diharapkan | Pass |
 | C10-UT11 | `showDetail(): String` | Negatif | Notifikasi dari baris lama yang pesannya kosong | String kosong, tanpa galat | `""` | Pass |
 
-Tabel 4.2.2b. Ringkasan Cakupan Kelas C10
+Tabel 4.2.7b. Ringkasan Cakupan Kelas C10
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -504,7 +532,7 @@ Tabel 4.2.2b. Ringkasan Cakupan Kelas C10
 | ID Algoritma yang tercakup | Algo-C10-01, Algo-C10-02, Algo-C10-03 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/Notifikasi.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.x Kelas RiwayatKontribusi
+### 4.2.8 Kelas RiwayatKontribusi
 
 **ID Kelas:** C11  
 **Nama Kelas:** RiwayatKontribusi  
@@ -512,7 +540,7 @@ Tabel 4.2.2b. Ringkasan Cakupan Kelas C10
 
 Data uji sama dengan subbab C03: program Pantai 4 jam dan program Hutan 2,5 jam. `perbaruiJamAksi()` bersifat *private* pada implementasi, sehingga diuji lewat `tambahRiwayatProgram()`. File test: `src/tests/unit/RiwayatKontribusi.test.ts`.
 
-Tabel 4.2.x. Hasil Pengujian Unit Kelas C11
+Tabel 4.2.8. Hasil Pengujian Unit Kelas C11
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -525,7 +553,7 @@ Tabel 4.2.x. Hasil Pengujian Unit Kelas C11
 | C11-UT07 | `getDaftarProgramSelesai()` | Negatif | Ambil daftar program selesai, lalu ubah daftar yang dikembalikan (tambah dan kosongkan isinya) | Isi riwayat tidak ikut berubah: daftar tetap `["pantai"]`, total tetap 4 jam | `["pantai"]`, total 4 | Pass |
 | C11-UT08 | `mencatat(program): Boolean` (tambahan) | Normal dan negatif | Periksa program Pantai sebelum dan sesudah ditambahkan, serta program Hutan yang tidak ditambahkan | `false` sebelum ditambahkan, `true` sesudahnya, dan `false` untuk program Hutan | `false`, `true`, `false` | Pass |
 
-Tabel 4.2.xb. Ringkasan Cakupan Kelas C11
+Tabel 4.2.8b. Ringkasan Cakupan Kelas C11
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -534,7 +562,7 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C11
 | ID Algoritma yang tercakup | Algo-C11-01 s.d. Algo-C11-04 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/RiwayatKontribusi.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.3 Kelas KelolaAkunPage
+### 4.2.9 Kelas KelolaAkunPage
 
 **ID Kelas:** C12  
 **Nama Kelas:** KelolaAkunPage  
@@ -542,7 +570,7 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C11
 
 Logika C12 yang bisa diuji secara unit adalah penyaringan `urlKembali` (Algo-C12-09 `arahkanKembali()`) di `src/lib/urlKembali.ts`. Operasi tampilan lainnya diuji lewat UC01, UC02, dan UC06 (Subbab 4.4).
 
-Tabel 4.2.3. Hasil Pengujian Unit Kelas C12
+Tabel 4.2.9. Hasil Pengujian Unit Kelas C12
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -551,7 +579,7 @@ Tabel 4.2.3. Hasil Pengujian Unit Kelas C12
 | C12-UT03 | `urlKembaliAman(url)` | Negatif | `//evil.example`, `/\evil.example`, `/\/evil.example` | Semua `null` (bukan path internal) | Semua `null` | Pass |
 | C12-UT04 | `urlKembaliAman(url)` | Batas | Path yang disisipi tab, *newline*, atau CR (`/\t/evil.example`, `/\n/evil.example`, `/a\r\nb`) | Semua `null` | Semua `null` | Pass |
 
-### 4.2.4 Kelas AuthController
+### 4.2.10 Kelas AuthController
 
 **ID Kelas:** C13  
 **Nama Kelas:** AuthController  
@@ -559,7 +587,7 @@ Tabel 4.2.3. Hasil Pengujian Unit Kelas C12
 
 Data uji Relawan: email `"  Ayu@RekanBumi.Test "`, kata sandi `Rahasia123`, nama `" Ayu Lestari "`, telepon `081234567890`, domisili `Bandung`, jenis dokumen `KTP`, berkas PDF 64 byte. Data uji Inisiator: `komunitas@rekanbumi.test`, lembaga `Komunitas Hijau`, tautan `https://hijau.example.org`. Operasi *private* diuji langsung karena memuat aturan validasi dan blokir.
 
-Tabel 4.2.4. Hasil Pengujian Unit Kelas C13
+Tabel 4.2.10. Hasil Pengujian Unit Kelas C13
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -605,7 +633,7 @@ Tabel 4.2.4. Hasil Pengujian Unit Kelas C13
 | C13-UT40 | `cekSesi()` | Negatif | `BetterAuth.ambilSesi()` melempar galat "Sesi rusak" | Galat diteruskan | Galat "Sesi rusak" dilempar | Pass |
 | C13-UT41 | `bacaNotifikasi()` | Batas | Ayu membuka notifikasinya yang sudah dibaca untuk kedua kali | Tetap `statusDibaca = true`, basis data hanya di-*update* sekali | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.4b. Ringkasan Cakupan Kelas C13
+Tabel 4.2.10b. Ringkasan Cakupan Kelas C13
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -614,7 +642,7 @@ Tabel 4.2.4b. Ringkasan Cakupan Kelas C13
 | ID Algoritma yang tercakup | Algo-C13-01 s.d. Algo-C13-12 |
 | Coverage (wajib ≥ 70%) | 100% baris / 97,67% cabang (`src/server/controllers/AuthController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.x Kelas PresensiController
+### 4.2.11 Kelas PresensiController
 
 **ID Kelas:** C20  
 **Nama Kelas:** PresensiController  
@@ -624,7 +652,7 @@ Basis data diganti tiruan di memori (`vi.mock("~/server/db")`), dan waktu sekara
 
 Data uji alur check-in: program "Tanam Mangrove" berstatus AKTIF pada 5 Des 2026, 15.00–19.00 WIB, dan relawan `relawan-1` yang pendaftarannya DITERIMA. "Saat kegiatan" berarti pukul 16.30 WIB. Data uji alur portofolio: program Pantai berstatus SELESAI dengan durasi 4 jam, serta tiga relawan diterima: HADIR (sudah punya riwayat 3 jam), ABSEN (riwayat 0 jam), dan BARU (belum punya riwayat).
 
-Tabel 4.2.x. Hasil Pengujian Unit Kelas C20
+Tabel 4.2.11. Hasil Pengujian Unit Kelas C20
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -676,7 +704,7 @@ Tabel 4.2.x. Hasil Pengujian Unit Kelas C20
 | C20-UT46 | `ambilProfilRelawan()` (tambahan) | Batas | Relawan yang statusnya belum terverifikasi dan domisilinya kosong | `terverifikasi` = `false`, domisili `null` | Sesuai yang diharapkan | Pass |
 | C20-UT47 | `ambilProfilRelawan()` (tambahan) | Negatif | Relawan tidak ada | Galat "Relawan tidak ditemukan" | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.xb. Ringkasan Cakupan Kelas C20
+Tabel 4.2.11b. Ringkasan Cakupan Kelas C20
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -685,7 +713,7 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C20
 | ID Algoritma yang tercakup | Algo-C20-01 s.d. Algo-C20-07 |
 | Coverage (wajib ≥ 70%) | 98,29% baris / 95,52% cabang (`src/server/controllers/PresensiController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.5 Kelas CloudStorageAdapter
+### 4.2.12 Kelas CloudStorageAdapter
 
 **ID Kelas:** C21  
 **Nama Kelas:** CloudStorageAdapter  
@@ -693,7 +721,7 @@ Tabel 4.2.xb. Ringkasan Cakupan Kelas C20
 
 Setiap test memakai folder unggahan sementara (`UPLOAD_DIR` di folder *temp*) yang dihapus setelah test selesai.
 
-Tabel 4.2.5. Hasil Pengujian Unit Kelas C21
+Tabel 4.2.12. Hasil Pengujian Unit Kelas C21
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -711,7 +739,7 @@ Tabel 4.2.5. Hasil Pengujian Unit Kelas C21
 | C21-UT12 | `unggahBerkas()` | Batas | PDF tepat 2 MB diunggah lalu diambil lagi | Berkas tersimpan utuh (2.097.152 byte) | Sesuai yang diharapkan | Pass |
 | C21-UT13 | `ambilBerkas()` | Batas | URL berupa nama berkas saja, tanpa awalan `uploads/` | Berkas tetap ditemukan dengan tipe `image/png` | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.5b. Ringkasan Cakupan Kelas C21
+Tabel 4.2.12b. Ringkasan Cakupan Kelas C21
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -720,7 +748,7 @@ Tabel 4.2.5b. Ringkasan Cakupan Kelas C21
 | ID Algoritma yang tercakup | Algo-C21-01, Algo-C21-02, Algo-C21-03 |
 | Coverage (wajib ≥ 70%) | 100% baris / 92% cabang (`src/server/adapters/CloudStorageAdapter.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.6 Kelas BetterAuth
+### 4.2.13 Kelas BetterAuth
 
 **ID Kelas:** C22  
 **Nama Kelas:** BetterAuth  
@@ -728,7 +756,7 @@ Tabel 4.2.5b. Ringkasan Cakupan Kelas C21
 
 `hashKataSandi()` dan `cocokkanHash()` diuji dengan bcrypt asli. Untuk operasi lainnya, API pustaka Better Auth, `next/headers`, dan basis data diganti tiruan. Uji dengan Better Auth dan basis data asli ada di INT-TC04, INT-TC05, dan KNF02-TC01.
 
-Tabel 4.2.6. Hasil Pengujian Unit Kelas C22
+Tabel 4.2.13. Hasil Pengujian Unit Kelas C22
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -748,7 +776,7 @@ Tabel 4.2.6. Hasil Pengujian Unit Kelas C22
 | C22-UT14 | `buatSesiMasuk()` | Batas | Request tanpa *header* IP | Sesi tetap dibuat (token `token-tanpa-ip`), *header* kosong diteruskan apa adanya | Sesuai yang diharapkan | Pass |
 | C22-UT15 | `ambilSesi()` | Negatif | `getSession` melempar galat "Sesi rusak" | Galat diteruskan | Sesuai yang diharapkan | Pass |
 
-Tabel 4.2.6b. Ringkasan Cakupan Kelas C22
+Tabel 4.2.13b. Ringkasan Cakupan Kelas C22
 
 | Informasi | Keterangan |
 | :--- | :--- |
@@ -757,7 +785,7 @@ Tabel 4.2.6b. Ringkasan Cakupan Kelas C22
 | ID Algoritma yang tercakup | Algo-C22-01 s.d. Algo-C22-06 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/adapters/BetterAuth.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.7 Kelas Verifikator
+### 4.2.14 Kelas Verifikator
 
 
 **ID Kelas:** C06  
@@ -765,12 +793,12 @@ Tabel 4.2.6b. Ringkasan Cakupan Kelas C22
 **Tingkat:** Tidak perlu (lihat Tabel 4.1.1)
 
 
-Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfirmasiLaporan()` dan `tolakLaporan()` ke `LaporanProgram` dengan `this.idPengguna`. Pada implementasi akhir, kelas ini tidak dipanggil dari kode aplikasi. Peninjauan laporan berjalan lewat `ProgramController.konfirmasiLaporan()` dan `tolakLaporan()` (C15), yang memakai `LaporanProgram` (C09) langsung dengan `idVerifikator` dari sesi (B.1 no. 6 dan 9). Karena itu kelas ini tidak punya unit test khusus, dan coverage terukurnya 0% (`Verifikator.ts`, @vitest/coverage-v8, bukti pada 4.6). Logika yang ia teruskan teruji lewat C09 (4.2.8) dan C15 (4.2.10), serta lewat UC07-TC01 dan UC07-TC02.
+Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfirmasiLaporan()` dan `tolakLaporan()` ke `LaporanProgram` dengan `this.idPengguna`. Pada implementasi akhir, kelas ini tidak dipanggil dari kode aplikasi. Peninjauan laporan berjalan lewat `ProgramController.konfirmasiLaporan()` dan `tolakLaporan()` (C15), yang memakai `LaporanProgram` (C09) langsung dengan `idVerifikator` dari sesi (B.1 no. 6 dan 9). Karena itu kelas ini tidak punya unit test khusus, dan coverage terukurnya 0% (`Verifikator.ts`, @vitest/coverage-v8, bukti pada 4.6). Logika yang ia teruskan teruji lewat C09 (4.2.15) dan C15 (4.2.17), serta lewat UC07-TC01 dan UC07-TC02.
 
 
 
 
-### 4.2.8 Kelas LaporanProgram
+### 4.2.15 Kelas LaporanProgram
 
 
 **ID Kelas:** C09  
@@ -778,7 +806,7 @@ Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfi
 **Tingkat:** Mendalam
 
 
-Tabel 4.2.8. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgram.test.ts`)
+Tabel 4.2.15. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgram.test.ts`)
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
@@ -789,7 +817,7 @@ Tabel 4.2.8. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgr
 | C09-UT04 | `tolak()` | Normal dan negatif | Tolak laporan tanpa catatan revisi, lalu dengan catatan revisi | Tanpa catatan ditolak dengan "Catatan revisi wajib diisi", dengan catatan berstatus DITOLAK (Algo-C09-03) | Sesuai yang diharapkan | Pass |
 
 
-Tabel 4.2.8b. Ringkasan Cakupan Kelas C09
+Tabel 4.2.15b. Ringkasan Cakupan Kelas C09
 
 
 | Informasi | Keterangan |
@@ -802,7 +830,7 @@ Tabel 4.2.8b. Ringkasan Cakupan Kelas C09
 
 
 
-### 4.2.9 Kelas KelolaProgramPage
+### 4.2.16 Kelas KelolaProgramPage
 
 
 **ID Kelas:** C14  
@@ -813,7 +841,7 @@ Tabel 4.2.8b. Ringkasan Cakupan Kelas C09
 Kelas ini adalah kelas *boundary* yang pada implementasi dipecah menjadi satu komponen per layar (B.1 no. 11). Logika yang dapat diuji dipisahkan ke fungsi murni di `src/lib/programSaya.ts` (misalnya `labelStatus()` untuk Algo-C14-12 `tampilkanStatusProgram`, `aksiProgram()`, `hitungStatistik()`, `saringProgram()`, `persenKuota()`). Komponen tampilannya teruji lewat pengujian use case (UC01-TC03, UC01-TC04, UC07-TC01, UC07-TC02).
 
 
-Tabel 4.2.9. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/programSaya.test.ts`, 9 tes)
+Tabel 4.2.16. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/programSaya.test.ts`, 9 tes)
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
@@ -829,7 +857,7 @@ Tabel 4.2.9. Hasil Pengujian Unit Fungsi Logika C14 (berkas `src/tests/unit/prog
 | C14-UT09 | `persenKuota()` | Batas dan negatif | Diterima di bawah kuota, melebihi kuota, dan kuota 0 | 60, 100 (dibatasi), dan 0 | Sesuai yang diharapkan | Pass |
 
 
-Tabel 4.2.9b. Ringkasan Cakupan Kelas C14
+Tabel 4.2.16b. Ringkasan Cakupan Kelas C14
 
 
 | Informasi | Keterangan |
@@ -840,7 +868,7 @@ Tabel 4.2.9b. Ringkasan Cakupan Kelas C14
 
 
 
-### 4.2.10 Kelas ProgramController
+### 4.2.17 Kelas ProgramController
 
 
 **ID Kelas:** C15  
@@ -848,7 +876,7 @@ Tabel 4.2.9b. Ringkasan Cakupan Kelas C14
 **Tingkat:** Mendalam
 
 
-Tabel 4.2.10. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan program saya
+Tabel 4.2.17. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan program saya
 
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
@@ -891,7 +919,7 @@ Tabel 4.2.10. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan p
 | C15-UT50 | `validasiTautanSitus()` | Batas | `HTTPS://hijau.example` dan `  https://hijau.example  ` (spasi di pinggir) | `true` untuk keduanya, karena skema dibaca tanpa membedakan huruf dan spasi pinggir diabaikan pembaca URL | `true` dan `true` | Pass |
 
 
-Tabel 4.2.10b. Ringkasan Cakupan Kelas C15
+Tabel 4.2.17b. Ringkasan Cakupan Kelas C15
 
 
 | Informasi | Keterangan |
@@ -902,7 +930,41 @@ Tabel 4.2.10b. Ringkasan Cakupan Kelas C15
 | ID Algoritma yang tercakup | Algo-C15-03, Algo-C15-04, Algo-C15-05, Algo-C15-06, Algo-C15-09, Algo-C15-10, Algo-C15-11 (notifikasi dalam transaksi) |
 | Coverage (wajib ≥ 70%) | 78,28% baris / 86,53% cabang untuk seluruh `ProgramController.ts` (semua berkas tes `ProgramController.*`, @vitest/coverage-v8, bukti pada 4.6) |
 
-### 4.2.x Kelas [Nama Kelas lain]
+### 4.2.18 Kelas SeleksiController
+
+**ID Kelas:** C18<br>
+**Nama Kelas:** SeleksiController<br>
+**Tingkat:** Mendalam
+
+Subbab ini menguji operasi public C18 yang direalisasikan pada alur seleksi: `lihatDaftarRelawan()`, `simpanHasilSeleksi()`, dan `konfirmasiHasilSeleksi()`. Operasi private `validasiKuota()` dan `triggerNotifikasi()` teruji tidak langsung lewat operasi public yang memanggilnya. Operasi `ajukanPendaftaran()` pada DPPL direalisasikan sebagai `ProgramController.daftarRelawan()` (C15) sehingga pengujiannya dicatat pada subbab C15. Aturan yang diuji: hanya pemilik program yang dapat melihat dan mengubah hasil seleksi (KF07), jumlah penerimaan tidak boleh melampaui kuota (KF05), hasil seleksi diumumkan satu kali setelah seluruh pendaftar diputuskan, dan notifikasi dikirim ke tiap pendaftar (KF08, KF09). Data uji: program "Penanaman Pohon" berstatus AKTIF dengan kuota 2 milik pengguna `inisiator-1`, dengan pendaftar berstatus MENUNGGU, DITERIMA, atau DITOLAK. Basis data Prisma digantikan objek tiruan (*mock*) sehingga pengujian berjalan tanpa basis data. File test: `src/tests/unit/SeleksiController.test.ts`.
+
+Tabel 4.2.18a. Informasi Pengujian Kelas C18
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `ajukanPendaftaran()`, `lihatDaftarRelawan()`, `simpanHasilSeleksi()`, `konfirmasiHasilSeleksi()` |
+| Operasi yang diuji | `lihatDaftarRelawan()`, `simpanHasilSeleksi()`, `konfirmasiHasilSeleksi()` (3 dari 4 operasi public); `ajukanPendaftaran()` direalisasikan di `ProgramController.daftarRelawan()` (C15-UT17 s.d. C15-UT24) |
+| ID Algoritma yang tercakup | Algo-C18-02 s.d. Algo-C18-06 (Algo-C18-01 dicakup oleh C15-UT17 s.d. C15-UT24) |
+| Coverage (wajib ≥ 70%) | 83,5% baris / 76,92% cabang (`src/server/controllers/SeleksiController.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+Tabel 4.2.18b. Hasil Pengujian Unit Kelas C18
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C18-UT01 | `lihatDaftarRelawan(idProgram)` | Normal | `inisiator-1` (pemilik program) memanggil `lihatDaftarRelawan("inisiator-1", "program-1")` dengan satu pendaftar MENUNGGU | Mengembalikan program "Penanaman Pohon" dan pendaftar `pendaftaran-1` berstatus MENUNGGU; data pendaftar diambil satu kali | Program dan pendaftar dikembalikan; data pendaftar diambil satu kali | Pass |
+| C18-UT02 | `lihatDaftarRelawan(idProgram)` | Negatif | Program dimiliki `pemilik-lain`, lalu `inisiator-1` memanggil `lihatDaftarRelawan("inisiator-1", "program-1")` | Ditolak dengan kode galat `FORBIDDEN`; data pendaftar tidak diambil | Galat `FORBIDDEN`; data pendaftar tidak diambil | Pass |
+| C18-UT03 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Kuota 2, sudah 1 diterima, dua pendaftar MENUNGGU keduanya diputuskan DITERIMA | Ditolak dengan kode galat `CONFLICT`; tidak ada status pendaftar yang diubah | Galat `CONFLICT`; status pendaftar tidak diubah | Pass |
+| C18-UT04 | `simpanHasilSeleksi(idProgram, keputusan)` | Batas | Kuota 2, sudah 1 diterima, satu pendaftar MENUNGGU diputuskan DITERIMA (tepat sampai batas kuota) | Mengembalikan `true`; pembaruan status pendaftar dipanggil satu kali | `true`; pembaruan status dipanggil satu kali | Pass |
+| C18-UT05 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Program dimiliki `pemilik-lain`, lalu `inisiator-1` memanggil `simpanHasilSeleksi("inisiator-1", "program-1", ...)` dengan keputusan DITOLAK untuk `pendaftaran-1` | Ditolak dengan kode galat `FORBIDDEN`; pembaruan status pendaftar tidak dipanggil | Galat `FORBIDDEN`; pembaruan status tidak dipanggil | Pass |
+| C18-UT06 | `simpanHasilSeleksi(idProgram, keputusan)` | Normal | `inisiator-1` (pemilik) memutuskan DITERIMA untuk satu pendaftar berstatus MENUNGGU (kuota 2, belum ada yang diterima) | Mengembalikan `true`; pembaruan status dipanggil dengan kondisi `id = pendaftaran-1` dan `status = MENUNGGU`, data status `DITERIMA` | `true`; pembaruan status sesuai kondisi dan data yang diharapkan | Pass |
+| C18-UT07 | `konfirmasiHasilSeleksi(idProgram)` | Normal | Dua pendaftar sudah diputuskan: `relawan-1` DITERIMA dan `relawan-2` DITOLAK, lalu `konfirmasiHasilSeleksi("inisiator-1", "program-1")` | Mengembalikan `true`; pembaruan status dipanggil 2 kali; 2 notifikasi dibuat: untuk `relawan-1` berisi kata "diterima" dan untuk `relawan-2` berisi "belum dapat diterima" | `true`; dua status diperbarui dan dua notifikasi sesuai hasil seleksi dikirim | Pass |
+| C18-UT08 | `konfirmasiHasilSeleksi(idProgram)` | Negatif | Satu pendaftar masih berstatus MENUNGGU, lalu `konfirmasiHasilSeleksi("inisiator-1", "program-1")` | Ditolak dengan kode galat `CONFLICT`; tidak ada pembaruan status dan tidak ada notifikasi | Galat `CONFLICT`; tidak ada pembaruan status atau notifikasi | Pass |
+| C18-UT09 | `konfirmasiHasilSeleksi(idProgram)` | Negatif | Satu-satunya pendaftar (DITERIMA) sudah pernah dinotifikasi (`notifikasiTerkirimAt` terisi), lalu `konfirmasiHasilSeleksi(...)` | Ditolak dengan kode galat `CONFLICT`; tidak ada pembaruan status dan tidak ada notifikasi ulang | Galat `CONFLICT`; tidak ada pembaruan status atau notifikasi ulang | Pass |
+| C18-UT10 | `konfirmasiHasilSeleksi(idProgram)` | Batas | Dua pendaftar sudah diputuskan: `relawan-lama` DITERIMA sudah pernah dinotifikasi, `relawan-baru` DITOLAK belum, lalu `konfirmasiHasilSeleksi(...)` | Mengembalikan `true`; pembaruan status dan notifikasi masing-masing dipanggil 1 kali, hanya untuk `pendaftaran-2` / `relawan-baru` | `true`; hanya `pendaftaran-2` diperbarui dan notifikasi dikirim ke `relawan-baru` | Pass |
+| C18-UT11 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Keputusan DITOLAK untuk `pendaftar-asing` yang bukan pendaftar program ini | Ditolak dengan kode galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Galat `BAD_REQUEST`; pembaruan status tidak dipanggil | Pass |
+| C18-UT12 | `simpanHasilSeleksi(idProgram, keputusan)` | Negatif | Satu permintaan memuat `pendaftaran-1` dua kali (DITERIMA dan DITOLAK) | Ditolak dengan galat bertipe `GalatSeleksi` | Galat `GalatSeleksi` dilempar | Pass |
+
+### 4.2.19 Kelas [Nama Kelas lain]
 
 *[Ulangi pola 4.2.1 untuk setiap kelas bertingkat Mendalam atau Sedang milik modul lain, urut menurut ID kelas.]*
 
@@ -1048,7 +1110,7 @@ Tabel 4.4.2. Hasil Pengujian Use Case UC02
 
 ### 4.4.3 Use Case Mencari program
 
-**ID Use Case:** UC03  
+**ID Use Case:** UC03<br>
 **Nama Use Case:** Mencari program
 
 Data: akun *seed* tidak diperlukan karena pencarian terbuka untuk pengunjung (tanpa login). Basis data berisi tiga program AKTIF hasil `pnpm db:seed`: "Aksi Bersih Sungai" (Jaga Alam), "Susur Pantai Bersih" (Jaga Iklim), dan "Penanaman Pohon Bersama" (Jaga Alam).
@@ -1063,7 +1125,7 @@ Tabel 4.4.3. Hasil Pengujian Use Case UC03
 
 ### 4.4.4 Use Case Mengunjungi situs program
 
-**ID Use Case:** UC04  
+**ID Use Case:** UC04<br>
 **Nama Use Case:** Mengunjungi situs program
 
 Tabel 4.4.4. Hasil Pengujian Use Case UC04
@@ -1103,7 +1165,7 @@ Tabel 4.4.7. Hasil Pengujian Use Case UC07
 
 ### 4.4.8 Use Case Konfirmasi kehadiran program
 
-**ID Use Case:** UC08  
+**ID Use Case:** UC08<br>
 **Nama Use Case:** Konfirmasi kehadiran program
 
 Menu check-in ada di halaman Kegiatan Saya (`/kegiatan`), yang menampilkan program yang didaftari relawan beserta panel check-in. Program "Aksi Bersih Sungai" pada data *seed* selalu berlangsung saat seed dijalankan (mulai 1 jam sebelumnya, selesai 3 jam sesudahnya), sedangkan "Penanaman Pohon Bersama" dijadwalkan 5 Desember 2026.
@@ -1117,7 +1179,7 @@ Tabel 4.4.8. Hasil Pengujian Use Case UC08
 
 ### 4.4.9 Use Case Memperbarui status akun relawan
 
-**ID Use Case:** UC09  
+**ID Use Case:** UC09<br>
 **Nama Use Case:** Memperbarui status akun relawan
 
 UC09-TC01 dan UC09-TC02 dijalankan dalam satu alur pada program "Aksi Bersih Sungai" (durasi 4 jam) setelah UC08-TC01. Bima Contoh sudah check-in pada UC08-TC01, sedangkan pendaftaran Ayu Contoh diterima tanpa check-in. Sebelum pengujian, portofolio Bima berisi 0 jam aksi dan 0 program selesai, sedangkan Ayu berisi 4 jam aksi dan 1 program selesai ("Penanaman Mangrove Selesai").
@@ -1179,6 +1241,7 @@ Tabel 4.6. Bukti Hasil Pengujian
 
 | ID Pengujian | Bukti Hasil Pengujian |
 | :--- | :--- |
+| C02-UT01 – C02-UT06 | <img src="./assets/C02-UT.png" alt="Keluaran unit test C02" width="600"> |
 | C01-UT01 – C01-UT38 | <img src="./assets/C01-UT.png" alt="Keluaran unit test C01" width="600"> |
 | C05-UT01 – C05-UT07 | <img src="./assets/C05-UT.png" alt="Keluaran unit test C05" width="600"> |
 | C15-UT31 – C15-UT50 | <img src="./assets/C15-UT31-UT50.png" alt="Keluaran unit test C15 operasi eksplorasi program" width="600"> |
@@ -1188,9 +1251,11 @@ Tabel 4.6. Bukti Hasil Pengujian
 | C11-UT01 – C11-UT08 | <img src="./assets/C11-UT.png" alt="Keluaran unit test C11" width="600"> |
 | C12-UT01 – C12-UT04 | <img src="./assets/C12-UT.png" alt="Keluaran unit test C12" width="600"> |
 | C13-UT01 – C13-UT41 | <img src="./assets/C13-UT.png" alt="Keluaran unit test C13" width="600"> |
+| C18-UT01 – C18-UT12 | <img src="./assets/C18-UT.png" alt="Keluaran unit test C18" width="600"> |
 | C20-UT01 – C20-UT47 | <img src="./assets/C20-UT-1.png" alt="Keluaran unit test C20 bagian 1" width="600"><br><img src="./assets/C20-UT-2.png" alt="Keluaran unit test C20 bagian 2" width="600"> |
 | C21-UT01 – C21-UT13 | <img src="./assets/C21-UT.png" alt="Keluaran unit test C21" width="600"> |
 | C22-UT01 – C22-UT15 | <img src="./assets/C22-UT.png" alt="Keluaran unit test C22" width="600"> |
+| C02, C18 (coverage) | Pendaftaran 100% baris / 100% cabang; SeleksiController 83,5% baris / 76,92% cabang (`pnpm test:coverage`, @vitest/coverage-v8) |
 | C10, C13, C21, C22 (coverage) | <img src="./assets/coverage-modul1.png" alt="Laporan coverage kelas Modul 1" width="600"><br>Notifikasi 100% baris / 100% cabang, AuthController 100% / 97,67%, CloudStorageAdapter 100% / 92%, BetterAuth 100% / 100% |
 | C01, C05, C15 (coverage) | <img src="./assets/coverage-modul2.png" alt="Laporan coverage kelas Modul 2" width="600"><br>Program 100% baris / 100% cabang, InisiatorProgram 100% / 100%, ProgramController (seluruh berkas) 78,28% / 86,53% |
 | C11, C20 (coverage) | <img src="./assets/coverage-modul5.png" alt="Laporan coverage kelas Modul 5" width="600"><br>RiwayatKontribusi 100% baris / 100% cabang, PresensiController 98,29% / 95,52% |
