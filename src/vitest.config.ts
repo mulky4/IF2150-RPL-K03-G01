@@ -20,6 +20,8 @@ export default defineConfig({
         "server/adapters/CloudStorageAdapter.ts": { lines: 70, branches: 70 },
         "server/models/RiwayatKontribusi.ts": { lines: 70, branches: 70 },
         "server/controllers/PresensiController.ts": { lines: 70, branches: 70 },
+        "server/models/Program.ts": { lines: 70, branches: 70 },
+        "server/models/InisiatorProgram.ts": { lines: 70, branches: 70 },
       },
     },
   },

@@ -64,7 +64,7 @@ async function galatDari(janji: Promise<unknown>): Promise<unknown> {
 }
 
 describe("ProgramController.cariProgram", () => {
-  it("selalu membatasi ke program AKTIF", async () => {
+  it("C15-UT31 cariProgram selalu membatasi pencarian ke program AKTIF", async () => {
     const { controller, findMany } = buatDb();
     await controller.cariProgram("mangrove", null, 24);
     const { where } = findMany.mock.calls[0]![0] as {
@@ -73,7 +73,7 @@ describe("ProgramController.cariProgram", () => {
     expect(where.status).toBe("AKTIF");
   });
 
-  it("kata kunci dicocokkan ke nama dan deskripsi tanpa membedakan huruf", async () => {
+  it("C15-UT32 cariProgram mencocokkan kata kunci (dipangkas spasinya) ke nama dan deskripsi tanpa membedakan huruf", async () => {
     const { controller, findMany } = buatDb();
     await controller.cariProgram("  Mangrove ", null, 24);
     const { where } = findMany.mock.calls[0]![0] as {
@@ -85,7 +85,7 @@ describe("ProgramController.cariProgram", () => {
     ]);
   });
 
-  it("kategori dipakai sebagai filter; kosong dan tanpa kategori = semua yang aktif", async () => {
+  it("C15-UT33 cariProgram memakai kategori sebagai filter; kata kunci kosong dan tanpa kategori = semua program aktif", async () => {
     const { controller, findMany } = buatDb();
     await controller.cariProgram("", "JAGA_IKLIM", 24);
     await controller.cariProgram("   ", undefined, 24);
@@ -96,7 +96,7 @@ describe("ProgramController.cariProgram", () => {
     expect(panggilan[1]).toEqual({ status: "AKTIF" });
   });
 
-  it("mengambil satu baris lebih banyak dari batas untuk menentukan adaLagi", async () => {
+  it("C15-UT34 cariProgram mengambil satu baris lebih banyak dari batas untuk menentukan adaLagi", async () => {
     const tiga = [
       barisProgram({ id: "a" }),
       barisProgram({ id: "b" }),
@@ -112,7 +112,7 @@ describe("ProgramController.cariProgram", () => {
     expect((await c2.cariProgram("", null, 2)).adaLagi).toBe(false);
   });
 
-  it("memetakan baris ke ringkasan, jumlah diterima dari _count (tanpa query per program)", async () => {
+  it("C15-UT35 cariProgram memetakan baris ke ringkasan dengan jumlah diterima dari _count (tanpa query per program)", async () => {
     const { controller } = buatDb({ findMany: [barisProgram()] });
     const { daftar } = await controller.cariProgram("", null, 24);
     expect(daftar).toEqual([
@@ -130,17 +130,43 @@ describe("ProgramController.cariProgram", () => {
       },
     ]);
   });
+
+  it("C15-UT36 cariProgram tanpa hasil mengembalikan daftar kosong dan adaLagi false", async () => {
+    const { controller } = buatDb({ findMany: [] });
+    const hasil = await controller.cariProgram(
+      "tidak-ada-program-ini",
+      null,
+      24,
+    );
+    expect(hasil).toEqual({ daftar: [], adaLagi: false });
+  });
+
+  it("C15-UT37 cariProgram menggabungkan kata kunci dan kategori dalam satu pencarian", async () => {
+    const { controller, findMany } = buatDb();
+    await controller.cariProgram("sungai", "JAGA_ALAM", 24);
+    expect(findMany.mock.calls[0]![0]).toMatchObject({
+      where: {
+        status: "AKTIF",
+        kategori: "JAGA_ALAM",
+        OR: [
+          { namaProgram: { contains: "sungai", mode: "insensitive" } },
+          { deskripsi: { contains: "sungai", mode: "insensitive" } },
+        ],
+      },
+      orderBy: { waktuMulai: "asc" },
+    });
+  });
 });
 
 describe("ProgramController.ambilDetailProgram", () => {
-  it("NOT_FOUND kalau program tidak ada", async () => {
+  it("C15-UT38 ambilDetailProgram melempar NOT_FOUND kalau program tidak ada", async () => {
     const { controller } = buatDb();
     const galat = await galatDari(controller.ambilDetailProgram("x"));
     expect(galat).toBeInstanceOf(GalatProgram);
     expect((galat as GalatProgram).code).toBe("NOT_FOUND");
   });
 
-  it("program MENUNGGU_VERIFIKASI tidak boleh tampil ke publik", async () => {
+  it("C15-UT39 ambilDetailProgram menyembunyikan program MENUNGGU_VERIFIKASI dari publik (NOT_FOUND)", async () => {
     const { controller } = buatDb({
       findUnique: barisProgram({ status: "MENUNGGU_VERIFIKASI" }),
     });
@@ -148,7 +174,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     expect((galat as GalatProgram).code).toBe("NOT_FOUND");
   });
 
-  it("tautan https valid dikembalikan; kuota tersedia mengikuti jumlah diterima", async () => {
+  it("C15-UT40 ambilDetailProgram mengembalikan tautan https valid dan kuota tersedia mengikuti jumlah diterima", async () => {
     const { controller } = buatDb({ findUnique: barisProgram() });
     const detail = await controller.ambilDetailProgram("prog-1");
     expect(detail.tautanSitusResmi).toBe("https://hijau.example");
@@ -158,7 +184,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     expect(detail.capaian).toBeNull();
   });
 
-  it("kuota penuh → kuotaTersedia false", async () => {
+  it("C15-UT41 ambilDetailProgram: kuota penuh membuat kuotaTersedia false", async () => {
     const { controller } = buatDb({
       findUnique: barisProgram({ _count: { pendaftaran: 10 } }),
     });
@@ -167,7 +193,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     );
   });
 
-  it("tahap waktu dan bisaDaftar dihitung dari tanggal, kuota, dan status", async () => {
+  it("C15-UT42 ambilDetailProgram menghitung tahap waktu dan bisaDaftar dari tanggal, kuota, dan status", async () => {
     vi.useFakeTimers();
     try {
       const detail = async (ubah: Record<string, unknown> = {}) =>
@@ -201,7 +227,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     }
   });
 
-  it("tautan kosong, bukan URL, atau bukan http/https → null", async () => {
+  it("C15-UT43 ambilDetailProgram: tautan kosong, bukan URL, atau bukan http/https menjadi null", async () => {
     for (const tautan of [
       null,
       "   ",
@@ -223,7 +249,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     }
   });
 
-  it("program SELESAI menampilkan capaian dari laporan yang disetujui", async () => {
+  it("C15-UT44 ambilDetailProgram: program SELESAI menampilkan capaian dari laporan yang disetujui", async () => {
     const { controller, findFirst } = buatDb({
       findUnique: barisProgram({ status: "SELESAI" }),
       laporan: {
@@ -241,7 +267,7 @@ describe("ProgramController.ambilDetailProgram", () => {
     });
   });
 
-  it("program AKTIF tidak mencari laporan; SELESAI tanpa laporan disetujui → capaian null", async () => {
+  it("C15-UT45 ambilDetailProgram: program AKTIF tidak mencari laporan, SELESAI tanpa laporan disetujui berisi capaian null", async () => {
     const aktif = buatDb({ findUnique: barisProgram() });
     await aktif.controller.ambilDetailProgram("prog-1");
     expect(aktif.findFirst).not.toHaveBeenCalled();
@@ -252,5 +278,44 @@ describe("ProgramController.ambilDetailProgram", () => {
     expect(
       (await selesai.controller.ambilDetailProgram("prog-1")).capaian,
     ).toBeNull();
+  });
+
+  it("C15-UT46 ambilDetailProgram: program yang sudah diajukan konfirmasi tetap tampil tetapi tidak bisa didaftar", async () => {
+    const { controller } = buatDb({
+      findUnique: barisProgram({ status: "MENUNGGU_KONFIRMASI" }),
+    });
+    const detail = await controller.ambilDetailProgram("prog-1");
+    expect(detail.status).toBe("MENUNGGU_KONFIRMASI");
+    expect(detail.bisaDaftar).toBe(false);
+  });
+});
+
+describe("ProgramController.validasiTautanSitus (operasi private, dipanggil lewat ambilDetailProgram)", () => {
+  const { controller } = buatDb();
+  const valid = (url: string) =>
+    (
+      controller as unknown as { validasiTautanSitus(url: string): boolean }
+    ).validasiTautanSitus(url);
+
+  it("C15-UT47 validasiTautanSitus menerima URL http dan https", () => {
+    expect(valid("https://hijau.example")).toBe(true);
+    expect(valid("http://hijau.example/tentang")).toBe(true);
+  });
+
+  it("C15-UT48 validasiTautanSitus menolak teks kosong, spasi saja, dan teks yang bukan URL", () => {
+    expect(valid("")).toBe(false);
+    expect(valid("   ")).toBe(false);
+    expect(valid("hijau.example")).toBe(false);
+  });
+
+  it("C15-UT49 validasiTautanSitus menolak skema selain http dan https (javascript, ftp, data)", () => {
+    expect(valid("javascript:alert(1)")).toBe(false);
+    expect(valid("ftp://hijau.example")).toBe(false);
+    expect(valid("data:text/html,<b>x</b>")).toBe(false);
+  });
+
+  it("C15-UT50 batas: skema huruf besar dan spasi di pinggir tetap dianggap URL http/https yang valid", () => {
+    expect(valid("HTTPS://hijau.example")).toBe(true);
+    expect(valid("  https://hijau.example  ")).toBe(true);
   });
 });
