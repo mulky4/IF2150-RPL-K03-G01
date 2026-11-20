@@ -515,6 +515,109 @@ Tabel 4.2.6b. Ringkasan Cakupan Kelas C22
 | ID Algoritma yang tercakup | Algo-C22-01 s.d. Algo-C22-06 |
 | Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/adapters/BetterAuth.ts`, @vitest/coverage-v8, bukti pada 4.6) |
 
+### 4.2.7 Kelas Verifikator
+
+**ID Kelas:** C06  
+**Nama Kelas:** Verifikator  
+**Tingkat:** Tidak perlu (lihat Tabel 4.1.1)
+
+Kelas `Verifikator` (`src/server/models/Verifikator.ts`) hanya meneruskan `konfirmasiLaporan()` dan `tolakLaporan()` ke `LaporanProgram` dengan `this.idPengguna`. Pada implementasi akhir, kelas ini tidak dipanggil dari kode aplikasi. Peninjauan laporan berjalan lewat `ProgramController.konfirmasiLaporan()` dan `tolakLaporan()` (C15), yang memakai `LaporanProgram` (C09) langsung dengan `idVerifikator` dari sesi. Karena itu kelas ini tidak punya unit test khusus, dan coverage terukurnya 0% (`src/server/models/Verifikator.ts`, @vitest/coverage-v8, bukti pada 4.6). Logika yang ia teruskan teruji lewat C09 (4.2.8) dan C15 (4.2.10), serta lewat UC07-TC01 dan UC07-TC02.
+
+### 4.2.8 Kelas LaporanProgram
+
+**ID Kelas:** C09  
+**Nama Kelas:** LaporanProgram  
+**Tingkat:** Mendalam
+
+Berkas tes: `src/tests/unit/LaporanProgram.test.ts`.
+
+Tabel 4.2.8. Hasil Pengujian Unit Kelas C09
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C09-UT01 | `uploadDokumentasi()`, `showSummary()`, `showDokumentasi()` | Normal | Tes "menyimpan dokumentasi dan ringkasan capaian" | Tautan tersimpan dan dapat dibaca kembali, ringkasan capaian dikembalikan | Sesuai yang diharapkan | Pass |
+| C09-UT02 | `uploadDokumentasi()` | Negatif | Tes "menolak tautan dokumentasi kosong" | Galat "Tautan berkas tidak valid" (Algo-C09-01) | Galat tersebut dilempar | Pass |
+| C09-UT03 | `setujui()` | Normal dan negatif | Tes "menyetujui laporan sekali saja" | Persetujuan pertama berhasil, persetujuan kedua ditolak dengan "Laporan sudah ditinjau" (Algo-C09-02) | Sesuai yang diharapkan | Pass |
+| C09-UT04 | `tolak()` | Normal dan negatif | Tes "menolak laporan hanya dengan catatan revisi" | Tanpa catatan revisi ditolak dengan "Catatan revisi wajib diisi", dengan catatan berstatus DITOLAK (Algo-C09-03) | Sesuai yang diharapkan | Pass |
+
+Tabel 4.2.8b. Ringkasan Cakupan Kelas C09
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `uploadDokumentasi()`, `setujui()`, `tolak()`, `showSummary()`, `showDokumentasi()` |
+| Operasi yang diuji | 5 dari 5 operasi public (4 tes). Kasus batas belum dibuat terpisah. |
+| ID Algoritma yang tercakup | Algo-C09-01 s.d. Algo-C09-05 |
+| Coverage (wajib ≥ 70%) | 100% baris / 100% cabang (`src/server/models/LaporanProgram.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+### 4.2.9 Kelas KelolaProgramPage
+
+**ID Kelas:** C14  
+**Nama Kelas:** KelolaProgramPage  
+**Tingkat:** Sedang
+
+Kelas ini adalah kelas *boundary* yang pada implementasi dipecah menjadi satu komponen per layar. Logika yang dapat diuji dipisahkan ke fungsi murni di `src/lib/programSaya.ts` (misalnya `labelStatus()` untuk Algo-C14-12 `tampilkanStatusProgram()`). Operasi tampilan lainnya (Algo-C14-01 s.d. C14-11, C14-13, C14-14) diuji lewat UC01 dan UC07 (Subbab 4.4).
+
+Berkas tes: `src/tests/unit/programSaya.test.ts`.
+
+Tabel 4.2.9. Hasil Pengujian Unit Kelas C14
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C14-UT01 | `labelStatus()`, `nadaStatus()` | Normal | Status MENUNGGU_KONFIRMASI, AKTIF, PERLU_REVISI | Label "Menunggu Konfirmasi", nada sukses untuk AKTIF dan error untuk PERLU_REVISI | Sesuai yang diharapkan | Pass |
+| C14-UT02 | `aksiProgram()` | Negatif | Status MENUNGGU_VERIFIKASI | Kelola pendaftar nonaktif, tanpa tombol laporan | Sesuai yang diharapkan | Pass |
+| C14-UT03 | `aksiProgram()` | Normal | Status AKTIF | Tombol "Unggah Laporan" aktif | Sesuai yang diharapkan | Pass |
+| C14-UT04 | `aksiProgram()` | Normal | Status MENUNGGU_KONFIRMASI | "Laporan Dikirim", tombol nonaktif | Sesuai yang diharapkan | Pass |
+| C14-UT05 | `aksiProgram()` | Normal | Status PERLU_REVISI | "Unggah Ulang" aktif | Sesuai yang diharapkan | Pass |
+| C14-UT06 | `aksiProgram()` | Batas | Status SELESAI | Tanpa tombol laporan | Sesuai yang diharapkan | Pass |
+| C14-UT07 | `hitungStatistik()` | Normal | Empat program (2 AKTIF, 1 PERLU_REVISI, 1 SELESAI) dengan pendaftar menunggu 2, 0, 3, 0 | Program aktif 2, pendaftar menunggu 5, perlu revisi 1 | Sesuai yang diharapkan | Pass |
+| C14-UT08 | `saringProgram()` | Normal | Filter SEMUA, AKTIF, SELESAI | 4, 2, dan 1 program | Sesuai yang diharapkan | Pass |
+| C14-UT09 | `persenKuota()` | Batas dan negatif | (18, 30), (40, 30), (5, 0) | 60, 100 (dibatasi), 0 (kuota nol) | Sesuai yang diharapkan | Pass |
+
+Tabel 4.2.9b. Ringkasan Cakupan Kelas C14
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Operasi yang diuji | `tampilkanStatusProgram()` (Algo-C14-12) beserta fungsi bantu I-07. Operasi lain berupa render dan handler, teruji lewat UC01 dan UC07. |
+| Coverage | 97,26% baris / 100% cabang (`src/lib/programSaya.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
+### 4.2.10 Kelas ProgramController
+
+**ID Kelas:** C15  
+**Nama Kelas:** ProgramController  
+**Tingkat:** Mendalam
+
+Subbab ini melaporkan operasi laporan, verifikasi, dan program saya. Tes eksplorasi (`ProgramController.eksplorasi.test.ts`) dan pendaftaran relawan (`ProgramController.daftarRelawan.test.ts`) dilaporkan penulis masing-masing. Seluruh tes memakai basis data tiruan.
+
+Tabel 4.2.10. Hasil Pengujian Unit Kelas C15
+
+| ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| C15-UT01 | `konfirmasiLaporan()` | Normal | `ProgramController.peninjauan.test.ts`: keputusan DISETUJUI | Portofolio diperbarui dengan `tx` yang sama, setelah status program diubah | Sesuai yang diharapkan | Pass |
+| C15-UT02 | `tolakLaporan()` | Normal | Keputusan DITOLAK | Portofolio tidak diperbarui | Sesuai yang diharapkan | Pass |
+| C15-UT03 | `konfirmasiLaporan()` | Negatif | Galat validasi dari pembaruan portofolio | Dibungkus menjadi `CONFLICT` | Sesuai yang diharapkan | Pass |
+| C15-UT04 | `konfirmasiLaporan()` | Negatif | Galat tak terduga dari pembaruan portofolio | Dilempar ulang apa adanya | Sesuai yang diharapkan | Pass |
+| C15-UT05 | `ajukanLaporanAkhir()` | Normal | `ProgramController.ajukanLaporan.test.ts`: dua verifikator terdaftar | Satu notifikasi untuk setiap verifikator | Sesuai yang diharapkan | Pass |
+| C15-UT06 | `ajukanLaporanAkhir()` | Batas | Belum ada verifikator | Tidak ada notifikasi dibuat | Sesuai yang diharapkan | Pass |
+| C15-UT07 | `ajukanLaporanAkhir()` | Negatif | Program milik akun lain | Ditolak, tidak ada transaksi | Sesuai yang diharapkan | Pass |
+| C15-UT08 | `setujuiProgram()` | Normal | `ProgramController.verifikasi.test.ts`: program MENUNGGU_VERIFIKASI | Status menjadi AKTIF dan notifikasi dikirim ke Inisiator | Sesuai yang diharapkan | Pass |
+| C15-UT09 | `setujuiProgram()` | Negatif | Program tidak ada | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
+| C15-UT10 | `setujuiProgram()` | Negatif | Program sudah AKTIF | Galat `CONFLICT`, tanpa notifikasi | Sesuai yang diharapkan | Pass |
+| C15-UT11 | `setujuiProgram()` | Batas | Program keburu diproses verifikator lain (`updateMany` mengubah 0 baris) | Galat `CONFLICT`, tanpa notifikasi | Sesuai yang diharapkan | Pass |
+| C15-UT12 | `ambilProgramMenungguVerifikasi()` | Normal | `ProgramController.menungguVerifikasi.test.ts`: program berbagai status | Hanya status MENUNGGU_VERIFIKASI, urut waktu mulai | Sesuai yang diharapkan | Pass |
+| C15-UT13 | `ambilProgramMenungguVerifikasi()` | Batas | Tidak ada program menunggu | Daftar kosong tanpa query dokumen | Sesuai yang diharapkan | Pass |
+| C15-UT14 | `ambilProgramMenungguVerifikasi()` | Normal | Inisiator punya beberapa dokumen legalitas | Nama lembaga dan dokumen legalitas terbaru ikut dikembalikan | Sesuai yang diharapkan | Pass |
+| C15-UT15 | `ambilProgramSaya()` | Negatif | `ProgramController.programSaya.test.ts`: akun bukan Inisiator | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
+| C15-UT16 | `ambilProgramSaya()` | Normal | Dua Inisiator dengan program masing-masing | Hanya program milik Inisiator itu, dengan hitungan diterima dan menunggu | Sesuai yang diharapkan | Pass |
+
+Tabel 4.2.10b. Ringkasan Cakupan Kelas C15
+
+| Informasi | Keterangan |
+| :--- | :--- |
+| Daftar operasi public pada DPPL | `simpanProgramBaru()`, `validasiDataProgram()`, `cariProgram()`, `ambilDetailProgram()`, `validasiTautanSitus()`, `ajukanLaporanAkhir()`, `validasiLaporan()`, `tinjauLaporan()`, `konfirmasiLaporan()`, `tolakLaporan()`, `buatNotifikasi()` |
+| Operasi yang diuji pada subbab ini | `ajukanLaporanAkhir()`, `konfirmasiLaporan()`, `tolakLaporan()`, serta operasi tambahan `setujuiProgram()`, `ambilProgramMenungguVerifikasi()`, `ambilProgramSaya()`. `simpanProgramBaru()`, `validasiDataProgram()`, `tinjauLaporan()`, dan `validasiLaporan()` belum punya unit test khusus dan teruji lewat pengujian use case. |
+| ID Algoritma yang tercakup | Algo-C15-06, Algo-C15-08 (sebagian), Algo-C15-09, Algo-C15-10, Algo-C15-11 |
+| Coverage (wajib ≥ 70%) | 78,28% baris / 86,53% cabang untuk seluruh `src/server/controllers/ProgramController.ts` (semua berkas `ProgramController.*.test.ts`, @vitest/coverage-v8, bukti pada 4.6) |
+
 ### 4.2.x Kelas [Nama Kelas lain]
 
 *[Ulangi pola 4.2.1 untuk setiap kelas bertingkat Mendalam atau Sedang milik modul lain, urut menurut ID kelas.]*
