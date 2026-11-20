@@ -662,7 +662,7 @@ Tabel 4.2.8. Hasil Pengujian Unit Kelas C09 (berkas `src/tests/unit/LaporanProgr
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| C09-UT01 | `uploadDokumentasi()`, `showSummary()`, `showDokumentasi()` | Normal | Simpan satu tautan dokumentasi dan ringkasan capaian, lalu baca kembali | Tautan tersimpan dan dapat dibaca kembali, ringkasan capaian dikembalikan | Sesuai yang diharapkan | Pass |
+| C09-UT01 | `uploadDokumentasi()`, `showSummary()`, `showDokumentasi()` | Normal | Buat laporan dengan ringkasan dan satu tautan awal, tambah satu tautan lewat `uploadDokumentasi()`, lalu baca kembali | `showSummary()` mengembalikan ringkasan yang sama, `showDokumentasi()` mengembalikan kedua tautan berurutan | Sesuai yang diharapkan | Pass |
 | C09-UT02 | `uploadDokumentasi()` | Negatif | Tautan dokumentasi kosong | Galat "Tautan berkas tidak valid" (Algo-C09-01) | Galat tersebut dilempar | Pass |
 | C09-UT03 | `setujui()` | Normal dan negatif | Setujui laporan, lalu setujui laporan yang sama sekali lagi | Persetujuan pertama berhasil, persetujuan kedua ditolak dengan "Laporan sudah ditinjau" (Algo-C09-02) | Sesuai yang diharapkan | Pass |
 | C09-UT04 | `tolak()` | Normal dan negatif | Tolak laporan tanpa catatan revisi, lalu dengan catatan revisi | Tanpa catatan ditolak dengan "Catatan revisi wajib diisi", dengan catatan berstatus DITOLAK (Algo-C09-03) | Sesuai yang diharapkan | Pass |
@@ -732,10 +732,10 @@ Tabel 4.2.10. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan p
 
 | ID Pengujian | Operasi yang Diuji | Jenis Kasus | Prosedur/Masukan | Hasil yang Diharapkan | Hasil Pengujian | Kesimpulan |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| C15-UT01 | `konfirmasiLaporan()` (Algo-C15-09) | Normal | Setujui laporan (berkas `ProgramController.peninjauan.test.ts`) | Portofolio relawan diperbarui dalam `tx` yang sama | Sesuai yang diharapkan | Pass |
-| C15-UT02 | `tolakLaporan()` (Algo-C15-10) | Normal | Tolak laporan (berkas yang sama) | Status ditolak dan portofolio tidak diperbarui | Sesuai yang diharapkan | Pass |
+| C15-UT01 | `konfirmasiLaporan()` (Algo-C15-09) | Normal | Setujui laporan (berkas `ProgramController.peninjauan.test.ts`) | Mengembalikan `SELESAI`. Portofolio diperbarui sekali dengan `programId` dan `tx` yang sama, setelah status program diubah | Sesuai yang diharapkan | Pass |
+| C15-UT02 | `tolakLaporan()` (Algo-C15-10) | Normal | Tolak laporan dengan catatan "Dokumentasi kurang lengkap" (berkas yang sama) | Mengembalikan `PERLU_REVISI` dan portofolio tidak diperbarui | Sesuai yang diharapkan | Pass |
 | C15-UT03 | `konfirmasiLaporan()` | Negatif | Pembaruan portofolio melempar galat | Galat dibungkus menjadi `CONFLICT` | Sesuai yang diharapkan | Pass |
-| C15-UT04 | `konfirmasiLaporan()` | Negatif | Galat tak terduga dilempar saat peninjauan | Galat dilempar ulang tanpa diubah | Sesuai yang diharapkan | Pass |
+| C15-UT04 | `konfirmasiLaporan()` | Negatif | Pembaruan portofolio melempar galat tak terduga (bukan `GalatValidasi`) | Galat dilempar ulang apa adanya, tidak dibungkus | Sesuai yang diharapkan | Pass |
 | C15-UT05 | `ajukanLaporanAkhir()` (Algo-C15-06) | Normal | Ajukan laporan dengan beberapa verifikator (`ProgramController.ajukanLaporan.test.ts`) | Satu notifikasi per verifikator | Sesuai yang diharapkan | Pass |
 | C15-UT06 | `ajukanLaporanAkhir()` | Batas | Ajukan laporan tanpa verifikator terdaftar | Tidak ada notifikasi dikirim | Sesuai yang diharapkan | Pass |
 | C15-UT07 | `ajukanLaporanAkhir()` | Negatif | Program milik akun lain | Ditolak tanpa memulai transaksi | Sesuai yang diharapkan | Pass |
@@ -743,11 +743,11 @@ Tabel 4.2.10. Hasil Pengujian Unit Kelas C15, operasi laporan, verifikasi, dan p
 | C15-UT09 | `setujuiProgram()` | Negatif | Program tidak ditemukan | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
 | C15-UT10 | `setujuiProgram()` | Negatif | Program sudah AKTIF | Galat `CONFLICT` | Sesuai yang diharapkan | Pass |
 | C15-UT11 | `setujuiProgram()` | Negatif | Program keburu diproses verifikator lain | Galat `CONFLICT` | Sesuai yang diharapkan | Pass |
-| C15-UT12 | `ambilProgramMenungguVerifikasi()` | Normal | Daftar program dengan status campuran (`ProgramController.menungguVerifikasi.test.ts`) | Hanya status MENUNGGU_VERIFIKASI yang dikembalikan | Sesuai yang diharapkan | Pass |
-| C15-UT13 | `ambilProgramMenungguVerifikasi()` | Batas | Tidak ada program yang menunggu | Daftar kosong | Sesuai yang diharapkan | Pass |
-| C15-UT14 | `ambilProgramMenungguVerifikasi()` | Normal | Program dengan lembaga dan dokumen legalitas | Nama lembaga dan dokumen legalitas terbaru ikut dikembalikan | Sesuai yang diharapkan | Pass |
+| C15-UT12 | `ambilProgramMenungguVerifikasi()` | Normal | Panggil operasi lalu periksa argumen query ke basis data (`ProgramController.menungguVerifikasi.test.ts`) | Query memfilter `status = MENUNGGU_VERIFIKASI` dan mengurutkan `waktuMulai` menaik | Sesuai yang diharapkan | Pass |
+| C15-UT13 | `ambilProgramMenungguVerifikasi()` | Batas | Tidak ada program yang menunggu | Mengembalikan daftar kosong tanpa query dokumen legalitas | Sesuai yang diharapkan | Pass |
+| C15-UT14 | `ambilProgramMenungguVerifikasi()` | Normal | Dua program dari dua lembaga, dokumen legalitas hanya milik lembaga pertama (dua versi) | Nama lembaga ikut dikembalikan, dokumen terbaru dipakai untuk lembaga pertama, lembaga kedua `null`, data `inisiatorProgram` mentah tidak ikut | Sesuai yang diharapkan | Pass |
 | C15-UT15 | `ambilProgramSaya()` | Negatif | Akun yang bukan inisiator (`ProgramController.programSaya.test.ts`) | Galat `NOT_FOUND` | Sesuai yang diharapkan | Pass |
-| C15-UT16 | `ambilProgramSaya()` | Normal | Inisiator dengan program miliknya dan program akun lain | Hanya program miliknya, dengan hitungan diterima dan menunggu | Sesuai yang diharapkan | Pass |
+| C15-UT16 | `ambilProgramSaya()` | Normal | Inisiator dengan dua program miliknya dan satu program akun lain | Hanya dua program miliknya, dengan hitungan diterima dan menunggu, nama lembaga, dan statistik (aktif 1, pendaftar menunggu 1, perlu revisi 1) | Sesuai yang diharapkan | Pass |
 
 
 Tabel 4.2.10b. Ringkasan Cakupan Kelas C15
@@ -826,6 +826,7 @@ Tabel 4.3.2. Hasil Pengujian Integrasi
 | INT-TC37 | C15 → C09 → DB, C15 → C10, C15 → C20 | Normal: Verifikator menyetujui laporan akhir | Ajukan laporan, lalu panggil `konfirmasiLaporan()` oleh Verifikator | Mengembalikan `SELESAI`. Laporan `DISETUJUI` dengan `verifikatorId` tercatat, status program `SELESAI`, dan Inisiator menerima satu notifikasi "Laporan akhir disetujui." | Sesuai yang diharapkan | Pass |
 | INT-TC38 | C15 → C09 → DB, C15 → C10 | Alternatif: Verifikator menolak laporan akhir | Ajukan laporan, lalu panggil `tolakLaporan()` dengan catatan "Lengkapi foto kegiatan" | Mengembalikan `PERLU_REVISI`. Laporan `DITOLAK` dengan catatan revisi dan `verifikatorId` tercatat, status program `PERLU_REVISI`, dan notifikasi Inisiator memuat catatan | Sesuai yang diharapkan | Pass |
 | INT-TC39 | C15 → C09 → DB | Gagal: meninjau laporan yang sudah ditinjau | Ajukan laporan, tolak, lalu panggil `konfirmasiLaporan()` pada laporan yang sama | Galat `CONFLICT`, laporan tetap `DITOLAK`, status program tetap `PERLU_REVISI` | Galat sesuai, status laporan dan program tidak berubah | Pass |
+| Coverage C06, C09, C14, C15 | <img src="./assets/coverage-laporan-verifikasi.png" alt="Coverage kelas C06, C09, C14, dan C15" width="600"> |
 | *INT-TC10 dst.* | *[CXX → CYY]* | *[Skenario]* | *[Prosedur/masukan]* | *[Hasil yang diharapkan]* | *[Hasil aktual]* | *Pass/Fail* |
 
 <br>
